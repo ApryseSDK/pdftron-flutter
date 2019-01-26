@@ -108,7 +108,8 @@
 	+      url: git://github.com/PDFTron/pdftron-flutter.git
 	```
 
-3. Open `myapp/ios/Podfile`, add:
+3. Run `flutter packages get`
+4. Open `myapp/ios/Podfile`, add:
 	```diff
 	 # Uncomment this line to define a global platform for your project
 	-# platform :ios, '9.0'
@@ -121,10 +122,10 @@
 	+  pod 'PDFNet', podspec: 'POD_LINK_GOES_HERE'
 	 end
 	```
-4. Run `flutter build ios --no-codesign` to ensure integration process is sucessful
-5. Replace `lib/main.dart` with what is shown [here](#usage)
-6. Run `flutter emulators --launch apple_ios_simulator`
-7. Run `flutter run`
+6. Run `flutter build ios --no-codesign` to ensure integration process is sucessful
+7. Replace `lib/main.dart` with what is shown [here](#usage)
+8. Run `flutter emulators --launch apple_ios_simulator`
+9. Run `flutter run`
 
 ## Usage
 
