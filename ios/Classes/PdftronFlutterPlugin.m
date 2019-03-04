@@ -40,12 +40,7 @@
           fileURL = [NSURL fileURLWithPath:document];
       }
       
-      NSError *error = nil;
-      BOOL success = [tabbedController openDocumentWithURL:fileURL error:&error];
-      if (!success) {
-          // error handling
-          return;
-      }
+      [tabbedController openDocumentWithURL:fileURL];
       
       UIViewController *presentingViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
       
