@@ -89,10 +89,10 @@ The complete installation and API guides can be found at https://www.pdftron.com
 
 5. Add your AWS credentials in to the `myapp/android/gradle.properties` file.
 	```diff
-	  org.gradle.jvmargs=-Xmx1536M
+	org.gradle.jvmargs=-Xmx1536M
 
-	+ AWS_ACCESS_KEY=YOUR_ACCESS_KEY_GOES_HERE
-	+ AWS_SECRET_KEY=YOUR_SECRET_KEY_GOES_HERE
+	AWS_ACCESS_KEY=YOUR_ACCESS_KEY_GOES_HERE
+	AWS_SECRET_KEY=YOUR_SECRET_KEY_GOES_HERE
 	```
 6. Replace `lib/main.dart` with what is shown [here](#usage)
 7. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
