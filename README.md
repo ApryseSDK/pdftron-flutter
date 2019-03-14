@@ -1,13 +1,15 @@
 # PDFTron Flutter Wrapper
 
-- [System requirements](#system-requirements)
+- [Prerequisites](#Prerequisites)
 - [Preview](#preview)
 - [Installation](#installation)
 - [Usage](#usage)
 - [APIs](#apis)
 - [License](#license)
 
-## System requirements
+## Prerequisites
+- A valid evaluation or commercial license key. If you do not have a license key, please contact sales for a commercial license key or click [here](https://www.pdftron.com/documentation/android/guides/flutter/?showkey=true) to get an evaluation key.
+- AWS credentials that comes with your license key.
 - PDFTron SDK >= 6.9.0
 - Flutter >= 1.0.0
 
@@ -18,6 +20,8 @@
 ![demo](./flutter-pdftron-demo-android.gif) | ![demo](./flutter-pdftron-demo-ios.gif)
 
 ## Installation
+
+The complete installation and API guides can be found at https://www.pdftron.com/documentation/android/guides/flutter
 
 ### Android
 1. First follow the Flutter getting started guides to [install](https://flutter.io/docs/get-started/install), [set up an editor](https://flutter.io/docs/get-started/editor), and [create a Flutter Project](https://flutter.io/docs/get-started/test-drive?tab=terminal#create-app). The rest of this guide assumes your project is created by running `flutter create myapp`.
@@ -83,12 +87,12 @@
 		...
 	```
 
-5. Add your credentials in the `myapp/android/gradle.properties` file.
+5. Add your AWS credentials in to the `myapp/android/gradle.properties` file.
 	```diff
-	org.gradle.jvmargs=-Xmx1536M
+	  org.gradle.jvmargs=-Xmx1536M
 
-	+AWS_ACCESS_KEY=YOUR_ACCESS_KEY_GOES_HERE
-	+AWS_SECRET_KEY=YOUR_SECRET_KEY_GOES_HERE
+	+ AWS_ACCESS_KEY=YOUR_ACCESS_KEY_GOES_HERE
+	+ AWS_SECRET_KEY=YOUR_SECRET_KEY_GOES_HERE
 	```
 6. Replace `lib/main.dart` with what is shown [here](#usage)
 7. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
