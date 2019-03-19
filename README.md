@@ -33,6 +33,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
 	+  pdftron_flutter:
 	+    git:
 	+      url: git://github.com/PDFTron/pdftron-flutter.git
+	+  permission: 0.1.0
 
 	```
 3. Now add the following items in your `myapp/android/app/build.gradle` file:
@@ -110,6 +111,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
 	+  pdftron_flutter:
 	+    git:
 	+      url: git://github.com/PDFTron/pdftron-flutter.git
+	+  permission: 0.1.0
 	```
 
 3. Run `flutter packages get`
@@ -138,11 +140,13 @@ Open `lib/main.dart`, replace the entire file with the following:
 **Replace `your_pdftron_license_key` string with your license key**
 
 ```dart
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:io' show Platform;
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdftron_flutter/pdftron_flutter.dart';
+import 'package:permission/permission.dart';
 
 void main() => runApp(MyApp());
 
@@ -153,13 +157,27 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _version = 'Unknown';
+  String _document = "https://pdftron.s3.amazonaws.com/downloads/pdfref.pdf";
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
 
-    PdftronFlutter.openDocument("https://pdftron.s3.amazonaws.com/downloads/pdfref.pdf");
+    if (Platform.isIOS) {
+      // Open the document for iOS, no need for permission
+      PdftronFlutter.openDocument(_document);
+    } else {
+      // Request for permissions for android before opening document
+      requestPermission();
+    }
+  }
+
+  Future<void> requestPermission() async {
+    final res = await Permission.requestSinglePermission(PermissionName.Storage);
+    if (granted(res)) {
+      PdftronFlutter.openDocument(_document);
+    }
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -181,6 +199,10 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _version = version;
     });
+  }
+
+  bool granted(PermissionStatus status) {
+    return status == PermissionStatus.allow;
   }
 
   @override
