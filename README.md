@@ -9,7 +9,7 @@
 
 ## Prerequisites
 - A valid evaluation or commercial license key. If you do not have a license key, please contact sales for a commercial license key or click [here](https://www.pdftron.com/documentation/android/guides/flutter/?showkey=true) to get an evaluation key.
-- AWS credentials that comes with your license key.
+- PDFTron gradle credentials that comes with your license key (Android)
 - PDFTron SDK >= 6.9.0
 - Flutter >= 1.0.0
 
@@ -88,7 +88,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
 		...
 	```
 
-5. Add your AWS credentials in to the `myapp/android/gradle.properties` file.
+5. Add your PDFTron credentials in to the `myapp/android/gradle.properties` file.
 	```diff
 	org.gradle.jvmargs=-Xmx1536M
 
