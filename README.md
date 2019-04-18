@@ -235,5 +235,8 @@ Initializes PDFTron SDK
 
 Opens a document in the viewer
 
+## Contributing
+See [Contributing](./CONTRIBUTING.md)
+
 ## License
 See [License](./LICENSE)
