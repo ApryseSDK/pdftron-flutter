@@ -20,7 +20,7 @@ dev_dependencies:
   pdftron_flutter:
     path: ../
 
-  permission: 0.1.0
+  permission_handler: '3.0.1'
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
