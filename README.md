@@ -33,7 +33,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
 	+  pdftron_flutter:
 	+    git:
 	+      url: git://github.com/PDFTron/pdftron-flutter.git
-	+  permission: 0.1.0
+	+  permission_handler: '3.0.1'
 
 	```
 3. Now add the following items in your `myapp/android/app/build.gradle` file:
@@ -111,7 +111,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
 	+  pdftron_flutter:
 	+    git:
 	+      url: git://github.com/PDFTron/pdftron-flutter.git
-	+  permission: 0.1.0
+	+  permission_handler: '3.0.1'
 	```
 
 3. Run `flutter packages get`
@@ -146,7 +146,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdftron_flutter/pdftron_flutter.dart';
-import 'package:permission/permission.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
@@ -169,13 +169,13 @@ class _MyAppState extends State<MyApp> {
       PdftronFlutter.openDocument(_document);
     } else {
       // Request for permissions for android before opening document
-      requestPermission();
+      launchWithPermission();
     }
   }
 
-  Future<void> requestPermission() async {
-    final res = await Permission.requestSinglePermission(PermissionName.Storage);
-    if (granted(res)) {
+  Future<void> launchWithPermission() async {
+    Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    if (granted(permissions[PermissionGroup.storage])) {
       PdftronFlutter.openDocument(_document);
     }
   }
@@ -202,7 +202,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   bool granted(PermissionStatus status) {
-    return status == PermissionStatus.allow;
+    return status == PermissionStatus.granted;
   }
 
   @override
