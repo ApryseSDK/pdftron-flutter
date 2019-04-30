@@ -32,6 +32,8 @@
       
       UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:tabbedController];
       
+      tabbedController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
+      
       // Open a file URL.
       NSURL *fileURL = [[NSBundle mainBundle] URLForResource:document withExtension:@"pdf"];
       if ([document containsString:@"://"]) {
@@ -49,6 +51,13 @@
   } else {
     result(FlutterMethodNotImplemented);
   }
+}
+
+- (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem
+{
+    
+    [[UIApplication sharedApplication].delegate.window.rootViewController.presentedViewController dismissViewControllerAnimated:YES completion:Nil];
+    
 }
 
 @end
