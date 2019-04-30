@@ -91,6 +91,10 @@ The complete installation and API guides can be found at https://www.pdftron.com
 5. Add your PDFTron credentials in to the `myapp/android/gradle.properties` file.
 	```diff
 	org.gradle.jvmargs=-Xmx1536M
+    
+    # If you're using the permission_handler package, also add these two lines
+    android.useAndroidX=true
+    android.enableJetifier=true
 
 	AWS_ACCESS_KEY=YOUR_ACCESS_KEY_GOES_HERE
 	AWS_SECRET_KEY=YOUR_SECRET_KEY_GOES_HERE
