@@ -34,7 +34,9 @@ class _MyAppState extends State<MyApp> {
   Future<void> launchWithPermission() async {
     Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
     if (granted(permissions[PermissionGroup.storage])) {
-      PdftronFlutter.openDocument(_document);
+      var disabledElements = [Buttons.shareButton, Buttons.searchButton];
+      var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
+      PdftronFlutter.openDocument(_document, config: Config(disabledElements, disabledTools));
     }
   }
 
