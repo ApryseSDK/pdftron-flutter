@@ -52,26 +52,23 @@ class Tools {
   static const annotationCreateAreaMeasurement = 'AnnotationCreateAreaMeasurement';
 }
 
-class Viewer {
-  static const multiTabEnabled = 'multiTabEnabled';
-  static const fullscreenModeEnabled = 'fullscreenModeEnabled';
-  static const restrictDownloadUsage = 'restrictDownloadUsage';
-}
-
 class Config {
-  var disabledElements;
-  var disabledTools;
+  var dElements;
+  var dTools;
 
-  Config(this.disabledElements, this.disabledTools);
+  Config();
+
+  set disabledElements(List value) => dElements = value;
+  set disabledTools(List value) => dTools = value;
 
   Config.fromJson(Map<String, dynamic> json)
-      : disabledElements = json['disabledElements'],
-        disabledTools = json['disabledTools'];
+      : dElements = json['disabledElements'],
+        dTools = json['disabledTools'];
 
   Map<String, dynamic> toJson() =>
     {
-      'disabledElements': disabledElements,
-      'disabledTools': disabledTools,
+      'disabledElements': dElements,
+      'disabledTools': dTools,
     };
 
 }
