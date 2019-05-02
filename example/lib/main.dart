@@ -36,7 +36,10 @@ class _MyAppState extends State<MyApp> {
     if (granted(permissions[PermissionGroup.storage])) {
       var disabledElements = [Buttons.shareButton, Buttons.searchButton];
       var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
-      PdftronFlutter.openDocument(_document, config: Config(disabledElements, disabledTools));
+      var config = Config();
+      config.disabledElements = disabledElements;
+      config.disabledTools = disabledTools;
+      PdftronFlutter.openDocument(_document, config: config);
     }
   }
 
