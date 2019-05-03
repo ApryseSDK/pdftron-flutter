@@ -79,25 +79,27 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
     private static final String disabledTools = "disabledTools";
 
     private void openDocument(String document, String configStr) {
-        try {
-            ViewerConfig.Builder builder = new ViewerConfig.Builder()
-                    .openUrlCachePath(mContext.getCacheDir().getAbsolutePath());
+        ViewerConfig.Builder builder = new ViewerConfig.Builder()
+                .openUrlCachePath(mContext.getCacheDir().getAbsolutePath());
 
-            JSONObject configJson = new JSONObject(configStr);
-            if (configJson.has(disabledElements)) {
-                JSONArray array = configJson.getJSONArray(disabledElements);
-                builder = disableElements(builder, array);
+        if (configStr != null && !configStr.equals("null")) {
+            try {
+                JSONObject configJson = new JSONObject(configStr);
+                if (configJson.has(disabledElements)) {
+                    JSONArray array = configJson.getJSONArray(disabledElements);
+                    builder = disableElements(builder, array);
+                }
+                if (configJson.has(disabledTools)) {
+                    JSONArray array = configJson.getJSONArray(disabledTools);
+                    builder = disableTools(builder, array);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-            if (configJson.has(disabledTools)) {
-                JSONArray array = configJson.getJSONArray(disabledTools);
-                builder = disableTools(builder, array);
-            }
-
-            final Uri fileLink = Uri.parse(document);
-            DocumentActivity.openDocument(mContext, fileLink, builder.build());
-        } catch (Exception ex) {
-            ex.printStackTrace();
         }
+
+        final Uri fileLink = Uri.parse(document);
+        DocumentActivity.openDocument(mContext, fileLink, builder.build());
     }
 
     private ViewerConfig.Builder disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
@@ -137,7 +139,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
         ToolManager.ToolMode[] modes = modesArr.toArray(new ToolManager.ToolMode[modesArr.size()]);
         ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
         toolManagerBuilder = toolManagerBuilder.disableToolModes(modes);
-        builder.toolManagerBuilder(toolManagerBuilder);
+        builder = builder.toolManagerBuilder(toolManagerBuilder);
         return builder;
     }
 
