@@ -34,12 +34,15 @@ class _MyAppState extends State<MyApp> {
   Future<void> launchWithPermission() async {
     Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
     if (granted(permissions[PermissionGroup.storage])) {
-      var disabledElements = [Buttons.shareButton, Buttons.searchButton];
-      var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
-      var config = Config();
-      config.disabledElements = disabledElements;
-      config.disabledTools = disabledTools;
-      PdftronFlutter.openDocument(_document, config: config);
+//      // configuration options
+//      var disabledElements = [Buttons.shareButton, Buttons.searchButton];
+//      var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
+//      var config = Config();
+//      config.disabledElements = disabledElements;
+//      config.disabledTools = disabledTools;
+//      PdftronFlutter.openDocument(_document, config: config);
+
+        PdftronFlutter.openDocument(_document);
     }
   }
 
