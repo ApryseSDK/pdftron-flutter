@@ -1,6 +1,5 @@
 #import "PdftronFlutterPlugin.h"
-#import <PDFNet/PDFNet.h>
-#import <Tools/Tools.h>
+
 
 @implementation PdftronFlutterPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -28,11 +27,11 @@
       }
       
       // Create and wrap a tabbed controller in a navigation controller.
-      PTTabbedDocumentViewController *tabbedController = [[PTTabbedDocumentViewController alloc] init];
+      self.documentViewController = [[PTDocumentViewController alloc] init];
       
-      UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:tabbedController];
+      UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.documentViewController];
       
-      tabbedController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
+      self.documentViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
       
       // Open a file URL.
       NSURL *fileURL = [[NSBundle mainBundle] URLForResource:document withExtension:@"pdf"];
@@ -42,7 +41,7 @@
           fileURL = [NSURL fileURLWithPath:document];
       }
       
-      [tabbedController openDocumentWithURL:fileURL];
+      [self.documentViewController openDocumentWithURL:fileURL];
       
       UIViewController *presentingViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
       
