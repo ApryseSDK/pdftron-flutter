@@ -2,3 +2,5 @@
 .DS_Store
 *.iml
 *.lock
+.idea
+.packages
