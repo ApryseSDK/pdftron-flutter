@@ -24,7 +24,8 @@ class _MyAppState extends State<MyApp> {
 
     if (Platform.isIOS) {
       // Open the document for iOS, no need for permission
-      PdftronFlutter.openDocument(_document);
+      showViewer();
+
     } else {
       // Request for permissions for android before opening document
       launchWithPermission();
@@ -34,15 +35,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> launchWithPermission() async {
     Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
     if (granted(permissions[PermissionGroup.storage])) {
-//      // configuration options
-//      var disabledElements = [Buttons.shareButton, Buttons.searchButton];
-//      var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
-//      var config = Config();
-//      config.disabledElements = disabledElements;
-//      config.disabledTools = disabledTools;
-//      PdftronFlutter.openDocument(_document, config: config);
-
-        PdftronFlutter.openDocument(_document);
+      showViewer();
     }
   }
 
@@ -65,6 +58,20 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       _version = version;
     });
+  }
+
+
+  void showViewer() {
+    // shows how to disale functionality
+    //  var disabledElements = [Buttons.shareButton, Buttons.searchButton];
+    //  var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
+    //  var config = Config();
+    //  config.disabledElements = disabledElements;
+    //  config.disabledTools = disabledTools;
+    //  PdftronFlutter.openDocument(_document, config: config);
+
+    // opening without a config file will have all functionality enabled.
+    PdftronFlutter.openDocument(_document);
   }
 
   bool granted(PermissionStatus status) {
