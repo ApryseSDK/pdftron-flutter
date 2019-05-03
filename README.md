@@ -239,6 +239,19 @@ Initializes PDFTron SDK
 
 Opens a document in the viewer
 
+- `PdftronFlutter.openDocument(String, Config)`
+
+Opens a document in the viewer with options to remove buttons and disable tools
+
+```dart
+var disabledElements = [Buttons.shareButton, Buttons.searchButton];
+var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
+var config = Config();
+config.disabledElements = disabledElements;
+config.disabledTools = disabledTools;
+PdftronFlutter.openDocument(_document, config: config);
+```
+
 ## Contributing
 See [Contributing](./CONTRIBUTING.md)
 
