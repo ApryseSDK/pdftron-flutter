@@ -80,6 +80,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
 
     private void openDocument(String document, String configStr) {
         ViewerConfig.Builder builder = new ViewerConfig.Builder()
+                .multiTabEnabled(false)
                 .openUrlCachePath(mContext.getCacheDir().getAbsolutePath());
 
         if (configStr != null && !configStr.equals("null")) {
