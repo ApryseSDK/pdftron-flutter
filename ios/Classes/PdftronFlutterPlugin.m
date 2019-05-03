@@ -14,7 +14,93 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
 
 -(void)disableTools:(NSArray*)toolsToDisable
 {
-    
+    for(NSObject* item in toolsToDisable)
+    {
+        BOOL value = NO;
+        
+        if( [item isKindOfClass:[NSString class]])
+        {
+            NSString* string = (NSString*)item;
+            
+            if( [string isEqualToString:@"AnnotationEdit"] )
+            {
+                // multi-select not implemented
+            }
+            else if( [string isEqualToString:@"AnnotationCreateSticky"] || [string isEqualToString:@"stickyToolButton"] )
+            {
+                self.documentViewController.toolManager.textAnnotationOptions.canCreate = value;
+            }
+            else if ( [string isEqualToString:@"AnnotationCreateFreeHand"] || [string isEqualToString:@"freeHandToolButton"] )
+            {
+                self.documentViewController.toolManager.inkAnnotationOptions.canCreate = value;
+            }
+            else if ( [string isEqualToString:@"TextSelect"] )
+            {
+                self.documentViewController.toolManager.textSelectionEnabled = value;
+            }
+            else if ( [string isEqualToString:@"AnnotationCreateTextHighlight"] || [string isEqualToString:@"highlightToolButton"] )
+            {
+                self.documentViewController.toolManager.highlightAnnotationOptions.canCreate = value;
+            }
+            else if ( [string isEqualToString:@"AnnotationCreateTextUnderline"] || [string isEqualToString:@"underlineToolButton"] )
+            {
+                self.documentViewController.toolManager.underlineAnnotationOptions.canCreate = value;
+            }
+            else if ( [string isEqualToString:@"AnnotationCreateTextSquiggly"] || [string isEqualToString:@"squigglyToolButton"] )
+            {
+                self.documentViewController.toolManager.squigglyAnnotationOptions.canCreate = value;
+            }
+            else if ( [string isEqualToString:@"AnnotationCreateTextStrikeout"] || [string isEqualToString:@"strikeoutToolButton"] )
+            {
+                self.documentViewController.toolManager.strikeOutAnnotationOptions.canCreate = value;
+            }
+            else if ( [string isEqualToString:@"AnnotationCreateFreeText"] || [string isEqualToString:@"freeTextToolButton"] )
+            {
+                self.documentViewController.toolManager.freeTextAnnotationOptions.canCreate = value;
+            }
+            else if ( [string isEqualToString:@"AnnotationCreateCallout"] || [string isEqualToString:@"calloutToolButton"] )
+            {
+                // not supported
+            }
+            else if ( [string isEqualToString:@"AnnotationCreateSignature"] || [string isEqualToString:@"signatureToolButton"] )
+            {
+                self.documentViewController.toolManager.signatureAnnotationOptions.canCreate = value;
+            }
+            else if ( [string isEqualToString:@"AnnotationCreateLine"] || [string isEqualToString:@"lineToolButton"] )
+            {
+                self.documentViewController.toolManager.lineAnnotationOptions.canCreate = value;
+            }
+            else if ( [string isEqualToString:@"AnnotationCreateArrow"] || [string isEqualToString:@"arrowToolButton"] )
+            {
+                self.documentViewController.toolManager.arrowAnnotationOptions.canCreate = value;
+            }
+            else if ( [string isEqualToString:@"AnnotationCreatePolyline"] || [string isEqualToString:@"polylineToolButton"] )
+            {
+                self.documentViewController.toolManager.polylineAnnotationOptions.canCreate = value;
+            }
+            else if ( [string isEqualToString:@"AnnotationCreateStamp"] || [string isEqualToString:@"stampToolButton"] )
+            {
+                self.documentViewController.toolManager.stampAnnotationOptions.canCreate = value;
+            }
+            else if ( [string isEqualToString:@"AnnotationCreateRectangle"] || [string isEqualToString:@"rectangleToolButton"] )
+            {
+                self.documentViewController.toolManager.squareAnnotationOptions.canCreate = value;
+            }
+            else if ( [string isEqualToString:@"AnnotationCreateEllipse"] || [string isEqualToString:@"ellipseToolButton"] )
+            {
+                self.documentViewController.toolManager.circleAnnotationOptions.canCreate = value;
+            }
+            else if ( [string isEqualToString:@"AnnotationCreatePolygon"] || [string isEqualToString:@"polygonToolButton"] )
+            {
+                self.documentViewController.toolManager.polygonAnnotationOptions.canCreate = value;
+            }
+            else if ( [string isEqualToString:@"AnnotationCreatePolygonCloud"] || [string isEqualToString:@"cloudToolButton"] )
+            {
+                self.documentViewController.toolManager.cloudyAnnotationOptions.canCreate = value;
+            }
+            
+        }
+    }
 }
 
 -(void)disableElements:(NSArray*)elementsToDisable
