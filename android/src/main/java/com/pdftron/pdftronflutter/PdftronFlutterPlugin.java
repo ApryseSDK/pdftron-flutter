@@ -138,9 +138,11 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         }
         ToolManager.ToolMode[] modes = modesArr.toArray(new ToolManager.ToolMode[modesArr.size()]);
-        ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
-        toolManagerBuilder = toolManagerBuilder.disableToolModes(modes);
-        builder = builder.toolManagerBuilder(toolManagerBuilder);
+        if (modes.length > 0) {
+          ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
+          toolManagerBuilder = toolManagerBuilder.disableToolModes(modes);
+          builder = builder.toolManagerBuilder(toolManagerBuilder);
+        }
         return builder;
     }
 
