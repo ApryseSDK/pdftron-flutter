@@ -105,7 +105,53 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
 
 -(void)disableElements:(NSArray*)elementsToDisable
 {
+    typedef void (^HideElementBlock)(void);
     
+    NSDictionary *hideElementActions = @{
+                                         @"toolsButton":
+                                             ^{
+                                                 self.documentViewController.annotationToolbarButtonHidden = YES;
+                                             },
+                                         @"searchButton":
+                                             ^{
+                                                 self.documentViewController.searchButtonHidden = YES;
+                                             },
+                                         @"shareButton":
+                                             ^{
+                                                 self.documentViewController.shareButtonHidden = YES;
+                                             },
+                                         @"viewControlsButton":
+                                             ^{
+                                                 self.documentViewController.viewerSettingsButtonHidden = YES;
+                                             },
+                                         @"thumbnailsButton":
+                                             ^{
+                                                 self.documentViewController.thumbnailBrowserButtonHidden = YES;
+                                             },
+                                         @"listsButton":
+                                             ^{
+                                                 self.documentViewController.navigationListsButtonHidden = YES;
+                                             },
+                                         @"thumbnailSlider":
+                                             ^{
+                                                 self.documentViewController.thumbnailSliderHidden = YES;
+                                             }
+                                         };
+    
+    
+    for(NSObject* item in elementsToDisable)
+    {
+        if( [item isKindOfClass:[NSString class]])
+        {
+            HideElementBlock block = hideElementActions[item];
+            if (block)
+            {
+                block();
+            }
+        }
+    }
+    
+    [self disableTools:elementsToDisable];
 }
 
 -(void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
