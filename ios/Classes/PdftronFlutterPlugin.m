@@ -1,5 +1,7 @@
 #import "PdftronFlutterPlugin.h"
 
+static NSString * const PTDisabledToolsKey = @"disabledTools";
+static NSString * const PTDisabledElementsKey = @"disabledElements";
 
 @implementation PdftronFlutterPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -8,6 +10,16 @@
             binaryMessenger:[registrar messenger]];
   PdftronFlutterPlugin* instance = [[PdftronFlutterPlugin alloc] init];
   [registrar addMethodCallDelegate:instance channel:channel];
+}
+
+-(void)disableTools:(NSArray*)toolsToDisable
+{
+    
+}
+
+-(void)disableElements:(NSArray*)elementsToDisable
+{
+    
 }
 
 -(void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
@@ -23,13 +35,36 @@
         NSDictionary* configPairs = (NSDictionary*)foundationObject;
         
         for (NSString* key in configPairs.allKeys) {
-            if( [key isEqualToString:@"foo"] )
+            if( [key isEqualToString:PTDisabledToolsKey] )
             {
-                
+                id toolsToDisable = configPairs[PTDisabledToolsKey];
+                NSAssert( [toolsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format." );
+                if( [toolsToDisable isKindOfClass:[NSArray class]] )
+                {
+                    [self disableTools:(NSArray*)toolsToDisable];
+                }
+                else
+                {
+                    NSLog(@"disabledTools JSON object not in expected array format.");
+                }
             }
-            else if( [key isEqualToString:@"bar"] )
+            else if( [key isEqualToString:PTDisabledElementsKey] )
             {
-                
+                id elementsToDisable = configPairs[PTDisabledElementsKey];
+                NSAssert( [elementsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format." );
+                if( [elementsToDisable isKindOfClass:[NSArray class]] )
+                {
+                    [self disableElements:(NSArray*)elementsToDisable];
+                }
+                else
+                {
+                    NSLog(@"disabledTools JSON object not in expected array format.");
+                }
+            }
+            else
+            {
+                NSLog(@"Unknown JSON key in config: %@.", key);
+                NSAssert( false, @"Unknown JSON key in config." );
             }
         }
     }
