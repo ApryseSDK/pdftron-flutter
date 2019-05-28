@@ -9,7 +9,6 @@
 
 ## Prerequisites
 - A valid evaluation or commercial license key. If you do not have a license key, please contact sales for a commercial license key or click [here](https://www.pdftron.com/documentation/android/guides/flutter/?showkey=true) to get an evaluation key.
-- PDFTron gradle credentials that comes with your license key (Android)
 - PDFTron SDK >= 6.9.0
 - Flutter >= 1.0.0
 
@@ -88,20 +87,9 @@ The complete installation and API guides can be found at https://www.pdftron.com
 		...
 	```
 
-5. Add your PDFTron credentials in to the `myapp/android/gradle.properties` file.
-	```diff
-	org.gradle.jvmargs=-Xmx1536M
-    
-    # If you're using the permission_handler package, also add these two lines
-    android.useAndroidX=true
-    android.enableJetifier=true
-
-	AWS_ACCESS_KEY=YOUR_ACCESS_KEY_GOES_HERE
-	AWS_SECRET_KEY=YOUR_SECRET_KEY_GOES_HERE
-	```
-6. Replace `lib/main.dart` with what is shown [here](#usage)
-7. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
-8. Run the app with the command `flutter run`.
+5. Replace `lib/main.dart` with what is shown [here](#usage)
+6. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
+7. Run the app with the command `flutter run`.
 
 ### iOS
 
