@@ -17,11 +17,7 @@ rootProject.allprojects {
         google()
         jcenter()
         maven {
-            url "s3://pdftron-maven/release"
-            credentials(AwsCredentials) {
-                accessKey AWS_ACCESS_KEY
-                secretKey AWS_SECRET_KEY
-            }
+            url "https://pdftron-maven.s3.amazonaws.com/release"
         }
     }
 }
