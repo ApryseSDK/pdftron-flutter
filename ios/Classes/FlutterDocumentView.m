@@ -31,6 +31,7 @@
     int64_t _viewId;
     FlutterMethodChannel* _channel;
     PTDocumentViewController* _documentViewController;
+    UINavigationController* _navigationController;
     UITextView* _textView;
 }
 
@@ -38,7 +39,22 @@
 {
     if ([super init]) {
         _viewId = viewId;
-        _textView = [[UITextView alloc]initWithFrame:frame];
+//        _textView = [[UITextView alloc]initWithFrame:frame];
+        
+        // Create a PTDocumentViewController
+        _documentViewController = [[PTDocumentViewController alloc] init];
+        
+        // The PTDocumentViewController must be in a navigation controller before a document can be opened
+        _navigationController = [[UINavigationController alloc] initWithRootViewController:_documentViewController];
+        
+        UIViewController *parentController = UIApplication.sharedApplication.keyWindow.rootViewController;
+        [parentController addChildViewController:_navigationController];
+        [_navigationController didMoveToParentViewController:parentController];
+        
+        NSURL *fileURL = [NSURL URLWithString:@"https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf"];
+        
+        [_documentViewController openDocumentWithURL:fileURL];
+        
         NSString* channelName = [NSString stringWithFormat:@"pdftron_flutter/documentview_%lld", viewId];
         _channel = [FlutterMethodChannel methodChannelWithName:channelName binaryMessenger:messenger];
         __weak __typeof__(self) weakSelf = self;
@@ -52,10 +68,12 @@
 
 -(UIView *)view
 {
-    _textView.text = @"some text";
-    _textView.backgroundColor = [UIColor redColor];
-    [_textView sizeToFit];
-    return _textView;
+    return _navigationController.view;
+    
+//    _textView.text = @"some text";
+//    _textView.backgroundColor = [UIColor redColor];
+//    [_textView sizeToFit];
+//    return _textView;
 }
 
 - (void)onMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
