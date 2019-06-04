@@ -9,6 +9,7 @@ import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdftronflutter.factories.DocumentViewFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,6 +39,9 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "pdftron_flutter");
         channel.setMethodCallHandler(new PdftronFlutterPlugin(registrar.activeContext()));
+
+
+        registrar.platformViewRegistry().registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(registrar.messenger(), registrar.activeContext()));
     }
 
     @Override

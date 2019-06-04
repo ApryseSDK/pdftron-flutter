@@ -4,7 +4,6 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdftron_flutter/pdftron_flutter.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,28 +14,14 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _version = 'Unknown';
-  String _document = "https://pdftron.s3.amazonaws.com/downloads/pdfref.pdf";
+  String _document = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
 
-    if (Platform.isIOS) {
-      // Open the document for iOS, no need for permission
-      showViewer();
-
-    } else {
-      // Request for permissions for android before opening document
-      launchWithPermission();
-    }
-  }
-
-  Future<void> launchWithPermission() async {
-    Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-    if (granted(permissions[PermissionGroup.storage])) {
-      showViewer();
-    }
+    showViewer();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -71,24 +56,27 @@ class _MyAppState extends State<MyApp> {
     //  PdftronFlutter.openDocument(_document, config: config);
 
     // opening without a config file will have all functionality enabled.
-    PdftronFlutter.openDocument(_document);
-  }
-
-  bool granted(PermissionStatus status) {
-    return status == PermissionStatus.granted;
+    // PdftronFlutter.openDocument(_document);
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('PDFTron flutter app'),
-        ),
-        body: Center(
-          child: Text('Running on: $_version\n'),
+        body: SafeArea(
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: DocumentView(
+              onCreated: _onDocumentViewCreated,
+            ),
+          ),
         ),
       ),
     );
+  }
+
+  void _onDocumentViewCreated(DocumentViewController controller) {
+
   }
 }

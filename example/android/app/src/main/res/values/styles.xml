@@ -5,4 +5,14 @@
              Flutter draws its first frame -->
         <item name="android:windowBackground">@drawable/launch_background</item>
     </style>
+
+    <style name="CustomAppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">#00A4E4</item>
+        <item name="colorPrimaryDark">#018DC9</item>
+        <item name="colorAccent">#EA7350</item>
+        <item name="actionMenuTextColor">@android:color/white</item>
+        <!-- Action bar -->
+        <item name="actionModeBackground">?attr/colorPrimary</item>
+        <item name="windowActionModeOverlay">true</item>
+    </style>
 </resources>
