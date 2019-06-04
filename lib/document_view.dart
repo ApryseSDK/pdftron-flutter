@@ -22,6 +22,11 @@ class _DocumentViewState extends State<DocumentView> {
         viewType: 'pdftron_flutter/documentview',
         onPlatformViewCreated: _onPlatformViewCreated,
       );
+    } else if (Platform.isIOS) {
+      return UiKitView(
+        viewType: 'pdftron_flutter/documentview',
+        onPlatformViewCreated: _onPlatformViewCreated,
+      );
     }
     return Text('coming soon');
   }

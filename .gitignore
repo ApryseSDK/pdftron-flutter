@@ -4,3 +4,4 @@
 *.lock
 .idea
 .packages
+example/ios/Runner.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
