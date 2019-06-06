@@ -8,7 +8,7 @@
 - [License](#license)
 
 ## Prerequisites
-- A valid evaluation or commercial license key. If you do not have a license key, please contact sales for a commercial license key or click [here](https://www.pdftron.com/documentation/android/guides/flutter/?showkey=true) to get an evaluation key.
+- No license key is requird for trial. However, a valid commercial license key is required after trial. If you do not have a license key, please contact sales for a commercial license key or click [here](https://www.pdftron.com/documentation/android/guides/flutter/?showkey=true) to get an evaluation key.
 - PDFTron SDK >= 6.9.0
 - Flutter >= 1.0.0
 
@@ -117,7 +117,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
 	   ...
 	+  # PDFTron Pods
 	+  use_frameworks!
-	+  pod 'PDFNet', podspec: 'POD_LINK_GOES_HERE'
+	+  pod 'PDFNet', podspec: 'https://www.pdftron.com/downloads/ios/cocoapods/pdfnet/latest.podspec'
 	 end
 	```
 6. Run `flutter build ios --no-codesign` to ensure integration process is sucessful
@@ -128,8 +128,6 @@ The complete installation and API guides can be found at https://www.pdftron.com
 ## Usage
 
 Open `lib/main.dart`, replace the entire file with the following:
-
-**Replace `your_pdftron_license_key` string with your license key**
 
 ```dart
 import 'dart:async';
@@ -149,7 +147,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _version = 'Unknown';
-  String _document = "https://pdftron.s3.amazonaws.com/downloads/pdfref.pdf";
+  String _document = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
 
   @override
   void initState() {
@@ -178,7 +176,7 @@ class _MyAppState extends State<MyApp> {
     String version;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      PdftronFlutter.initialize("your_pdftron_license_key");
+      PdftronFlutter.initialize("Insert commercial license key here after purchase");
       version = await PdftronFlutter.version;
     } on PlatformException {
       version = 'Failed to get platform version.';
