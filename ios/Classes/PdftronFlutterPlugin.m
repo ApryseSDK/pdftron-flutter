@@ -156,53 +156,63 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
 
 -(void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
 {
-    //convert from json to dict
-    NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
-    id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
-
-    NSAssert( [foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format." );
-    
-    if( [foundationObject isKindOfClass:[NSDictionary class]] )
+    if( config && ![config isEqualToString:@"null"] )
     {
-        NSDictionary* configPairs = (NSDictionary*)foundationObject;
+        //convert from json to dict
+        NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
+        id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
+
+        NSAssert( [foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format." );
         
-        for (NSString* key in configPairs.allKeys) {
-            if( [key isEqualToString:PTDisabledToolsKey] )
-            {
-                id toolsToDisable = configPairs[PTDisabledToolsKey];
-                NSAssert( [toolsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format." );
-                if( [toolsToDisable isKindOfClass:[NSArray class]] )
+        if( [foundationObject isKindOfClass:[NSDictionary class]] )
+        {
+            NSDictionary* configPairs = (NSDictionary*)foundationObject;
+            
+            for (NSString* key in configPairs.allKeys) {
+                if( [key isEqualToString:PTDisabledToolsKey] )
                 {
-                    [self disableTools:(NSArray*)toolsToDisable];
+                    id toolsToDisable = configPairs[PTDisabledToolsKey];
+                    if( ![toolsToDisable isEqual:[NSNull null]] )
+                    {
+                        NSAssert( [toolsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format." );
+                        if( [toolsToDisable isKindOfClass:[NSArray class]] )
+                        {
+                            [self disableTools:(NSArray*)toolsToDisable];
+                        }
+                        else
+                        {
+                            NSLog(@"disabledTools JSON object not in expected array format.");
+                        }
+                    }
+                }
+                else if( [key isEqualToString:PTDisabledElementsKey] )
+                {
+                    id elementsToDisable = configPairs[PTDisabledElementsKey];
+                    
+                    if( ![elementsToDisable isEqual:[NSNull null]] )
+                    {
+                        NSAssert( [elementsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format." );
+                        if( [elementsToDisable isKindOfClass:[NSArray class]] )
+                        {
+                            [self disableElements:(NSArray*)elementsToDisable];
+                        }
+                        else
+                        {
+                            NSLog(@"disabledTools JSON object not in expected array format.");
+                        }
+                    }
                 }
                 else
                 {
-                    NSLog(@"disabledTools JSON object not in expected array format.");
+                    NSLog(@"Unknown JSON key in config: %@.", key);
+                    NSAssert( false, @"Unknown JSON key in config." );
                 }
-            }
-            else if( [key isEqualToString:PTDisabledElementsKey] )
-            {
-                id elementsToDisable = configPairs[PTDisabledElementsKey];
-                NSAssert( [elementsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format." );
-                if( [elementsToDisable isKindOfClass:[NSArray class]] )
-                {
-                    [self disableElements:(NSArray*)elementsToDisable];
-                }
-                else
-                {
-                    NSLog(@"disabledTools JSON object not in expected array format.");
-                }
-            }
-            else
-            {
-                NSLog(@"Unknown JSON key in config: %@.", key);
-                NSAssert( false, @"Unknown JSON key in config." );
             }
         }
-    }
-    else
-    {
-        NSLog(@"config JSON object not in expected dictionary format.");
+        else
+        {
+            NSLog(@"config JSON object not in expected dictionary format.");
+        }
     }
     
     
