@@ -123,6 +123,10 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                         .showUserBookmarksList(false);
             } else if ("thumbnailSlider".equals(item)) {
                 builder = builder.showBottomNavBar(false);
+            } else if ("saveCopyButton".equals(item)) {
+                builder = builder.showSaveCopyOption(false);
+            } else if ("editPagesButton".equals(item)) {
+                builder = builder.showEditPagesOption(false);
             }
         }
         return disableTools(builder, args);
