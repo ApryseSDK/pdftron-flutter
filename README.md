@@ -240,9 +240,13 @@ Initializes PDFTron SDK
 
 Opens a document in the viewer
 
-- `PdftronFlutter.openDocument(String, Config)`
+- `PdftronFlutter.openDocument(String, password: String, config: Config)`
 
 Opens a document in the viewer with options to remove buttons and disable tools
+
+Optional parameters:
+- password: String, password to encrypted document
+- config: Config, viewer configuration options
 
 ```dart
 var disabledElements = [Buttons.shareButton, Buttons.searchButton];
