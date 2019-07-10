@@ -245,8 +245,8 @@ Opens a document in the viewer
 Opens a document in the viewer with options to remove buttons and disable tools
 
 Optional parameters:
-- password: String, password to encrypted document
-- config: Config, viewer configuration options
+- `password`: String, password to an encrypted document
+- `config`: Config, viewer configuration options
 
 ```dart
 var disabledElements = [Buttons.shareButton, Buttons.searchButton];
