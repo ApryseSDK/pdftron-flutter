@@ -229,7 +229,7 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
   } else if ([@"openDocument" isEqualToString:call.method]) {
       NSString *document = call.arguments[@"document"];
       
-     
+      NSString *password = call.arguments[@"password"];
       
       if (document == nil || document.length == 0) {
           // error handling
@@ -256,7 +256,7 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
           fileURL = [NSURL fileURLWithPath:document];
       }
       
-      [self.documentViewController openDocumentWithURL:fileURL];
+      [self.documentViewController openDocumentWithURL:fileURL password:password];
       
       UIViewController *presentingViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
       
