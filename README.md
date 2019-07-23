@@ -20,7 +20,7 @@
 
 ## Installation
 
-The complete installation and API guides can be found at https://www.pdftron.com/documentation/android/guides/flutter
+The complete installation and API guides can be found at https://www.pdftron.com/documentation/android/flutter
 
 ### Android
 1. First follow the Flutter getting started guides to [install](https://flutter.io/docs/get-started/install), [set up an editor](https://flutter.io/docs/get-started/editor), and [create a Flutter Project](https://flutter.io/docs/get-started/test-drive?tab=terminal#create-app). The rest of this guide assumes your project is created by running `flutter create myapp`.
