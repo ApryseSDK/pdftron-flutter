@@ -78,6 +78,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
 
     private static final String disabledElements = "disabledElements";
     private static final String disabledTools = "disabledTools";
+    private static final String multiTabEnabled = "multiTabEnabled";
 
     private void openDocument(String document, String password, String configStr) {
         ViewerConfig.Builder builder = new ViewerConfig.Builder()
@@ -87,13 +88,17 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
         if (configStr != null && !configStr.equals("null")) {
             try {
                 JSONObject configJson = new JSONObject(configStr);
-                if (configJson.has(disabledElements)) {
+                if (!configJson.isNull(disabledElements)) {
                     JSONArray array = configJson.getJSONArray(disabledElements);
                     builder = disableElements(builder, array);
                 }
-                if (configJson.has(disabledTools)) {
+                if (!configJson.isNull(disabledTools)) {
                     JSONArray array = configJson.getJSONArray(disabledTools);
                     builder = disableTools(builder, array);
+                }
+                if (!configJson.isNull(multiTabEnabled)) {
+                    boolean val = configJson.getBoolean(multiTabEnabled);
+                    builder = builder.multiTabEnabled(val);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

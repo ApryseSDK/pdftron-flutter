@@ -58,20 +58,24 @@ class Tools {
 class Config {
   var dElements;
   var dTools;
+  var multiTab;
 
   Config();
 
   set disabledElements(List value) => dElements = value;
   set disabledTools(List value) => dTools = value;
+  set multiTabEnabled(bool value) => multiTab = value;
 
   Config.fromJson(Map<String, dynamic> json)
       : dElements = json['disabledElements'],
-        dTools = json['disabledTools'];
+        dTools = json['disabledTools'],
+        multiTab = json['multiTabEnabled'];
 
   Map<String, dynamic> toJson() =>
     {
       'disabledElements': dElements,
       'disabledTools': dTools,
+      'multiTabEnabled': multiTab,
     };
 
 }
