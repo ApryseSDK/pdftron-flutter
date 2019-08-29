@@ -15,7 +15,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _version = 'Unknown';
-  String _document = "https://pdftron.s3.amazonaws.com/downloads/pdfref.pdf";
+  String _document = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
 
   @override
   void initState() {
@@ -68,6 +68,7 @@ class _MyAppState extends State<MyApp> {
     //  var config = Config();
     //  config.disabledElements = disabledElements;
     //  config.disabledTools = disabledTools;
+    //  config.multiTabEnabled = true;
     //  PdftronFlutter.openDocument(_document, config: config);
 
     // opening without a config file will have all functionality enabled.
