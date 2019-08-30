@@ -61,7 +61,7 @@ target 'Runner' do
 
   # PDFTron Pods
   use_frameworks!
-  pod 'PDFNet', podspec: 'POD_LINK_GOES_HERE'
+  pod 'PDFNet', podspec: 'https://www.pdftron.com/downloads/ios/cocoapods/pdfnet/latest.podspec'
 end
 
 post_install do |installer|
