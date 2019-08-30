@@ -2,8 +2,16 @@
 
 static NSString * const PTDisabledToolsKey = @"disabledTools";
 static NSString * const PTDisabledElementsKey = @"disabledElements";
+static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
+
+@interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate>
+
+@property (nonatomic, strong) id config;
+
+@end
 
 @implementation PdftronFlutterPlugin
+
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
   FlutterMethodChannel* channel = [FlutterMethodChannel
       methodChannelWithName:@"pdftron_flutter"
@@ -12,7 +20,7 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
   [registrar addMethodCallDelegate:instance channel:channel];
 }
 
--(void)disableTools:(NSArray*)toolsToDisable
+-(void)disableTools:(NSArray*)toolsToDisable documentViewController:(PTDocumentViewController *)documentViewController
 {
     for(NSObject* item in toolsToDisable)
     {
@@ -28,35 +36,35 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
             }
             else if( [string isEqualToString:@"AnnotationCreateSticky"] || [string isEqualToString:@"stickyToolButton"] )
             {
-                self.documentViewController.toolManager.textAnnotationOptions.canCreate = value;
+                documentViewController.toolManager.textAnnotationOptions.canCreate = value;
             }
             else if ( [string isEqualToString:@"AnnotationCreateFreeHand"] || [string isEqualToString:@"freeHandToolButton"] )
             {
-                self.documentViewController.toolManager.inkAnnotationOptions.canCreate = value;
+                documentViewController.toolManager.inkAnnotationOptions.canCreate = value;
             }
             else if ( [string isEqualToString:@"TextSelect"] )
             {
-                self.documentViewController.toolManager.textSelectionEnabled = value;
+                documentViewController.toolManager.textSelectionEnabled = value;
             }
             else if ( [string isEqualToString:@"AnnotationCreateTextHighlight"] || [string isEqualToString:@"highlightToolButton"] )
             {
-                self.documentViewController.toolManager.highlightAnnotationOptions.canCreate = value;
+                documentViewController.toolManager.highlightAnnotationOptions.canCreate = value;
             }
             else if ( [string isEqualToString:@"AnnotationCreateTextUnderline"] || [string isEqualToString:@"underlineToolButton"] )
             {
-                self.documentViewController.toolManager.underlineAnnotationOptions.canCreate = value;
+                documentViewController.toolManager.underlineAnnotationOptions.canCreate = value;
             }
             else if ( [string isEqualToString:@"AnnotationCreateTextSquiggly"] || [string isEqualToString:@"squigglyToolButton"] )
             {
-                self.documentViewController.toolManager.squigglyAnnotationOptions.canCreate = value;
+                documentViewController.toolManager.squigglyAnnotationOptions.canCreate = value;
             }
             else if ( [string isEqualToString:@"AnnotationCreateTextStrikeout"] || [string isEqualToString:@"strikeoutToolButton"] )
             {
-                self.documentViewController.toolManager.strikeOutAnnotationOptions.canCreate = value;
+                documentViewController.toolManager.strikeOutAnnotationOptions.canCreate = value;
             }
             else if ( [string isEqualToString:@"AnnotationCreateFreeText"] || [string isEqualToString:@"freeTextToolButton"] )
             {
-                self.documentViewController.toolManager.freeTextAnnotationOptions.canCreate = value;
+                documentViewController.toolManager.freeTextAnnotationOptions.canCreate = value;
             }
             else if ( [string isEqualToString:@"AnnotationCreateCallout"] || [string isEqualToString:@"calloutToolButton"] )
             {
@@ -64,77 +72,77 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
             }
             else if ( [string isEqualToString:@"AnnotationCreateSignature"] || [string isEqualToString:@"signatureToolButton"] )
             {
-                self.documentViewController.toolManager.signatureAnnotationOptions.canCreate = value;
+                documentViewController.toolManager.signatureAnnotationOptions.canCreate = value;
             }
             else if ( [string isEqualToString:@"AnnotationCreateLine"] || [string isEqualToString:@"lineToolButton"] )
             {
-                self.documentViewController.toolManager.lineAnnotationOptions.canCreate = value;
+                documentViewController.toolManager.lineAnnotationOptions.canCreate = value;
             }
             else if ( [string isEqualToString:@"AnnotationCreateArrow"] || [string isEqualToString:@"arrowToolButton"] )
             {
-                self.documentViewController.toolManager.arrowAnnotationOptions.canCreate = value;
+                documentViewController.toolManager.arrowAnnotationOptions.canCreate = value;
             }
             else if ( [string isEqualToString:@"AnnotationCreatePolyline"] || [string isEqualToString:@"polylineToolButton"] )
             {
-                self.documentViewController.toolManager.polylineAnnotationOptions.canCreate = value;
+                documentViewController.toolManager.polylineAnnotationOptions.canCreate = value;
             }
             else if ( [string isEqualToString:@"AnnotationCreateStamp"] || [string isEqualToString:@"stampToolButton"] )
             {
-                self.documentViewController.toolManager.stampAnnotationOptions.canCreate = value;
+                documentViewController.toolManager.stampAnnotationOptions.canCreate = value;
             }
             else if ( [string isEqualToString:@"AnnotationCreateRectangle"] || [string isEqualToString:@"rectangleToolButton"] )
             {
-                self.documentViewController.toolManager.squareAnnotationOptions.canCreate = value;
+                documentViewController.toolManager.squareAnnotationOptions.canCreate = value;
             }
             else if ( [string isEqualToString:@"AnnotationCreateEllipse"] || [string isEqualToString:@"ellipseToolButton"] )
             {
-                self.documentViewController.toolManager.circleAnnotationOptions.canCreate = value;
+                documentViewController.toolManager.circleAnnotationOptions.canCreate = value;
             }
             else if ( [string isEqualToString:@"AnnotationCreatePolygon"] || [string isEqualToString:@"polygonToolButton"] )
             {
-                self.documentViewController.toolManager.polygonAnnotationOptions.canCreate = value;
+                documentViewController.toolManager.polygonAnnotationOptions.canCreate = value;
             }
             else if ( [string isEqualToString:@"AnnotationCreatePolygonCloud"] || [string isEqualToString:@"cloudToolButton"] )
             {
-                self.documentViewController.toolManager.cloudyAnnotationOptions.canCreate = value;
+                documentViewController.toolManager.cloudyAnnotationOptions.canCreate = value;
             }
             
         }
     }
 }
 
--(void)disableElements:(NSArray*)elementsToDisable
+-(void)disableElements:(NSArray*)elementsToDisable documentViewController:(PTDocumentViewController *)documentViewController
 {
     typedef void (^HideElementBlock)(void);
     
     NSDictionary *hideElementActions = @{
                                          @"toolsButton":
                                              ^{
-                                                 self.documentViewController.annotationToolbarButtonHidden = YES;
+                                                 documentViewController.annotationToolbarButtonHidden = YES;
                                              },
                                          @"searchButton":
                                              ^{
-                                                 self.documentViewController.searchButtonHidden = YES;
+                                                 documentViewController.searchButtonHidden = YES;
                                              },
                                          @"shareButton":
                                              ^{
-                                                 self.documentViewController.shareButtonHidden = YES;
+                                                 documentViewController.shareButtonHidden = YES;
                                              },
                                          @"viewControlsButton":
                                              ^{
-                                                 self.documentViewController.viewerSettingsButtonHidden = YES;
+                                                 documentViewController.viewerSettingsButtonHidden = YES;
                                              },
                                          @"thumbnailsButton":
                                              ^{
-                                                 self.documentViewController.thumbnailBrowserButtonHidden = YES;
+                                                 documentViewController.thumbnailBrowserButtonHidden = YES;
                                              },
                                          @"listsButton":
                                              ^{
-                                                 self.documentViewController.navigationListsButtonHidden = YES;
+                                                 documentViewController.navigationListsButtonHidden = YES;
                                              },
                                          @"thumbnailSlider":
                                              ^{
-                                                 self.documentViewController.thumbnailSliderHidden = YES;
+                                                 documentViewController.thumbnailSliderHidden = YES;
                                              }
                                          };
     
@@ -151,7 +159,38 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
         }
     }
     
-    [self disableTools:elementsToDisable];
+    [self disableTools:elementsToDisable documentViewController:documentViewController];
+}
+
+-(void)configureTabbedDocumentViewController:(PTTabbedDocumentViewController*)tabbedDocumentViewController withConfig:(NSString*)config
+{
+    if( config && ![config isEqualToString:@"null"] )
+    {
+        //convert from json to dict
+        NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
+        id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
+        
+        NSAssert( [foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format." );
+        
+        if( [foundationObject isKindOfClass:[NSDictionary class]] )
+        {
+            NSDictionary* configPairs = (NSDictionary*)foundationObject;
+            
+            for (NSString* key in configPairs.allKeys) {
+                if ([key isEqualToString:PTMultiTabEnabledKey]) {
+                    id multiTabEnabledValue = configPairs[PTMultiTabEnabledKey];
+                    if ([multiTabEnabledValue isKindOfClass:[NSNumber class]]) {
+                        BOOL multiTabEnabled = ((NSNumber *)multiTabEnabledValue).boolValue;
+                        tabbedDocumentViewController.tabsEnabled = multiTabEnabled;
+                    }
+                }
+            }
+        }
+        else
+        {
+            NSLog(@"config JSON object not in expected dictionary format.");
+        }
+    }
 }
 
 -(void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
@@ -177,7 +216,7 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
                         NSAssert( [toolsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format." );
                         if( [toolsToDisable isKindOfClass:[NSArray class]] )
                         {
-                            [self disableTools:(NSArray*)toolsToDisable];
+                            [self disableTools:(NSArray*)toolsToDisable documentViewController:documentViewController];
                         }
                         else
                         {
@@ -194,13 +233,16 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
                         NSAssert( [elementsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format." );
                         if( [elementsToDisable isKindOfClass:[NSArray class]] )
                         {
-                            [self disableElements:(NSArray*)elementsToDisable];
+                            [self disableElements:(NSArray*)elementsToDisable documentViewController:documentViewController];
                         }
                         else
                         {
                             NSLog(@"disabledTools JSON object not in expected array format.");
                         }
                     }
+                }
+                else if ([key isEqualToString:PTMultiTabEnabledKey]) {
+                    // Handled by tabbed config.
                 }
                 else
                 {
@@ -214,8 +256,6 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
             NSLog(@"config JSON object not in expected dictionary format.");
         }
     }
-    
-    
 }
 
 - (void)handleOpenDocumentMethod:(NSDictionary<NSString *, id> *)arguments
@@ -239,16 +279,21 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
         password = (NSString *)passwordValue;
     }
     
-    // Create and wrap a tabbed controller in a navigation controller.
-    self.documentViewController = [[PTDocumentViewController alloc] init];
+    // Create and wrap a tabbed controller in a navigation controller.    
+    self.tabbedDocumentViewController = [[PTTabbedDocumentViewController alloc] init];
+    self.tabbedDocumentViewController.delegate = self;
+    self.tabbedDocumentViewController.tabsEnabled = NO;
     
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.documentViewController];
+    self.tabbedDocumentViewController.restorationIdentifier = [NSUUID UUID].UUIDString;
     
-    self.documentViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.tabbedDocumentViewController];
+    
+    self.tabbedDocumentViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
     
     NSString* config = arguments[@"config"];
+    self.config = config;
     
-    [self configureDocumentViewController:self.documentViewController withConfig:config];
+    [self configureTabbedDocumentViewController:self.tabbedDocumentViewController withConfig:config];
     
     // Open a file URL.
     NSURL *fileURL = [[NSBundle mainBundle] URLForResource:document withExtension:@"pdf"];
@@ -258,7 +303,7 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
         fileURL = [NSURL fileURLWithPath:document];
     }
     
-    [self.documentViewController openDocumentWithURL:fileURL password:password];
+    [self.tabbedDocumentViewController openDocumentWithURL:fileURL password:password];
     
     UIViewController *presentingViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     
@@ -283,9 +328,16 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem
 {
-    
-    [[UIApplication sharedApplication].delegate.window.rootViewController.presentedViewController dismissViewControllerAnimated:YES completion:Nil];
-    
+    if (self.tabbedDocumentViewController) {
+        [self.tabbedDocumentViewController dismissViewControllerAnimated:YES completion:nil];
+    } else {
+        [UIApplication.sharedApplication.keyWindow.rootViewController.presentedViewController dismissViewControllerAnimated:YES completion:Nil];
+    }
+}
+
+- (void)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController willAddDocumentViewController:(PTDocumentViewController *)documentViewController
+{
+    [self configureDocumentViewController:documentViewController withConfig:self.config];
 }
 
 @end

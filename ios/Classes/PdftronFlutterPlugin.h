@@ -4,6 +4,6 @@
 
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin>
 
-@property (nonatomic, strong) PTDocumentViewController* documentViewController;
+@property (nonatomic, strong) PTTabbedDocumentViewController *tabbedDocumentViewController;
 
 @end
