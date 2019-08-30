@@ -1,5 +1,8 @@
 name: pdftron_flutter_example
 description: Demonstrates how to use the pdftron_flutter plugin.
+
+version: 1.0.0+1
+
 publish_to: 'none'
 
 environment:
