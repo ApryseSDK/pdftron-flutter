@@ -4,7 +4,7 @@ static NSString * const PTDisabledToolsKey = @"disabledTools";
 static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
 
-@interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate>
+@interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate, PTDocumentViewControllerDelegate>
 
 @property (nonatomic, strong) id config;
 
@@ -337,7 +337,19 @@ static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
 
 - (void)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController willAddDocumentViewController:(PTDocumentViewController *)documentViewController
 {
+    documentViewController.delegate = self;
+    
     [self configureDocumentViewController:documentViewController withConfig:self.config];
+}
+
+- (void)documentViewControllerDidOpenDocument:(PTDocumentViewController *)documentViewController
+{
+    NSLog(@"Document opened successfully");
+}
+
+- (void)documentViewController:(PTDocumentViewController *)documentViewController didFailToOpenDocumentWithError:(NSError *)error
+{
+    NSLog(@"Failed to open document: %@", error);
 }
 
 @end
