@@ -17,7 +17,7 @@ rootProject.allprojects {
         google()
         jcenter()
         maven {
-            url "https://pdftron-maven.s3.amazonaws.com/snapshot"
+            url "https://pdftron-maven.s3.amazonaws.com/release"
         }
     }
 }
@@ -43,6 +43,6 @@ android {
 
 dependencies {
     // PDFTron SDK dependencies
-    implementation "com.pdftron:pdftron:7.0.2-beta1"
-    implementation "com.pdftron:tools:7.0.2-beta1"
+    implementation "com.pdftron:pdftron:7.0.2"
+    implementation "com.pdftron:tools:7.0.2"
 }
