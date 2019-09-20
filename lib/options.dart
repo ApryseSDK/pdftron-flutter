@@ -25,6 +25,9 @@ class Buttons {
   static const thumbnailsButton = 'thumbnailsButton';
   static const listsButton = 'listsButton';
   static const thumbnailSlider = 'thumbnailSlider';
+  static const saveCopyButton = 'saveCopyButton';
+  static const editPagesButton = 'editPagesButton';
+  static const printButton = 'printButton';
 }
 
 class Tools {

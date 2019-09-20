@@ -70,8 +70,9 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 break;
             case "openDocument":
                 String document = call.argument("document");
+                String password = call.argument("password");
                 String config = call.argument("config");
-                openDocument(document, config);
+                openDocument(document, password, config);
                 break;
             default:
                 result.notImplemented();
@@ -82,7 +83,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
     private static final String disabledElements = "disabledElements";
     private static final String disabledTools = "disabledTools";
 
-    private void openDocument(String document, String configStr) {
+    private void openDocument(String document, String password, String configStr) {
         ViewerConfig.Builder builder = new ViewerConfig.Builder()
                 .multiTabEnabled(false)
                 .openUrlCachePath(mContext.getCacheDir().getAbsolutePath());
@@ -104,7 +105,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
         }
 
         final Uri fileLink = Uri.parse(document);
-        DocumentActivity.openDocument(mContext, fileLink, builder.build());
+        DocumentActivity.openDocument(mContext, fileLink, password, builder.build());
     }
 
     private ViewerConfig.Builder disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
@@ -127,6 +128,12 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                         .showUserBookmarksList(false);
             } else if ("thumbnailSlider".equals(item)) {
                 builder = builder.showBottomNavBar(false);
+            } else if ("saveCopyButton".equals(item)) {
+                builder = builder.showSaveCopyOption(false);
+            } else if ("editPagesButton".equals(item)) {
+                builder = builder.showEditPagesOption(false);
+            } else if ("printButton".equals(item)) {
+                builder = builder.showPrintOption(false);
             }
         }
         return disableTools(builder, args);
