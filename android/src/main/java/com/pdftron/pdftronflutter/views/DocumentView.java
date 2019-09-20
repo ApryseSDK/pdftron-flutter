@@ -1,13 +1,14 @@
 package com.pdftron.pdftronflutter.views;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class DocumentView extends com.pdftron.pdf.controls.DocumentView {
 
