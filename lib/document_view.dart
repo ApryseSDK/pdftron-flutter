@@ -44,4 +44,13 @@ class DocumentViewController {
       : _channel = new MethodChannel('pdftron_flutter/documentview_$id');
 
   final MethodChannel _channel;
+
+  Future<void> openDocument(String document,
+      {String password, Config config}) {
+    return _channel.invokeMethod('openDocument', <String, dynamic>{
+      'document': document,
+      'password': password,
+      'config': jsonEncode(config)
+    });
+  }
 }

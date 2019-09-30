@@ -12,8 +12,6 @@ import androidx.annotation.Nullable;
 
 public class DocumentView extends com.pdftron.pdf.controls.DocumentView {
 
-    private String mDocumentPath;
-
     private ToolManagerBuilder mToolManagerBuilder;
     private ViewerConfig.Builder mBuilder;
     private String mCacheDir;

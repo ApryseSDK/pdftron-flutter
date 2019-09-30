@@ -77,6 +77,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _onDocumentViewCreated(DocumentViewController controller) {
-
+    controller.openDocument(_document);
   }
 }

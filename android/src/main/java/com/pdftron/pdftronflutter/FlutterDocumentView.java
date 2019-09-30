@@ -3,12 +3,13 @@ package com.pdftron.pdftronflutter;
 import android.content.Context;
 import android.net.Uri;
 import android.view.View;
-import android.widget.TextView;
 
-import com.pdftron.pdf.PDFViewCtrl;
-import com.pdftron.pdf.tools.ToolManager;
-import com.pdftron.pdf.utils.AppUtils;
+import com.pdftron.pdf.config.ViewerBuilder;
+import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdftronflutter.views.DocumentView;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -17,10 +18,11 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 
+import static com.pdftron.pdftronflutter.PluginUtils.disabledElements;
+import static com.pdftron.pdftronflutter.PluginUtils.disabledTools;
+
 public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCallHandler {
 
-//    private final PDFViewCtrl pdfViewCtrl;
-//    private final TextView textView;
     private final DocumentView documentView;
 
     private final MethodChannel methodChannel;
@@ -30,23 +32,10 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
 
         FragmentManager manager = null;
         if (activityContext instanceof FragmentActivity) {
-            manager = ((FragmentActivity)activityContext).getSupportFragmentManager();
+            manager = ((FragmentActivity) activityContext).getSupportFragmentManager();
         }
 
         documentView.setSupportFragmentManager(manager);
-        documentView.setDocumentUri(Uri.parse("https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf"));
-
-//        textView = new TextView(context);
-//        textView.setText("PDFTron Test");
-
-//        pdfViewCtrl = new PDFViewCtrl(activityContext, null);
-//        try {
-//            AppUtils.setupPDFViewCtrl(pdfViewCtrl);
-//            pdfViewCtrl.setToolManager(new ToolManager(pdfViewCtrl));
-//            pdfViewCtrl.openPDFUri(Uri.parse("https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf"), "");
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
 
         methodChannel = new MethodChannel(messenger, "pdftron_flutter/documentview_" + id);
         methodChannel.setMethodCallHandler(this);
@@ -54,18 +43,71 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
 
     @Override
     public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
+        switch (methodCall.method) {
+            case "openDocument":
+                String document = methodCall.argument("document");
+                String password = methodCall.argument("password");
+                String config = methodCall.argument("config");
+                openDocument(document, password, config);
+                break;
+            default:
+                result.notImplemented();
+                break;
+        }
+    }
 
+    private void openDocument(String document, String password, String configStr) {
+        if (null == documentView) {
+            return;
+        }
+        ViewerConfig.Builder configBuilder = new ViewerConfig.Builder()
+                .multiTabEnabled(false)
+                .openUrlCachePath(documentView.getContext().getCacheDir().getAbsolutePath());
+
+        if (configStr != null && !configStr.equals("null")) {
+            try {
+                JSONObject configJson = new JSONObject(configStr);
+                if (configJson.has(disabledElements)) {
+                    JSONArray array = configJson.getJSONArray(disabledElements);
+                    configBuilder = PluginUtils.disableElements(configBuilder, array);
+                }
+                if (configJson.has(disabledTools)) {
+                    JSONArray array = configJson.getJSONArray(disabledTools);
+                    configBuilder = PluginUtils.disableTools(configBuilder, array);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        final Uri fileLink = Uri.parse(document);
+
+        documentView.setDocumentUri(fileLink);
+        documentView.setPassword(password);
+        documentView.setViewerConfig(configBuilder.build());
+
+        ViewerBuilder viewerBuilder = ViewerBuilder.withUri(fileLink, password)
+                .usingConfig(configBuilder.build());
+        if (documentView.mPdfViewCtrlTabHostFragment != null) {
+            documentView.mPdfViewCtrlTabHostFragment.onOpenAddNewTab(viewerBuilder.createBundle(documentView.getContext()));
+        } else {
+            documentView.mPdfViewCtrlTabHostFragment = viewerBuilder.build(documentView.getContext());
+            if (documentView.mFragmentManager != null) {
+                documentView.mFragmentManager.beginTransaction().add(documentView.mPdfViewCtrlTabHostFragment, "document_view").commitNow();
+                View fragmentView = documentView.mPdfViewCtrlTabHostFragment.getView();
+                if (fragmentView != null) {
+                    documentView.addView(fragmentView, -1, -1);
+                }
+            }
+        }
     }
 
     @Override
     public View getView() {
-//        return textView;
-//        return pdfViewCtrl;
         return documentView;
     }
 
     @Override
     public void dispose() {
-//        pdfViewCtrl.destroy();
     }
 }

@@ -24,13 +24,13 @@ class PdftronFlutter {
   }
 
   static Future<void> initialize(String licenseKey) {
-    _channel.invokeMethod(
+    return _channel.invokeMethod(
         'initialize', <String, dynamic>{'licenseKey': licenseKey});
   }
 
   static Future<void> openDocument(String document,
       {String password, Config config}) {
-    _channel.invokeMethod('openDocument', <String, dynamic>{
+    return _channel.invokeMethod('openDocument', <String, dynamic>{
       'document': document,
       'password': password,
       'config': jsonEncode(config)
