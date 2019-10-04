@@ -307,6 +307,8 @@ static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
     
     UIViewController *presentingViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     
+    navigationController.modalPresentationStyle = UIModalPresentationFullScreen;
+    
     // Show navigation (and tabbed) controller.
     [presentingViewController presentViewController:navigationController animated:YES completion:nil];
 }
