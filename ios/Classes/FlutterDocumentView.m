@@ -1,5 +1,7 @@
 #import "FlutterDocumentView.h"
 
+#import "PdftronFlutterPlugin.h"
+
 @implementation DocumentViewFactory {
     NSObject<FlutterBinaryMessenger>* _messenger;
 }
@@ -35,11 +37,11 @@
     UITextView* _textView;
 }
 
--(instancetype)initWithWithFrame:(CGRect)frame viewIdentifier:(int64_t)viewId arguments:(id)args binaryMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
+- (instancetype)initWithWithFrame:(CGRect)frame viewIdentifier:(int64_t)viewId arguments:(id)args binaryMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
 {
-    if ([super init]) {
+    self = [super init];
+    if (self) {
         _viewId = viewId;
-//        _textView = [[UITextView alloc]initWithFrame:frame];
         
         // Create a PTDocumentViewController
         _documentViewController = [[PTDocumentViewController alloc] init];
@@ -50,35 +52,68 @@
         UIViewController *parentController = UIApplication.sharedApplication.keyWindow.rootViewController;
         [parentController addChildViewController:_navigationController];
         [_navigationController didMoveToParentViewController:parentController];
-        
-        NSURL *fileURL = [NSURL URLWithString:@"https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf"];
-        
-        [_documentViewController openDocumentWithURL:fileURL];
-        
+                
         NSString* channelName = [NSString stringWithFormat:@"pdftron_flutter/documentview_%lld", viewId];
         _channel = [FlutterMethodChannel methodChannelWithName:channelName binaryMessenger:messenger];
         __weak __typeof__(self) weakSelf = self;
         [_channel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
-            [weakSelf onMethodCall:call result:result];
+            __strong __typeof__(weakSelf) self = weakSelf;
+            if (self) {
+                [self onMethodCall:call result:result];
+            }
         }];
         
     }
     return self;
 }
 
--(UIView *)view
+- (UIView *)view
 {
     return _navigationController.view;
+}
+
+static NSString * _Nullable PT_idAsNSString(id value)
+{
+    if ([value isKindOfClass:[NSString class]]) {
+        return (NSString *)value;
+    }
+    return nil;
+}
+
+- (void)onMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result
+{
+    if ([call.method isEqualToString:@"openDocument"]) {
+        NSString *document = PT_idAsNSString(call.arguments[@"document"]);
+        NSString *password = PT_idAsNSString(call.arguments[@"password"]);
+        NSString *config = PT_idAsNSString(call.arguments[@"config"]);
+        if ([config isEqualToString:@"null"]) {
+            config = nil;
+        }
+        
+        [self openDocument:document password:password config:config];
+    } else {
+        result(FlutterMethodNotImplemented);
+    }
+}
+
+- (void)openDocument:(NSString *)document password:(NSString *)password config:(NSString *)config
+{
+    if (!_documentViewController) {
+        return;
+    }
     
-//    _textView.text = @"some text";
-//    _textView.backgroundColor = [UIColor redColor];
-//    [_textView sizeToFit];
-//    return _textView;
+    [PdftronFlutterPlugin configureDocumentViewController:_documentViewController
+                                               withConfig:config];
+    
+    // Open a file URL.
+    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:document withExtension:@"pdf"];
+    if ([document containsString:@"://"]) {
+        fileURL = [NSURL URLWithString:document];
+    } else if ([document hasPrefix:@"/"]) {
+        fileURL = [NSURL fileURLWithPath:document];
+    }
+    
+    [_documentViewController openDocumentWithURL:fileURL password:password];
 }
-
-- (void)onMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-    result(FlutterMethodNotImplemented);
-}
-
 
 @end

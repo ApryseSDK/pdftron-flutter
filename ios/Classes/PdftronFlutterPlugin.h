@@ -6,4 +6,6 @@
 
 @property (nonatomic, strong) PTDocumentViewController* documentViewController;
 
++ (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config;
+
 @end
