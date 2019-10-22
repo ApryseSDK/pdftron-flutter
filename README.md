@@ -228,19 +228,39 @@ class _MyAppState extends State<MyApp> {
 
 ## APIs
 
-- `PdftronFlutter.version`
+### PdftronFlutter.version
 
 Obtain PDFTron SDK version
 
-- `PdftronFlutter.initialize(String)`
+**Returns:** String
+
+### PdftronFlutter.initialize(String)
 
 Initializes PDFTron SDK
 
-- `PdftronFlutter.openDocument(String)`
+#### Params
+
+##### key
+Your PDFTron license key
+
+Type | Required | Default
+--- | --- | ---
+String | true | 
+
+### PdftronFlutter.openDocument(String)
 
 Opens a document in the viewer
 
-- `PdftronFlutter.openDocument(String, password: String, config: Config)`
+#### Params
+
+##### path
+Path to the document
+
+Type | Required | Default
+--- | --- | ---
+String | true | 
+
+### PdftronFlutter.openDocument(String, password: String, config: Config)
 
 Opens a document in the viewer with options to remove buttons and disable tools
 
