@@ -54,7 +54,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
 	+       multiDexEnabled true
 		versionCode flutterVersionCode.toInteger()
 		versionName flutterVersionName
-		testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 	    }
 		...
 	}
