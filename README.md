@@ -56,12 +56,6 @@ The complete installation and API guides can be found at https://www.pdftron.com
 		versionName flutterVersionName
 		testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 	    }
-
-	+   configurations.all {
-	+       resolutionStrategy.force "com.android.support:appcompat-v7:28.0.0"
-	+       resolutionStrategy.force "com.android.support:support-v4:28.0.0"
-	+       resolutionStrategy.force "android.arch.lifecycle:runtime:1.0.3"
-	+   }
 		...
 	}
 	```
