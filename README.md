@@ -39,7 +39,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
 	```diff
 	android {
 	-   compileSdkVersion 27
-	+   compileSdkVersion 28
+	+   compileSdkVersion 29
 
 	    lintOptions {
 		disable 'InvalidPackage'
@@ -50,7 +50,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
 	-       minSdkVersion 16
 	+       minSdkVersion 21
 	-       targetSdkVersion 27
-	+       targetSdkVersion 28
+	+       targetSdkVersion 29
 	+       multiDexEnabled true
 		versionCode flutterVersionCode.toInteger()
 		versionName flutterVersionName
