@@ -3,6 +3,7 @@
 static NSString * const PTDisabledToolsKey = @"disabledTools";
 static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
+static NSString * const PTCustomHeadersKey = @"customHeaders";
 
 @interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate, PTDocumentViewControllerDelegate>
 
@@ -238,6 +239,14 @@ static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
                         {
                             NSLog(@"disabledTools JSON object not in expected array format.");
                         }
+                    }
+                }
+                else if ([key isEqualToString:PTCustomHeadersKey]) {
+                    id customHeadersValue = configPairs[PTCustomHeadersKey];
+                    if ([customHeadersValue isKindOfClass:[NSDictionary class]]) {
+                        NSDictionary *customHeaders = (NSDictionary *)customHeadersValue;
+                        
+                        documentViewController.additionalHTTPHeaders = customHeaders;
                     }
                 }
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
