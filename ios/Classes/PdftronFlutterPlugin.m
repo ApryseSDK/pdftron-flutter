@@ -116,36 +116,35 @@ static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
     typedef void (^HideElementBlock)(void);
     
     NSDictionary *hideElementActions = @{
-                                         @"toolsButton":
-                                             ^{
-                                                 documentViewController.annotationToolbarButtonHidden = YES;
-                                             },
-                                         @"searchButton":
-                                             ^{
-                                                 documentViewController.searchButtonHidden = YES;
-                                             },
-                                         @"shareButton":
-                                             ^{
-                                                 documentViewController.shareButtonHidden = YES;
-                                             },
-                                         @"viewControlsButton":
-                                             ^{
-                                                 documentViewController.viewerSettingsButtonHidden = YES;
-                                             },
-                                         @"thumbnailsButton":
-                                             ^{
-                                                 documentViewController.thumbnailBrowserButtonHidden = YES;
-                                             },
-                                         @"listsButton":
-                                             ^{
-                                                 documentViewController.navigationListsButtonHidden = YES;
-                                             },
-                                         @"thumbnailSlider":
-                                             ^{
-                                                 documentViewController.thumbnailSliderHidden = YES;
-                                             }
-                                         };
-    
+        @"toolsButton":
+            ^{
+                documentViewController.annotationToolbarButtonHidden = YES;
+            },
+        @"searchButton":
+            ^{
+                documentViewController.searchButtonHidden = YES;
+            },
+        @"shareButton":
+            ^{
+                documentViewController.shareButtonHidden = YES;
+            },
+        @"viewControlsButton":
+            ^{
+                documentViewController.viewerSettingsButtonHidden = YES;
+            },
+        @"thumbnailsButton":
+            ^{
+                documentViewController.thumbnailBrowserButtonHidden = YES;
+            },
+        @"listsButton":
+            ^{
+                documentViewController.navigationListsButtonHidden = YES;
+            },
+        @"thumbnailSlider":
+            ^{
+                documentViewController.thumbnailSliderHidden = YES;
+            }
+    };
     
     for(NSObject* item in elementsToDisable)
     {
