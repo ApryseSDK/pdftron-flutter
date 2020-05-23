@@ -79,12 +79,14 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
     private static final String disabledElements = "disabledElements";
     private static final String disabledTools = "disabledTools";
     private static final String multiTabEnabled = "multiTabEnabled";
+    private static final String customHeaders = "customHeaders";
 
     private void openDocument(String document, String password, String configStr) {
         ViewerConfig.Builder builder = new ViewerConfig.Builder()
                 .multiTabEnabled(false)
                 .openUrlCachePath(mContext.getCacheDir().getAbsolutePath());
 
+        JSONObject customHeaderJson = null;
         if (configStr != null && !configStr.equals("null")) {
             try {
                 JSONObject configJson = new JSONObject(configStr);
@@ -100,13 +102,16 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                     boolean val = configJson.getBoolean(multiTabEnabled);
                     builder = builder.multiTabEnabled(val);
                 }
+                if (!configJson.isNull(customHeaders)) {
+                    customHeaderJson = configJson.getJSONObject(customHeaders);
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
         final Uri fileLink = Uri.parse(document);
-        DocumentActivity.openDocument(mContext, fileLink, password, builder.build());
+        DocumentActivity.openDocument(mContext, fileLink, password, customHeaderJson, builder.build());
     }
 
     private ViewerConfig.Builder disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
