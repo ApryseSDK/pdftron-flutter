@@ -194,6 +194,7 @@ class _MyAppState extends State<MyApp> {
     //  var config = Config();
     //  config.disabledElements = disabledElements;
     //  config.disabledTools = disabledTools;
+    // config.customHeaders = {'headerName': 'headerValue'};
     //  PdftronFlutter.openDocument(_document, config: config);
 
     // Open document without a config file which will have all functionality enabled.
@@ -268,6 +269,7 @@ var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle
 var config = Config();
 config.disabledElements = disabledElements;
 config.disabledTools = disabledTools;
+config.customHeaders = {'headerName': 'headerValue'};
 PdftronFlutter.openDocument(_document, config: config);
 ```
 

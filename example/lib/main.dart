@@ -63,13 +63,14 @@ class _MyAppState extends State<MyApp> {
 
   void showViewer() {
     // shows how to disale functionality
-    //  var disabledElements = [Buttons.shareButton, Buttons.searchButton];
-    //  var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
-    //  var config = Config();
-    //  config.disabledElements = disabledElements;
-    //  config.disabledTools = disabledTools;
-    //  config.multiTabEnabled = true;
-    //  PdftronFlutter.openDocument(_document, config: config);
+//      var disabledElements = [Buttons.shareButton, Buttons.searchButton];
+//      var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
+//      var config = Config();
+//      config.disabledElements = disabledElements;
+//      config.disabledTools = disabledTools;
+//      config.multiTabEnabled = true;
+//      config.customHeaders = {'headerName': 'headerValue'};
+//      PdftronFlutter.openDocument(_document, config: config);
 
     // opening without a config file will have all functionality enabled.
     PdftronFlutter.openDocument(_document);
