@@ -3,6 +3,7 @@
 static NSString * const PTDisabledToolsKey = @"disabledTools";
 static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
+static NSString * const PTCustomHeadersKey = @"customHeaders";
 
 @interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate, PTDocumentViewControllerDelegate>
 
@@ -116,36 +117,35 @@ static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
     typedef void (^HideElementBlock)(void);
     
     NSDictionary *hideElementActions = @{
-                                         @"toolsButton":
-                                             ^{
-                                                 documentViewController.annotationToolbarButtonHidden = YES;
-                                             },
-                                         @"searchButton":
-                                             ^{
-                                                 documentViewController.searchButtonHidden = YES;
-                                             },
-                                         @"shareButton":
-                                             ^{
-                                                 documentViewController.shareButtonHidden = YES;
-                                             },
-                                         @"viewControlsButton":
-                                             ^{
-                                                 documentViewController.viewerSettingsButtonHidden = YES;
-                                             },
-                                         @"thumbnailsButton":
-                                             ^{
-                                                 documentViewController.thumbnailBrowserButtonHidden = YES;
-                                             },
-                                         @"listsButton":
-                                             ^{
-                                                 documentViewController.navigationListsButtonHidden = YES;
-                                             },
-                                         @"thumbnailSlider":
-                                             ^{
-                                                 documentViewController.thumbnailSliderHidden = YES;
-                                             }
-                                         };
-    
+        @"toolsButton":
+            ^{
+                documentViewController.annotationToolbarButtonHidden = YES;
+            },
+        @"searchButton":
+            ^{
+                documentViewController.searchButtonHidden = YES;
+            },
+        @"shareButton":
+            ^{
+                documentViewController.shareButtonHidden = YES;
+            },
+        @"viewControlsButton":
+            ^{
+                documentViewController.viewerSettingsButtonHidden = YES;
+            },
+        @"thumbnailsButton":
+            ^{
+                documentViewController.thumbnailBrowserButtonHidden = YES;
+            },
+        @"listsButton":
+            ^{
+                documentViewController.navigationListsButtonHidden = YES;
+            },
+        @"thumbnailSlider":
+            ^{
+                documentViewController.thumbnailSliderHidden = YES;
+            }
+    };
     
     for(NSObject* item in elementsToDisable)
     {
@@ -239,6 +239,14 @@ static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
                         {
                             NSLog(@"disabledTools JSON object not in expected array format.");
                         }
+                    }
+                }
+                else if ([key isEqualToString:PTCustomHeadersKey]) {
+                    id customHeadersValue = configPairs[PTCustomHeadersKey];
+                    if ([customHeadersValue isKindOfClass:[NSDictionary class]]) {
+                        NSDictionary *customHeaders = (NSDictionary *)customHeadersValue;
+                        
+                        documentViewController.additionalHTTPHeaders = customHeaders;
                     }
                 }
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
