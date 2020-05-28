@@ -28,6 +28,9 @@ class Buttons {
   static const saveCopyButton = 'saveCopyButton';
   static const editPagesButton = 'editPagesButton';
   static const printButton = 'printButton';
+  static const fillAndSignButton = 'fillAndSignButton';
+  static const prepareFormButton = 'prepareFormButton';
+  static const reflowModeButton = 'reflowModeButton';
 }
 
 class Tools {
@@ -53,6 +56,10 @@ class Tools {
   static const annotationCreateDistanceMeasurement = 'AnnotationCreateDistanceMeasurement';
   static const annotationCreatePerimeterMeasurement = 'AnnotationCreatePerimeterMeasurement';
   static const annotationCreateAreaMeasurement = 'AnnotationCreateAreaMeasurement';
+  static const annotationCreateSound = 'AnnotationCreateSound';
+  static const annotationCreateFreeHighlighter = 'AnnotationCreateFreeHighlighter';
+  static const annotationCreateRubberStamp = 'AnnotationCreateRubberStamp';
+  static const eraser = 'Eraser';
 }
 
 class Config {

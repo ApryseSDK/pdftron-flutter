@@ -81,10 +81,14 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
     private static final String multiTabEnabled = "multiTabEnabled";
     private static final String customHeaders = "customHeaders";
 
+    private ArrayList<ToolManager.ToolMode> mDisabledTools = new ArrayList<>();
+
     private void openDocument(String document, String password, String configStr) {
         ViewerConfig.Builder builder = new ViewerConfig.Builder()
                 .multiTabEnabled(false)
                 .openUrlCachePath(mContext.getCacheDir().getAbsolutePath());
+
+        ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
 
         JSONObject customHeaderJson = null;
         if (configStr != null && !configStr.equals("null")) {
@@ -92,11 +96,11 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 JSONObject configJson = new JSONObject(configStr);
                 if (!configJson.isNull(disabledElements)) {
                     JSONArray array = configJson.getJSONArray(disabledElements);
-                    builder = disableElements(builder, array);
+                    disableElements(builder, array);
                 }
                 if (!configJson.isNull(disabledTools)) {
                     JSONArray array = configJson.getJSONArray(disabledTools);
-                    builder = disableTools(builder, array);
+                    disableTools(builder, array);
                 }
                 if (!configJson.isNull(multiTabEnabled)) {
                     boolean val = configJson.getBoolean(multiTabEnabled);
@@ -110,11 +114,20 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         }
 
+        if (mDisabledTools.size() > 0) {
+            ToolManager.ToolMode[] modes = mDisabledTools.toArray(new ToolManager.ToolMode[0]);
+            if (modes.length > 0) {
+                toolManagerBuilder = toolManagerBuilder.disableToolModes(modes);
+            }
+        }
+
+        builder = builder.toolManagerBuilder(toolManagerBuilder);
+
         final Uri fileLink = Uri.parse(document);
         DocumentActivity.openDocument(mContext, fileLink, password, customHeaderJson, builder.build());
     }
 
-    private ViewerConfig.Builder disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
+    private void disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
         for (int i = 0; i < args.length(); i++) {
             String item = args.getString(i);
             if ("toolsButton".equals(item)) {
@@ -140,27 +153,25 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 builder = builder.showEditPagesOption(false);
             } else if ("printButton".equals(item)) {
                 builder = builder.showPrintOption(false);
+            } else if ("fillAndSignButton".equals(item)) {
+                builder = builder.showFillAndSignToolbarOption(false);
+            } else if ("prepareFormButton".equals(item)) {
+                builder = builder.showFormToolbarOption(false);
+            } else if ("reflowModeButton".equals(item)) {
+                builder = builder.showReflowOption(false);
             }
         }
-        return disableTools(builder, args);
+        disableTools(builder, args);
     }
 
-    private ViewerConfig.Builder disableTools(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
-        ArrayList<ToolManager.ToolMode> modesArr = new ArrayList<>();
+    private void disableTools(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
         for (int i = 0; i < args.length(); i++) {
             String item = args.getString(i);
             ToolManager.ToolMode mode = convStringToToolMode(item);
             if (mode != null) {
-                modesArr.add(mode);
+                mDisabledTools.add(mode);
             }
         }
-        ToolManager.ToolMode[] modes = modesArr.toArray(new ToolManager.ToolMode[modesArr.size()]);
-        if (modes.length > 0) {
-          ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
-          toolManagerBuilder = toolManagerBuilder.disableToolModes(modes);
-          builder = builder.toolManagerBuilder(toolManagerBuilder);
-        }
-        return builder;
     }
 
     private ToolManager.ToolMode convStringToToolMode(String item) {
@@ -209,6 +220,14 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             mode = ToolManager.ToolMode.TEXT_SELECT;
         } else if ("AnnotationEdit".equals(item)) {
             mode = ToolManager.ToolMode.ANNOT_EDIT_RECT_GROUP;
+        } else if ("AnnotationCreateSound".equals(item)) {
+            mode = ToolManager.ToolMode.SOUND_CREATE;
+        } else if ("AnnotationCreateFreeHighlighter".equals(item)) {
+            mode = ToolManager.ToolMode.FREE_HIGHLIGHTER;
+        } else if ("AnnotationCreateRubberStamp".equals(item)) {
+            mode = ToolManager.ToolMode.RUBBER_STAMPER;
+        } else if ("Eraser".equals(item)) {
+            mode = ToolManager.ToolMode.INK_ERASER;
         }
         return mode;
     }
