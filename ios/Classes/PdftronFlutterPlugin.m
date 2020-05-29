@@ -26,7 +26,7 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
     [registrar registerViewFactory:documentViewFactory withId:@"pdftron_flutter/documentview"];
 }
 
--(void)disableTools:(NSArray*)toolsToDisable documentViewController:(PTDocumentViewController *)documentViewController
++ (void)disableTools:(NSArray*)toolsToDisable documentViewController:(PTDocumentViewController *)documentViewController
 {
     for(NSObject* item in toolsToDisable)
     {
@@ -117,7 +117,7 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
     }
 }
 
--(void)disableElements:(NSArray*)elementsToDisable documentViewController:(PTDocumentViewController *)documentViewController
++ (void)disableElements:(NSArray*)elementsToDisable documentViewController:(PTDocumentViewController *)documentViewController
 {
     typedef void (^HideElementBlock)(void);
     
@@ -167,7 +167,7 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
     [self disableTools:elementsToDisable documentViewController:documentViewController];
 }
 
--(void)configureTabbedDocumentViewController:(PTTabbedDocumentViewController*)tabbedDocumentViewController withConfig:(NSString*)config
++ (void)configureTabbedDocumentViewController:(PTTabbedDocumentViewController*)tabbedDocumentViewController withConfig:(NSString*)config
 {
     if( config && ![config isEqualToString:@"null"] )
     {
@@ -200,7 +200,7 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
 
 + (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
 {
-    if (!config) {
+    if (config.length == 0 || [config isEqualToString:@"null"]) {
         return;
     }
     
@@ -316,7 +316,8 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
     NSString* config = arguments[@"config"];
     self.config = config;
     
-    [self configureTabbedDocumentViewController:self.tabbedDocumentViewController withConfig:config];
+    [[self class] configureTabbedDocumentViewController:self.tabbedDocumentViewController
+                                             withConfig:config];
     
     // Open a file URL.
     NSURL *fileURL = [[NSBundle mainBundle] URLForResource:document withExtension:@"pdf"];
@@ -326,7 +327,8 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
         fileURL = [NSURL fileURLWithPath:document];
     }
     
-    [self.tabbedDocumentViewController openDocumentWithURL:fileURL password:password];
+    [self.tabbedDocumentViewController openDocumentWithURL:fileURL
+                                                  password:password];
     
     UIViewController *presentingViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     
@@ -364,7 +366,8 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
 {
     documentViewController.delegate = self;
     
-    [self configureDocumentViewController:documentViewController withConfig:self.config];
+    [[self class] configureDocumentViewController:documentViewController
+                                       withConfig:self.config];
 }
 
 - (void)documentViewControllerDidOpenDocument:(PTDocumentViewController *)documentViewController
