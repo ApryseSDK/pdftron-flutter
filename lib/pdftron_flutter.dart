@@ -2,10 +2,13 @@ library pdftron;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 part 'options.dart';
+part 'document_view.dart';
 
 class PdftronFlutter {
   static const MethodChannel _channel = const MethodChannel('pdftron_flutter');
@@ -21,13 +24,13 @@ class PdftronFlutter {
   }
 
   static Future<void> initialize(String licenseKey) {
-    _channel.invokeMethod(
+    return _channel.invokeMethod(
         'initialize', <String, dynamic>{'licenseKey': licenseKey});
   }
 
   static Future<void> openDocument(String document,
       {String password, Config config}) {
-    _channel.invokeMethod('openDocument', <String, dynamic>{
+    return _channel.invokeMethod('openDocument', <String, dynamic>{
       'document': document,
       'password': password,
       'config': jsonEncode(config)

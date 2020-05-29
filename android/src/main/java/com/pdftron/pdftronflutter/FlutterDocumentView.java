@@ -2,82 +2,60 @@ package com.pdftron.pdftronflutter;
 
 import android.content.Context;
 import android.net.Uri;
+import android.view.View;
 
-import com.pdftron.common.PDFNetException;
-import com.pdftron.pdf.PDFNet;
 import com.pdftron.pdf.config.ToolManagerBuilder;
+import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
-import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.tools.ToolManager;
-import com.pdftron.pdftronflutter.factories.DocumentViewFactory;
+import com.pdftron.pdftronflutter.views.DocumentView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+
 import java.util.ArrayList;
 
+import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
-import io.flutter.plugin.common.MethodChannel.Result;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
+import io.flutter.plugin.platform.PlatformView;
 
 import static com.pdftron.pdftronflutter.PluginUtils.customHeaders;
 import static com.pdftron.pdftronflutter.PluginUtils.disabledElements;
 import static com.pdftron.pdftronflutter.PluginUtils.disabledTools;
 import static com.pdftron.pdftronflutter.PluginUtils.multiTabEnabled;
 
-/**
- * PdftronFlutterPlugin
- */
-public class PdftronFlutterPlugin implements MethodCallHandler {
+public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCallHandler {
 
-    private final Context mContext;
-
+    private final DocumentView documentView;
     private ArrayList<ToolManager.ToolMode> mDisabledTools = new ArrayList<>();
 
-    public PdftronFlutterPlugin(Context context) {
-        mContext = context;
-    }
+    private final MethodChannel methodChannel;
 
-    /**
-     * Plugin registration.
-     */
-    public static void registerWith(Registrar registrar) {
-        final MethodChannel channel = new MethodChannel(registrar.messenger(), "pdftron_flutter");
-        channel.setMethodCallHandler(new PdftronFlutterPlugin(registrar.activeContext()));
+    public FlutterDocumentView(Context context, Context activityContext, BinaryMessenger messenger, int id) {
+        documentView = new DocumentView(context);
 
-        registrar.platformViewRegistry().registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(registrar.messenger(), registrar.activeContext()));
+        FragmentManager manager = null;
+        if (activityContext instanceof FragmentActivity) {
+            manager = ((FragmentActivity) activityContext).getSupportFragmentManager();
+        }
+
+        documentView.setSupportFragmentManager(manager);
+
+        methodChannel = new MethodChannel(messenger, "pdftron_flutter/documentview_" + id);
+        methodChannel.setMethodCallHandler(this);
     }
 
     @Override
-    public void onMethodCall(MethodCall call, Result result) {
-        switch (call.method) {
-            case "getPlatformVersion":
-                result.success("Android " + android.os.Build.VERSION.RELEASE);
-                break;
-            case "getVersion":
-                try {
-                    String pdftronVersion = Double.toString(PDFNet.getVersion());
-                    result.success(pdftronVersion);
-                } catch (PDFNetException e) {
-                    e.printStackTrace();
-                    result.error(Long.toString(e.getErrorCode()), "PDFTronException Error: " + e, null);
-                }
-                break;
-            case "initialize":
-                try {
-                    String licenseKey = call.argument("licenseKey");
-                    com.pdftron.pdf.utils.AppUtils.initializePDFNetApplication(mContext.getApplicationContext(), licenseKey);
-                } catch (PDFNetException e) {
-                    e.printStackTrace();
-                    result.error(Long.toString(e.getErrorCode()), "PDFTronException Error: " + e, null);
-                }
-                break;
+    public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
+        switch (methodCall.method) {
             case "openDocument":
-                String document = call.argument("document");
-                String password = call.argument("password");
-                String config = call.argument("config");
+                String document = methodCall.argument("document");
+                String password = methodCall.argument("password");
+                String config = methodCall.argument("config");
                 openDocument(document, password, config);
                 break;
             default:
@@ -87,9 +65,13 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
     }
 
     private void openDocument(String document, String password, String configStr) {
+        if (null == documentView) {
+            return;
+        }
+
         ViewerConfig.Builder builder = new ViewerConfig.Builder()
                 .multiTabEnabled(false)
-                .openUrlCachePath(mContext.getCacheDir().getAbsolutePath());
+                .openUrlCachePath(documentView.getContext().getCacheDir().getAbsolutePath());
 
         ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
 
@@ -127,6 +109,35 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
         builder = builder.toolManagerBuilder(toolManagerBuilder);
 
         final Uri fileLink = Uri.parse(document);
-        DocumentActivity.openDocument(mContext, fileLink, password, customHeaderJson, builder.build());
+
+        documentView.setDocumentUri(fileLink);
+        documentView.setPassword(password);
+        documentView.setCustomHeaders(customHeaderJson);
+        documentView.setViewerConfig(builder.build());
+
+        ViewerBuilder viewerBuilder = ViewerBuilder.withUri(fileLink, password)
+                .usingCustomHeaders(customHeaderJson)
+                .usingConfig(builder.build());
+        if (documentView.mPdfViewCtrlTabHostFragment != null) {
+            documentView.mPdfViewCtrlTabHostFragment.onOpenAddNewTab(viewerBuilder.createBundle(documentView.getContext()));
+        } else {
+            documentView.mPdfViewCtrlTabHostFragment = viewerBuilder.build(documentView.getContext());
+            if (documentView.mFragmentManager != null) {
+                documentView.mFragmentManager.beginTransaction().add(documentView.mPdfViewCtrlTabHostFragment, "document_view").commitNow();
+                View fragmentView = documentView.mPdfViewCtrlTabHostFragment.getView();
+                if (fragmentView != null) {
+                    documentView.addView(fragmentView, -1, -1);
+                }
+            }
+        }
+    }
+
+    @Override
+    public View getView() {
+        return documentView;
+    }
+
+    @Override
+    public void dispose() {
     }
 }

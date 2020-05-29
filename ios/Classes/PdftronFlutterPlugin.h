@@ -6,4 +6,6 @@
 
 @property (nonatomic, strong) PTTabbedDocumentViewController *tabbedDocumentViewController;
 
++ (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config;
+
 @end
