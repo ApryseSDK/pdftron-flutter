@@ -1,6 +1,5 @@
 package com.pdftron.pdftronflutter;
 
-import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.tools.ToolManager;
 
@@ -11,10 +10,7 @@ import java.util.ArrayList;
 
 public class PluginUtils {
 
-    public static final String disabledElements = "disabledElements";
-    public static final String disabledTools = "disabledTools";
-
-    public static ViewerConfig.Builder disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
+    public static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
         for (int i = 0; i < args.length(); i++) {
             String item = args.getString(i);
             if ("toolsButton".equals(item)) {
@@ -40,27 +36,27 @@ public class PluginUtils {
                 builder = builder.showEditPagesOption(false);
             } else if ("printButton".equals(item)) {
                 builder = builder.showPrintOption(false);
+            } else if ("fillAndSignButton".equals(item)) {
+                builder = builder.showFillAndSignToolbarOption(false);
+            } else if ("prepareFormButton".equals(item)) {
+                builder = builder.showFormToolbarOption(false);
+            } else if ("reflowModeButton".equals(item)) {
+                builder = builder.showReflowOption(false);
             }
         }
-        return disableTools(builder, args);
+        return disableTools(args);
     }
 
-    public static ViewerConfig.Builder disableTools(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
-        ArrayList<ToolManager.ToolMode> modesArr = new ArrayList<>();
+    public static ArrayList<ToolManager.ToolMode> disableTools(JSONArray args) throws JSONException {
+        ArrayList<ToolManager.ToolMode> tools = new ArrayList<>();
         for (int i = 0; i < args.length(); i++) {
             String item = args.getString(i);
             ToolManager.ToolMode mode = convStringToToolMode(item);
             if (mode != null) {
-                modesArr.add(mode);
+                tools.add(mode);
             }
         }
-        ToolManager.ToolMode[] modes = modesArr.toArray(new ToolManager.ToolMode[modesArr.size()]);
-        if (modes.length > 0) {
-          ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
-          toolManagerBuilder = toolManagerBuilder.disableToolModes(modes);
-          builder = builder.toolManagerBuilder(toolManagerBuilder);
-        }
-        return builder;
+        return tools;
     }
 
     public static ToolManager.ToolMode convStringToToolMode(String item) {
@@ -109,6 +105,14 @@ public class PluginUtils {
             mode = ToolManager.ToolMode.TEXT_SELECT;
         } else if ("AnnotationEdit".equals(item)) {
             mode = ToolManager.ToolMode.ANNOT_EDIT_RECT_GROUP;
+        } else if ("AnnotationCreateSound".equals(item)) {
+            mode = ToolManager.ToolMode.SOUND_CREATE;
+        } else if ("AnnotationCreateFreeHighlighter".equals(item)) {
+            mode = ToolManager.ToolMode.FREE_HIGHLIGHTER;
+        } else if ("AnnotationCreateRubberStamp".equals(item)) {
+            mode = ToolManager.ToolMode.RUBBER_STAMPER;
+        } else if ("Eraser".equals(item)) {
+            mode = ToolManager.ToolMode.INK_ERASER;
         }
         return mode;
     }
