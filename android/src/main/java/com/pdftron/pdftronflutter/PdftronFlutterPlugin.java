@@ -5,22 +5,21 @@ import android.net.Uri;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFNet;
-import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
-import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdftronflutter.factories.DocumentViewFactory;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
+
+import static com.pdftron.pdftronflutter.PluginUtils.disabledElements;
+import static com.pdftron.pdftronflutter.PluginUtils.disabledTools;
 
 /**
  * PdftronFlutterPlugin
@@ -38,6 +37,9 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
     public static void registerWith(Registrar registrar) {
         final MethodChannel channel = new MethodChannel(registrar.messenger(), "pdftron_flutter");
         channel.setMethodCallHandler(new PdftronFlutterPlugin(registrar.activeContext()));
+
+
+        registrar.platformViewRegistry().registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(registrar.messenger(), registrar.activeContext()));
     }
 
     @Override
@@ -97,6 +99,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 if (!configJson.isNull(disabledElements)) {
                     JSONArray array = configJson.getJSONArray(disabledElements);
                     disableElements(builder, array);
+                    builder = PluginUtils.disableElements(builder, array);
                 }
                 if (!configJson.isNull(disabledTools)) {
                     JSONArray array = configJson.getJSONArray(disabledTools);
@@ -108,6 +111,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 }
                 if (!configJson.isNull(customHeaders)) {
                     customHeaderJson = configJson.getJSONObject(customHeaders);
+                    builder = PluginUtils.disableTools(builder, array);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

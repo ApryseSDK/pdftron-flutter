@@ -1,4 +1,5 @@
 #import "PdftronFlutterPlugin.h"
+#import "FlutterDocumentView.h"
 
 static NSString * const PTDisabledToolsKey = @"disabledTools";
 static NSString * const PTDisabledElementsKey = @"disabledElements";
@@ -14,11 +15,15 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
 @implementation PdftronFlutterPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
-  FlutterMethodChannel* channel = [FlutterMethodChannel
-      methodChannelWithName:@"pdftron_flutter"
-            binaryMessenger:[registrar messenger]];
-  PdftronFlutterPlugin* instance = [[PdftronFlutterPlugin alloc] init];
-  [registrar addMethodCallDelegate:instance channel:channel];
+    FlutterMethodChannel* channel = [FlutterMethodChannel
+                                     methodChannelWithName:@"pdftron_flutter"
+                                     binaryMessenger:[registrar messenger]];
+    PdftronFlutterPlugin* instance = [[PdftronFlutterPlugin alloc] init];
+    [registrar addMethodCallDelegate:instance channel:channel];
+    
+    DocumentViewFactory* documentViewFactory =
+    [[DocumentViewFactory alloc] initWithMessenger:registrar.messenger];
+    [registrar registerViewFactory:documentViewFactory withId:@"pdftron_flutter/documentview"];
 }
 
 -(void)disableTools:(NSArray*)toolsToDisable documentViewController:(PTDocumentViewController *)documentViewController
@@ -193,9 +198,19 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
     }
 }
 
--(void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
++ (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
 {
-    if( config && ![config isEqualToString:@"null"] )
+    if (!config) {
+        return;
+    }
+    
+    //convert from json to dict
+    NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
+    id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
+    
+    NSAssert( [foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format." );
+    
+    if( [foundationObject isKindOfClass:[NSDictionary class]] )
     {
         //convert from json to dict
         NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
