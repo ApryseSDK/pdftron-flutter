@@ -69,9 +69,9 @@ class _MyAppState extends State<MyApp> {
           child: Container(
             width: double.infinity,
             height: double.infinity,
-            child: DocumentView(
-              onCreated: _onDocumentViewCreated,
-            ),
+            // child: DocumentView(
+            //   onCreated: _onDocumentViewCreated,
+            // ),
           ),
         ),
       ),
