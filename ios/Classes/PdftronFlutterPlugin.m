@@ -26,93 +26,99 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
     [registrar registerViewFactory:documentViewFactory withId:@"pdftron_flutter/documentview"];
 }
 
-+ (void)disableTools:(NSArray*)toolsToDisable documentViewController:(PTDocumentViewController *)documentViewController
++ (void)disableTools:(NSArray<id> *)toolsToDisable documentViewController:(PTDocumentViewController *)documentViewController
 {
-    for(NSObject* item in toolsToDisable)
-    {
+    PTToolManager *toolManager = documentViewController.toolManager;
+    
+    for (id item in toolsToDisable) {
         BOOL value = NO;
         
-        if( [item isKindOfClass:[NSString class]])
-        {
-            NSString* string = (NSString*)item;
+        if ([item isKindOfClass:[NSString class]]) {
+            NSString *string = (NSString *)item;
             
-            if( [string isEqualToString:@"AnnotationEdit"] )
-            {
+            if ([string isEqualToString:@"AnnotationEdit"]) {
                 // multi-select not implemented
             }
-            else if( [string isEqualToString:@"AnnotationCreateSticky"] || [string isEqualToString:@"stickyToolButton"] )
-            {
-                documentViewController.toolManager.textAnnotationOptions.canCreate = value;
+            else if ([string isEqualToString:@"AnnotationCreateSticky"] ||
+                     [string isEqualToString:@"stickyToolButton"]) {
+                toolManager.textAnnotationOptions.canCreate = value;
             }
-            else if ( [string isEqualToString:@"AnnotationCreateFreeHand"] || [string isEqualToString:@"freeHandToolButton"] )
-            {
-                documentViewController.toolManager.inkAnnotationOptions.canCreate = value;
+            else if ([string isEqualToString:@"AnnotationCreateFreeHand"] ||
+                     [string isEqualToString:@"freeHandToolButton"]) {
+                toolManager.inkAnnotationOptions.canCreate = value;
             }
-            else if ( [string isEqualToString:@"TextSelect"] )
-            {
-                documentViewController.toolManager.textSelectionEnabled = value;
+            else if ([string isEqualToString:@"TextSelect"]) {
+                toolManager.textSelectionEnabled = value;
             }
-            else if ( [string isEqualToString:@"AnnotationCreateTextHighlight"] || [string isEqualToString:@"highlightToolButton"] )
-            {
-                documentViewController.toolManager.highlightAnnotationOptions.canCreate = value;
+            else if ([string isEqualToString:@"AnnotationCreateTextHighlight"] ||
+                     [string isEqualToString:@"highlightToolButton"]) {
+                toolManager.highlightAnnotationOptions.canCreate = value;
             }
-            else if ( [string isEqualToString:@"AnnotationCreateTextUnderline"] || [string isEqualToString:@"underlineToolButton"] )
-            {
-                documentViewController.toolManager.underlineAnnotationOptions.canCreate = value;
+            else if ([string isEqualToString:@"AnnotationCreateTextUnderline"] ||
+                     [string isEqualToString:@"underlineToolButton"]) {
+                toolManager.underlineAnnotationOptions.canCreate = value;
             }
-            else if ( [string isEqualToString:@"AnnotationCreateTextSquiggly"] || [string isEqualToString:@"squigglyToolButton"] )
-            {
-                documentViewController.toolManager.squigglyAnnotationOptions.canCreate = value;
+            else if ([string isEqualToString:@"AnnotationCreateTextSquiggly"] ||
+                     [string isEqualToString:@"squigglyToolButton"]) {
+                toolManager.squigglyAnnotationOptions.canCreate = value;
             }
-            else if ( [string isEqualToString:@"AnnotationCreateTextStrikeout"] || [string isEqualToString:@"strikeoutToolButton"] )
-            {
-                documentViewController.toolManager.strikeOutAnnotationOptions.canCreate = value;
+            else if ([string isEqualToString:@"AnnotationCreateTextStrikeout"] ||
+                     [string isEqualToString:@"strikeoutToolButton"]) {
+                toolManager.strikeOutAnnotationOptions.canCreate = value;
             }
-            else if ( [string isEqualToString:@"AnnotationCreateFreeText"] || [string isEqualToString:@"freeTextToolButton"] )
-            {
-                documentViewController.toolManager.freeTextAnnotationOptions.canCreate = value;
+            else if ([string isEqualToString:@"AnnotationCreateFreeText"] ||
+                     [string isEqualToString:@"freeTextToolButton"]) {
+                toolManager.freeTextAnnotationOptions.canCreate = value;
             }
-            else if ( [string isEqualToString:@"AnnotationCreateCallout"] || [string isEqualToString:@"calloutToolButton"] )
-            {
-                // not supported
+            else if ([string isEqualToString:@"AnnotationCreateCallout"] ||
+                     [string isEqualToString:@"calloutToolButton"]) {
+                toolManager.calloutAnnotationOptions.canCreate = value;
             }
-            else if ( [string isEqualToString:@"AnnotationCreateSignature"] || [string isEqualToString:@"signatureToolButton"] )
-            {
-                documentViewController.toolManager.signatureAnnotationOptions.canCreate = value;
+            else if ([string isEqualToString:@"AnnotationCreateSignature"] ||
+                     [string isEqualToString:@"signatureToolButton"]) {
+                toolManager.signatureAnnotationOptions.canCreate = value;
             }
-            else if ( [string isEqualToString:@"AnnotationCreateLine"] || [string isEqualToString:@"lineToolButton"] )
-            {
-                documentViewController.toolManager.lineAnnotationOptions.canCreate = value;
+            else if ([string isEqualToString:@"AnnotationCreateLine"] ||
+                     [string isEqualToString:@"lineToolButton"]) {
+                toolManager.lineAnnotationOptions.canCreate = value;
             }
-            else if ( [string isEqualToString:@"AnnotationCreateArrow"] || [string isEqualToString:@"arrowToolButton"] )
-            {
-                documentViewController.toolManager.arrowAnnotationOptions.canCreate = value;
+            else if ([string isEqualToString:@"AnnotationCreateArrow"] ||
+                     [string isEqualToString:@"arrowToolButton"]) {
+                toolManager.arrowAnnotationOptions.canCreate = value;
             }
-            else if ( [string isEqualToString:@"AnnotationCreatePolyline"] || [string isEqualToString:@"polylineToolButton"] )
-            {
-                documentViewController.toolManager.polylineAnnotationOptions.canCreate = value;
+            else if ([string isEqualToString:@"AnnotationCreatePolyline"] ||
+                     [string isEqualToString:@"polylineToolButton"]) {
+                toolManager.polylineAnnotationOptions.canCreate = value;
             }
-            else if ( [string isEqualToString:@"AnnotationCreateStamp"] || [string isEqualToString:@"stampToolButton"] )
-            {
-                documentViewController.toolManager.stampAnnotationOptions.canCreate = value;
+            else if ([string isEqualToString:@"AnnotationCreateStamp"] ||
+                     [string isEqualToString:@"stampToolButton"]) {
+                toolManager.stampAnnotationOptions.canCreate = value;
             }
-            else if ( [string isEqualToString:@"AnnotationCreateRectangle"] || [string isEqualToString:@"rectangleToolButton"] )
-            {
-                documentViewController.toolManager.squareAnnotationOptions.canCreate = value;
+            else if ([string isEqualToString:@"AnnotationCreateRectangle"] ||
+                     [string isEqualToString:@"rectangleToolButton"]) {
+                toolManager.squareAnnotationOptions.canCreate = value;
             }
-            else if ( [string isEqualToString:@"AnnotationCreateEllipse"] || [string isEqualToString:@"ellipseToolButton"] )
-            {
-                documentViewController.toolManager.circleAnnotationOptions.canCreate = value;
+            else if ([string isEqualToString:@"AnnotationCreateEllipse"] ||
+                     [string isEqualToString:@"ellipseToolButton"]) {
+                toolManager.circleAnnotationOptions.canCreate = value;
             }
-            else if ( [string isEqualToString:@"AnnotationCreatePolygon"] || [string isEqualToString:@"polygonToolButton"] )
-            {
-                documentViewController.toolManager.polygonAnnotationOptions.canCreate = value;
+            else if ([string isEqualToString:@"AnnotationCreatePolygon"] ||
+                     [string isEqualToString:@"polygonToolButton"]) {
+                toolManager.polygonAnnotationOptions.canCreate = value;
             }
-            else if ( [string isEqualToString:@"AnnotationCreatePolygonCloud"] || [string isEqualToString:@"cloudToolButton"] )
+            else if ([string isEqualToString:@"AnnotationCreatePolygonCloud"] ||
+                     [string isEqualToString:@"cloudToolButton"])
             {
-                documentViewController.toolManager.cloudyAnnotationOptions.canCreate = value;
+                toolManager.cloudyAnnotationOptions.canCreate = value;
             }
-            
+            else if ([string isEqualToString:@"AnnotationCreateFreeHighlighter"] ||
+                     [string isEqualToString:@"freeHighlighterToolButton"]) {
+                toolManager.freehandHighlightAnnotationOptions.canCreate = value;
+            }
+            else if ([string isEqualToString:@"Eraser"] ||
+                     [string isEqualToString:@"eraserToolButton"]) {
+                toolManager.eraserEnabled = value;
+            }
         }
     }
 }
@@ -146,6 +152,9 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
             ^{
                 documentViewController.navigationListsButtonHidden = YES;
             },
+        @"reflowModeButton": ^{
+            documentViewController.readerModeButtonHidden = YES;
+        },
         @"thumbnailSlider":
             ^{
                 documentViewController.thumbnailSliderHidden = YES;
