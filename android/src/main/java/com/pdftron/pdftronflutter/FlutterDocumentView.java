@@ -4,8 +4,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.view.View;
 
+import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
+import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdftronflutter.views.DocumentView;
 
 import org.json.JSONArray;
@@ -13,17 +15,23 @@ import org.json.JSONObject;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+
+import java.util.ArrayList;
+
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 
+import static com.pdftron.pdftronflutter.PluginUtils.customHeaders;
 import static com.pdftron.pdftronflutter.PluginUtils.disabledElements;
 import static com.pdftron.pdftronflutter.PluginUtils.disabledTools;
+import static com.pdftron.pdftronflutter.PluginUtils.multiTabEnabled;
 
 public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCallHandler {
 
     private final DocumentView documentView;
+    private ArrayList<ToolManager.ToolMode> mDisabledTools = new ArrayList<>();
 
     private final MethodChannel methodChannel;
 
@@ -60,34 +68,56 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         if (null == documentView) {
             return;
         }
-        ViewerConfig.Builder configBuilder = new ViewerConfig.Builder()
+
+        ViewerConfig.Builder builder = new ViewerConfig.Builder()
                 .multiTabEnabled(false)
                 .openUrlCachePath(documentView.getContext().getCacheDir().getAbsolutePath());
 
+        ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
+
+        JSONObject customHeaderJson = null;
         if (configStr != null && !configStr.equals("null")) {
             try {
                 JSONObject configJson = new JSONObject(configStr);
-                if (configJson.has(disabledElements)) {
+                if (!configJson.isNull(disabledElements)) {
                     JSONArray array = configJson.getJSONArray(disabledElements);
-                    configBuilder = PluginUtils.disableElements(configBuilder, array);
+                    mDisabledTools.addAll(PluginUtils.disableElements(builder, array));
                 }
-                if (configJson.has(disabledTools)) {
+                if (!configJson.isNull(disabledTools)) {
                     JSONArray array = configJson.getJSONArray(disabledTools);
-                    configBuilder = PluginUtils.disableTools(configBuilder, array);
+                    mDisabledTools.addAll(PluginUtils.disableTools(array));
+                }
+                if (!configJson.isNull(multiTabEnabled)) {
+                    boolean val = configJson.getBoolean(multiTabEnabled);
+                    builder = builder.multiTabEnabled(val);
+                }
+                if (!configJson.isNull(customHeaders)) {
+                    customHeaderJson = configJson.getJSONObject(customHeaders);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
+        if (mDisabledTools.size() > 0) {
+            ToolManager.ToolMode[] modes = mDisabledTools.toArray(new ToolManager.ToolMode[0]);
+            if (modes.length > 0) {
+                toolManagerBuilder = toolManagerBuilder.disableToolModes(modes);
+            }
+        }
+
+        builder = builder.toolManagerBuilder(toolManagerBuilder);
+
         final Uri fileLink = Uri.parse(document);
 
         documentView.setDocumentUri(fileLink);
         documentView.setPassword(password);
-        documentView.setViewerConfig(configBuilder.build());
+        documentView.setCustomHeaders(customHeaderJson);
+        documentView.setViewerConfig(builder.build());
 
         ViewerBuilder viewerBuilder = ViewerBuilder.withUri(fileLink, password)
-                .usingConfig(configBuilder.build());
+                .usingCustomHeaders(customHeaderJson)
+                .usingConfig(builder.build());
         if (documentView.mPdfViewCtrlTabHostFragment != null) {
             documentView.mPdfViewCtrlTabHostFragment.onOpenAddNewTab(viewerBuilder.createBundle(documentView.getContext()));
         } else {

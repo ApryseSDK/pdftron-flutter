@@ -10,6 +10,11 @@ import java.util.ArrayList;
 
 public class PluginUtils {
 
+    public static final String disabledElements = "disabledElements";
+    public static final String disabledTools = "disabledTools";
+    public static final String multiTabEnabled = "multiTabEnabled";
+    public static final String customHeaders = "customHeaders";
+
     public static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
         for (int i = 0; i < args.length(); i++) {
             String item = args.getString(i);

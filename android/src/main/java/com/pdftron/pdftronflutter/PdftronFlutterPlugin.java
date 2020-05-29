@@ -22,17 +22,19 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
+import static com.pdftron.pdftronflutter.PluginUtils.customHeaders;
+import static com.pdftron.pdftronflutter.PluginUtils.disabledElements;
+import static com.pdftron.pdftronflutter.PluginUtils.disabledTools;
+import static com.pdftron.pdftronflutter.PluginUtils.multiTabEnabled;
+
 /**
  * PdftronFlutterPlugin
  */
 public class PdftronFlutterPlugin implements MethodCallHandler {
 
-    private static final String disabledElements = "disabledElements";
-    private static final String disabledTools = "disabledTools";
-    private static final String multiTabEnabled = "multiTabEnabled";
-    private static final String customHeaders = "customHeaders";
-
     private final Context mContext;
+
+    private ArrayList<ToolManager.ToolMode> mDisabledTools = new ArrayList<>();
 
     public PdftronFlutterPlugin(Context context) {
         mContext = context;
@@ -83,8 +85,6 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 break;
         }
     }
-
-    private ArrayList<ToolManager.ToolMode> mDisabledTools = new ArrayList<>();
 
     private void openDocument(String document, String password, String configStr) {
         ViewerConfig.Builder builder = new ViewerConfig.Builder()
