@@ -75,6 +75,8 @@ class _MyAppState extends State<MyApp> {
     }
 
     var cancel = startExportAnnotationCommandListener((xfdfCommand) {
+      // local annotation changed
+      // upload XFDF command to server here
       print("flutter xfdfCommand: $xfdfCommand");
     });
 
