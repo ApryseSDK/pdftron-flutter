@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -44,8 +45,11 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
      * Plugin registration.
      */
     public static void registerWith(Registrar registrar) {
-        final MethodChannel channel = new MethodChannel(registrar.messenger(), "pdftron_flutter");
-        channel.setMethodCallHandler(new PdftronFlutterPlugin(registrar.activeContext()));
+        final MethodChannel methodChannel = new MethodChannel(registrar.messenger(), "pdftron_flutter");
+        methodChannel.setMethodCallHandler(new PdftronFlutterPlugin(registrar.activeContext()));
+
+        final EventChannel eventChannel = new EventChannel(registrar.messenger(), "pdftron_event");
+        eventChannel.setStreamHandler(new PdftronFlutterEventHandler());
 
         registrar.platformViewRegistry().registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(registrar.messenger(), registrar.activeContext()));
     }

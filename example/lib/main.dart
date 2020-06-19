@@ -71,6 +71,10 @@ class _MyAppState extends State<MyApp> {
       print("Failed to importAnnotationCommand '${e.message}'.");
     }
 
+    var cancel = startListening((msg) {
+      print("flutter: $msg");
+    });
+
     // opening without a config file will have all functionality enabled.
     // PdftronFlutter.openDocument(_document);
   }

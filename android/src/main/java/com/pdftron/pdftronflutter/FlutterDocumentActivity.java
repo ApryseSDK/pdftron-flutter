@@ -25,12 +25,15 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 public class FlutterDocumentActivity extends DocumentActivity {
 
     private static FlutterDocumentActivity sCurrentActivity;
     private static AtomicReference<Result> sFlutterLoadResult = new AtomicReference<>();
+
+    private static AtomicReference<EventSink> sFlutterEventEmitter = new AtomicReference<>();
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
         openDocument(packageContext, fileUri, password, customHeaders, config, DEFAULT_NAV_ICON_ID);
@@ -57,6 +60,10 @@ public class FlutterDocumentActivity extends DocumentActivity {
 
     public static void setFlutterLoadResult(Result result) {
         sFlutterLoadResult.set(result);
+    }
+
+    public static void setFlutterEventEmitter(EventSink emitter) {
+        sFlutterEventEmitter.set(emitter);
     }
 
     @Override
@@ -163,6 +170,11 @@ public class FlutterDocumentActivity extends DocumentActivity {
                         e.printStackTrace();
                     }
                     Log.d("pdfnet", "added:" + xfdfCommand);
+
+                    EventSink eventSink = sFlutterEventEmitter.get();
+                    if (eventSink!=null) {
+                        eventSink.success("add: " + xfdfCommand);
+                    }
                 }
 
                 @Override
@@ -179,6 +191,11 @@ public class FlutterDocumentActivity extends DocumentActivity {
                         e.printStackTrace();
                     }
                     Log.d("pdfnet", "modified:" + xfdfCommand);
+
+                    EventSink eventSink = sFlutterEventEmitter.get();
+                    if (eventSink!=null) {
+                        eventSink.success("modified: " + xfdfCommand);
+                    }
                 }
 
                 @Override
@@ -191,6 +208,11 @@ public class FlutterDocumentActivity extends DocumentActivity {
                         e.printStackTrace();
                     }
                     Log.d("pdfnet", "removed:" + xfdfCommand);
+
+                    EventSink eventSink = sFlutterEventEmitter.get();
+                    if (eventSink!=null) {
+                        eventSink.success("removed: " + xfdfCommand);
+                    }
                 }
 
                 @Override
