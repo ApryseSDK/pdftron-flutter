@@ -47,6 +47,9 @@ class _MyAppState extends State<MyApp> {
 
 
   void showViewer() async {
+    // opening without a config file will have all functionality enabled.
+    // await PdftronFlutter.openDocument(_document);
+
     // shows how to disale functionality
 //      var disabledElements = [Buttons.shareButton, Buttons.searchButton];
 //      var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
@@ -71,15 +74,12 @@ class _MyAppState extends State<MyApp> {
       print("Failed to importAnnotationCommand '${e.message}'.");
     }
 
-    var cancel = startExportAnnotationCommandListening((xfdfCommand) {
+    var cancel = startExportAnnotationCommandListener((xfdfCommand) {
       print("flutter xfdfCommand: $xfdfCommand");
     });
 
     // to cancel event:
     //cancel();
-
-    // opening without a config file will have all functionality enabled.
-    // PdftronFlutter.openDocument(_document);
   }
 
   @override
