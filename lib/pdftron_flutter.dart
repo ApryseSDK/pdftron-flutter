@@ -36,4 +36,8 @@ class PdftronFlutter {
       'config': jsonEncode(config)
     });
   }
+
+  static Future<void> importAnnotationCommand(String xfdfCommand) {
+    return _channel.invokeMethod('importAnnotationCommand', <String, dynamic>{'xfdfCommand': xfdfCommand});
+  }
 }

@@ -22,7 +22,6 @@ import com.pdftron.pdf.tools.ToolManager;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -152,27 +151,46 @@ public class FlutterDocumentActivity extends DocumentActivity {
     // events
     public void handleAnnotationModifications() {
         ToolManager toolManager = getToolManager();
-        if (toolManager!=null) {
+        if (toolManager != null) {
             toolManager.addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
                 @Override
                 public void onAnnotationsAdded(Map<Annot, Integer> map) {
-                    List<Annot> annots = new ArrayList<>(map.keySet());
-
+                    ArrayList<Annot> annots = new ArrayList<>(map.keySet());
+                    String xfdfCommand = null;
+                    try {
+                        xfdfCommand = generateXfdfCommand(annots, null, null);
+                    } catch (PDFNetException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("pdfnet", "added:" + xfdfCommand);
                 }
 
                 @Override
                 public void onAnnotationsPreModify(Map<Annot, Integer> map) {
-
                 }
 
                 @Override
                 public void onAnnotationsModified(Map<Annot, Integer> map, Bundle bundle) {
-
+                    ArrayList<Annot> annots = new ArrayList<>(map.keySet());
+                    String xfdfCommand = null;
+                    try {
+                        xfdfCommand = generateXfdfCommand(null, annots, null);
+                    } catch (PDFNetException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("pdfnet", "modified:" + xfdfCommand);
                 }
 
                 @Override
                 public void onAnnotationsPreRemove(Map<Annot, Integer> map) {
-
+                    ArrayList<Annot> annots = new ArrayList<>(map.keySet());
+                    String xfdfCommand = null;
+                    try {
+                        xfdfCommand = generateXfdfCommand(null, null, annots);
+                    } catch (PDFNetException e) {
+                        e.printStackTrace();
+                    }
+                    Log.d("pdfnet", "removed:" + xfdfCommand);
                 }
 
                 @Override
@@ -236,7 +254,13 @@ public class FlutterDocumentActivity extends DocumentActivity {
     }
 
     // helper
-    private void generateXfdfCommand(ArrayList<Annot> added, ArrayList<Annot> modified, ArrayList<Annot> removed) {
-        
+    @Nullable
+    private String generateXfdfCommand(ArrayList<Annot> added, ArrayList<Annot> modified, ArrayList<Annot> removed) throws PDFNetException {
+        PDFDoc pdfDoc = getPdfDoc();
+        if (pdfDoc != null) {
+            FDFDoc fdfDoc = pdfDoc.fdfExtract(added, modified, removed);
+            return fdfDoc.saveAsXFDF();
+        }
+        return null;
     }
 }
