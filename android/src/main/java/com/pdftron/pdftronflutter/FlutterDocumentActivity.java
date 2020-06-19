@@ -9,8 +9,10 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.Nullable;
 
 import com.pdftron.pdf.PDFDoc;
+import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 
 import org.json.JSONObject;
@@ -93,9 +95,25 @@ public class FlutterDocumentActivity extends DocumentActivity {
     }
 
     @Nullable
+    public PdfViewCtrlTabFragment getPdfViewCtrlTabFragment() {
+        if (mPdfViewCtrlTabHostFragment != null) {
+            return mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment();
+        }
+        return null;
+    }
+
+    @Nullable
+    public PDFViewCtrl getPdfViewCtrl() {
+        if (getPdfViewCtrlTabFragment() != null) {
+            return getPdfViewCtrlTabFragment().getPDFViewCtrl();
+        }
+        return null;
+    }
+
+    @Nullable
     public PDFDoc getPdfDoc() {
-        if (mPdfViewCtrlTabHostFragment != null && mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment() != null) {
-            return mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment().getPdfDoc();
+        if (getPdfViewCtrlTabFragment() != null) {
+            return getPdfViewCtrlTabFragment().getPdfDoc();
         }
         return null;
     }

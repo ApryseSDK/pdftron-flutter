@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
@@ -80,6 +81,9 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 String config = call.argument("config");
                 FlutterDocumentActivity.setFlutterResult(result);
                 openDocument(document, password, config);
+                break;
+            case "importAnnotations":
+
                 break;
             default:
                 result.notImplemented();
