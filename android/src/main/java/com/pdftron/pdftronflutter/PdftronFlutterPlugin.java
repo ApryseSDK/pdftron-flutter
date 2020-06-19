@@ -79,11 +79,20 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 String document = call.argument("document");
                 String password = call.argument("password");
                 String config = call.argument("config");
-                FlutterDocumentActivity.setFlutterResult(result);
+                FlutterDocumentActivity.setFlutterLoadResult(result);
                 openDocument(document, password, config);
                 break;
-            case "importAnnotations":
-
+            case "importAnnotationCommand":
+                FlutterDocumentActivity flutterDocumentActivity = FlutterDocumentActivity.getCurrentActivity();
+                Objects.requireNonNull(flutterDocumentActivity);
+                Objects.requireNonNull(flutterDocumentActivity.getPdfDoc());
+                String xfdfCommand = call.argument("xfdfCommand");
+                try {
+                    flutterDocumentActivity.importAnnotationCommand(xfdfCommand, result);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
                 break;
             default:
                 result.notImplemented();

@@ -8,15 +8,22 @@ import android.util.Log;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Nullable;
 
+import com.pdftron.common.PDFNetException;
+import com.pdftron.fdf.FDFDoc;
+import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.tools.ToolManager;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.flutter.plugin.common.MethodChannel.Result;
@@ -24,7 +31,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 public class FlutterDocumentActivity extends DocumentActivity {
 
     private static FlutterDocumentActivity sCurrentActivity;
-    private static AtomicReference<Result> sFlutterResult = new AtomicReference<>();
+    private static AtomicReference<Result> sFlutterLoadResult = new AtomicReference<>();
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
         openDocument(packageContext, fileUri, password, customHeaders, config, DEFAULT_NAV_ICON_ID);
@@ -49,8 +56,8 @@ public class FlutterDocumentActivity extends DocumentActivity {
         packageContext.startActivity(intent);
     }
 
-    public static void setFlutterResult(Result result) {
-        sFlutterResult.set(result);
+    public static void setFlutterLoadResult(Result result) {
+        sFlutterLoadResult.set(result);
     }
 
     @Override
@@ -71,9 +78,9 @@ public class FlutterDocumentActivity extends DocumentActivity {
     public void onTabDocumentLoaded(String tag) {
         super.onTabDocumentLoaded(tag);
 
-        Log.d("pdfnet", "documentloaded");
+        handleAnnotationModifications();
 
-        Result result = sFlutterResult.getAndSet(null);
+        Result result = sFlutterLoadResult.getAndSet(null);
         if (result != null) {
             result.success(true);
         }
@@ -83,7 +90,7 @@ public class FlutterDocumentActivity extends DocumentActivity {
     public void onOpenDocError() {
         super.onOpenDocError();
 
-        Result result = sFlutterResult.getAndSet(null);
+        Result result = sFlutterLoadResult.getAndSet(null);
         if (result != null) {
             result.success(false);
         }
@@ -111,6 +118,14 @@ public class FlutterDocumentActivity extends DocumentActivity {
     }
 
     @Nullable
+    public ToolManager getToolManager() {
+        if (getPdfViewCtrlTabFragment() != null) {
+            return getPdfViewCtrlTabFragment().getToolManager();
+        }
+        return null;
+    }
+
+    @Nullable
     public PDFDoc getPdfDoc() {
         if (getPdfViewCtrlTabFragment() != null) {
             return getPdfViewCtrlTabFragment().getPdfDoc();
@@ -123,7 +138,7 @@ public class FlutterDocumentActivity extends DocumentActivity {
     }
 
     private void detachActivity() {
-        Result result = sFlutterResult.getAndSet(null);
+        Result result = sFlutterLoadResult.getAndSet(null);
         if (result != null) {
             result.success(false);
         }
@@ -132,5 +147,96 @@ public class FlutterDocumentActivity extends DocumentActivity {
 
     public static FlutterDocumentActivity getCurrentActivity() {
         return sCurrentActivity;
+    }
+
+    // events
+    public void handleAnnotationModifications() {
+        ToolManager toolManager = getToolManager();
+        if (toolManager!=null) {
+            toolManager.addAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
+                @Override
+                public void onAnnotationsAdded(Map<Annot, Integer> map) {
+                    List<Annot> annots = new ArrayList<>(map.keySet());
+
+                }
+
+                @Override
+                public void onAnnotationsPreModify(Map<Annot, Integer> map) {
+
+                }
+
+                @Override
+                public void onAnnotationsModified(Map<Annot, Integer> map, Bundle bundle) {
+
+                }
+
+                @Override
+                public void onAnnotationsPreRemove(Map<Annot, Integer> map) {
+
+                }
+
+                @Override
+                public void onAnnotationsRemoved(Map<Annot, Integer> map) {
+
+                }
+
+                @Override
+                public void onAnnotationsRemovedOnPage(int i) {
+
+                }
+
+                @Override
+                public void annotationsCouldNotBeAdded(String s) {
+
+                }
+            });
+        }
+    }
+
+    // methods
+    public void importAnnotationCommand(String xfdfCommand, Result result) throws PDFNetException {
+        PDFViewCtrl pdfViewCtrl = getPdfViewCtrl();
+        PDFDoc pdfDoc = getPdfDoc();
+        if (null == pdfViewCtrl || null == pdfDoc) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        boolean shouldUnlockRead = false;
+        try {
+            pdfViewCtrl.docLockRead();
+            shouldUnlockRead = true;
+
+            if (pdfDoc.hasDownloader()) {
+                // still downloading file, let's wait for next call
+                result.error("InvalidState", "Document download in progress, try again later", null);
+                return;
+            }
+        } finally {
+            if (shouldUnlockRead) {
+                pdfViewCtrl.docUnlockRead();
+            }
+        }
+
+        boolean shouldUnlock = false;
+        try {
+            pdfViewCtrl.docLock(true);
+            shouldUnlock = true;
+
+            FDFDoc fdfDoc = pdfDoc.fdfExtract(PDFDoc.e_both);
+            fdfDoc.mergeAnnots(xfdfCommand);
+
+            pdfDoc.fdfUpdate(fdfDoc);
+            pdfViewCtrl.update(true);
+            result.success(null);
+        } finally {
+            if (shouldUnlock) {
+                pdfViewCtrl.docUnlock();
+            }
+        }
+    }
+
+    // helper
+    private void generateXfdfCommand(ArrayList<Annot> added, ArrayList<Annot> modified, ArrayList<Annot> removed) {
+        
     }
 }
