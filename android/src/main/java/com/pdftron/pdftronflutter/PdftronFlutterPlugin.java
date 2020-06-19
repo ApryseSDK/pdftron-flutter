@@ -7,7 +7,6 @@ import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFNet;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
-import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdftronflutter.factories.DocumentViewFactory;
 
@@ -69,6 +68,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 try {
                     String licenseKey = call.argument("licenseKey");
                     com.pdftron.pdf.utils.AppUtils.initializePDFNetApplication(mContext.getApplicationContext(), licenseKey);
+                    result.success(null);
                 } catch (PDFNetException e) {
                     e.printStackTrace();
                     result.error(Long.toString(e.getErrorCode()), "PDFTronException Error: " + e, null);
@@ -78,6 +78,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 String document = call.argument("document");
                 String password = call.argument("password");
                 String config = call.argument("config");
+                FlutterDocumentActivity.setFlutterResult(result);
                 openDocument(document, password, config);
                 break;
             default:
@@ -127,6 +128,6 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
         builder = builder.toolManagerBuilder(toolManagerBuilder);
 
         final Uri fileLink = Uri.parse(document);
-        DocumentActivity.openDocument(mContext, fileLink, password, customHeaderJson, builder.build());
+        FlutterDocumentActivity.openDocument(mContext, fileLink, password, customHeaderJson, builder.build());
     }
 }
