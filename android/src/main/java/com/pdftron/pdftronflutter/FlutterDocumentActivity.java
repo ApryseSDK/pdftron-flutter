@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Nullable;
 
@@ -33,7 +32,7 @@ public class FlutterDocumentActivity extends DocumentActivity {
     private static FlutterDocumentActivity sCurrentActivity;
     private static AtomicReference<Result> sFlutterLoadResult = new AtomicReference<>();
 
-    private static AtomicReference<EventSink> sFlutterEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sExportAnnotationCommandEventEmitter = new AtomicReference<>();
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
         openDocument(packageContext, fileUri, password, customHeaders, config, DEFAULT_NAV_ICON_ID);
@@ -62,8 +61,8 @@ public class FlutterDocumentActivity extends DocumentActivity {
         sFlutterLoadResult.set(result);
     }
 
-    public static void setFlutterEventEmitter(EventSink emitter) {
-        sFlutterEventEmitter.set(emitter);
+    public static void setExportAnnotationCommandEventEmitter(EventSink emitter) {
+        sExportAnnotationCommandEventEmitter.set(emitter);
     }
 
     @Override
@@ -169,11 +168,10 @@ public class FlutterDocumentActivity extends DocumentActivity {
                     } catch (PDFNetException e) {
                         e.printStackTrace();
                     }
-                    Log.d("pdfnet", "added:" + xfdfCommand);
 
-                    EventSink eventSink = sFlutterEventEmitter.get();
-                    if (eventSink!=null) {
-                        eventSink.success("add: " + xfdfCommand);
+                    EventSink eventSink = sExportAnnotationCommandEventEmitter.get();
+                    if (eventSink != null) {
+                        eventSink.success(xfdfCommand);
                     }
                 }
 
@@ -190,11 +188,10 @@ public class FlutterDocumentActivity extends DocumentActivity {
                     } catch (PDFNetException e) {
                         e.printStackTrace();
                     }
-                    Log.d("pdfnet", "modified:" + xfdfCommand);
 
-                    EventSink eventSink = sFlutterEventEmitter.get();
-                    if (eventSink!=null) {
-                        eventSink.success("modified: " + xfdfCommand);
+                    EventSink eventSink = sExportAnnotationCommandEventEmitter.get();
+                    if (eventSink != null) {
+                        eventSink.success(xfdfCommand);
                     }
                 }
 
@@ -207,11 +204,10 @@ public class FlutterDocumentActivity extends DocumentActivity {
                     } catch (PDFNetException e) {
                         e.printStackTrace();
                     }
-                    Log.d("pdfnet", "removed:" + xfdfCommand);
 
-                    EventSink eventSink = sFlutterEventEmitter.get();
-                    if (eventSink!=null) {
-                        eventSink.success("removed: " + xfdfCommand);
+                    EventSink eventSink = sExportAnnotationCommandEventEmitter.get();
+                    if (eventSink != null) {
+                        eventSink.success(xfdfCommand);
                     }
                 }
 

@@ -48,8 +48,18 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
         final MethodChannel methodChannel = new MethodChannel(registrar.messenger(), "pdftron_flutter");
         methodChannel.setMethodCallHandler(new PdftronFlutterPlugin(registrar.activeContext()));
 
-        final EventChannel eventChannel = new EventChannel(registrar.messenger(), "pdftron_event");
-        eventChannel.setStreamHandler(new PdftronFlutterEventHandler());
+        final EventChannel eventChannel = new EventChannel(registrar.messenger(), "export_annotation_command_event");
+        eventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setExportAnnotationCommandEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setExportAnnotationCommandEventEmitter(null);
+            }
+        });
 
         registrar.platformViewRegistry().registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(registrar.messenger(), registrar.activeContext()));
     }
