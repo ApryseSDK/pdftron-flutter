@@ -13,7 +13,6 @@ part 'events.dart';
 
 class PdftronFlutter {
   static const MethodChannel _channel = const MethodChannel('pdftron_flutter');
-  static const EventChannel _eventChannel = const EventChannel('pdftron_event');
 
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
