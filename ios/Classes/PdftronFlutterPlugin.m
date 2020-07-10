@@ -22,12 +22,31 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
 
 @implementation PdftronFlutterPlugin
 
+- (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events
+{
+    return Nil;
+}
+
+- (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments
+{
+    return Nil;
+}
+
+
+
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel* channel = [FlutterMethodChannel
                                      methodChannelWithName:@"pdftron_flutter"
                                      binaryMessenger:[registrar messenger]];
+    
+
+    
     PdftronFlutterPlugin* instance = [[PdftronFlutterPlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
+    
+    FlutterEventChannel* eventChannel = [FlutterEventChannel eventChannelWithName:@"export_annotation_command_event" binaryMessenger:[registrar messenger]];
+    
+    [eventChannel setStreamHandler:instance];
     
     DocumentViewFactory* documentViewFactory =
     [[DocumentViewFactory alloc] initWithMessenger:registrar.messenger];

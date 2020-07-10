@@ -2,7 +2,9 @@
 #import <PDFNet/PDFNet.h>
 #import <Tools/Tools.h>
 
-@interface PdftronFlutterPlugin : NSObject<FlutterPlugin>
+NS_ASSUME_NONNULL_BEGIN
+
+@interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler>
 
 @property (nonatomic, strong) PTTabbedDocumentViewController *tabbedDocumentViewController;
 
@@ -10,4 +12,9 @@
 
 - (void)importAnnotationCommand:(NSDictionary<NSString *, id> *)arguments;
 
+- (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events;
+- (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments;
+
 @end
+
+NS_ASSUME_NONNULL_END
