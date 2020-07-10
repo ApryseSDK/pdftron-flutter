@@ -11,6 +11,7 @@ import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdftronflutter.factories.DocumentViewFactory;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -48,8 +49,8 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
         final MethodChannel methodChannel = new MethodChannel(registrar.messenger(), "pdftron_flutter");
         methodChannel.setMethodCallHandler(new PdftronFlutterPlugin(registrar.activeContext()));
 
-        final EventChannel eventChannel = new EventChannel(registrar.messenger(), "export_annotation_command_event");
-        eventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+        final EventChannel annotEventChannel = new EventChannel(registrar.messenger(), "export_annotation_command_event");
+        annotEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
                 FlutterDocumentActivity.setExportAnnotationCommandEventEmitter(emitter);
@@ -58,6 +59,19 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             @Override
             public void onCancel(Object arguments) {
                 FlutterDocumentActivity.setExportAnnotationCommandEventEmitter(null);
+            }
+        });
+
+        final EventChannel bookmarkEventChannel = new EventChannel(registrar.messenger(), "export_bookmark_event");
+        bookmarkEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setExportBookmarkEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setExportBookmarkEventEmitter(null);
             }
         });
 
@@ -96,7 +110,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 FlutterDocumentActivity.setFlutterLoadResult(result);
                 openDocument(document, password, config);
                 break;
-            case "importAnnotationCommand":
+            case "importAnnotationCommand": {
                 FlutterDocumentActivity flutterDocumentActivity = FlutterDocumentActivity.getCurrentActivity();
                 Objects.requireNonNull(flutterDocumentActivity);
                 Objects.requireNonNull(flutterDocumentActivity.getPdfDoc());
@@ -108,6 +122,20 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                     result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
                 }
                 break;
+            }
+            case "importBookmarkJson": {
+                FlutterDocumentActivity flutterDocumentActivity = FlutterDocumentActivity.getCurrentActivity();
+                Objects.requireNonNull(flutterDocumentActivity);
+                Objects.requireNonNull(flutterDocumentActivity.getPdfDoc());
+                String bookmarkJson = call.argument("bookmarkJson");
+                try {
+                    flutterDocumentActivity.importBookmarkJson(bookmarkJson, result);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                    result.error(Integer.toString(ex.hashCode()), "JSONException Error: " + ex, null);
+                }
+                break;
+            }
             default:
                 result.notImplemented();
                 break;

@@ -74,14 +74,25 @@ class _MyAppState extends State<MyApp> {
       print("Failed to importAnnotationCommand '${e.message}'.");
     }
 
-    var cancel = startExportAnnotationCommandListener((xfdfCommand) {
+    try {
+      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
+    } on PlatformException catch(e) {
+      print("Failed to importBookmarkJson '${e.message}'.");
+    }
+
+    var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
       // local annotation changed
       // upload XFDF command to server here
       print("flutter xfdfCommand: $xfdfCommand");
     });
 
+    var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
+      print("flutter bookmark: ${bookmarkJson}");
+    });
+
     // to cancel event:
-    //cancel();
+    // annotCancel();
+    // bookmarkCancel();
   }
 
   @override

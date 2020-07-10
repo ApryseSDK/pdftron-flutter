@@ -41,4 +41,8 @@ class PdftronFlutter {
   static Future<void> importAnnotationCommand(String xfdfCommand) {
     return _channel.invokeMethod('importAnnotationCommand', <String, dynamic>{'xfdfCommand': xfdfCommand});
   }
+
+  static Future<void> importBookmarkJson(String bookmarkJson) {
+    return _channel.invokeMethod('importBookmarkJson', <String, dynamic>{'bookmarkJson': bookmarkJson});
+  }
 }

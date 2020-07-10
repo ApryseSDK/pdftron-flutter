@@ -17,10 +17,13 @@ import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.BookmarkManager;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -33,6 +36,7 @@ public class FlutterDocumentActivity extends DocumentActivity {
     private static AtomicReference<Result> sFlutterLoadResult = new AtomicReference<>();
 
     private static AtomicReference<EventSink> sExportAnnotationCommandEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sExportBookmarkEventEmitter = new AtomicReference<>();
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
         openDocument(packageContext, fileUri, password, customHeaders, config, DEFAULT_NAV_ICON_ID);
@@ -63,6 +67,10 @@ public class FlutterDocumentActivity extends DocumentActivity {
 
     public static void setExportAnnotationCommandEventEmitter(EventSink emitter) {
         sExportAnnotationCommandEventEmitter.set(emitter);
+    }
+
+    public static void setExportBookmarkEventEmitter(EventSink emitter) {
+        sExportBookmarkEventEmitter.set(emitter);
     }
 
     @Override
@@ -226,6 +234,62 @@ public class FlutterDocumentActivity extends DocumentActivity {
 
                 }
             });
+            toolManager.addPdfDocModificationListener(new ToolManager.PdfDocModificationListener() {
+                @Override
+                public void onBookmarkModified() {
+                    String bookmarkJson = null;
+                    try {
+                        bookmarkJson = generateBookmarkJson();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    EventSink eventSink = sExportBookmarkEventEmitter.get();
+                    if (eventSink != null) {
+                        eventSink.success(bookmarkJson);
+                    }
+                }
+
+                @Override
+                public void onPagesCropped() {
+
+                }
+
+                @Override
+                public void onPagesAdded(List<Integer> list) {
+
+                }
+
+                @Override
+                public void onPagesDeleted(List<Integer> list) {
+
+                }
+
+                @Override
+                public void onPagesRotated(List<Integer> list) {
+
+                }
+
+                @Override
+                public void onPageMoved(int i, int i1) {
+
+                }
+
+                @Override
+                public void onPageLabelsChanged() {
+
+                }
+
+                @Override
+                public void onAllAnnotationsRemoved() {
+
+                }
+
+                @Override
+                public void onAnnotationAction() {
+
+                }
+            });
         }
     }
 
@@ -233,7 +297,7 @@ public class FlutterDocumentActivity extends DocumentActivity {
     public void importAnnotationCommand(String xfdfCommand, Result result) throws PDFNetException {
         PDFViewCtrl pdfViewCtrl = getPdfViewCtrl();
         PDFDoc pdfDoc = getPdfDoc();
-        if (null == pdfViewCtrl || null == pdfDoc) {
+        if (null == pdfViewCtrl || null == pdfDoc || null == xfdfCommand) {
             result.error("InvalidState", "Activity not attached", null);
             return;
         }
@@ -271,6 +335,16 @@ public class FlutterDocumentActivity extends DocumentActivity {
         }
     }
 
+    public void importBookmarkJson(String bookmarkJson, Result result) throws JSONException {
+        PDFViewCtrl pdfViewCtrl = getPdfViewCtrl();
+        if (null == pdfViewCtrl || null == bookmarkJson) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        BookmarkManager.importPdfBookmarks(pdfViewCtrl, bookmarkJson);
+        result.success(null);
+    }
+
     // helper
     @Nullable
     private String generateXfdfCommand(ArrayList<Annot> added, ArrayList<Annot> modified, ArrayList<Annot> removed) throws PDFNetException {
@@ -278,6 +352,15 @@ public class FlutterDocumentActivity extends DocumentActivity {
         if (pdfDoc != null) {
             FDFDoc fdfDoc = pdfDoc.fdfExtract(added, modified, removed);
             return fdfDoc.saveAsXFDF();
+        }
+        return null;
+    }
+
+    @Nullable
+    private String generateBookmarkJson() throws JSONException {
+        PDFDoc pdfDoc = getPdfDoc();
+        if (pdfDoc != null) {
+            return BookmarkManager.exportPdfBookmarks(pdfDoc);
         }
         return null;
     }
