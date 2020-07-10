@@ -387,12 +387,40 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
 }
 - (void)importAnnotationCommand:(NSDictionary<NSString *, id> *)arguments
 {
+    PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
+    
+    if( docVC == Nil && self.tabbedDocumentViewController.tabsEnabled == NO)
+    {
+        docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
+    }
+    
+    if( docVC.document == Nil )
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        return;
+    }
+    
+    NSError* error;
+    
+    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        if( [doc HasDownloader] )
+        {
+            // too soon
+            NSLog(@"Error: The document is still being downloaded.");
+            return;
+        }
 
-//    PTFDFDoc* fdfDoc = pdfDoc.fdfExtract(PDFDoc.e_both);
-//    fdfDoc.mergeAnnots(xfdfCommand);
-//
-//    pdfDoc.fdfUpdate(fdfDoc);
-//    pdfViewCtrl.update(true);
+        PTFDFDoc* fdfDoc = [doc FDFExtract:e_ptboth];
+        [fdfDoc MergeAnnots:arguments[@"xfdfCommand"] permitted_user:@""];
+        [doc FDFUpdate:fdfDoc];
+
+        [docVC.pdfViewCtrl Update:YES];
+
+
+    } error:&error];
+        
+
 }
 
 - (void)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController willAddDocumentViewController:(PTDocumentViewController *)documentViewController
