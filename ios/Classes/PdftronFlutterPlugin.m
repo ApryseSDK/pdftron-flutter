@@ -22,18 +22,6 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
 
 @implementation PdftronFlutterPlugin
 
-- (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events
-{
-    return Nil;
-}
-
-- (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments
-{
-    return Nil;
-}
-
-
-
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel* channel = [FlutterMethodChannel
                                      methodChannelWithName:@"pdftron_flutter"
@@ -438,8 +426,57 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
 
 
     } error:&error];
-        
+}
 
+- (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events
+{
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        events(@"Test listen success");
+    });
+    
+    return Nil;
+}
+
+- (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments
+{
+    return Nil;
+}
+
+-(NSString*)generateXfdfCommandWithAdded:(NSArray<PTAnnot*>*)added modified:(NSArray<PTAnnot*>*)modified removed:(NSArray<PTAnnot*>*)removed
+{
+    PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
+    
+    if( docVC == Nil && self.tabbedDocumentViewController.tabsEnabled == NO)
+    {
+        docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
+    }
+    
+    PTPDFDoc* pdfDoc = docVC.document;
+    
+    if ( pdfDoc ) {
+        PTVectorAnnot* addedV = [[PTVectorAnnot alloc] init];
+        for(PTAnnot* annot in added)
+        {
+            [addedV add:annot];
+        }
+        
+        PTVectorAnnot* modifiedV = [[PTVectorAnnot alloc] init];
+        for(PTAnnot* annot in modified)
+        {
+            [modifiedV add:annot];
+        }
+        
+        PTVectorAnnot* removedV = [[PTVectorAnnot alloc] init];
+        for(PTAnnot* annot in removed)
+        {
+            [removedV add:annot];
+        }
+        
+        PTFDFDoc* fdfDoc = [pdfDoc FDFExtractCommand:addedV annot_modified:modifiedV annot_deleted:removedV];
+        
+        return [fdfDoc SaveAsXFDFToString];
+    }
+    return Nil;
 }
 
 - (void)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController willAddDocumentViewController:(PTDocumentViewController *)documentViewController
