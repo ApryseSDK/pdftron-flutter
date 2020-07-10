@@ -6,17 +6,71 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
 static NSString * const PTCustomHeadersKey = @"customHeaders";
 
+
+
 @interface PTFlutterViewController : PTDocumentViewController
 @property (nonatomic, strong) FlutterResult openResult;
+@property (nonatomic, strong) PdftronFlutterPlugin* plugin;
 @end
 
 @implementation PTFlutterViewController
+
+
+-(void)toolManager:(PTToolManager*)toolManager willRemoveAnnotation:(nonnull PTAnnot *)annotation onPageNumber:(int)pageNumber
+{
+    NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:Nil removed:@[annotation]];
+    [self.plugin docVC:self annotationChange:xfdf];
+}
+
+- (void)toolManager:(PTToolManager *)toolManager annotationAdded:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
+{
+    NSString* xfdf = [self generateXfdfCommandWithAdded:@[annotation] modified:Nil removed:Nil];
+    [self.plugin docVC:self annotationChange:xfdf];
+}
+
+- (void)toolManager:(PTToolManager *)toolManager annotationModified:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
+{
+    NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:@[annotation] removed:Nil];
+    [self.plugin docVC:self annotationChange:xfdf];
+}
+
+-(NSString*)generateXfdfCommandWithAdded:(NSArray<PTAnnot*>*)added modified:(NSArray<PTAnnot*>*)modified removed:(NSArray<PTAnnot*>*)removed
+{
+    
+    PTPDFDoc* pdfDoc = self.document;
+    
+    if ( pdfDoc ) {
+        PTVectorAnnot* addedV = [[PTVectorAnnot alloc] init];
+        for(PTAnnot* annot in added)
+        {
+            [addedV add:annot];
+        }
+        
+        PTVectorAnnot* modifiedV = [[PTVectorAnnot alloc] init];
+        for(PTAnnot* annot in modified)
+        {
+            [modifiedV add:annot];
+        }
+        
+        PTVectorAnnot* removedV = [[PTVectorAnnot alloc] init];
+        for(PTAnnot* annot in removed)
+        {
+            [removedV add:annot];
+        }
+        
+        PTFDFDoc* fdfDoc = [pdfDoc FDFExtractCommand:addedV annot_modified:modifiedV annot_deleted:removedV];
+        
+        return [fdfDoc SaveAsXFDFToString];
+    }
+    return Nil;
+}
 
 @end
 
 @interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate, PTDocumentViewControllerDelegate>
 
 @property (nonatomic, strong) id config;
+@property (nonatomic, strong) FlutterEventSink xfdfEventSink;
 
 @end
 
@@ -358,6 +412,7 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
                                                   password:password];
     
     ((PTFlutterViewController*)self.tabbedDocumentViewController.childViewControllers.lastObject).openResult = result;
+    ((PTFlutterViewController*)self.tabbedDocumentViewController.childViewControllers.lastObject).plugin = self;
     
     UIViewController *presentingViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     
@@ -427,57 +482,25 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
 
     } error:&error];
 }
+-(void)docVC:(PTDocumentViewController*)docVC annotationChange:(NSString*)xfdfCommand
+{
+    self.xfdfEventSink(xfdfCommand);
+}
 
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events
 {
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        events(@"Test listen success");
-    });
+     self.xfdfEventSink = events;
     
     return Nil;
 }
 
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments
 {
+    self.xfdfEventSink = Nil;
+    
     return Nil;
 }
 
--(NSString*)generateXfdfCommandWithAdded:(NSArray<PTAnnot*>*)added modified:(NSArray<PTAnnot*>*)modified removed:(NSArray<PTAnnot*>*)removed
-{
-    PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
-    
-    if( docVC == Nil && self.tabbedDocumentViewController.tabsEnabled == NO)
-    {
-        docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
-    }
-    
-    PTPDFDoc* pdfDoc = docVC.document;
-    
-    if ( pdfDoc ) {
-        PTVectorAnnot* addedV = [[PTVectorAnnot alloc] init];
-        for(PTAnnot* annot in added)
-        {
-            [addedV add:annot];
-        }
-        
-        PTVectorAnnot* modifiedV = [[PTVectorAnnot alloc] init];
-        for(PTAnnot* annot in modified)
-        {
-            [modifiedV add:annot];
-        }
-        
-        PTVectorAnnot* removedV = [[PTVectorAnnot alloc] init];
-        for(PTAnnot* annot in removed)
-        {
-            [removedV add:annot];
-        }
-        
-        PTFDFDoc* fdfDoc = [pdfDoc FDFExtractCommand:addedV annot_modified:modifiedV annot_deleted:removedV];
-        
-        return [fdfDoc SaveAsXFDFToString];
-    }
-    return Nil;
-}
 
 - (void)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController willAddDocumentViewController:(PTDocumentViewController *)documentViewController
 {

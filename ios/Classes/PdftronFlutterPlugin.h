@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events;
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments;
 
+-(void)docVC:(PTDocumentViewController*)docVC annotationChange:(NSString*)xfdfCommand;
+
 @end
 
 NS_ASSUME_NONNULL_END
