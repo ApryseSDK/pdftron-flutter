@@ -407,12 +407,14 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
 {
     NSLog(@"Document opened successfully");
     FlutterResult result = ((PTFlutterViewController*)documentViewController).openResult;
-    result(@"Opened Document");
+    result(@"Opened Document Successfully");
 }
 
 - (void)documentViewController:(PTDocumentViewController *)documentViewController didFailToOpenDocumentWithError:(NSError *)error
 {
     NSLog(@"Failed to open document: %@", error);
+    FlutterResult result = ((PTFlutterViewController*)documentViewController).openResult;
+    result([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
 }
 
 @end
