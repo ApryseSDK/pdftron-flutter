@@ -6,6 +6,14 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
 static NSString * const PTCustomHeadersKey = @"customHeaders";
 
+@interface PTFlutterViewController : PTDocumentViewController
+@property (nonatomic, strong) FlutterResult openResult;
+@end
+
+@implementation PTFlutterViewController
+
+@end
+
 @interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate, PTDocumentViewControllerDelegate>
 
 @property (nonatomic, strong) id config;
@@ -290,8 +298,11 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
     }
 }
 
-- (void)handleOpenDocumentMethod:(NSDictionary<NSString *, id> *)arguments
+- (void)handleOpenDocumentMethod:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)result
 {
+
+    [PTOverrides overrideClass:[PTDocumentViewController class] withClass:[PTFlutterViewController class]];
+    
     // Get document argument.
     NSString *document = nil;
     id documentValue = arguments[@"document"];
@@ -335,9 +346,11 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
     } else if ([document hasPrefix:@"/"]) {
         fileURL = [NSURL fileURLWithPath:document];
     }
-    
+        
     [self.tabbedDocumentViewController openDocumentWithURL:fileURL
                                                   password:password];
+    
+    ((PTFlutterViewController*)self.tabbedDocumentViewController.childViewControllers.lastObject).openResult = result;
     
     UIViewController *presentingViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     
@@ -356,7 +369,9 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
         NSString *licenseKey = call.arguments[@"licenseKey"];
         [PTPDFNet Initialize:licenseKey];
     } else if ([@"openDocument" isEqualToString:call.method]) {
-        [self handleOpenDocumentMethod:call.arguments];
+        [self handleOpenDocumentMethod:call.arguments resultToken:result];
+    } else if ([@"importAnnotationCommand" isEqualToString:call.method]) {
+        [self importAnnotationCommand:call.arguments];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -370,6 +385,15 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
         [UIApplication.sharedApplication.keyWindow.rootViewController.presentedViewController dismissViewControllerAnimated:YES completion:Nil];
     }
 }
+- (void)importAnnotationCommand:(NSDictionary<NSString *, id> *)arguments
+{
+
+//    PTFDFDoc* fdfDoc = pdfDoc.fdfExtract(PDFDoc.e_both);
+//    fdfDoc.mergeAnnots(xfdfCommand);
+//
+//    pdfDoc.fdfUpdate(fdfDoc);
+//    pdfViewCtrl.update(true);
+}
 
 - (void)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController willAddDocumentViewController:(PTDocumentViewController *)documentViewController
 {
@@ -382,6 +406,8 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
 - (void)documentViewControllerDidOpenDocument:(PTDocumentViewController *)documentViewController
 {
     NSLog(@"Document opened successfully");
+    FlutterResult result = ((PTFlutterViewController*)documentViewController).openResult;
+    result(@"Opened Document");
 }
 
 - (void)documentViewController:(PTDocumentViewController *)documentViewController didFailToOpenDocumentWithError:(NSError *)error

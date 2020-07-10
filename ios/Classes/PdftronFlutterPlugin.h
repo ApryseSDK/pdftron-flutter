@@ -8,4 +8,6 @@
 
 + (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config;
 
+- (void)importAnnotationCommand:(NSDictionary<NSString *, id> *)arguments;
+
 @end
