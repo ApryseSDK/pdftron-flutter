@@ -6,9 +6,71 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
 static NSString * const PTCustomHeadersKey = @"customHeaders";
 
+
+
+@interface PTFlutterViewController : PTDocumentViewController
+@property (nonatomic, strong) FlutterResult openResult;
+@property (nonatomic, strong) PdftronFlutterPlugin* plugin;
+@end
+
+@implementation PTFlutterViewController
+
+
+-(void)toolManager:(PTToolManager*)toolManager willRemoveAnnotation:(nonnull PTAnnot *)annotation onPageNumber:(int)pageNumber
+{
+    NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:Nil removed:@[annotation]];
+    [self.plugin docVC:self annotationChange:xfdf];
+}
+
+- (void)toolManager:(PTToolManager *)toolManager annotationAdded:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
+{
+    NSString* xfdf = [self generateXfdfCommandWithAdded:@[annotation] modified:Nil removed:Nil];
+    [self.plugin docVC:self annotationChange:xfdf];
+}
+
+- (void)toolManager:(PTToolManager *)toolManager annotationModified:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
+{
+    NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:@[annotation] removed:Nil];
+    [self.plugin docVC:self annotationChange:xfdf];
+}
+
+-(NSString*)generateXfdfCommandWithAdded:(NSArray<PTAnnot*>*)added modified:(NSArray<PTAnnot*>*)modified removed:(NSArray<PTAnnot*>*)removed
+{
+    
+    PTPDFDoc* pdfDoc = self.document;
+    
+    if ( pdfDoc ) {
+        PTVectorAnnot* addedV = [[PTVectorAnnot alloc] init];
+        for(PTAnnot* annot in added)
+        {
+            [addedV add:annot];
+        }
+        
+        PTVectorAnnot* modifiedV = [[PTVectorAnnot alloc] init];
+        for(PTAnnot* annot in modified)
+        {
+            [modifiedV add:annot];
+        }
+        
+        PTVectorAnnot* removedV = [[PTVectorAnnot alloc] init];
+        for(PTAnnot* annot in removed)
+        {
+            [removedV add:annot];
+        }
+        
+        PTFDFDoc* fdfDoc = [pdfDoc FDFExtractCommand:addedV annot_modified:modifiedV annot_deleted:removedV];
+        
+        return [fdfDoc SaveAsXFDFToString];
+    }
+    return Nil;
+}
+
+@end
+
 @interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate, PTDocumentViewControllerDelegate>
 
 @property (nonatomic, strong) id config;
+@property (nonatomic, strong) FlutterEventSink xfdfEventSink;
 
 @end
 
@@ -18,8 +80,15 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
     FlutterMethodChannel* channel = [FlutterMethodChannel
                                      methodChannelWithName:@"pdftron_flutter"
                                      binaryMessenger:[registrar messenger]];
+    
+
+    
     PdftronFlutterPlugin* instance = [[PdftronFlutterPlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
+    
+    FlutterEventChannel* eventChannel = [FlutterEventChannel eventChannelWithName:@"export_annotation_command_event" binaryMessenger:[registrar messenger]];
+    
+    [eventChannel setStreamHandler:instance];
     
     DocumentViewFactory* documentViewFactory =
     [[DocumentViewFactory alloc] initWithMessenger:registrar.messenger];
@@ -290,8 +359,11 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
     }
 }
 
-- (void)handleOpenDocumentMethod:(NSDictionary<NSString *, id> *)arguments
+- (void)handleOpenDocumentMethod:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)result
 {
+
+    [PTOverrides overrideClass:[PTDocumentViewController class] withClass:[PTFlutterViewController class]];
+    
     // Get document argument.
     NSString *document = nil;
     id documentValue = arguments[@"document"];
@@ -335,9 +407,12 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
     } else if ([document hasPrefix:@"/"]) {
         fileURL = [NSURL fileURLWithPath:document];
     }
-    
+        
     [self.tabbedDocumentViewController openDocumentWithURL:fileURL
                                                   password:password];
+    
+    ((PTFlutterViewController*)self.tabbedDocumentViewController.childViewControllers.lastObject).openResult = result;
+    ((PTFlutterViewController*)self.tabbedDocumentViewController.childViewControllers.lastObject).plugin = self;
     
     UIViewController *presentingViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     
@@ -356,7 +431,9 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
         NSString *licenseKey = call.arguments[@"licenseKey"];
         [PTPDFNet Initialize:licenseKey];
     } else if ([@"openDocument" isEqualToString:call.method]) {
-        [self handleOpenDocumentMethod:call.arguments];
+        [self handleOpenDocumentMethod:call.arguments resultToken:result];
+    } else if ([@"importAnnotationCommand" isEqualToString:call.method]) {
+        [self importAnnotationCommand:call.arguments];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -370,6 +447,60 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
         [UIApplication.sharedApplication.keyWindow.rootViewController.presentedViewController dismissViewControllerAnimated:YES completion:Nil];
     }
 }
+- (void)importAnnotationCommand:(NSDictionary<NSString *, id> *)arguments
+{
+    PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
+    
+    if( docVC == Nil && self.tabbedDocumentViewController.tabsEnabled == NO)
+    {
+        docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
+    }
+    
+    if( docVC.document == Nil )
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        return;
+    }
+    
+    NSError* error;
+    
+    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        if( [doc HasDownloader] )
+        {
+            // too soon
+            NSLog(@"Error: The document is still being downloaded.");
+            return;
+        }
+
+        PTFDFDoc* fdfDoc = [doc FDFExtract:e_ptboth];
+        [fdfDoc MergeAnnots:arguments[@"xfdfCommand"] permitted_user:@""];
+        [doc FDFUpdate:fdfDoc];
+
+        [docVC.pdfViewCtrl Update:YES];
+
+
+    } error:&error];
+}
+-(void)docVC:(PTDocumentViewController*)docVC annotationChange:(NSString*)xfdfCommand
+{
+    self.xfdfEventSink(xfdfCommand);
+}
+
+- (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events
+{
+     self.xfdfEventSink = events;
+    
+    return Nil;
+}
+
+- (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments
+{
+    self.xfdfEventSink = Nil;
+    
+    return Nil;
+}
+
 
 - (void)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController willAddDocumentViewController:(PTDocumentViewController *)documentViewController
 {
@@ -382,11 +513,15 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
 - (void)documentViewControllerDidOpenDocument:(PTDocumentViewController *)documentViewController
 {
     NSLog(@"Document opened successfully");
+    FlutterResult result = ((PTFlutterViewController*)documentViewController).openResult;
+    result(@"Opened Document Successfully");
 }
 
 - (void)documentViewController:(PTDocumentViewController *)documentViewController didFailToOpenDocumentWithError:(NSError *)error
 {
     NSLog(@"Failed to open document: %@", error);
+    FlutterResult result = ((PTFlutterViewController*)documentViewController).openResult;
+    result([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
 }
 
 @end
