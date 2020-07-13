@@ -6,6 +6,8 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
 static NSString * const PTCustomHeadersKey = @"customHeaders";
 
+const int exportAnnotationId = 1;
+const int exportBookmarkId = 2;
 
 
 @interface PTFlutterViewController : PTDocumentViewController
@@ -15,6 +17,33 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
 
 @implementation PTFlutterViewController
 
+- (void)bookmarkViewController:(PTBookmarkViewController *)bookmarkViewController didAddBookmark:(PTUserBookmark *)bookmark
+{
+    [super bookmarkViewController:bookmarkViewController didAddBookmark:bookmark];
+    [self bookrmarkModified];
+}
+
+- (void)bookmarkViewController:(PTBookmarkViewController *)bookmarkViewController didRemoveBookmark:(PTUserBookmark *)bookmark
+{
+    [super bookmarkViewController:bookmarkViewController didRemoveBookmark:bookmark];
+    [self bookrmarkModified];
+}
+
+-(void)bookrmarkModified
+{
+    __block NSString* json;
+    NSError* error;
+    BOOL exceptionOccurred = [self.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+        json = [PTBookmarkManager.defaultManager exportBookmarksFromDoc:doc];
+    } error:&error];
+    
+    if( exceptionOccurred )
+    {
+        NSLog(@"Error: %@", error.description);
+    }
+
+    [self.plugin docVC:self bookmarkChange:json];
+}
 
 -(void)toolManager:(PTToolManager*)toolManager willRemoveAnnotation:(nonnull PTAnnot *)annotation onPageNumber:(int)pageNumber
 {
@@ -71,6 +100,7 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
 
 @property (nonatomic, strong) id config;
 @property (nonatomic, strong) FlutterEventSink xfdfEventSink;
+@property (nonatomic, strong) FlutterEventSink bookmarkEventSink;
 
 @end
 
@@ -86,9 +116,13 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
     PdftronFlutterPlugin* instance = [[PdftronFlutterPlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
     
-    FlutterEventChannel* eventChannel = [FlutterEventChannel eventChannelWithName:@"export_annotation_command_event" binaryMessenger:[registrar messenger]];
+    FlutterEventChannel* xfdfEventChannel = [FlutterEventChannel eventChannelWithName:@"export_annotation_command_event" binaryMessenger:[registrar messenger]];
     
-    [eventChannel setStreamHandler:instance];
+    FlutterEventChannel* bookmarkEventChannel = [FlutterEventChannel eventChannelWithName:@"export_bookmark_event" binaryMessenger:[registrar messenger]];
+    
+    [xfdfEventChannel setStreamHandler:instance];
+    
+    [bookmarkEventChannel setStreamHandler:instance];
     
     DocumentViewFactory* documentViewFactory =
     [[DocumentViewFactory alloc] initWithMessenger:registrar.messenger];
@@ -434,6 +468,8 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
         [self handleOpenDocumentMethod:call.arguments resultToken:result];
     } else if ([@"importAnnotationCommand" isEqualToString:call.method]) {
         [self importAnnotationCommand:call.arguments];
+    } else if ([@"importBookmarkJson" isEqualToString:call.method]) {
+        [self importBookmarks:call.arguments];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -482,6 +518,44 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
 
     } error:&error];
 }
+
+-(void)importBookmarks:(NSDictionary*)bookmarkDict
+{
+    PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
+    
+    if( docVC == Nil && self.tabbedDocumentViewController.tabsEnabled == NO)
+    {
+        docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
+    }
+    
+    if( docVC.document == Nil )
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        return;
+    }
+    
+    NSError* error;
+    
+    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        if( [doc HasDownloader] )
+        {
+            // too soon
+            NSLog(@"Error: The document is still being downloaded.");
+            return;
+        }
+
+        [PTBookmarkManager.defaultManager importBookmarksForDoc:doc fromJSONString:bookmarkDict[@"bookmarkJson"]];
+
+
+    } error:&error];
+}
+
+-(void)docVC:(PTDocumentViewController*)docVC bookmarkChange:(NSString*)bookmarkJson
+{
+    self.bookmarkEventSink(bookmarkJson);
+}
+
 -(void)docVC:(PTDocumentViewController*)docVC annotationChange:(NSString*)xfdfCommand
 {
     self.xfdfEventSink(xfdfCommand);
@@ -489,7 +563,14 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
 
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events
 {
-     self.xfdfEventSink = events;
+    if( [arguments intValue] == exportAnnotationId )
+    {
+        self.xfdfEventSink = events;
+    }
+    else if( [arguments intValue] == exportBookmarkId )
+    {
+        self.bookmarkEventSink = events;
+    }
     
     return Nil;
 }

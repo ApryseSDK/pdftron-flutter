@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments;
 
 -(void)docVC:(PTDocumentViewController*)docVC annotationChange:(NSString*)xfdfCommand;
+-(void)docVC:(PTDocumentViewController*)docVC bookmarkChange:(NSString*)bookmarkJson;
 
 @end
 
