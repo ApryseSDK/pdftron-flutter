@@ -158,7 +158,11 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
         @"thumbnailSlider":
             ^{
                 documentViewController.thumbnailSliderHidden = YES;
-            }
+            },
+        @"saveCopyButton":
+            ^{
+                documentViewController.exportButtonHidden = YES;
+            },
     };
     
     for(NSObject* item in elementsToDisable)
