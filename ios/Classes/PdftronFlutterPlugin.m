@@ -20,16 +20,22 @@ const int exportBookmarkId = 2;
 - (void)bookmarkViewController:(PTBookmarkViewController *)bookmarkViewController didAddBookmark:(PTUserBookmark *)bookmark
 {
     [super bookmarkViewController:bookmarkViewController didAddBookmark:bookmark];
-    [self bookrmarkModified];
+    [self bookmarksModified];
 }
 
 - (void)bookmarkViewController:(PTBookmarkViewController *)bookmarkViewController didRemoveBookmark:(PTUserBookmark *)bookmark
 {
     [super bookmarkViewController:bookmarkViewController didRemoveBookmark:bookmark];
-    [self bookrmarkModified];
+    [self bookmarksModified];
 }
 
--(void)bookrmarkModified
+- (void)bookmarkViewController:(PTBookmarkViewController *)bookmarkViewController didModifyBookmark:(PTUserBookmark *)bookmark
+{
+    [super bookmarkViewController:bookmarkViewController didModifyBookmark:bookmark];
+    [self bookmarksModified];
+}
+
+-(void)bookmarksModified
 {
     __block NSString* json;
     NSError* error;
