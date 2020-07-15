@@ -273,6 +273,40 @@ config.customHeaders = {'headerName': 'headerValue'};
 PdftronFlutter.openDocument(_document, config: config);
 ```
 
+### PdftronFlutter.importAnnotationCommand(String)
+
+Imports XFDF command string to the document.
+The XFDF needs to be a valid command format with `<add>` `<modify>` `<delete>` tags.
+
+### PdftronFlutter.importBookmarkJson(String)
+
+Imports user bookmarks to the document.
+The input needs to be a valid bookmark JSON format, for example `{"0":"Page 1"}`.
+
+## Events
+
+### startExportAnnotationCommandListener
+
+Event is raised when local annotation changes committed to the document.
+
+```dart
+var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
+  // local annotation changed
+  // upload XFDF command to server here
+  print("flutter xfdfCommand: $xfdfCommand");
+});
+```
+
+### startExportBookmarkListener
+
+Event is raised when user bookmark changes committed to the document.
+
+```dart
+var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
+  print("flutter bookmark: ${bookmarkJson}");
+});
+```
+
 ## Contributing
 See [Contributing](./CONTRIBUTING.md)
 
