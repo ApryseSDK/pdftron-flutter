@@ -46,7 +46,10 @@ class _MyAppState extends State<MyApp> {
   }
 
 
-  void showViewer() {
+  void showViewer() async {
+    // opening without a config file will have all functionality enabled.
+    // await PdftronFlutter.openDocument(_document);
+
     // shows how to disale functionality
 //      var disabledElements = [Buttons.shareButton, Buttons.searchButton];
 //      var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
@@ -55,10 +58,41 @@ class _MyAppState extends State<MyApp> {
 //      config.disabledTools = disabledTools;
 //      config.multiTabEnabled = true;
 //      config.customHeaders = {'headerName': 'headerValue'};
-     PdftronFlutter.openDocument(_document, config: config);
+     await PdftronFlutter.openDocument(_document, config: config);
 
-    // opening without a config file will have all functionality enabled.
-    // PdftronFlutter.openDocument(_document);
+    try {
+      PdftronFlutter.importAnnotationCommand("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
+                "      <add>\n" +
+                "        <square style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20200619203211Z\" flags=\"print\" date=\"D:20200619203211Z\" name=\"c684da06-12d2-4ccd-9361-0a1bf2e089e3\" page=\"1\" rect=\"113.312,277.056,235.43,350.173\" title=\"\" />\n" +
+                "      </add>\n" +
+                "      <modify />\n" +
+                "      <delete />\n" +
+                "      <pdf-info import-version=\"3\" version=\"2\" xmlns=\"http://www.pdftron.com/pdfinfo\" />\n" +
+                "    </xfdf>");
+    } on PlatformException catch(e) {
+      print("Failed to importAnnotationCommand '${e.message}'.");
+    }
+
+    try {
+      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
+    } on PlatformException catch(e) {
+      print("Failed to importBookmarkJson '${e.message}'.");
+    }
+
+    var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
+      // local annotation changed
+      // upload XFDF command to server here
+      print("flutter xfdfCommand: $xfdfCommand");
+    });
+
+    var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
+      print("flutter bookmark: ${bookmarkJson}");
+    });
+
+    // to cancel event:
+    // annotCancel();
+    // bookmarkCancel();
   }
 
   @override

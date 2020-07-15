@@ -5,7 +5,7 @@
 
         <!-- Document viewer activity declaration-->
         <activity
-            android:name="com.pdftron.pdf.controls.DocumentActivity"
+            android:name=".FlutterDocumentActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize"
             android:theme="@style/CustomAppTheme"
             android:windowSoftInputMode="adjustPan" />

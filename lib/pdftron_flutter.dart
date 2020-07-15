@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 
 part 'options.dart';
 part 'document_view.dart';
+part 'events.dart';
 
 class PdftronFlutter {
   static const MethodChannel _channel = const MethodChannel('pdftron_flutter');
@@ -35,5 +36,13 @@ class PdftronFlutter {
       'password': password,
       'config': jsonEncode(config)
     });
+  }
+
+  static Future<void> importAnnotationCommand(String xfdfCommand) {
+    return _channel.invokeMethod('importAnnotationCommand', <String, dynamic>{'xfdfCommand': xfdfCommand});
+  }
+
+  static Future<void> importBookmarkJson(String bookmarkJson) {
+    return _channel.invokeMethod('importBookmarkJson', <String, dynamic>{'bookmarkJson': bookmarkJson});
   }
 }

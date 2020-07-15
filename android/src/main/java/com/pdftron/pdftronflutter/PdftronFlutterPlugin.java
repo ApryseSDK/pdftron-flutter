@@ -7,15 +7,17 @@ import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFNet;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
-import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdftronflutter.factories.DocumentViewFactory;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
+import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
@@ -44,8 +46,34 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
      * Plugin registration.
      */
     public static void registerWith(Registrar registrar) {
-        final MethodChannel channel = new MethodChannel(registrar.messenger(), "pdftron_flutter");
-        channel.setMethodCallHandler(new PdftronFlutterPlugin(registrar.activeContext()));
+        final MethodChannel methodChannel = new MethodChannel(registrar.messenger(), "pdftron_flutter");
+        methodChannel.setMethodCallHandler(new PdftronFlutterPlugin(registrar.activeContext()));
+
+        final EventChannel annotEventChannel = new EventChannel(registrar.messenger(), "export_annotation_command_event");
+        annotEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setExportAnnotationCommandEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setExportAnnotationCommandEventEmitter(null);
+            }
+        });
+
+        final EventChannel bookmarkEventChannel = new EventChannel(registrar.messenger(), "export_bookmark_event");
+        bookmarkEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setExportBookmarkEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setExportBookmarkEventEmitter(null);
+            }
+        });
 
         registrar.platformViewRegistry().registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(registrar.messenger(), registrar.activeContext()));
     }
@@ -69,6 +97,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 try {
                     String licenseKey = call.argument("licenseKey");
                     com.pdftron.pdf.utils.AppUtils.initializePDFNetApplication(mContext.getApplicationContext(), licenseKey);
+                    result.success(null);
                 } catch (PDFNetException e) {
                     e.printStackTrace();
                     result.error(Long.toString(e.getErrorCode()), "PDFTronException Error: " + e, null);
@@ -78,8 +107,35 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 String document = call.argument("document");
                 String password = call.argument("password");
                 String config = call.argument("config");
+                FlutterDocumentActivity.setFlutterLoadResult(result);
                 openDocument(document, password, config);
                 break;
+            case "importAnnotationCommand": {
+                FlutterDocumentActivity flutterDocumentActivity = FlutterDocumentActivity.getCurrentActivity();
+                Objects.requireNonNull(flutterDocumentActivity);
+                Objects.requireNonNull(flutterDocumentActivity.getPdfDoc());
+                String xfdfCommand = call.argument("xfdfCommand");
+                try {
+                    flutterDocumentActivity.importAnnotationCommand(xfdfCommand, result);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+                break;
+            }
+            case "importBookmarkJson": {
+                FlutterDocumentActivity flutterDocumentActivity = FlutterDocumentActivity.getCurrentActivity();
+                Objects.requireNonNull(flutterDocumentActivity);
+                Objects.requireNonNull(flutterDocumentActivity.getPdfDoc());
+                String bookmarkJson = call.argument("bookmarkJson");
+                try {
+                    flutterDocumentActivity.importBookmarkJson(bookmarkJson, result);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                    result.error(Integer.toString(ex.hashCode()), "JSONException Error: " + ex, null);
+                }
+                break;
+            }
             default:
                 result.notImplemented();
                 break;
@@ -127,6 +183,6 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
         builder = builder.toolManagerBuilder(toolManagerBuilder);
 
         final Uri fileLink = Uri.parse(document);
-        DocumentActivity.openDocument(mContext, fileLink, password, customHeaderJson, builder.build());
+        FlutterDocumentActivity.openDocument(mContext, fileLink, password, customHeaderJson, builder.build());
     }
 }
