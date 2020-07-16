@@ -100,13 +100,14 @@ public class FlutterDocumentActivity extends DocumentActivity {
     }
 
     @Override
-    public void onOpenDocError() {
+    public boolean onOpenDocError() {
         super.onOpenDocError();
 
         Result result = sFlutterLoadResult.getAndSet(null);
         if (result != null) {
             result.success(false);
         }
+        return false;
     }
 
     @Nullable
