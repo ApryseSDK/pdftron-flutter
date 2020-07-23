@@ -1,8 +1,10 @@
 import 'dart:async';
-import 'dart:io' show Platform;
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pdftron_flutter/pdftron_flutter.dart';
 
 void main() => runApp(MyApp());
@@ -14,7 +16,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _version = 'Unknown';
-  String _document = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
+  // String _document = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
+  String _document = "assets/getting_started.pdf";
 
   @override
   void initState() {
@@ -47,6 +50,17 @@ class _MyAppState extends State<MyApp> {
 
 
   void showViewer() async {
+    // extract asset file
+    final ByteData bytes = await DefaultAssetBundle.of(context).load(_document);
+    final Uint8List list = bytes.buffer.asUint8List();
+
+    final tempDir = await getTemporaryDirectory();
+    final tempDocumentPath = '${tempDir.path}/$_document';
+
+    final file = await new File(tempDocumentPath).create(recursive: true);
+    file.writeAsBytesSync(list);
+
+
     // opening without a config file will have all functionality enabled.
     // await PdftronFlutter.openDocument(_document);
 
@@ -58,27 +72,27 @@ class _MyAppState extends State<MyApp> {
 //      config.disabledTools = disabledTools;
 //      config.multiTabEnabled = true;
 //      config.customHeaders = {'headerName': 'headerValue'};
-     await PdftronFlutter.openDocument(_document, config: config);
+     await PdftronFlutter.openDocument(tempDocumentPath, config: config);
 
-    try {
-      PdftronFlutter.importAnnotationCommand("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
-                "      <add>\n" +
-                "        <square style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20200619203211Z\" flags=\"print\" date=\"D:20200619203211Z\" name=\"c684da06-12d2-4ccd-9361-0a1bf2e089e3\" page=\"1\" rect=\"113.312,277.056,235.43,350.173\" title=\"\" />\n" +
-                "      </add>\n" +
-                "      <modify />\n" +
-                "      <delete />\n" +
-                "      <pdf-info import-version=\"3\" version=\"2\" xmlns=\"http://www.pdftron.com/pdfinfo\" />\n" +
-                "    </xfdf>");
-    } on PlatformException catch(e) {
-      print("Failed to importAnnotationCommand '${e.message}'.");
-    }
+    // try {
+    //   PdftronFlutter.importAnnotationCommand("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+    //             "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
+    //             "      <add>\n" +
+    //             "        <square style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20200619203211Z\" flags=\"print\" date=\"D:20200619203211Z\" name=\"c684da06-12d2-4ccd-9361-0a1bf2e089e3\" page=\"1\" rect=\"113.312,277.056,235.43,350.173\" title=\"\" />\n" +
+    //             "      </add>\n" +
+    //             "      <modify />\n" +
+    //             "      <delete />\n" +
+    //             "      <pdf-info import-version=\"3\" version=\"2\" xmlns=\"http://www.pdftron.com/pdfinfo\" />\n" +
+    //             "    </xfdf>");
+    // } on PlatformException catch(e) {
+    //   print("Failed to importAnnotationCommand '${e.message}'.");
+    // }
 
-    try {
-      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
-    } on PlatformException catch(e) {
-      print("Failed to importBookmarkJson '${e.message}'.");
-    }
+    // try {
+    //   PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
+    // } on PlatformException catch(e) {
+    //   print("Failed to importBookmarkJson '${e.message}'.");
+    // }
 
     var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
       // local annotation changed
