@@ -45,4 +45,8 @@ class PdftronFlutter {
   static Future<void> importBookmarkJson(String bookmarkJson) {
     return _channel.invokeMethod('importBookmarkJson', <String, dynamic>{'bookmarkJson': bookmarkJson});
   }
+
+  static Future<String> saveDocument() async {
+    return _channel.invokeMethod('saveDocument');
+  }
 }
