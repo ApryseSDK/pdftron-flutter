@@ -283,6 +283,14 @@ The XFDF needs to be a valid command format with `<add>` `<modify>` `<delete>` t
 Imports user bookmarks to the document.
 The input needs to be a valid bookmark JSON format, for example `{"0":"Page 1"}`.
 
+### PdftronFlutter.saveDocument()
+
+Saves current opened document and returns the absolute path to the file.
+
+```dart
+var path = await PdftronFlutter.saveDocument();
+```
+
 ## Events
 
 ### startExportAnnotationCommandListener
