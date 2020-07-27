@@ -346,6 +346,17 @@ public class FlutterDocumentActivity extends DocumentActivity {
         result.success(null);
     }
 
+    public void saveDocument(Result result) {
+        if (getPdfViewCtrlTabFragment() != null) {
+            getPdfViewCtrlTabFragment().setSavingEnabled(true);
+            getPdfViewCtrlTabFragment().save(false, true, true);
+            // TODO if add auto save flag: getPdfViewCtrlTabFragment().setSavingEnabled(mAutoSaveEnabled);
+            result.success(getPdfViewCtrlTabFragment().getFilePath());
+            return;
+        }
+        result.error("InvalidState", "Activity not attached", null);
+    }
+
     // helper
     @Nullable
     private String generateXfdfCommand(ArrayList<Annot> added, ArrayList<Annot> modified, ArrayList<Annot> removed) throws PDFNetException {

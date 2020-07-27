@@ -90,6 +90,9 @@ class _MyAppState extends State<MyApp> {
       print("flutter bookmark: ${bookmarkJson}");
     });
 
+    var path = await PdftronFlutter.saveDocument();
+    print("flutter save: $path");
+
     // to cancel event:
     // annotCancel();
     // bookmarkCancel();

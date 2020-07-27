@@ -136,6 +136,13 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 }
                 break;
             }
+            case "saveDocument": {
+                FlutterDocumentActivity flutterDocumentActivity = FlutterDocumentActivity.getCurrentActivity();
+                Objects.requireNonNull(flutterDocumentActivity);
+                Objects.requireNonNull(flutterDocumentActivity.getPdfDoc());
+                flutterDocumentActivity.saveDocument(result);
+                break;
+            }
             default:
                 result.notImplemented();
                 break;
