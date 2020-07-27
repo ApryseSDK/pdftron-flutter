@@ -480,6 +480,8 @@ const int exportBookmarkId = 2;
         [self importAnnotationCommand:call.arguments];
     } else if ([@"importBookmarkJson" isEqualToString:call.method]) {
         [self importBookmarks:call.arguments];
+    } else if ([@"saveDocument" isEqualToString:call.method]) {
+        [self saveDocument:call.arguments resultToken:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -559,6 +561,64 @@ const int exportBookmarkId = 2;
 
 
     } error:&error];
+}
+
+-(void)saveDocument:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)result
+{
+    PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
+    
+    if( docVC == Nil && self.tabbedDocumentViewController.tabsEnabled == NO)
+    {
+        docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
+    }
+    
+    __block NSString* resultString;
+    
+    if( docVC.document == Nil )
+    {
+        resultString = @"Error: The document view controller has no document.";
+        
+        // something is wrong, no document.
+        NSLog(@"%@", resultString);
+        result(resultString);
+        
+        return;
+    }
+    
+    NSError* error;
+    
+    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        if( [doc HasDownloader] )
+        {
+            // too soon
+            resultString = @"Error: The document is still being downloaded and cannot be saved.";
+            NSLog(@"%@", resultString);
+            result(resultString);
+            return;
+        }
+
+        [docVC saveDocument:0 completionHandler:^(BOOL success) {
+            if(!success)
+            {
+                resultString = @"Error: The file could not be saved.";
+                NSLog(@"%@", resultString);
+                result(resultString);
+            }
+            else
+            {
+                resultString = @"The file was successfully saved.";
+                result(resultString);
+            }
+        }];
+
+
+    } error:&error];
+    
+    if( error )
+    {
+        NSLog(@"Error: There was an error while trying to save the document. %@", error.localizedDescription);
+    }
+    
 }
 
 -(void)docVC:(PTDocumentViewController*)docVC bookmarkChange:(NSString*)bookmarkJson
