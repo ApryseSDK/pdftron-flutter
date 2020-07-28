@@ -285,7 +285,7 @@ The input needs to be a valid bookmark JSON format, for example `{"0":"Page 1"}
 
 ### PdftronFlutter.saveDocument()
 
-Saves current opened document and returns the absolute path to the file.
+Saves the currently opened document in the viewer and returns the absolute path to the file. Must only be called when the document is opened in the viewer.
 
 ```dart
 var path = await PdftronFlutter.saveDocument();
