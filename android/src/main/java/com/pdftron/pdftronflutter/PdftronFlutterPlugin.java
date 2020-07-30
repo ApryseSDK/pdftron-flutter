@@ -34,6 +34,10 @@ import static com.pdftron.pdftronflutter.PluginUtils.multiTabEnabled;
  */
 public class PdftronFlutterPlugin implements MethodCallHandler {
 
+    private static final String EVENT_EXPORT_ANNOTATION_COMMAND = "export_annotation_command_event";
+    private static final String EVENT_EXPORT_BOOKMARK = "export_bookmark_event";
+    private static final String EVENT_DOCUMENT_LOADED = "document_loaded_event";
+
     private final Context mContext;
 
     private ArrayList<ToolManager.ToolMode> mDisabledTools = new ArrayList<>();
@@ -49,7 +53,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
         final MethodChannel methodChannel = new MethodChannel(registrar.messenger(), "pdftron_flutter");
         methodChannel.setMethodCallHandler(new PdftronFlutterPlugin(registrar.activeContext()));
 
-        final EventChannel annotEventChannel = new EventChannel(registrar.messenger(), "export_annotation_command_event");
+        final EventChannel annotEventChannel = new EventChannel(registrar.messenger(), EVENT_EXPORT_ANNOTATION_COMMAND);
         annotEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -62,7 +66,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
-        final EventChannel bookmarkEventChannel = new EventChannel(registrar.messenger(), "export_bookmark_event");
+        final EventChannel bookmarkEventChannel = new EventChannel(registrar.messenger(), EVENT_EXPORT_BOOKMARK);
         bookmarkEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -72,6 +76,19 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             @Override
             public void onCancel(Object arguments) {
                 FlutterDocumentActivity.setExportBookmarkEventEmitter(null);
+            }
+        });
+
+        final EventChannel documentLoadedEventChannel = new EventChannel(registrar.messenger(), EVENT_DOCUMENT_LOADED);
+        documentLoadedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setDocumentLoadedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setDocumentLoadedEventEmitter(null);
             }
         });
 
@@ -152,6 +169,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
     private void openDocument(String document, String password, String configStr) {
         ViewerConfig.Builder builder = new ViewerConfig.Builder()
                 .multiTabEnabled(false)
+                .saveCopyExportPath(mContext.getCacheDir().getAbsolutePath())
                 .openUrlCachePath(mContext.getCacheDir().getAbsolutePath());
 
         ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();

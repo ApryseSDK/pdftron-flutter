@@ -58,6 +58,11 @@ class _MyAppState extends State<MyApp> {
 //      config.disabledTools = disabledTools;
 //      config.multiTabEnabled = true;
 //      config.customHeaders = {'headerName': 'headerValue'};
+
+    var documentLoadedCancel = startDocumentLoadedListener((filePath) {
+      print("document loaded: $filePath");
+    });
+
      await PdftronFlutter.openDocument(_document, config: config);
 
     try {
@@ -87,7 +92,7 @@ class _MyAppState extends State<MyApp> {
     });
 
     var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
-      print("flutter bookmark: ${bookmarkJson}");
+      print("flutter bookmark: $bookmarkJson");
     });
 
     var path = await PdftronFlutter.saveDocument();
