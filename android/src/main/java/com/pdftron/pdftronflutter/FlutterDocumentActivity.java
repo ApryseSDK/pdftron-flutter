@@ -37,6 +37,7 @@ public class FlutterDocumentActivity extends DocumentActivity {
 
     private static AtomicReference<EventSink> sExportAnnotationCommandEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sExportBookmarkEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sDocumentLoadedEventEmitter = new AtomicReference<>();
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
         openDocument(packageContext, fileUri, password, customHeaders, config, DEFAULT_NAV_ICON_ID);
@@ -73,6 +74,10 @@ public class FlutterDocumentActivity extends DocumentActivity {
         sExportBookmarkEventEmitter.set(emitter);
     }
 
+    public static void setDocumentLoadedEventEmitter(EventSink emitter) {
+        sDocumentLoadedEventEmitter.set(emitter);
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +101,13 @@ public class FlutterDocumentActivity extends DocumentActivity {
         Result result = sFlutterLoadResult.getAndSet(null);
         if (result != null) {
             result.success(true);
+        }
+
+        if (getPdfViewCtrlTabFragment() != null) {
+            EventSink documentLoadedEventSink = sDocumentLoadedEventEmitter.get();
+            if (documentLoadedEventSink != null) {
+                documentLoadedEventSink.success(getPdfViewCtrlTabFragment().getFilePath());
+            }
         }
     }
 
