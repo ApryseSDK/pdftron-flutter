@@ -8,14 +8,47 @@ static NSString * const PTCustomHeadersKey = @"customHeaders";
 
 const int exportAnnotationId = 1;
 const int exportBookmarkId = 2;
-
+const int documentLoadedId = 3;
 
 @interface PTFlutterViewController : PTDocumentViewController
 @property (nonatomic, strong) FlutterResult openResult;
 @property (nonatomic, strong) PdftronFlutterPlugin* plugin;
+
+@property (nonatomic) BOOL local;
+@property (nonatomic) BOOL needsDocumentLoaded;
+@property (nonatomic) BOOL needsRemoteDocumentLoaded;
+@property (nonatomic) BOOL documentLoaded;
 @end
 
 @implementation PTFlutterViewController
+
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+
+    if (self.needsDocumentLoaded) {
+        self.needsDocumentLoaded = NO;
+        self.needsRemoteDocumentLoaded = NO;
+        self.documentLoaded = YES;
+
+        NSString *filePath = self.coordinatedDocument.fileURL.path;
+        [self.plugin docVC:self documentLoaded:filePath];
+    }
+}
+
+- (void)openDocumentWithURL:(NSURL *)url password:(NSString *)password
+{
+    if ([url isFileURL]) {
+        self.local = YES;
+    } else {
+        self.local = NO;
+    }
+    self.documentLoaded = NO;
+    self.needsDocumentLoaded = NO;
+    self.needsRemoteDocumentLoaded = NO;
+
+    [super openDocumentWithURL:url password:password];
+}
 
 - (void)bookmarkViewController:(PTBookmarkViewController *)bookmarkViewController didAddBookmark:(PTUserBookmark *)bookmark
 {
@@ -100,6 +133,32 @@ const int exportBookmarkId = 2;
     return Nil;
 }
 
+#pragma mark - <PTPDFViewCtrlDelegate>
+
+- (void)pdfViewCtrl:(PTPDFViewCtrl *)pdfViewCtrl onSetDoc:(PTPDFDoc *)doc
+{
+    [super pdfViewCtrl:pdfViewCtrl onSetDoc:doc];
+
+    if (self.local && !self.documentLoaded) {
+        self.needsDocumentLoaded = YES;
+    }
+    else if (!self.local && !self.documentLoaded && self.needsRemoteDocumentLoaded) {
+        self.needsDocumentLoaded = YES;
+    }
+    else if (!self.local && !self.documentLoaded && self.coordinatedDocument.fileURL) {
+        self.needsDocumentLoaded = YES;
+    }
+}
+
+- (void)pdfViewCtrl:(PTPDFViewCtrl *)pdfViewCtrl downloadEventType:(PTDownloadedType)type pageNumber:(int)pageNum message:(NSString *)message
+{
+    if (type == e_ptdownloadedtype_finished && !self.documentLoaded) {
+        self.needsRemoteDocumentLoaded = YES;
+    }
+
+    [super pdfViewCtrl:pdfViewCtrl downloadEventType:type pageNumber:pageNum message:message];
+}
+
 @end
 
 @interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate, PTDocumentViewControllerDelegate>
@@ -107,10 +166,15 @@ const int exportBookmarkId = 2;
 @property (nonatomic, strong) id config;
 @property (nonatomic, strong) FlutterEventSink xfdfEventSink;
 @property (nonatomic, strong) FlutterEventSink bookmarkEventSink;
+@property (nonatomic, strong) FlutterEventSink documentLoadedEventSink;
 
 @end
 
 @implementation PdftronFlutterPlugin
+
+static NSString * const EVENT_EXPORT_ANNOTATION_COMMAND = @"export_annotation_command_event";
+static NSString * const EVENT_EXPORT_BOOKMARK = @"export_bookmark_event";
+static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel* channel = [FlutterMethodChannel
@@ -122,14 +186,18 @@ const int exportBookmarkId = 2;
     PdftronFlutterPlugin* instance = [[PdftronFlutterPlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
     
-    FlutterEventChannel* xfdfEventChannel = [FlutterEventChannel eventChannelWithName:@"export_annotation_command_event" binaryMessenger:[registrar messenger]];
-    
-    FlutterEventChannel* bookmarkEventChannel = [FlutterEventChannel eventChannelWithName:@"export_bookmark_event" binaryMessenger:[registrar messenger]];
-    
+    FlutterEventChannel* xfdfEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_ANNOTATION_COMMAND binaryMessenger:[registrar messenger]];
+
+    FlutterEventChannel* bookmarkEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_BOOKMARK binaryMessenger:[registrar messenger]];
+
+    FlutterEventChannel* documentLoadedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_DOCUMENT_LOADED binaryMessenger:[registrar messenger]];
+
     [xfdfEventChannel setStreamHandler:instance];
     
     [bookmarkEventChannel setStreamHandler:instance];
     
+    [documentLoadedEventChannel setStreamHandler:instance];
+
     DocumentViewFactory* documentViewFactory =
     [[DocumentViewFactory alloc] initWithMessenger:registrar.messenger];
     [registrar registerViewFactory:documentViewFactory withId:@"pdftron_flutter/documentview"];
@@ -631,6 +699,11 @@ const int exportBookmarkId = 2;
     self.xfdfEventSink(xfdfCommand);
 }
 
+-(void)docVC:(PTDocumentViewController*)docVC documentLoaded:(NSString*)filePath
+{
+    self.documentLoadedEventSink(filePath);
+}
+
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events
 {
     if( [arguments intValue] == exportAnnotationId )
@@ -640,6 +713,10 @@ const int exportBookmarkId = 2;
     else if( [arguments intValue] == exportBookmarkId )
     {
         self.bookmarkEventSink = events;
+    }
+    else if( [arguments intValue] == documentLoadedId )
+    {
+        self.documentLoadedEventSink = events;
     }
     
     return Nil;

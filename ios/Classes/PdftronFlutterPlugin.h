@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(void)docVC:(PTDocumentViewController*)docVC annotationChange:(NSString*)xfdfCommand;
 -(void)docVC:(PTDocumentViewController*)docVC bookmarkChange:(NSString*)bookmarkJson;
+-(void)docVC:(PTDocumentViewController*)docVC documentLoaded:(NSString*)filePath;
 
 @end
 
