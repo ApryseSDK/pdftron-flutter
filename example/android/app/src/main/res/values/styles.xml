@@ -12,7 +12,11 @@
         <item name="colorAccent">#FFA153</item>
     </style>
 
-    <style name="CustomAppTheme" parent="AppTheme">
+    <style name="CustomAppTheme" parent="CustomAppThemeBase">
+        <item name="colorPrimary">#56607D</item>
+        <item name="colorPrimaryDark">#3D4763</item>
+        <item name="colorAccent">#FFA153</item>
+
         <item name="actionMenuTextColor">@android:color/white</item>
         <!-- Action bar -->
         <item name="actionModeBackground">?attr/colorPrimary</item>
