@@ -691,18 +691,28 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 
 -(void)docVC:(PTDocumentViewController*)docVC bookmarkChange:(NSString*)bookmarkJson
 {
-    self.bookmarkEventSink(bookmarkJson);
+    if( self.bookmarkEventSink != nil )
+    {
+        self.bookmarkEventSink(bookmarkJson);
+    }
 }
 
 -(void)docVC:(PTDocumentViewController*)docVC annotationChange:(NSString*)xfdfCommand
 {
-    self.xfdfEventSink(xfdfCommand);
+    if( self.xfdfEventSink != nil)
+    {
+        self.xfdfEventSink(xfdfCommand);
+    }
 }
 
 -(void)docVC:(PTDocumentViewController*)docVC documentLoaded:(NSString*)filePath
 {
-    self.documentLoadedEventSink(filePath);
+    if( self.documentLoadedEventSink != nil )
+    {
+        self.documentLoadedEventSink(filePath);
+    }
 }
+
 
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events
 {
