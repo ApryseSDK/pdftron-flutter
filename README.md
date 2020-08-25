@@ -105,7 +105,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
 	```diff
 	 # Uncomment this line to define a global platform for your project
 	-# platform :ios, '9.0'
-	+platform :ios, '9.3'
+	+platform :ios, '10.0'
 	...
 	 target 'Runner' do
 	   ...
