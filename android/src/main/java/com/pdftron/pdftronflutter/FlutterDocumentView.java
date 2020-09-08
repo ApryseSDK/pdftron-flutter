@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.view.View;
 
+import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
@@ -11,12 +12,14 @@ import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdftronflutter.views.DocumentView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodCall;
@@ -58,6 +61,36 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
                 String config = methodCall.argument("config");
                 openDocument(document, password, config);
                 break;
+            case "importAnnotationCommand": {
+                Objects.requireNonNull(documentView);
+                Objects.requireNonNull(documentView.getPdfDoc());
+                String xfdfCommand = methodCall.argument("xfdfCommand");
+                try {
+                    documentView.importAnnotationCommand(xfdfCommand, result);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+                break;
+            }
+            case "importBookmarkJson": {
+                Objects.requireNonNull(documentView);
+                Objects.requireNonNull(documentView.getPdfDoc());
+                String bookmarkJson = methodCall.argument("bookmarkJson");
+                try {
+                    documentView.importBookmarkJson(bookmarkJson, result);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                    result.error(Integer.toString(ex.hashCode()), "JSONException Error: " + ex, null);
+                }
+                break;
+            }
+            case "saveDocument": {
+                Objects.requireNonNull(documentView);
+                Objects.requireNonNull(documentView.getPdfDoc());
+                documentView.saveDocument(result);
+                break;
+            }
             default:
                 result.notImplemented();
                 break;

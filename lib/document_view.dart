@@ -3,10 +3,7 @@ part of pdftron;
 typedef void DocumentViewCreatedCallback(DocumentViewController controller);
 
 class DocumentView extends StatefulWidget {
-  const DocumentView({
-    Key key,
-    this.onCreated
-  }) : super(key: key);
+  const DocumentView({Key key, this.onCreated}) : super(key: key);
 
   final DocumentViewCreatedCallback onCreated;
 
@@ -45,12 +42,25 @@ class DocumentViewController {
 
   final MethodChannel _channel;
 
-  Future<void> openDocument(String document,
-      {String password, Config config}) {
+  Future<void> openDocument(String document, {String password, Config config}) {
     return _channel.invokeMethod('openDocument', <String, dynamic>{
       'document': document,
       'password': password,
       'config': jsonEncode(config)
     });
+  }
+
+  Future<void> importAnnotationCommand(String xfdfCommand) {
+    return _channel.invokeMethod('importAnnotationCommand',
+        <String, dynamic>{'xfdfCommand': xfdfCommand});
+  }
+
+  Future<void> importBookmarkJson(String bookmarkJson) {
+    return _channel.invokeMethod(
+        'importBookmarkJson', <String, dynamic>{'bookmarkJson': bookmarkJson});
+  }
+
+  Future<String> saveDocument() async {
+    return _channel.invokeMethod('saveDocument');
   }
 }
