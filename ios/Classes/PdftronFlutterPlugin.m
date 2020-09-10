@@ -567,7 +567,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 {
     PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
     
-    if( docVC == Nil && self.tabbedDocumentViewController.tabsEnabled == NO)
+    if( docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
     {
         docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
     }
@@ -603,7 +603,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 {
     PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
     
-    if( docVC == Nil && self.tabbedDocumentViewController.tabsEnabled == NO)
+    if( docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
     {
         docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
     }
@@ -635,7 +635,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 {
     PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
     
-    if( docVC == Nil && self.tabbedDocumentViewController.tabsEnabled == NO)
+    if( docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
     {
         docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
     }
