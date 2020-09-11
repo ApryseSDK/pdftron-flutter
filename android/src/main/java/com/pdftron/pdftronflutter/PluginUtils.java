@@ -15,6 +15,10 @@ public class PluginUtils {
     public static final String multiTabEnabled = "multiTabEnabled";
     public static final String customHeaders = "customHeaders";
 
+    public static final String EVENT_EXPORT_ANNOTATION_COMMAND = "export_annotation_command_event";
+    public static final String EVENT_EXPORT_BOOKMARK = "export_bookmark_event";
+    public static final String EVENT_DOCUMENT_LOADED = "document_loaded_event";
+
     public static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
         for (int i = 0; i < args.length(); i++) {
             String item = args.getString(i);

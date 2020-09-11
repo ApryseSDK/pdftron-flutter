@@ -59,7 +59,7 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
                 String document = methodCall.argument("document");
                 String password = methodCall.argument("password");
                 String config = methodCall.argument("config");
-                openDocument(document, password, config);
+                openDocument(result, document, password, config);
                 break;
             case "importAnnotationCommand": {
                 Objects.requireNonNull(documentView);
@@ -97,7 +97,7 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         }
     }
 
-    private void openDocument(String document, String password, String configStr) {
+    private void openDocument(MethodChannel.Result result, String document, String password, String configStr) {
         if (null == documentView) {
             return;
         }
@@ -147,6 +147,7 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         documentView.setPassword(password);
         documentView.setCustomHeaders(customHeaderJson);
         documentView.setViewerConfig(builder.build());
+        documentView.setFlutterLoadResult(result);
 
         ViewerBuilder viewerBuilder = ViewerBuilder.withUri(fileLink, password)
                 .usingCustomHeaders(customHeaderJson)
@@ -163,6 +164,8 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
                 }
             }
         }
+
+        documentView.attachListeners();
     }
 
     @Override

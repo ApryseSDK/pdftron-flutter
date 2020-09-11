@@ -11,6 +11,7 @@ import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
+import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.BookmarkManager;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView {
     private ToolManagerBuilder mToolManagerBuilder;
     private ViewerConfig.Builder mBuilder;
     private String mCacheDir;
+
+    private MethodChannel.Result flutterLoadResult;
 
     public DocumentView(@NonNull Context context) {
         this(context, null);
@@ -117,6 +120,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView {
         }
     }
 
+    public void setFlutterLoadResult(MethodChannel.Result flutterLoadResult) {
+        this.flutterLoadResult = flutterLoadResult;
+    }
+
     public void importBookmarkJson(String bookmarkJson, MethodChannel.Result result) throws JSONException {
         PDFViewCtrl pdfViewCtrl = getPdfViewCtrl();
         if (null == pdfViewCtrl || null == bookmarkJson) {
@@ -138,6 +145,21 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView {
         result.error("InvalidState", "Activity not attached", null);
     }
 
+    @Override
+    public void onTabDocumentLoaded(String tag) {
+        super.onTabDocumentLoaded(tag);
+
+        flutterLoadResult.success(true);
+    }
+
+    @Override
+    public boolean onOpenDocError() {
+        flutterLoadResult.success(false);
+        return false;
+    }
+
+
+    @Nullable
     public PdfViewCtrlTabFragment getPdfViewCtrlTabFragment() {
         if (mPdfViewCtrlTabHostFragment != null) {
             return mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment();
@@ -145,6 +167,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView {
         return null;
     }
 
+    @Nullable
     public PDFViewCtrl getPdfViewCtrl() {
         if (getPdfViewCtrlTabFragment() != null) {
             return getPdfViewCtrlTabFragment().getPDFViewCtrl();
@@ -152,10 +175,28 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView {
         return null;
     }
 
+    @Nullable
     public PDFDoc getPdfDoc() {
         if (getPdfViewCtrlTabFragment() != null) {
             return getPdfViewCtrlTabFragment().getPdfDoc();
         }
         return null;
+    }
+
+    @Nullable
+    public ToolManager getToolManager() {
+        if (getPdfViewCtrlTabFragment() != null) {
+            return getPdfViewCtrlTabFragment().getToolManager();
+        }
+        return null;
+    }
+
+    public void attachListeners() {
+        if (this.mPdfViewCtrlTabHostFragment != null) {
+            this.mPdfViewCtrlTabHostFragment.addHostListener(this);
+            if (this.mTabHostListener != null) {
+                this.mPdfViewCtrlTabHostFragment.addHostListener(this.mTabHostListener);
+            }
+        }
     }
 }

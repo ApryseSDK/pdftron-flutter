@@ -24,6 +24,10 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
+import static com.pdftron.pdftronflutter.PluginUtils.EVENT_EXPORT_ANNOTATION_COMMAND;
+import static com.pdftron.pdftronflutter.PluginUtils.EVENT_EXPORT_BOOKMARK;
+import static com.pdftron.pdftronflutter.PluginUtils.EVENT_DOCUMENT_LOADED;
+
 import static com.pdftron.pdftronflutter.PluginUtils.customHeaders;
 import static com.pdftron.pdftronflutter.PluginUtils.disabledElements;
 import static com.pdftron.pdftronflutter.PluginUtils.disabledTools;
@@ -33,10 +37,6 @@ import static com.pdftron.pdftronflutter.PluginUtils.multiTabEnabled;
  * PdftronFlutterPlugin
  */
 public class PdftronFlutterPlugin implements MethodCallHandler {
-
-    private static final String EVENT_EXPORT_ANNOTATION_COMMAND = "export_annotation_command_event";
-    private static final String EVENT_EXPORT_BOOKMARK = "export_bookmark_event";
-    private static final String EVENT_DOCUMENT_LOADED = "document_loaded_event";
 
     private final Context mContext;
 
@@ -206,7 +206,6 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
         }
 
         builder = builder.toolManagerBuilder(toolManagerBuilder);
-
         final Uri fileLink = Uri.parse(document);
         FlutterDocumentActivity.openDocument(mContext, fileLink, password, customHeaderJson, builder.build());
     }
