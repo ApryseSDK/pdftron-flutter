@@ -17,7 +17,7 @@ rootProject.allprojects {
         google()
         jcenter()
         maven {
-            url "https://pdftron-maven.s3.amazonaws.com/snapshot"
+            url "https://pdftron-maven.s3.amazonaws.com/release"
         }
     }
 }
