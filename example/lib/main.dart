@@ -21,7 +21,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     initPlatformState();
 
-    showViewer();
+    // showViewer();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -55,30 +55,64 @@ class _MyAppState extends State<MyApp> {
 //      config.disabledTools = disabledTools;
 //      config.multiTabEnabled = true;
 //      config.customHeaders = {'headerName': 'headerValue'};
-     PdftronFlutter.openDocument(_document, config: config);
+//      PdftronFlutter.openDocument(_document, config: config);
 
     // opening without a config file will have all functionality enabled.
     // PdftronFlutter.openDocument(_document);
   }
 
+  DocumentViewController _controller;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: SafeArea(
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            // child: DocumentView(
-            //   onCreated: _onDocumentViewCreated,
-            // ),
+        body: new Container(
+          child: new Center(
+            child: new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                new Column (
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget> [
+                    new FloatingActionButton(
+                      onPressed: loadDoc,
+                      child: new Icon(Icons.file_upload, color: Colors.black,),
+                      backgroundColor: Colors.white,),
+
+                    new FloatingActionButton(
+                      onPressed: loadDoc2,
+                      child: new Icon(Icons.file_download, color: Colors.black,),
+                      backgroundColor: Colors.white,),
+                  ],
+                ),
+
+                Container(
+                  width: 300,
+                  height: 500,
+                  child: DocumentView(
+                    onCreated: _onDocumentViewCreated,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
+  void loadDoc() {
+    _document = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
+    _controller.openDocument(_document);
+  }
+
+  void loadDoc2() {
+    _document = "http://pdftron.s3.amazonaws.com/downloads/pl/form.pdf";
+    _controller.openDocument(_document);
+  }
+
   void _onDocumentViewCreated(DocumentViewController controller) {
-    controller.openDocument(_document);
+    _controller = controller;
   }
 }
