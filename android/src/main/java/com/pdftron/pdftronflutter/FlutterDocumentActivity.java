@@ -12,6 +12,8 @@ import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.Page;
+import com.pdftron.pdf.Rect;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
@@ -29,6 +31,13 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.MethodChannel.Result;
+
+import static com.pdftron.pdftronflutter.PluginUtils.KEY_HEIGHT;
+import static com.pdftron.pdftronflutter.PluginUtils.KEY_WIDTH;
+import static com.pdftron.pdftronflutter.PluginUtils.KEY_X1;
+import static com.pdftron.pdftronflutter.PluginUtils.KEY_X2;
+import static com.pdftron.pdftronflutter.PluginUtils.KEY_Y1;
+import static com.pdftron.pdftronflutter.PluginUtils.KEY_Y2;
 
 public class FlutterDocumentActivity extends DocumentActivity {
 
@@ -369,6 +378,17 @@ public class FlutterDocumentActivity extends DocumentActivity {
         result.error("InvalidState", "Activity not attached", null);
     }
 
+    public void getPageCropBox(int pageNumber, Result result) throws PDFNetException, JSONException {
+        JSONObject jsonObject = new JSONObject();
+        Rect rect = getPdfDoc().getPage(pageNumber).getCropBox();
+        jsonObject.put(KEY_X1, rect.getX1());
+        jsonObject.put(KEY_Y1, rect.getY1());
+        jsonObject.put(KEY_X2, rect.getX2());
+        jsonObject.put(KEY_Y2, rect.getY2());
+        jsonObject.put(KEY_WIDTH, rect.getWidth());
+        jsonObject.put(KEY_HEIGHT, rect.getHeight());
+        result.success(jsonObject.toString());
+    }
     // helper
     @Nullable
     private String generateXfdfCommand(ArrayList<Annot> added, ArrayList<Annot> modified, ArrayList<Annot> removed) throws PDFNetException {

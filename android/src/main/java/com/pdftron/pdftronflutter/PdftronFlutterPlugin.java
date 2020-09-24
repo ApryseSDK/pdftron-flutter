@@ -160,6 +160,24 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 flutterDocumentActivity.saveDocument(result);
                 break;
             }
+            case "getPageCropBox": {
+                FlutterDocumentActivity flutterDocumentActivity = FlutterDocumentActivity.getCurrentActivity();
+                Objects.requireNonNull(flutterDocumentActivity);
+                Objects.requireNonNull(flutterDocumentActivity.getPdfDoc());
+
+                Integer pageNumber = call.argument("pageNumber");
+                if (pageNumber != null) {
+                    try {
+                        flutterDocumentActivity.getPageCropBox(pageNumber, result);
+                    } catch (JSONException ex) {
+                        ex.printStackTrace();
+                        result.error(Integer.toString(ex.hashCode()), "JSONException Error: " + ex, null);
+                    } catch (PDFNetException ex) {
+                        ex.printStackTrace();
+                        result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                    }
+                }
+            }
             default:
                 result.notImplemented();
                 break;

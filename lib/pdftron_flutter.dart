@@ -39,14 +39,28 @@ class PdftronFlutter {
   }
 
   static Future<void> importAnnotationCommand(String xfdfCommand) {
-    return _channel.invokeMethod('importAnnotationCommand', <String, dynamic>{'xfdfCommand': xfdfCommand});
+    return _channel.invokeMethod('importAnnotationCommand',
+        <String, dynamic>{'xfdfCommand': xfdfCommand});
   }
 
   static Future<void> importBookmarkJson(String bookmarkJson) {
-    return _channel.invokeMethod('importBookmarkJson', <String, dynamic>{'bookmarkJson': bookmarkJson});
+    return _channel.invokeMethod(
+        'importBookmarkJson', <String, dynamic>{'bookmarkJson': bookmarkJson});
   }
 
   static Future<String> saveDocument() async {
     return _channel.invokeMethod('saveDocument');
+  }
+
+  // static Future<dynamic> getPageCropBox(int pageNumber) async {
+  //   return _channel.invokeMethod('getPageCropBox', <String, dynamic>{
+  //     'pageNumber': pageNumber
+  //   }).then((value) => jsonDecode(value));
+  // }
+
+  static Future<dynamic> getPageCropBox(int pageNumber) {
+    return _channel.invokeMethod('getPageCropBox', <String, dynamic>{
+      'pageNumber': pageNumber
+    }).then((value) => jsonDecode(value));
   }
 }

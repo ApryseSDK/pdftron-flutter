@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 -(void)saveDocument:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)result;
 
+-(void)getPageCropBox:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)result;
+
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events;
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments;
 

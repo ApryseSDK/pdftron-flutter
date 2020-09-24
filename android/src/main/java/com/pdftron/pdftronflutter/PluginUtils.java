@@ -15,6 +15,15 @@ public class PluginUtils {
     public static final String multiTabEnabled = "multiTabEnabled";
     public static final String customHeaders = "customHeaders";
 
+    public static final String KEY_X1 = "x1";
+    public static final String KEY_Y1 = "y1";
+    public static final String KEY_X2 = "x2";
+    public static final String KEY_Y2 = "y2";
+    public static final String KEY_WIDTH = "width";
+    public static final String KEY_HEIGHT = "height";
+
+
+
     public static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
         for (int i = 0; i < args.length(); i++) {
             String item = args.getString(i);

@@ -550,6 +550,8 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
         [self importBookmarks:call.arguments];
     } else if ([@"saveDocument" isEqualToString:call.method]) {
         [self saveDocument:call.arguments resultToken:result];
+    } else if ([@"getPageCropBox" isEqualToString:call.method]) {
+        [self getPageCropBox:call.arguments resultToken:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -687,6 +689,57 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
         NSLog(@"Error: There was an error while trying to save the document. %@", error.localizedDescription);
     }
     
+}
+
+-(void)getPageCropBox:(NSDictionary<NSString *,id> *)arguments resultToken:(FlutterResult)result
+{
+    PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
+    
+    if( docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
+    {
+        docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
+    }
+    
+    if( docVC.document == Nil )
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        return;
+    }
+    
+    NSError* error;
+    
+    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        if([doc HasDownloader])
+        {
+            // too soon
+            NSLog(@"Error: The document is still being downloaded.");
+            return;
+        }
+        
+        PTPage *page = [doc GetPage:(int)arguments[@"result"]];
+        if (page) {
+            PTPDFRect *rect = [page GetCropBox];
+            NSDictionary<NSString *, NSNumber *> *map = @{
+                @"x1": @([rect GetX1]),
+                @"y1": @([rect GetY1]),
+                @"x2": @([rect GetX2]),
+                @"y2": @([rect GetY2]),
+                @"width": @([rect Width]),
+                @"height": @([rect Height]),
+            };
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:map options:0 error:nil];
+            NSString *res = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            
+            result(res);
+        }
+
+    } error:&error];
+    
+    if(error)
+    {
+        NSLog(@"Error: There was an error while trying to get the page crop box. %@", error.localizedDescription);
+    }
 }
 
 -(void)docVC:(PTDocumentViewController*)docVC bookmarkChange:(NSString*)bookmarkJson
