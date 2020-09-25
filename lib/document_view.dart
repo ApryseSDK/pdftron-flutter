@@ -43,30 +43,30 @@ class DocumentViewController {
   final MethodChannel _channel;
 
   Future<void> openDocument(String document, {String password, Config config}) {
-    return _channel.invokeMethod('openDocument', <String, dynamic>{
-      'document': document,
-      'password': password,
-      'config': jsonEncode(config)
+    return _channel.invokeMethod(Functions.openDocument, <String, dynamic>{
+      Parameters.document: document,
+      Parameters.password: password,
+      Parameters.config: jsonEncode(config)
     });
   }
 
   Future<void> importAnnotationCommand(String xfdfCommand) {
-    return _channel.invokeMethod('importAnnotationCommand',
-        <String, dynamic>{'xfdfCommand': xfdfCommand});
+    return _channel.invokeMethod(Functions.importAnnotationCommand,
+        <String, dynamic>{Parameters.xfdfCommand: xfdfCommand});
   }
 
   Future<void> importBookmarkJson(String bookmarkJson) {
-    return _channel.invokeMethod(
-        'importBookmarkJson', <String, dynamic>{'bookmarkJson': bookmarkJson});
+    return _channel.invokeMethod(Functions.importBookmarkJson,
+        <String, dynamic>{Parameters.bookmarkJson: bookmarkJson});
   }
 
   Future<String> saveDocument() async {
-    return _channel.invokeMethod('saveDocument');
+    return _channel.invokeMethod(Functions.saveDocument);
   }
 
   Future<dynamic> getPageCropBox(int pageNumber) {
-    return _channel.invokeMethod('getPageCropBox', <String, dynamic>{
-      'pageNumber': pageNumber
-    }).then((value) => jsonDecode(value));
+    return _channel.invokeMethod(Functions.getPageCropBox, <String, dynamic>{
+      Parameters.pageNumber: pageNumber
+    }).then((value) => CropBox.fromJson(jsonDecode(value)));
   }
 }

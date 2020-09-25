@@ -91,7 +91,7 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
                 documentView.saveDocument(result);
                 break;
             }
-            case "getPageCropBox":
+            case "getPageCropBox": {
                 Objects.requireNonNull(documentView);
                 Objects.requireNonNull(documentView.getPdfDoc());
 
@@ -108,6 +108,7 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
                     }
                 }
                 break;
+            }
             default:
                 result.notImplemented();
                 break;

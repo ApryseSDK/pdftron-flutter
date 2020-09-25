@@ -1,11 +1,6 @@
 #import "PdftronFlutterPlugin.h"
 #import "FlutterDocumentView.h"
 
-static NSString * const PTDisabledToolsKey = @"disabledTools";
-static NSString * const PTDisabledElementsKey = @"disabledElements";
-static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
-static NSString * const PTCustomHeadersKey = @"customHeaders";
-
 const int exportAnnotationId = 1;
 const int exportBookmarkId = 2;
 const int documentLoadedId = 3;
@@ -76,7 +71,7 @@ const int documentLoadedId = 3;
         json = [PTBookmarkManager.defaultManager exportBookmarksFromDoc:doc];
     } error:&error];
     
-    if( exceptionOccurred )
+    if(exceptionOccurred)
     {
         NSLog(@"Error: %@", error.description);
     }
@@ -107,7 +102,7 @@ const int documentLoadedId = 3;
     
     PTPDFDoc* pdfDoc = self.document;
     
-    if ( pdfDoc ) {
+    if (pdfDoc) {
         PTVectorAnnot* addedV = [[PTVectorAnnot alloc] init];
         for(PTAnnot* annot in added)
         {
@@ -213,87 +208,87 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
         if ([item isKindOfClass:[NSString class]]) {
             NSString *string = (NSString *)item;
             
-            if ([string isEqualToString:@"AnnotationEdit"]) {
+            if ([string isEqualToString:PTAnnotationEditToolKey]) {
                 // multi-select not implemented
             }
-            else if ([string isEqualToString:@"AnnotationCreateSticky"] ||
-                     [string isEqualToString:@"stickyToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreateStickyToolKey] ||
+                     [string isEqualToString:PTStickyToolButtonKey]) {
                 toolManager.textAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreateFreeHand"] ||
-                     [string isEqualToString:@"freeHandToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreateFreeHandToolKey] ||
+                     [string isEqualToString:PTFreeHandToolButtonKey]) {
                 toolManager.inkAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"TextSelect"]) {
+            else if ([string isEqualToString:PTTextSelectToolKey]) {
                 toolManager.textSelectionEnabled = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreateTextHighlight"] ||
-                     [string isEqualToString:@"highlightToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreateTextHighlightToolKey] ||
+                     [string isEqualToString:PTHighlightToolButtonKey]) {
                 toolManager.highlightAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreateTextUnderline"] ||
-                     [string isEqualToString:@"underlineToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreateTextUnderlineToolKey] ||
+                     [string isEqualToString:PTUnderlineToolButtonKey]) {
                 toolManager.underlineAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreateTextSquiggly"] ||
-                     [string isEqualToString:@"squigglyToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreateTextSquigglyToolKey] ||
+                     [string isEqualToString:PTSquigglyToolButtonKey]) {
                 toolManager.squigglyAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreateTextStrikeout"] ||
-                     [string isEqualToString:@"strikeoutToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreateTextStrikeoutToolKey] ||
+                     [string isEqualToString:PTStrikeoutToolButtonnKey]) {
                 toolManager.strikeOutAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreateFreeText"] ||
-                     [string isEqualToString:@"freeTextToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreateFreeTextToolKey] ||
+                     [string isEqualToString:PTFreeTextToolButtonKey]) {
                 toolManager.freeTextAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreateCallout"] ||
-                     [string isEqualToString:@"calloutToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreateCalloutToolKey] ||
+                     [string isEqualToString:PTCalloutToolButtonKey]) {
                 toolManager.calloutAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreateSignature"] ||
-                     [string isEqualToString:@"signatureToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreateSignatureToolKey] ||
+                     [string isEqualToString:PTSignatureToolButtonKey]) {
                 toolManager.signatureAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreateLine"] ||
-                     [string isEqualToString:@"lineToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreateLineToolKey] ||
+                     [string isEqualToString:PTLineToolButtonKey]) {
                 toolManager.lineAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreateArrow"] ||
-                     [string isEqualToString:@"arrowToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreateArrowToolKey] ||
+                     [string isEqualToString:PTArrowToolButtonKey]) {
                 toolManager.arrowAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreatePolyline"] ||
-                     [string isEqualToString:@"polylineToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreatePolylineToolKey] ||
+                     [string isEqualToString:PTPolylineToolButtonKey]) {
                 toolManager.polylineAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreateStamp"] ||
-                     [string isEqualToString:@"stampToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreateStampToolKey] ||
+                     [string isEqualToString:PTStampToolButtonKey]) {
                 toolManager.stampAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreateRectangle"] ||
-                     [string isEqualToString:@"rectangleToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreateRectangleToolKey] ||
+                     [string isEqualToString:PTRectangleToolButtonKey]) {
                 toolManager.squareAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreateEllipse"] ||
-                     [string isEqualToString:@"ellipseToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreateEllipseToolKey] ||
+                     [string isEqualToString:PTEllipseToolButtonKey]) {
                 toolManager.circleAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreatePolygon"] ||
-                     [string isEqualToString:@"polygonToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreatePolygonToolKey] ||
+                     [string isEqualToString:PTPolygonToolButtonKey]) {
                 toolManager.polygonAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreatePolygonCloud"] ||
-                     [string isEqualToString:@"cloudToolButton"])
+            else if ([string isEqualToString:PTAnnotationCreatePolygonCloudToolKey] ||
+                     [string isEqualToString:PTCloudToolButtonKey])
             {
                 toolManager.cloudyAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"AnnotationCreateFreeHighlighter"] ||
-                     [string isEqualToString:@"freeHighlighterToolButton"]) {
+            else if ([string isEqualToString:PTAnnotationCreateFreeHighlighterToolKey] ||
+                     [string isEqualToString:PTFreeHighlighterToolButtonKey]) {
                 toolManager.freehandHighlightAnnotationOptions.canCreate = value;
             }
-            else if ([string isEqualToString:@"Eraser"] ||
-                     [string isEqualToString:@"eraserToolButton"]) {
+            else if ([string isEqualToString:PTEraserToolKey] ||
+                     [string isEqualToString:PTEraserToolButtonKey]) {
                 toolManager.eraserEnabled = value;
             }
         }
@@ -305,38 +300,39 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     typedef void (^HideElementBlock)(void);
     
     NSDictionary *hideElementActions = @{
-        @"toolsButton":
+        PTToolsButtonKey:
             ^{
                 documentViewController.annotationToolbarButtonHidden = YES;
             },
-        @"searchButton":
+        PTSearchButtonKey:
             ^{
                 documentViewController.searchButtonHidden = YES;
             },
-        @"shareButton":
+        PTShareButtonKey:
             ^{
                 documentViewController.shareButtonHidden = YES;
             },
-        @"viewControlsButton":
+        PTViewControlsButtonKey:
             ^{
                 documentViewController.viewerSettingsButtonHidden = YES;
             },
-        @"thumbnailsButton":
+        PTThumbnailsButtonKey:
             ^{
                 documentViewController.thumbnailBrowserButtonHidden = YES;
             },
-        @"listsButton":
+        PTListsButtonKey:
             ^{
                 documentViewController.navigationListsButtonHidden = YES;
             },
-        @"reflowModeButton": ^{
+        PTReflowModeButtonKey:
+            ^{
             documentViewController.readerModeButtonHidden = YES;
-        },
-        @"thumbnailSlider":
+            },
+        PTThumbnailSliderKey:
             ^{
                 documentViewController.thumbnailSliderHidden = YES;
             },
-        @"saveCopyButton":
+        PTSaveCopyButtonKey:
             ^{
                 documentViewController.exportButtonHidden = YES;
             },
@@ -344,7 +340,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     
     for(NSObject* item in elementsToDisable)
     {
-        if( [item isKindOfClass:[NSString class]])
+        if([item isKindOfClass:[NSString class]])
         {
             HideElementBlock block = hideElementActions[item];
             if (block)
@@ -359,15 +355,15 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 
 + (void)configureTabbedDocumentViewController:(PTTabbedDocumentViewController*)tabbedDocumentViewController withConfig:(NSString*)config
 {
-    if( config && ![config isEqualToString:@"null"] )
+    if(config && ![config isEqualToString:@"null"])
     {
         //convert from json to dict
         NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
         id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
         
-        NSAssert( [foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format." );
+        NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
         
-        if( [foundationObject isKindOfClass:[NSDictionary class]] )
+        if([foundationObject isKindOfClass:[NSDictionary class]])
         {
             NSDictionary* configPairs = (NSDictionary*)foundationObject;
             
@@ -398,28 +394,28 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
     id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
     
-    NSAssert( [foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format." );
+    NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
     
-    if( [foundationObject isKindOfClass:[NSDictionary class]] )
+    if([foundationObject isKindOfClass:[NSDictionary class]])
     {
         //convert from json to dict
         NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
         id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
 
-        NSAssert( [foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format." );
+        NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
         
-        if( [foundationObject isKindOfClass:[NSDictionary class]] )
+        if([foundationObject isKindOfClass:[NSDictionary class]])
         {
             NSDictionary* configPairs = (NSDictionary*)foundationObject;
             
             for (NSString* key in configPairs.allKeys) {
-                if( [key isEqualToString:PTDisabledToolsKey] )
+                if([key isEqualToString:PTDisabledToolsKey])
                 {
                     id toolsToDisable = configPairs[PTDisabledToolsKey];
-                    if( ![toolsToDisable isEqual:[NSNull null]] )
+                    if(![toolsToDisable isEqual:[NSNull null]])
                     {
-                        NSAssert( [toolsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format." );
-                        if( [toolsToDisable isKindOfClass:[NSArray class]] )
+                        NSAssert([toolsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format.");
+                        if([toolsToDisable isKindOfClass:[NSArray class]])
                         {
                             [self disableTools:(NSArray*)toolsToDisable documentViewController:documentViewController];
                         }
@@ -429,14 +425,14 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
                         }
                     }
                 }
-                else if( [key isEqualToString:PTDisabledElementsKey] )
+                else if([key isEqualToString:PTDisabledElementsKey])
                 {
                     id elementsToDisable = configPairs[PTDisabledElementsKey];
                     
-                    if( ![elementsToDisable isEqual:[NSNull null]] )
+                    if(![elementsToDisable isEqual:[NSNull null]])
                     {
-                        NSAssert( [elementsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format." );
-                        if( [elementsToDisable isKindOfClass:[NSArray class]] )
+                        NSAssert([elementsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format.");
+                        if([elementsToDisable isKindOfClass:[NSArray class]])
                         {
                             [self disableElements:(NSArray*)elementsToDisable documentViewController:documentViewController];
                         }
@@ -460,7 +456,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
-                    NSAssert( false, @"Unknown JSON key in config." );
+                    NSAssert(false, @"Unknown JSON key in config.");
                 }
             }
         }
@@ -478,7 +474,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     
     // Get document argument.
     NSString *document = nil;
-    id documentValue = arguments[@"document"];
+    id documentValue = arguments[PTDocumentArgumentKey];
     if ([documentValue isKindOfClass:[NSString class]]) {
         document = (NSString *)documentValue;
     }
@@ -490,7 +486,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     
     // Get (optional) password argument.
     NSString *password = nil;
-    id passwordValue = arguments[@"password"];
+    id passwordValue = arguments[PTPasswordArgumentKey];
     if ([passwordValue isKindOfClass:[NSString class]]) {
         password = (NSString *)passwordValue;
     }
@@ -506,7 +502,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     
     self.tabbedDocumentViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
     
-    NSString* config = arguments[@"config"];
+    NSString* config = arguments[PTConfigArgumentKey];
     self.config = config;
     
     [[self class] configureTabbedDocumentViewController:self.tabbedDocumentViewController
@@ -535,22 +531,22 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-    if ([@"getPlatformVersion" isEqualToString:call.method]) {
+    if ([call.method isEqualToString:PTGetPlatformVersionKey]) {
         result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
-    } else if ([@"getVersion" isEqualToString:call.method]) {
+    } else if ([call.method isEqualToString:PTGetVersionKey]) {
         result([@"PDFNet " stringByAppendingFormat:@"%f", [PTPDFNet GetVersion]]);
-    } else if ([@"initialize" isEqualToString:call.method]) {
-        NSString *licenseKey = call.arguments[@"licenseKey"];
+    } else if ([call.method isEqualToString:PTInitializeKey]) {
+        NSString *licenseKey = call.arguments[PTLicenseArgumentKey];
         [PTPDFNet Initialize:licenseKey];
-    } else if ([@"openDocument" isEqualToString:call.method]) {
+    } else if ([call.method isEqualToString:PTOpenDocumentKey]) {
         [self handleOpenDocumentMethod:call.arguments resultToken:result];
-    } else if ([@"importAnnotationCommand" isEqualToString:call.method]) {
+    } else if ([call.method isEqualToString:PTImportAnnotationCommandKey]) {
         [self importAnnotationCommand:call.arguments];
-    } else if ([@"importBookmarkJson" isEqualToString:call.method]) {
+    } else if ([call.method isEqualToString:PTImportBookmarksKey]) {
         [self importBookmarks:call.arguments];
-    } else if ([@"saveDocument" isEqualToString:call.method]) {
+    } else if ([call.method isEqualToString:PTSaveDocumentKey]) {
         [self saveDocument:call.arguments resultToken:result];
-    } else if ([@"getPageCropBox" isEqualToString:call.method]) {
+    } else if ([call.method isEqualToString:PTGetPageCropBoxKey]) {
         [self getPageCropBox:call.arguments resultToken:result];
     } else {
         result(FlutterMethodNotImplemented);
@@ -569,12 +565,12 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 {
     PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
     
-    if( docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
+    if(docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
     {
         docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
     }
     
-    if( docVC.document == Nil )
+    if(docVC.document == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
@@ -584,7 +580,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     NSError* error;
     
     [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if( [doc HasDownloader] )
+        if([doc HasDownloader])
         {
             // too soon
             NSLog(@"Error: The document is still being downloaded.");
@@ -592,25 +588,29 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
         }
 
         PTFDFDoc* fdfDoc = [doc FDFExtract:e_ptboth];
-        [fdfDoc MergeAnnots:arguments[@"xfdfCommand"] permitted_user:@""];
+        [fdfDoc MergeAnnots:arguments[PTXfdfCommandArgumentKey] permitted_user:@""];
         [doc FDFUpdate:fdfDoc];
 
         [docVC.pdfViewCtrl Update:YES];
 
-
     } error:&error];
+    
+    if(error)
+    {
+        NSLog(@"Error: There was an error while trying to import annotation commands. %@", error.localizedDescription);
+    }
 }
 
 -(void)importBookmarks:(NSDictionary*)bookmarkDict
 {
     PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
     
-    if( docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
+    if(docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
     {
         docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
     }
     
-    if( docVC.document == Nil )
+    if(docVC.document == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
@@ -620,31 +620,35 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     NSError* error;
     
     [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if( [doc HasDownloader] )
+        if([doc HasDownloader])
         {
             // too soon
             NSLog(@"Error: The document is still being downloaded.");
             return;
         }
 
-        [PTBookmarkManager.defaultManager importBookmarksForDoc:doc fromJSONString:bookmarkDict[@"bookmarkJson"]];
-
+        [PTBookmarkManager.defaultManager importBookmarksForDoc:doc fromJSONString:bookmarkDict[PTBookmarkJsonArgumentKey]];
 
     } error:&error];
+    
+    if(error)
+    {
+        NSLog(@"Error: There was an error while trying to import bookmarks. %@", error.localizedDescription);
+    }
 }
 
 -(void)saveDocument:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)result
 {
     PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
     
-    if( docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
+    if(docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
     {
         docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
     }
     
     __block NSString* resultString;
     
-    if( docVC.document == Nil )
+    if(docVC.document == Nil)
     {
         resultString = @"Error: The document view controller has no document.";
         
@@ -658,7 +662,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     NSError* error;
     
     [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if( [doc HasDownloader] )
+        if([doc HasDownloader])
         {
             // too soon
             resultString = @"Error: The document is still being downloaded and cannot be saved.";
@@ -681,10 +685,9 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
             }
         }];
 
-
     } error:&error];
     
-    if( error )
+    if(error)
     {
         NSLog(@"Error: There was an error while trying to save the document. %@", error.localizedDescription);
     }
@@ -695,12 +698,12 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 {
     PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
     
-    if( docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
+    if(docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
     {
         docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
     }
     
-    if( docVC.document == Nil )
+    if(docVC.document == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
@@ -717,16 +720,16 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
             return;
         }
         
-        PTPage *page = [doc GetPage:(int)arguments[@"result"]];
+        PTPage *page = [doc GetPage:(int)arguments[PTPageNumberArgumentKey]];
         if (page) {
             PTPDFRect *rect = [page GetCropBox];
             NSDictionary<NSString *, NSNumber *> *map = @{
-                @"x1": @([rect GetX1]),
-                @"y1": @([rect GetY1]),
-                @"x2": @([rect GetX2]),
-                @"y2": @([rect GetY2]),
-                @"width": @([rect Width]),
-                @"height": @([rect Height]),
+                PTX1Key: @([rect GetX1]),
+                PTY1Key: @([rect GetY1]),
+                PTX2Key: @([rect GetX2]),
+                PTY2Key: @([rect GetY2]),
+                PTWidthKey: @([rect Width]),
+                PTHeightKey: @([rect Height]),
             };
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:map options:0 error:nil];
             NSString *res = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
@@ -744,7 +747,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 
 -(void)docVC:(PTDocumentViewController*)docVC bookmarkChange:(NSString*)bookmarkJson
 {
-    if( self.bookmarkEventSink != nil )
+    if(self.bookmarkEventSink != nil)
     {
         self.bookmarkEventSink(bookmarkJson);
     }
@@ -752,7 +755,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 
 -(void)docVC:(PTDocumentViewController*)docVC annotationChange:(NSString*)xfdfCommand
 {
-    if( self.xfdfEventSink != nil)
+    if(self.xfdfEventSink != nil)
     {
         self.xfdfEventSink(xfdfCommand);
     }
@@ -760,7 +763,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 
 -(void)docVC:(PTDocumentViewController*)docVC documentLoaded:(NSString*)filePath
 {
-    if( self.documentLoadedEventSink != nil )
+    if(self.documentLoadedEventSink != nil)
     {
         self.documentLoadedEventSink(filePath);
     }
@@ -769,15 +772,15 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events
 {
-    if( [arguments intValue] == exportAnnotationId )
+    if([arguments intValue] == exportAnnotationId)
     {
         self.xfdfEventSink = events;
     }
-    else if( [arguments intValue] == exportBookmarkId )
+    else if([arguments intValue] == exportBookmarkId)
     {
         self.bookmarkEventSink = events;
     }
-    else if( [arguments intValue] == documentLoadedId )
+    else if([arguments intValue] == documentLoadedId)
     {
         self.documentLoadedEventSink = events;
     }

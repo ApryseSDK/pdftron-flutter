@@ -1,5 +1,44 @@
 part of pdftron;
 
+class CropBox {
+  double x1, y1, x2, y2, width, height;
+  CropBox(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
+
+  factory CropBox.fromJson(dynamic json) {
+    return CropBox(getInt(json['x1']), getInt(json['y1']), getInt(json['x2']),
+        getInt(json['y2']), getInt(json['width']), getInt(json['height']));
+  }
+
+  static getInt(dynamic value) {
+    if (value is int) {
+      return value.toDouble();
+    } else {
+      return value;
+    }
+  }
+}
+
+class Functions {
+  static const getPlatformVersion = "getPlatformVersion";
+  static const getVersion = "getVersion";
+  static const initialize = "initialize";
+  static const openDocument = "openDocument";
+  static const importAnnotationCommand = "importAnnotationCommand";
+  static const importBookmarkJson = "importBookmarkJson";
+  static const saveDocument = "saveDocument";
+  static const getPageCropBox = "getPageCropBox";
+}
+
+class Parameters {
+  static const licenseKey = "licenseKey";
+  static const document = "document";
+  static const password = "password";
+  static const config = "config";
+  static const xfdfCommand = "xfdfCommand";
+  static const bookmarkJson = "bookmarkJson";
+  static const pageNumber = "pageNumber";
+}
+
 class Buttons {
   static const viewControlsButton = 'viewControlsButton';
   static const freeHandToolButton = 'freeHandToolButton';
@@ -53,40 +92,15 @@ class Tools {
   static const annotationCreateEllipse = 'AnnotationCreateEllipse';
   static const annotationCreatePolygon = 'AnnotationCreatePolygon';
   static const annotationCreatePolygonCloud = 'AnnotationCreatePolygonCloud';
-  static const annotationCreateDistanceMeasurement = 'AnnotationCreateDistanceMeasurement';
-  static const annotationCreatePerimeterMeasurement = 'AnnotationCreatePerimeterMeasurement';
-  static const annotationCreateAreaMeasurement = 'AnnotationCreateAreaMeasurement';
+  static const annotationCreateDistanceMeasurement =
+      'AnnotationCreateDistanceMeasurement';
+  static const annotationCreatePerimeterMeasurement =
+      'AnnotationCreatePerimeterMeasurement';
+  static const annotationCreateAreaMeasurement =
+      'AnnotationCreateAreaMeasurement';
   static const annotationCreateSound = 'AnnotationCreateSound';
-  static const annotationCreateFreeHighlighter = 'AnnotationCreateFreeHighlighter';
+  static const annotationCreateFreeHighlighter =
+      'AnnotationCreateFreeHighlighter';
   static const annotationCreateRubberStamp = 'AnnotationCreateRubberStamp';
   static const eraser = 'Eraser';
-}
-
-class Config {
-  var dElements;
-  var dTools;
-  var multiTab;
-  var mCustomHeaders;
-
-  Config();
-
-  set disabledElements(List value) => dElements = value;
-  set disabledTools(List value) => dTools = value;
-  set multiTabEnabled(bool value) => multiTab = value;
-  set customHeaders(Map<String, String> value) => mCustomHeaders = value;
-
-  Config.fromJson(Map<String, dynamic> json)
-      : dElements = json['disabledElements'],
-        dTools = json['disabledTools'],
-        multiTab = json['multiTabEnabled'],
-        mCustomHeaders = json['customHeaders'];
-
-  Map<String, dynamic> toJson() =>
-    {
-      'disabledElements': dElements,
-      'disabledTools': dTools,
-      'multiTabEnabled': multiTab,
-      'customHeaders': mCustomHeaders,
-    };
-
 }

@@ -177,6 +177,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                         result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
                     }
                 }
+                break;
             }
             default:
                 result.notImplemented();

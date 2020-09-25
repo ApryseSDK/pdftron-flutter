@@ -34,34 +34,29 @@
 @end
 
 @implementation FlutterDocumentView {
-    int64_t _viewId;
-    FlutterMethodChannel* _channel;
-    PTDocumentViewController* _documentViewController;
-    UINavigationController* _navigationController;
-    UITextView* _textView;
-    FlutterResult flutterResult;
+
 }
 
 - (instancetype)initWithWithFrame:(CGRect)frame viewIdentifier:(int64_t)viewId arguments:(id)args binaryMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
 {
     self = [super init];
     if (self) {
-        _viewId = viewId;
+        viewId = viewId;
         
         // Create a PTDocumentViewController
-        _documentViewController = [[PTDocumentViewController alloc] init];
+        self.documentViewController = [[PTDocumentViewController alloc] init];
         
         // The PTDocumentViewController must be in a navigation controller before a document can be opened
-        _navigationController = [[UINavigationController alloc] initWithRootViewController:_documentViewController];
+        self.navigationController = [[UINavigationController alloc] initWithRootViewController:self.documentViewController];
         
         UIViewController *parentController = UIApplication.sharedApplication.keyWindow.rootViewController;
-        [parentController addChildViewController:_navigationController];
-        [_navigationController didMoveToParentViewController:parentController];
+        [parentController addChildViewController:self.navigationController];
+        [self.navigationController didMoveToParentViewController:parentController];
                 
         NSString* channelName = [NSString stringWithFormat:@"pdftron_flutter/documentview_%lld", viewId];
-        _channel = [FlutterMethodChannel methodChannelWithName:channelName binaryMessenger:messenger];
+        self.channel = [FlutterMethodChannel methodChannelWithName:channelName binaryMessenger:messenger];
         __weak __typeof__(self) weakSelf = self;
-        [_channel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
+        [self.channel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
             __strong __typeof__(weakSelf) self = weakSelf;
             if (self) {
                 [self onMethodCall:call result:result];
@@ -74,7 +69,7 @@
 
 - (UIView *)view
 {
-    return _navigationController.view;
+    return self.navigationController.view;
 }
 
 static NSString * _Nullable PT_idAsNSString(id value)
@@ -95,25 +90,25 @@ static NSNumber * _Nullable PT_idAsNSNumber(id value)
 
 - (void)onMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result
 {
-    if ([call.method isEqualToString:@"openDocument"]) {
-        NSString *document = PT_idAsNSString(call.arguments[@"document"]);
-        NSString *password = PT_idAsNSString(call.arguments[@"password"]);
-        NSString *config = PT_idAsNSString(call.arguments[@"config"]);
+    if ([call.method isEqualToString:PTOpenDocumentKey]) {
+        NSString *document = PT_idAsNSString(call.arguments[PTDocumentArgumentKey]);
+        NSString *password = PT_idAsNSString(call.arguments[PTPasswordArgumentKey]);
+        NSString *config = PT_idAsNSString(call.arguments[PTConfigArgumentKey]);
         if ([config isEqualToString:@"null"]) {
             config = nil;
         }
         
         [self openDocument:document password:password config:config resultToken:result];
-    } else if ([call.method isEqualToString:@"importAnnotationCommand"]) {
-        NSString *xfdfCommand = PT_idAsNSString(call.arguments[@"xfdfCommand"]);
+    } else if ([call.method isEqualToString:PTImportAnnotationCommandKey]) {
+        NSString *xfdfCommand = PT_idAsNSString(call.arguments[PTXfdfCommandArgumentKey]);
         [self importAnnotationCommand:xfdfCommand];
-    } else if ([call.method isEqualToString:@"importBookmarkJson"]) {
-        NSString *bookmarkJson = PT_idAsNSString(call.arguments[@"bookmarkJson"]);
+    } else if ([call.method isEqualToString:PTImportBookmarksKey]) {
+        NSString *bookmarkJson = PT_idAsNSString(call.arguments[PTBookmarkJsonArgumentKey]);
         [self importBookmarks:bookmarkJson];
-    } else if ([call.method isEqualToString:@"saveDocument"]) {
+    } else if ([call.method isEqualToString:PTSaveDocumentKey]) {
         [self saveDocument:result];
-    } else if ([call.method isEqualToString:@"getPageCropBox"]) {
-        NSNumber *pageNumber = PT_idAsNSNumber(call.arguments[@"pageNumber"]);
+    } else if ([call.method isEqualToString:PTGetPageCropBoxKey]) {
+        NSNumber *pageNumber = PT_idAsNSNumber(call.arguments[PTPageNumberArgumentKey]);
         [self getPageCropBox:pageNumber resultToken:result];
     } else {
         result(FlutterMethodNotImplemented);
@@ -122,11 +117,11 @@ static NSNumber * _Nullable PT_idAsNSNumber(id value)
 
 - (void)openDocument:(NSString *)document password:(NSString *)password config:(NSString *)config resultToken:(FlutterResult)result
 {
-    if (!_documentViewController) {
+    if (!self.documentViewController) {
         return;
     }
     
-    [PdftronFlutterPlugin configureDocumentViewController:_documentViewController
+    [PdftronFlutterPlugin configureDocumentViewController:self.documentViewController
                                                withConfig:config];
     
     // Open a file URL.
@@ -137,15 +132,15 @@ static NSNumber * _Nullable PT_idAsNSNumber(id value)
         fileURL = [NSURL fileURLWithPath:document];
     }
     
-    _documentViewController.delegate = self;
-    flutterResult = result;
+    self.documentViewController.delegate = self;
+    self.flutterResult = result;
     
-    [_documentViewController openDocumentWithURL:fileURL password:password];
+    [self.documentViewController openDocumentWithURL:fileURL password:password];
 }
 
 - (void)importAnnotationCommand:(NSString *)xfdfCommand
 {
-    if(_documentViewController.document == Nil )
+    if(self.documentViewController.document == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
@@ -154,8 +149,8 @@ static NSNumber * _Nullable PT_idAsNSNumber(id value)
     
     NSError* error;
     
-    [_documentViewController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if( [doc HasDownloader] )
+    [self.documentViewController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        if([doc HasDownloader])
         {
             // too soon
             NSLog(@"Error: The document is still being downloaded.");
@@ -166,15 +161,19 @@ static NSNumber * _Nullable PT_idAsNSNumber(id value)
         [fdfDoc MergeAnnots:xfdfCommand permitted_user:@""];
         [doc FDFUpdate:fdfDoc];
 
-        [_documentViewController.pdfViewCtrl Update:YES];
-
+        [self.documentViewController.pdfViewCtrl Update:YES];
 
     } error:&error];
+    
+    if(error)
+    {
+        NSLog(@"Error: There was an error while trying to import annotaion commands. %@", error.localizedDescription);
+    }
 }
 
 -(void)importBookmarks:(NSString *)bookmarkJson
 {
-    if( _documentViewController.document == Nil )
+    if(self.documentViewController.document == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
@@ -183,8 +182,8 @@ static NSNumber * _Nullable PT_idAsNSNumber(id value)
     
     NSError* error;
     
-    [_documentViewController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if( [doc HasDownloader] )
+    [self.documentViewController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        if([doc HasDownloader])
         {
             // too soon
             NSLog(@"Error: The document is still being downloaded.");
@@ -193,15 +192,19 @@ static NSNumber * _Nullable PT_idAsNSNumber(id value)
 
         [PTBookmarkManager.defaultManager importBookmarksForDoc:doc fromJSONString:bookmarkJson];
 
-
     } error:&error];
+    
+    if(error)
+    {
+        NSLog(@"Error: There was an error while trying to import bookmarks. %@", error.localizedDescription);
+    }
 }
 
 -(void)saveDocument:(FlutterResult)result
 {
     __block NSString* resultString;
     
-    if( _documentViewController.document == Nil )
+    if(self.documentViewController.document == Nil)
     {
         resultString = @"Error: The document view controller has no document.";
         
@@ -214,8 +217,8 @@ static NSNumber * _Nullable PT_idAsNSNumber(id value)
     
     NSError* error;
     
-    [_documentViewController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if( [doc HasDownloader] )
+    [self.documentViewController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        if([doc HasDownloader])
         {
             // too soon
             resultString = @"Error: The document is still being downloaded and cannot be saved.";
@@ -224,7 +227,7 @@ static NSNumber * _Nullable PT_idAsNSNumber(id value)
             return;
         }
 
-        [_documentViewController saveDocument:0 completionHandler:^(BOOL success) {
+        [self.documentViewController saveDocument:0 completionHandler:^(BOOL success) {
             if(!success)
             {
                 resultString = @"Error: The file could not be saved.";
@@ -238,10 +241,9 @@ static NSNumber * _Nullable PT_idAsNSNumber(id value)
             }
         }];
 
-
     } error:&error];
     
-    if( error )
+    if(error)
     {
         NSLog(@"Error: There was an error while trying to save the document. %@", error.localizedDescription);
     }
@@ -251,7 +253,7 @@ static NSNumber * _Nullable PT_idAsNSNumber(id value)
     
     
     NSError *error;
-    [_documentViewController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+    [self.documentViewController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
         if([doc HasDownloader])
         {
             // too soon
@@ -263,12 +265,12 @@ static NSNumber * _Nullable PT_idAsNSNumber(id value)
         if (page) {
             PTPDFRect *rect = [page GetCropBox];
             NSDictionary<NSString *, NSNumber *> *map = @{
-                @"x1": @([rect GetX1]),
-                @"y1": @([rect GetY1]),
-                @"x2": @([rect GetX2]),
-                @"y2": @([rect GetY2]),
-                @"width": @([rect Width]),
-                @"height": @([rect Height]),
+                PTX1Key: @([rect GetX1]),
+                PTY1Key: @([rect GetY1]),
+                PTX2Key: @([rect GetX2]),
+                PTY2Key: @([rect GetY2]),
+                PTWidthKey: @([rect Width]),
+                PTHeightKey: @([rect Height]),
             };
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:map options:0 error:nil];
             NSString *res = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
@@ -277,18 +279,23 @@ static NSNumber * _Nullable PT_idAsNSNumber(id value)
         }
 
     } error:&error];
+    
+    if(error)
+    {
+        NSLog(@"Error: There was an error while trying to get the page crop box. %@", error.localizedDescription);
+    }
 }
 
 - (void)documentViewControllerDidOpenDocument:(PTDocumentViewController *)documentViewController
 {
     NSLog(@"Document opened successfully");
-    flutterResult(@"Opened Document Successfully");
+    self.flutterResult(@"Opened Document Successfully");
 }
 
 - (void)documentViewController:(PTDocumentViewController *)documentViewController didFailToOpenDocumentWithError:(NSError *)error
 {
     NSLog(@"Failed to open document: %@", error);
-    flutterResult([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
+    self.flutterResult([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
 }
 
 @end
