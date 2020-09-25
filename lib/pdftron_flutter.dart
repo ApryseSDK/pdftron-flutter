@@ -54,9 +54,9 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.saveDocument);
   }
 
-  static Future<CropBox> getPageCropBox(int pageNumber) {
+  static Future<PTRect> getPageCropBox(int pageNumber) {
     return _channel.invokeMethod(Functions.getPageCropBox, <String, dynamic>{
       Parameters.pageNumber: pageNumber
-    }).then((value) => CropBox.fromJson(jsonDecode(value)));
+    }).then((value) => PTRect.fromJson(jsonDecode(value)));
   }
 }

@@ -297,7 +297,7 @@ Return a map object with values for position (bottom-left: `x1`, `y1`; top-right
 
 ```dart
 var cropBox = await controller.getPageCropBox(1);
-print('The width of crop box for page 1 is: ' + cropBox['width'].toString());
+print('The width of crop box for page 1 is: ' + cropBox.width.toString());
 ```
 
 ## Events

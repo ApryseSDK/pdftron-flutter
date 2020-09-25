@@ -64,9 +64,9 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.saveDocument);
   }
 
-  Future<dynamic> getPageCropBox(int pageNumber) {
+  Future<PTRect> getPageCropBox(int pageNumber) {
     return _channel.invokeMethod(Functions.getPageCropBox, <String, dynamic>{
       Parameters.pageNumber: pageNumber
-    }).then((value) => CropBox.fromJson(jsonDecode(value)));
+    }).then((value) => PTRect.fromJson(jsonDecode(value)));
   }
 }

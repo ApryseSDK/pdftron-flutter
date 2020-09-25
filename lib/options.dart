@@ -1,11 +1,11 @@
 part of pdftron;
 
-class CropBox {
+class PTRect {
   double x1, y1, x2, y2, width, height;
-  CropBox(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
+  PTRect(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
 
-  factory CropBox.fromJson(dynamic json) {
-    return CropBox(getInt(json['x1']), getInt(json['y1']), getInt(json['x2']),
+  factory PTRect.fromJson(dynamic json) {
+    return PTRect(getInt(json['x1']), getInt(json['y1']), getInt(json['x2']),
         getInt(json['y2']), getInt(json['width']), getInt(json['height']));
   }
 

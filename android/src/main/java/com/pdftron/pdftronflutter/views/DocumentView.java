@@ -22,7 +22,6 @@ import androidx.annotation.Nullable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
 import static com.pdftron.pdftronflutter.PluginUtils.KEY_HEIGHT;
@@ -106,6 +105,16 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView {
         if (flutterLoadResult != null) {
             flutterLoadResult.success(true);
         }
+    }
+
+    @Override
+    public boolean onOpenDocError() {
+        super.onOpenDocError();
+
+        if (flutterLoadResult != null) {
+            flutterLoadResult.success(false);
+        }
+        return false;
     }
 
     public void setFlutterLoadResult(MethodChannel.Result result) {
