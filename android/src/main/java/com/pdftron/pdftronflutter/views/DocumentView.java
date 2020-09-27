@@ -4,40 +4,34 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
-import com.pdftron.common.PDFNetException;
-import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
-import com.pdftron.pdf.Rect;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.ToolManager;
-import com.pdftron.pdf.utils.BookmarkManager;
+import com.pdftron.pdftronflutter.ViewActivityComponent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
-import static com.pdftron.pdftronflutter.PluginUtils.KEY_HEIGHT;
-import static com.pdftron.pdftronflutter.PluginUtils.KEY_WIDTH;
-import static com.pdftron.pdftronflutter.PluginUtils.KEY_X1;
-import static com.pdftron.pdftronflutter.PluginUtils.KEY_X2;
-import static com.pdftron.pdftronflutter.PluginUtils.KEY_Y1;
-import static com.pdftron.pdftronflutter.PluginUtils.KEY_Y2;
+import static com.pdftron.pdftronflutter.PluginUtils.*;
 
-public class DocumentView extends com.pdftron.pdf.controls.DocumentView {
+public class DocumentView extends com.pdftron.pdf.controls.DocumentView implements ViewActivityComponent {
 
     private ToolManagerBuilder mToolManagerBuilder;
     private ViewerConfig.Builder mBuilder;
     private String mCacheDir;
 
-    private MethodChannel.Result flutterLoadResult;
+    private EventChannel.EventSink sExportAnnotationCommandEventEmitter;
+    private EventChannel.EventSink sExportBookmarkEventEmitter;
+    private EventChannel.EventSink sDocumentLoadedEventEmitter;
+
+    private MethodChannel.Result sFlutterLoadResult;
 
     public DocumentView(@NonNull Context context) {
         this(context, null);
@@ -102,101 +96,50 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView {
     public void onTabDocumentLoaded(String tag) {
         super.onTabDocumentLoaded(tag);
 
-        if (flutterLoadResult != null) {
-            flutterLoadResult.success(true);
-        }
+        handleDocumentLoaded(this);
     }
 
     @Override
     public boolean onOpenDocError() {
         super.onOpenDocError();
 
-        if (flutterLoadResult != null) {
-            flutterLoadResult.success(false);
-        }
-        return false;
+        return handleOpenDocError(this);
+    }
+
+    public void setExportAnnotationCommandEventEmitter(EventChannel.EventSink emitter) {
+        sExportAnnotationCommandEventEmitter = emitter;
+    }
+
+    public void setExportBookmarkEventEmitter(EventChannel.EventSink emitter) {
+        sExportBookmarkEventEmitter = emitter;
+    }
+
+    public void setDocumentLoadedEventEmitter(EventChannel.EventSink emitter) {
+        sDocumentLoadedEventEmitter = emitter;
     }
 
     public void setFlutterLoadResult(MethodChannel.Result result) {
-        flutterLoadResult = result;
+        sFlutterLoadResult = result;
     }
 
-    // methods
-    public void importAnnotationCommand(String xfdfCommand, MethodChannel.Result result) throws PDFNetException {
-        PDFViewCtrl pdfViewCtrl = getPdfViewCtrl();
-        PDFDoc pdfDoc = getPdfDoc();
-        if (null == pdfViewCtrl || null == pdfDoc || null == xfdfCommand) {
-            result.error("InvalidState", "Activity not attached", null);
-            return;
-        }
-        boolean shouldUnlockRead = false;
-        try {
-            pdfViewCtrl.docLockRead();
-            shouldUnlockRead = true;
-
-            if (pdfDoc.hasDownloader()) {
-                // still downloading file, let's wait for next call
-                result.error("InvalidState", "Document download in progress, try again later", null);
-                return;
-            }
-        } finally {
-            if (shouldUnlockRead) {
-                pdfViewCtrl.docUnlockRead();
-            }
-        }
-
-        boolean shouldUnlock = false;
-        try {
-            pdfViewCtrl.docLock(true);
-            shouldUnlock = true;
-
-            FDFDoc fdfDoc = pdfDoc.fdfExtract(PDFDoc.e_both);
-            fdfDoc.mergeAnnots(xfdfCommand);
-
-            pdfDoc.fdfUpdate(fdfDoc);
-            pdfViewCtrl.update(true);
-            result.success(null);
-        } finally {
-            if (shouldUnlock) {
-                pdfViewCtrl.docUnlock();
-            }
-        }
+    public EventChannel.EventSink getExportAnnotationCommandEventEmitter() {
+        return sExportAnnotationCommandEventEmitter;
     }
 
-    public void importBookmarkJson(String bookmarkJson, MethodChannel.Result result) throws JSONException {
-        PDFViewCtrl pdfViewCtrl = getPdfViewCtrl();
-        if (null == pdfViewCtrl || null == bookmarkJson) {
-            result.error("InvalidState", "Activity not attached", null);
-            return;
-        }
-        BookmarkManager.importPdfBookmarks(pdfViewCtrl, bookmarkJson);
-        result.success(null);
+    public EventChannel.EventSink getExportBookmarkEventEmitter() {
+        return sExportBookmarkEventEmitter;
     }
 
-    public void saveDocument(MethodChannel.Result result) {
-        if (getPdfViewCtrlTabFragment() != null) {
-            getPdfViewCtrlTabFragment().setSavingEnabled(true);
-            getPdfViewCtrlTabFragment().save(false, true, true);
-            // TODO if add auto save flag: getPdfViewCtrlTabFragment().setSavingEnabled(mAutoSaveEnabled);
-            result.success(getPdfViewCtrlTabFragment().getFilePath());
-            return;
-        }
-        result.error("InvalidState", "Activity not attached", null);
+    public EventChannel.EventSink getDocumentLoadedEventEmitter() {
+        return sDocumentLoadedEventEmitter;
     }
 
-    public void getPageCropBox(int pageNumber, MethodChannel.Result result) throws PDFNetException, JSONException {
-        JSONObject jsonObject = new JSONObject();
-        Rect rect = getPdfDoc().getPage(pageNumber).getCropBox();
-        jsonObject.put(KEY_X1, rect.getX1());
-        jsonObject.put(KEY_Y1, rect.getY1());
-        jsonObject.put(KEY_X2, rect.getX2());
-        jsonObject.put(KEY_Y2, rect.getY2());
-        jsonObject.put(KEY_WIDTH, rect.getWidth());
-        jsonObject.put(KEY_HEIGHT, rect.getHeight());
-        result.success(jsonObject.toString());
+    public MethodChannel.Result getFlutterLoadResult() {
+        return sFlutterLoadResult;
     }
 
-    // convenience
+    // Convenience
+
     @Nullable
     public PdfViewCtrlTabHostFragment getPdfViewCtrlTabHostFragment() {
         return mPdfViewCtrlTabHostFragment;

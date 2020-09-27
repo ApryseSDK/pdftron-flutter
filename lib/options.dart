@@ -9,6 +9,7 @@ class PTRect {
         getInt(json['y2']), getInt(json['width']), getInt(json['height']));
   }
 
+  // a helper for JSON number decoding
   static getInt(dynamic value) {
     if (value is int) {
       return value.toDouble();
