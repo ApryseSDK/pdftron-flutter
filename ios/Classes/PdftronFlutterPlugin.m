@@ -1,5 +1,6 @@
 #import "PdftronFlutterPlugin.h"
 #import "FlutterDocumentView.h"
+#import "PluginUtils.h"
 
 const int exportAnnotationId = 1;
 const int exportBookmarkId = 2;
@@ -530,26 +531,28 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     [presentingViewController presentViewController:navigationController animated:YES completion:nil];
 }
 
+- (PTDocumentViewController *)getDocumentviewController {
+    PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
+    
+    if(docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
+    {
+        docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
+    }
+    return docVC;
+}
+
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if ([call.method isEqualToString:PTGetPlatformVersionKey]) {
         result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
     } else if ([call.method isEqualToString:PTGetVersionKey]) {
         result([@"PDFNet " stringByAppendingFormat:@"%f", [PTPDFNet GetVersion]]);
     } else if ([call.method isEqualToString:PTInitializeKey]) {
-        NSString *licenseKey = call.arguments[PTLicenseArgumentKey];
+        NSString *licenseKey = [PluginUtils PT_idAsNSString:call.arguments[PTLicenseArgumentKey]];
         [PTPDFNet Initialize:licenseKey];
     } else if ([call.method isEqualToString:PTOpenDocumentKey]) {
         [self handleOpenDocumentMethod:call.arguments resultToken:result];
-    } else if ([call.method isEqualToString:PTImportAnnotationCommandKey]) {
-        [self importAnnotationCommand:call.arguments];
-    } else if ([call.method isEqualToString:PTImportBookmarksKey]) {
-        [self importBookmarks:call.arguments];
-    } else if ([call.method isEqualToString:PTSaveDocumentKey]) {
-        [self saveDocument:call.arguments resultToken:result];
-    } else if ([call.method isEqualToString:PTGetPageCropBoxKey]) {
-        [self getPageCropBox:call.arguments resultToken:result];
     } else {
-        result(FlutterMethodNotImplemented);
+        [PluginUtils handleMethodCall:call result:result documentViewController:[self getDocumentviewController]];
     }
 }
 
@@ -559,189 +562,6 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
         [self.tabbedDocumentViewController dismissViewControllerAnimated:YES completion:nil];
     } else {
         [UIApplication.sharedApplication.keyWindow.rootViewController.presentedViewController dismissViewControllerAnimated:YES completion:Nil];
-    }
-}
-- (void)importAnnotationCommand:(NSDictionary<NSString *, id> *)arguments
-{
-    PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
-    
-    if(docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
-    {
-        docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
-    }
-    
-    if(docVC.document == Nil)
-    {
-        // something is wrong, no document.
-        NSLog(@"Error: The document view controller has no document.");
-        return;
-    }
-    
-    NSError* error;
-    
-    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if([doc HasDownloader])
-        {
-            // too soon
-            NSLog(@"Error: The document is still being downloaded.");
-            return;
-        }
-
-        PTFDFDoc* fdfDoc = [doc FDFExtract:e_ptboth];
-        [fdfDoc MergeAnnots:arguments[PTXfdfCommandArgumentKey] permitted_user:@""];
-        [doc FDFUpdate:fdfDoc];
-
-        [docVC.pdfViewCtrl Update:YES];
-
-    } error:&error];
-    
-    if(error)
-    {
-        NSLog(@"Error: There was an error while trying to import annotation commands. %@", error.localizedDescription);
-    }
-}
-
--(void)importBookmarks:(NSDictionary*)bookmarkDict
-{
-    PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
-    
-    if(docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
-    {
-        docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
-    }
-    
-    if(docVC.document == Nil)
-    {
-        // something is wrong, no document.
-        NSLog(@"Error: The document view controller has no document.");
-        return;
-    }
-    
-    NSError* error;
-    
-    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if([doc HasDownloader])
-        {
-            // too soon
-            NSLog(@"Error: The document is still being downloaded.");
-            return;
-        }
-
-        [PTBookmarkManager.defaultManager importBookmarksForDoc:doc fromJSONString:bookmarkDict[PTBookmarkJsonArgumentKey]];
-
-    } error:&error];
-    
-    if(error)
-    {
-        NSLog(@"Error: There was an error while trying to import bookmarks. %@", error.localizedDescription);
-    }
-}
-
--(void)saveDocument:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)result
-{
-    PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
-    
-    if(docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
-    {
-        docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
-    }
-    
-    __block NSString* resultString;
-    
-    if(docVC.document == Nil)
-    {
-        resultString = @"Error: The document view controller has no document.";
-        
-        // something is wrong, no document.
-        NSLog(@"%@", resultString);
-        result(resultString);
-        
-        return;
-    }
-    
-    NSError* error;
-    
-    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if([doc HasDownloader])
-        {
-            // too soon
-            resultString = @"Error: The document is still being downloaded and cannot be saved.";
-            NSLog(@"%@", resultString);
-            result(resultString);
-            return;
-        }
-
-        [docVC saveDocument:0 completionHandler:^(BOOL success) {
-            if(!success)
-            {
-                resultString = @"Error: The file could not be saved.";
-                NSLog(@"%@", resultString);
-                result(resultString);
-            }
-            else
-            {
-                resultString = @"The file was successfully saved.";
-                result(resultString);
-            }
-        }];
-
-    } error:&error];
-    
-    if(error)
-    {
-        NSLog(@"Error: There was an error while trying to save the document. %@", error.localizedDescription);
-    }
-    
-}
-
--(void)getPageCropBox:(NSDictionary<NSString *,id> *)arguments resultToken:(FlutterResult)result
-{
-    PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
-    
-    if(docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
-    {
-        docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
-    }
-    
-    if(docVC.document == Nil)
-    {
-        // something is wrong, no document.
-        NSLog(@"Error: The document view controller has no document.");
-        return;
-    }
-    
-    NSError* error;
-    
-    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if([doc HasDownloader])
-        {
-            // too soon
-            NSLog(@"Error: The document is still being downloaded.");
-            return;
-        }
-        
-        PTPage *page = [doc GetPage:(int)arguments[PTPageNumberArgumentKey]];
-        if (page) {
-            PTPDFRect *rect = [page GetCropBox];
-            NSDictionary<NSString *, NSNumber *> *map = @{
-                PTX1Key: @([rect GetX1]),
-                PTY1Key: @([rect GetY1]),
-                PTX2Key: @([rect GetX2]),
-                PTY2Key: @([rect GetY2]),
-                PTWidthKey: @([rect Width]),
-                PTHeightKey: @([rect Height]),
-            };
-            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:map options:0 error:nil];
-            NSString *res = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-            
-            result(res);
-        }
-
-    } error:&error];
-    
-    if(error)
-    {
-        NSLog(@"Error: There was an error while trying to get the page crop box. %@", error.localizedDescription);
     }
 }
 
