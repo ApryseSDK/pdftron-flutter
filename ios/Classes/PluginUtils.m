@@ -4,7 +4,7 @@
 
 @implementation PluginUtils
 
-+(NSString *)PT_idAsNSString:(id)value
++ (NSString *)PT_idAsNSString:(id)value
 {
     if ([value isKindOfClass:[NSString class]]) {
         return (NSString *)value;
@@ -12,7 +12,7 @@
     return nil;
 }
 
-+(NSNumber *)PT_idAsNSNumber:(id)value
++ (NSNumber *)PT_idAsNSNumber:(id)value
 {
     if ([value isKindOfClass:[NSNumber class]]) {
         return (NSNumber *)value;
@@ -20,7 +20,7 @@
     return nil;
 }
 
-+(void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result documentViewController:(PTDocumentViewController *)docVC
++ (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result documentViewController:(PTDocumentViewController *)docVC
 {
     if ([call.method isEqualToString:PTImportAnnotationCommandKey]) {
         NSString *xfdfCommand = [PluginUtils PT_idAsNSString:call.arguments[PTXfdfCommandArgumentKey]];
@@ -39,7 +39,7 @@
 }
 
 
-+(void)importAnnotationCommand:(NSString *)xfdfCommand documentViewController:(PTDocumentViewController *)docVC
++ (void)importAnnotationCommand:(NSString *)xfdfCommand documentViewController:(PTDocumentViewController *)docVC
 {
     if(docVC.document == Nil)
     {
@@ -72,7 +72,7 @@
     }
 }
 
-+(void)importBookmarks:(NSString *)bookmarkJson documentViewController:(PTDocumentViewController *)docVC
++ (void)importBookmarks:(NSString *)bookmarkJson documentViewController:(PTDocumentViewController *)docVC
 {
     if(docVC.document == Nil)
     {
@@ -101,7 +101,7 @@
     }
 }
 
-+(void)saveDocument:(FlutterResult)flutterResult documentViewController:(PTDocumentViewController *)docVC
++ (void)saveDocument:(FlutterResult)flutterResult documentViewController:(PTDocumentViewController *)docVC
 {
     __block NSString* resultString;
 
@@ -150,7 +150,7 @@
     }
 }
 
-+(void)getPageCropBox:(NSNumber *)pageNumber resultToken:(FlutterResult)result documentViewController:(PTDocumentViewController *)docVC
++ (void)getPageCropBox:(NSNumber *)pageNumber resultToken:(FlutterResult)result documentViewController:(PTDocumentViewController *)docVC
 {
     NSError *error;
     [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {

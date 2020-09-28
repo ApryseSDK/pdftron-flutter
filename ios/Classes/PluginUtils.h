@@ -90,8 +90,8 @@ static NSString * const PTHeightKey = @"height";
 
 @interface PluginUtils : NSObject
 
-+(NSString *)PT_idAsNSString:(id)value;
-+(NSNumber *)PT_idAsNSNumber:(id)value;
++ (NSString *)PT_idAsNSString:(id)value;
++ (NSNumber *)PT_idAsNSNumber:(id)value;
 
-+(void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result documentViewController:(PTDocumentViewController *)docVC;
++ (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result documentViewController:(PTDocumentViewController *)docVC;
 @end
