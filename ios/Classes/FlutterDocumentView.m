@@ -1,6 +1,6 @@
 #import "FlutterDocumentView.h"
 #import "PdftronFlutterPlugin.h"
-#import "PluginUtils.h"
+#import "PTPluginUtils.h"
 
 @implementation DocumentViewFactory {
     NSObject<FlutterBinaryMessenger>* _messenger;
@@ -75,15 +75,15 @@
 - (void)onMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result
 {
     if ([call.method isEqualToString:PTOpenDocumentKey]) {
-        NSString *document = [PluginUtils PT_idAsNSString:call.arguments[PTDocumentArgumentKey]];
-        NSString *password = [PluginUtils PT_idAsNSString:call.arguments[PTPasswordArgumentKey]];
-        NSString *config = [PluginUtils PT_idAsNSString:call.arguments[PTConfigArgumentKey]];
+        NSString *document = [PTPluginUtils PT_idAsNSString:call.arguments[PTDocumentArgumentKey]];
+        NSString *password = [PTPluginUtils PT_idAsNSString:call.arguments[PTPasswordArgumentKey]];
+        NSString *config = [PTPluginUtils PT_idAsNSString:call.arguments[PTConfigArgumentKey]];
         if ([config isEqualToString:@"null"]) {
             config = nil;
         }
         [self openDocument:document password:password config:config resultToken:result];
     } else {
-        [PluginUtils handleMethodCall:call result:result documentViewController:self.documentViewController];
+        [PTPluginUtils handleMethodCall:call result:result documentViewController:self.documentViewController];
     }
 }
 

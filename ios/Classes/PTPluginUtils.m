@@ -1,8 +1,8 @@
-#import "PluginUtils.h"
+#import "PTPluginUtils.h"
 #import "PdftronFlutterPlugin.h"
 #import "FlutterDocumentView.h"
 
-@implementation PluginUtils
+@implementation PTPluginUtils
 
 + (NSString *)PT_idAsNSString:(id)value
 {
@@ -23,16 +23,16 @@
 + (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result documentViewController:(PTDocumentViewController *)docVC
 {
     if ([call.method isEqualToString:PTImportAnnotationCommandKey]) {
-        NSString *xfdfCommand = [PluginUtils PT_idAsNSString:call.arguments[PTXfdfCommandArgumentKey]];
-        [PluginUtils importAnnotationCommand:xfdfCommand documentViewController:docVC];
+        NSString *xfdfCommand = [PTPluginUtils PT_idAsNSString:call.arguments[PTXfdfCommandArgumentKey]];
+        [PTPluginUtils importAnnotationCommand:xfdfCommand documentViewController:docVC];
     } else if ([call.method isEqualToString:PTImportBookmarksKey]) {
-        NSString *bookmarkJson = [PluginUtils PT_idAsNSString:call.arguments[PTBookmarkJsonArgumentKey]];
-        [PluginUtils importBookmarks:bookmarkJson documentViewController:docVC];
+        NSString *bookmarkJson = [PTPluginUtils PT_idAsNSString:call.arguments[PTBookmarkJsonArgumentKey]];
+        [PTPluginUtils importBookmarks:bookmarkJson documentViewController:docVC];
     } else if ([call.method isEqualToString:PTSaveDocumentKey]) {
-        [PluginUtils saveDocument:result documentViewController:docVC];
+        [PTPluginUtils saveDocument:result documentViewController:docVC];
     } else if ([call.method isEqualToString:PTGetPageCropBoxKey]) {
-        NSNumber *pageNumber = [PluginUtils PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
-        [PluginUtils getPageCropBox:pageNumber resultToken:result documentViewController:docVC];
+        NSNumber *pageNumber = [PTPluginUtils PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
+        [PTPluginUtils getPageCropBox:pageNumber resultToken:result documentViewController:docVC];
     } else {
         result(FlutterMethodNotImplemented);
     }

@@ -1,6 +1,6 @@
 #import "PdftronFlutterPlugin.h"
 #import "FlutterDocumentView.h"
-#import "PluginUtils.h"
+#import "PTPluginUtils.h"
 
 const int exportAnnotationId = 1;
 const int exportBookmarkId = 2;
@@ -547,12 +547,12 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     } else if ([call.method isEqualToString:PTGetVersionKey]) {
         result([@"PDFNet " stringByAppendingFormat:@"%f", [PTPDFNet GetVersion]]);
     } else if ([call.method isEqualToString:PTInitializeKey]) {
-        NSString *licenseKey = [PluginUtils PT_idAsNSString:call.arguments[PTLicenseArgumentKey]];
+        NSString *licenseKey = [PTPluginUtils PT_idAsNSString:call.arguments[PTLicenseArgumentKey]];
         [PTPDFNet Initialize:licenseKey];
     } else if ([call.method isEqualToString:PTOpenDocumentKey]) {
         [self handleOpenDocumentMethod:call.arguments resultToken:result];
     } else {
-        [PluginUtils handleMethodCall:call result:result documentViewController:[self getDocumentviewController]];
+        [PTPluginUtils handleMethodCall:call result:result documentViewController:[self getDocumentviewController]];
     }
 }
 

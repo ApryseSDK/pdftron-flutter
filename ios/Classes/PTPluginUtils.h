@@ -88,7 +88,7 @@ static NSString * const PTY2Key = @"y2";
 static NSString * const PTWidthKey = @"width";
 static NSString * const PTHeightKey = @"height";
 
-@interface PluginUtils : NSObject
+@interface PTPluginUtils : NSObject
 
 + (NSString *)PT_idAsNSString:(id)value;
 + (NSNumber *)PT_idAsNSNumber:(id)value;
