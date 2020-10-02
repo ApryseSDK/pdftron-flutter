@@ -10,10 +10,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config;
 
-- (void)importAnnotationCommand:(NSDictionary<NSString *, id> *)arguments;
-
--(void)saveDocument:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)result;
-
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events;
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments;
 

@@ -11,11 +11,9 @@ import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdftronflutter.factories.DocumentViewFactory;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
@@ -24,19 +22,12 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
-import static com.pdftron.pdftronflutter.PluginUtils.customHeaders;
-import static com.pdftron.pdftronflutter.PluginUtils.disabledElements;
-import static com.pdftron.pdftronflutter.PluginUtils.disabledTools;
-import static com.pdftron.pdftronflutter.PluginUtils.multiTabEnabled;
+import static com.pdftron.pdftronflutter.PluginUtils.*;
 
 /**
  * PdftronFlutterPlugin
  */
 public class PdftronFlutterPlugin implements MethodCallHandler {
-
-    private static final String EVENT_EXPORT_ANNOTATION_COMMAND = "export_annotation_command_event";
-    private static final String EVENT_EXPORT_BOOKMARK = "export_bookmark_event";
-    private static final String EVENT_DOCUMENT_LOADED = "document_loaded_event";
 
     private final Context mContext;
 
@@ -98,10 +89,10 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         switch (call.method) {
-            case "getPlatformVersion":
+            case FUNCTION_GET_PLATFORM_VERSION:
                 result.success("Android " + android.os.Build.VERSION.RELEASE);
                 break;
-            case "getVersion":
+            case FUNCTION_GET_VERSION:
                 try {
                     String pdftronVersion = Double.toString(PDFNet.getVersion());
                     result.success(pdftronVersion);
@@ -110,9 +101,9 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                     result.error(Long.toString(e.getErrorCode()), "PDFTronException Error: " + e, null);
                 }
                 break;
-            case "initialize":
+            case FUNCTION_INITALIZE:
                 try {
-                    String licenseKey = call.argument("licenseKey");
+                    String licenseKey = call.argument(KEY_LICENSE_KEY);
                     com.pdftron.pdf.utils.AppUtils.initializePDFNetApplication(mContext.getApplicationContext(), licenseKey);
                     result.success(null);
                 } catch (PDFNetException e) {
@@ -120,48 +111,15 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                     result.error(Long.toString(e.getErrorCode()), "PDFTronException Error: " + e, null);
                 }
                 break;
-            case "openDocument":
-                String document = call.argument("document");
-                String password = call.argument("password");
-                String config = call.argument("config");
+            case FUNCTION_OPEN_DOCUMENT:
+                String document = call.argument(KEY_DOCUMENT);
+                String password = call.argument(KEY_PASSWORD);
+                String config = call.argument(KEY_CONFIG);
                 FlutterDocumentActivity.setFlutterLoadResult(result);
                 openDocument(document, password, config);
                 break;
-            case "importAnnotationCommand": {
-                FlutterDocumentActivity flutterDocumentActivity = FlutterDocumentActivity.getCurrentActivity();
-                Objects.requireNonNull(flutterDocumentActivity);
-                Objects.requireNonNull(flutterDocumentActivity.getPdfDoc());
-                String xfdfCommand = call.argument("xfdfCommand");
-                try {
-                    flutterDocumentActivity.importAnnotationCommand(xfdfCommand, result);
-                } catch (PDFNetException ex) {
-                    ex.printStackTrace();
-                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
-                }
-                break;
-            }
-            case "importBookmarkJson": {
-                FlutterDocumentActivity flutterDocumentActivity = FlutterDocumentActivity.getCurrentActivity();
-                Objects.requireNonNull(flutterDocumentActivity);
-                Objects.requireNonNull(flutterDocumentActivity.getPdfDoc());
-                String bookmarkJson = call.argument("bookmarkJson");
-                try {
-                    flutterDocumentActivity.importBookmarkJson(bookmarkJson, result);
-                } catch (JSONException ex) {
-                    ex.printStackTrace();
-                    result.error(Integer.toString(ex.hashCode()), "JSONException Error: " + ex, null);
-                }
-                break;
-            }
-            case "saveDocument": {
-                FlutterDocumentActivity flutterDocumentActivity = FlutterDocumentActivity.getCurrentActivity();
-                Objects.requireNonNull(flutterDocumentActivity);
-                Objects.requireNonNull(flutterDocumentActivity.getPdfDoc());
-                flutterDocumentActivity.saveDocument(result);
-                break;
-            }
             default:
-                result.notImplemented();
+                PluginUtils.onMethodCall(call, result, FlutterDocumentActivity.getCurrentActivity());
                 break;
         }
     }
@@ -178,20 +136,20 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
         if (configStr != null && !configStr.equals("null")) {
             try {
                 JSONObject configJson = new JSONObject(configStr);
-                if (!configJson.isNull(disabledElements)) {
-                    JSONArray array = configJson.getJSONArray(disabledElements);
+                if (!configJson.isNull(KEY_CONFIG_DISABLED_ELEMENTS)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_DISABLED_ELEMENTS);
                     mDisabledTools.addAll(PluginUtils.disableElements(builder, array));
                 }
-                if (!configJson.isNull(disabledTools)) {
-                    JSONArray array = configJson.getJSONArray(disabledTools);
+                if (!configJson.isNull(KEY_CONFIG_DISABLED_TOOLS)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_DISABLED_TOOLS);
                     mDisabledTools.addAll(PluginUtils.disableTools(array));
                 }
-                if (!configJson.isNull(multiTabEnabled)) {
-                    boolean val = configJson.getBoolean(multiTabEnabled);
+                if (!configJson.isNull(KEY_CONFIG_MULTI_TAB_ENABLED)) {
+                    boolean val = configJson.getBoolean(KEY_CONFIG_MULTI_TAB_ENABLED);
                     builder = builder.multiTabEnabled(val);
                 }
-                if (!configJson.isNull(customHeaders)) {
-                    customHeaderJson = configJson.getJSONObject(customHeaders);
+                if (!configJson.isNull(KEY_CONFIG_CUSTOM_HEADERS)) {
+                    customHeaderJson = configJson.getJSONObject(KEY_CONFIG_CUSTOM_HEADERS);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

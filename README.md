@@ -291,6 +291,15 @@ Saves the currently opened document in the viewer and returns the absolute path 
 var path = await PdftronFlutter.saveDocument();
 ```
 
+### PdftronFlutter.getPageCropBox()
+
+Return a map object with values for position (bottom-left: `x1`, `y1`; top-right: `x2`, `y2`) and size (`width`, `height`) of the crop box for specified page. Values all have type `double`.
+
+```dart
+var cropBox = await controller.getPageCropBox(1);
+print('The width of crop box for page 1 is: ' + cropBox.width.toString());
+```
+
 ## Events
 
 ### startExportAnnotationCommandListener

@@ -1,6 +1,6 @@
 #import "FlutterDocumentView.h"
-
 #import "PdftronFlutterPlugin.h"
+#import "PTPluginUtils.h"
 
 @implementation DocumentViewFactory {
     NSObject<FlutterBinaryMessenger>* _messenger;
@@ -29,34 +29,34 @@
 
 @end
 
+@interface FlutterDocumentView () <PTDocumentViewControllerDelegate>
+
+@end
+
 @implementation FlutterDocumentView {
-    int64_t _viewId;
-    FlutterMethodChannel* _channel;
-    PTDocumentViewController* _documentViewController;
-    UINavigationController* _navigationController;
-    UITextView* _textView;
+
 }
 
 - (instancetype)initWithWithFrame:(CGRect)frame viewIdentifier:(int64_t)viewId arguments:(id)args binaryMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
 {
     self = [super init];
     if (self) {
-        _viewId = viewId;
+        viewId = viewId;
         
         // Create a PTDocumentViewController
-        _documentViewController = [[PTDocumentViewController alloc] init];
+        self.documentViewController = [[PTDocumentViewController alloc] init];
         
         // The PTDocumentViewController must be in a navigation controller before a document can be opened
-        _navigationController = [[UINavigationController alloc] initWithRootViewController:_documentViewController];
+        self.navigationController = [[UINavigationController alloc] initWithRootViewController:self.documentViewController];
         
         UIViewController *parentController = UIApplication.sharedApplication.keyWindow.rootViewController;
-        [parentController addChildViewController:_navigationController];
-        [_navigationController didMoveToParentViewController:parentController];
+        [parentController addChildViewController:self.navigationController];
+        [self.navigationController didMoveToParentViewController:parentController];
                 
         NSString* channelName = [NSString stringWithFormat:@"pdftron_flutter/documentview_%lld", viewId];
-        _channel = [FlutterMethodChannel methodChannelWithName:channelName binaryMessenger:messenger];
+        self.channel = [FlutterMethodChannel methodChannelWithName:channelName binaryMessenger:messenger];
         __weak __typeof__(self) weakSelf = self;
-        [_channel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
+        [self.channel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
             __strong __typeof__(weakSelf) self = weakSelf;
             if (self) {
                 [self onMethodCall:call result:result];
@@ -69,40 +69,31 @@
 
 - (UIView *)view
 {
-    return _navigationController.view;
-}
-
-static NSString * _Nullable PT_idAsNSString(id value)
-{
-    if ([value isKindOfClass:[NSString class]]) {
-        return (NSString *)value;
-    }
-    return nil;
+    return self.navigationController.view;
 }
 
 - (void)onMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result
 {
-    if ([call.method isEqualToString:@"openDocument"]) {
-        NSString *document = PT_idAsNSString(call.arguments[@"document"]);
-        NSString *password = PT_idAsNSString(call.arguments[@"password"]);
-        NSString *config = PT_idAsNSString(call.arguments[@"config"]);
+    if ([call.method isEqualToString:PTOpenDocumentKey]) {
+        NSString *document = [PTPluginUtils PT_idAsNSString:call.arguments[PTDocumentArgumentKey]];
+        NSString *password = [PTPluginUtils PT_idAsNSString:call.arguments[PTPasswordArgumentKey]];
+        NSString *config = [PTPluginUtils PT_idAsNSString:call.arguments[PTConfigArgumentKey]];
         if ([config isEqualToString:@"null"]) {
             config = nil;
         }
-        
-        [self openDocument:document password:password config:config];
+        [self openDocument:document password:password config:config resultToken:result];
     } else {
-        result(FlutterMethodNotImplemented);
+        [PTPluginUtils handleMethodCall:call result:result documentViewController:self.documentViewController];
     }
 }
 
-- (void)openDocument:(NSString *)document password:(NSString *)password config:(NSString *)config
+- (void)openDocument:(NSString *)document password:(NSString *)password config:(NSString *)config resultToken:(FlutterResult)result
 {
-    if (!_documentViewController) {
+    if (!self.documentViewController) {
         return;
     }
     
-    [PdftronFlutterPlugin configureDocumentViewController:_documentViewController
+    [PdftronFlutterPlugin configureDocumentViewController:self.documentViewController
                                                withConfig:config];
     
     // Open a file URL.
@@ -113,7 +104,22 @@ static NSString * _Nullable PT_idAsNSString(id value)
         fileURL = [NSURL fileURLWithPath:document];
     }
     
-    [_documentViewController openDocumentWithURL:fileURL password:password];
+    self.documentViewController.delegate = self;
+    self.flutterResult = result;
+    
+    [self.documentViewController openDocumentWithURL:fileURL password:password];
+}
+
+- (void)documentViewControllerDidOpenDocument:(PTDocumentViewController *)documentViewController
+{
+    NSLog(@"Document opened successfully");
+    self.flutterResult(@"Opened Document Successfully");
+}
+
+- (void)documentViewController:(PTDocumentViewController *)documentViewController didFailToOpenDocumentWithError:(NSError *)error
+{
+    NSLog(@"Failed to open document: %@", error);
+    self.flutterResult([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
 }
 
 @end

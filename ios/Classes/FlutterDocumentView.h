@@ -4,6 +4,13 @@
 
 @interface FlutterDocumentView : NSObject <FlutterPlatformView>
 
+@property (nonatomic) int64_t viewId;
+@property (nonatomic, strong) FlutterMethodChannel *channel;
+@property (nonatomic, strong) PTDocumentViewController *documentViewController;
+@property (nonatomic, strong) UINavigationController *navigationController;
+@property (nonatomic, strong) UITextView *textView;
+@property (nonatomic, strong) FlutterResult flutterResult;
+
 - (instancetype)initWithWithFrame:(CGRect)frame
                    viewIdentifier:(int64_t)viewId
                         arguments:(id)args

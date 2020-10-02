@@ -4,17 +4,34 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
+import com.pdftron.pdf.PDFDoc;
+import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdftronflutter.ViewActivityComponent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class DocumentView extends com.pdftron.pdf.controls.DocumentView {
+import io.flutter.plugin.common.EventChannel;
+import io.flutter.plugin.common.MethodChannel;
+
+import static com.pdftron.pdftronflutter.PluginUtils.*;
+
+public class DocumentView extends com.pdftron.pdf.controls.DocumentView implements ViewActivityComponent {
 
     private ToolManagerBuilder mToolManagerBuilder;
     private ViewerConfig.Builder mBuilder;
     private String mCacheDir;
+
+    private EventChannel.EventSink sExportAnnotationCommandEventEmitter;
+    private EventChannel.EventSink sExportBookmarkEventEmitter;
+    private EventChannel.EventSink sDocumentLoadedEventEmitter;
+
+    private MethodChannel.Result sFlutterLoadResult;
 
     public DocumentView(@NonNull Context context) {
         this(context, null);
@@ -46,6 +63,15 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView {
                 .useSupportActionBar(false);
     }
 
+    public void attachListeners() {
+        if (this.mPdfViewCtrlTabHostFragment != null) {
+            this.mPdfViewCtrlTabHostFragment.addHostListener(this);
+            if (this.mTabHostListener != null) {
+                this.mPdfViewCtrlTabHostFragment.addHostListener(this.mTabHostListener);
+            }
+        }
+    }
+
     private ViewerConfig getConfig() {
         if (mCacheDir != null) {
             mBuilder.openUrlCachePath(mCacheDir);
@@ -64,5 +90,90 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView {
     @Override
     public boolean canShowFileCloseSnackbar() {
         return false;
+    }
+
+    @Override
+    public void onTabDocumentLoaded(String tag) {
+        super.onTabDocumentLoaded(tag);
+
+        handleDocumentLoaded(this);
+    }
+
+    @Override
+    public boolean onOpenDocError() {
+        super.onOpenDocError();
+
+        return handleOpenDocError(this);
+    }
+
+    public void setExportAnnotationCommandEventEmitter(EventChannel.EventSink emitter) {
+        sExportAnnotationCommandEventEmitter = emitter;
+    }
+
+    public void setExportBookmarkEventEmitter(EventChannel.EventSink emitter) {
+        sExportBookmarkEventEmitter = emitter;
+    }
+
+    public void setDocumentLoadedEventEmitter(EventChannel.EventSink emitter) {
+        sDocumentLoadedEventEmitter = emitter;
+    }
+
+    public void setFlutterLoadResult(MethodChannel.Result result) {
+        sFlutterLoadResult = result;
+    }
+
+    public EventChannel.EventSink getExportAnnotationCommandEventEmitter() {
+        return sExportAnnotationCommandEventEmitter;
+    }
+
+    public EventChannel.EventSink getExportBookmarkEventEmitter() {
+        return sExportBookmarkEventEmitter;
+    }
+
+    public EventChannel.EventSink getDocumentLoadedEventEmitter() {
+        return sDocumentLoadedEventEmitter;
+    }
+
+    public MethodChannel.Result getFlutterLoadResult() {
+        return sFlutterLoadResult;
+    }
+
+    // Convenience
+
+    @Nullable
+    public PdfViewCtrlTabHostFragment getPdfViewCtrlTabHostFragment() {
+        return mPdfViewCtrlTabHostFragment;
+    }
+
+    @Nullable
+    public PdfViewCtrlTabFragment getPdfViewCtrlTabFragment() {
+        if (mPdfViewCtrlTabHostFragment != null) {
+            return mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment();
+        }
+        return null;
+    }
+
+    @Nullable
+    public PDFViewCtrl getPdfViewCtrl() {
+        if (getPdfViewCtrlTabFragment() != null) {
+            return getPdfViewCtrlTabFragment().getPDFViewCtrl();
+        }
+        return null;
+    }
+
+    @Nullable
+    public ToolManager getToolManager() {
+        if (getPdfViewCtrlTabFragment() != null) {
+            return getPdfViewCtrlTabFragment().getToolManager();
+        }
+        return null;
+    }
+
+    @Nullable
+    public PDFDoc getPdfDoc() {
+        if (getPdfViewCtrlTabFragment() != null) {
+            return getPdfViewCtrlTabFragment().getPdfDoc();
+        }
+        return null;
     }
 }

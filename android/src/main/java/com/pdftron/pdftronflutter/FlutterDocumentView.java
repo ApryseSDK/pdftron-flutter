@@ -19,14 +19,12 @@ import androidx.fragment.app.FragmentManager;
 import java.util.ArrayList;
 
 import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 
-import static com.pdftron.pdftronflutter.PluginUtils.customHeaders;
-import static com.pdftron.pdftronflutter.PluginUtils.disabledElements;
-import static com.pdftron.pdftronflutter.PluginUtils.disabledTools;
-import static com.pdftron.pdftronflutter.PluginUtils.multiTabEnabled;
+import static com.pdftron.pdftronflutter.PluginUtils.*;
 
 public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCallHandler {
 
@@ -47,24 +45,68 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
 
         methodChannel = new MethodChannel(messenger, "pdftron_flutter/documentview_" + id);
         methodChannel.setMethodCallHandler(this);
+
+        registerWith(messenger);
+    }
+
+    public void registerWith(BinaryMessenger messenger) {
+
+        final EventChannel annotEventChannel = new EventChannel(messenger, EVENT_EXPORT_ANNOTATION_COMMAND);
+        annotEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                documentView.setExportAnnotationCommandEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                documentView.setExportAnnotationCommandEventEmitter(null);
+            }
+        });
+
+        final EventChannel bookmarkEventChannel = new EventChannel(messenger, EVENT_EXPORT_BOOKMARK);
+        bookmarkEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                documentView.setExportBookmarkEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                documentView.setExportBookmarkEventEmitter(null);
+            }
+        });
+
+        final EventChannel documentLoadedEventChannel = new EventChannel(messenger, EVENT_DOCUMENT_LOADED);
+        documentLoadedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                documentView.setDocumentLoadedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                documentView.setDocumentLoadedEventEmitter(null);
+            }
+        });
     }
 
     @Override
-    public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
-        switch (methodCall.method) {
-            case "openDocument":
-                String document = methodCall.argument("document");
-                String password = methodCall.argument("password");
-                String config = methodCall.argument("config");
-                openDocument(document, password, config);
+    public void onMethodCall(MethodCall call, MethodChannel.Result result) {
+        switch (call.method) {
+            case FUNCTION_OPEN_DOCUMENT:
+                String document = call.argument("document");
+                String password = call.argument("password");
+                String config = call.argument("config");
+                openDocument(document, password, config, result);
                 break;
             default:
-                result.notImplemented();
+                PluginUtils.onMethodCall(call, result, documentView);
                 break;
         }
     }
 
-    private void openDocument(String document, String password, String configStr) {
+    private void openDocument(String document, String password, String configStr, MethodChannel.Result result) {
         if (null == documentView) {
             return;
         }
@@ -79,20 +121,20 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         if (configStr != null && !configStr.equals("null")) {
             try {
                 JSONObject configJson = new JSONObject(configStr);
-                if (!configJson.isNull(disabledElements)) {
-                    JSONArray array = configJson.getJSONArray(disabledElements);
+                if (!configJson.isNull(KEY_CONFIG_DISABLED_ELEMENTS)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_DISABLED_ELEMENTS);
                     mDisabledTools.addAll(PluginUtils.disableElements(builder, array));
                 }
-                if (!configJson.isNull(disabledTools)) {
-                    JSONArray array = configJson.getJSONArray(disabledTools);
+                if (!configJson.isNull(KEY_CONFIG_DISABLED_TOOLS)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_DISABLED_TOOLS);
                     mDisabledTools.addAll(PluginUtils.disableTools(array));
                 }
-                if (!configJson.isNull(multiTabEnabled)) {
-                    boolean val = configJson.getBoolean(multiTabEnabled);
+                if (!configJson.isNull(KEY_CONFIG_MULTI_TAB_ENABLED)) {
+                    boolean val = configJson.getBoolean(KEY_CONFIG_MULTI_TAB_ENABLED);
                     builder = builder.multiTabEnabled(val);
                 }
-                if (!configJson.isNull(customHeaders)) {
-                    customHeaderJson = configJson.getJSONObject(customHeaders);
+                if (!configJson.isNull(KEY_CONFIG_CUSTOM_HEADERS)) {
+                    customHeaderJson = configJson.getJSONObject(KEY_CONFIG_CUSTOM_HEADERS);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -114,6 +156,7 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         documentView.setPassword(password);
         documentView.setCustomHeaders(customHeaderJson);
         documentView.setViewerConfig(builder.build());
+        documentView.setFlutterLoadResult(result);
 
         ViewerBuilder viewerBuilder = ViewerBuilder.withUri(fileLink, password)
                 .usingCustomHeaders(customHeaderJson)
@@ -130,6 +173,7 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
                 }
             }
         }
+        documentView.attachListeners();
     }
 
     @Override
