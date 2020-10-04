@@ -49,7 +49,7 @@ class AnnotWithFlag {
   Annot annotation;
   List<AnnotFlag> flags;
 
-  AnnotWithFlag.fromAnnotationAndFlags(this.annotation, this.flags);
+  AnnotWithFlag.fromAnnotAndFlags(this.annotation, this.flags);
 
   AnnotWithFlag(String annotId, int pageNumber, String flag, bool flagValue) {
     annotation = new Annot(annotId, pageNumber);
