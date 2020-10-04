@@ -66,6 +66,12 @@ static NSString * const PTGetPlatformVersionKey = @"getPlatformVersion";
 static NSString * const PTGetVersionKey = @"getVersion";
 static NSString * const PTInitializeKey = @"initialize";
 static NSString * const PTOpenDocumentKey = @"openDocument";
+static NSString * const PTImportAnnotationsKey = @"importAnnotations";
+static NSString * const PTExportAnnotationsKey = @"exportAnnotations";
+static NSString * const PTFlattenAnnotationsKey = @"flattenAnnotations";
+static NSString * const PTDeleteAnnotationsKey = @"deleteAnnotations";
+static NSString * const PTSelectAnnotationKey = @"selectAnnotation";
+static NSString * const PTSetFlagForAnnotationsKey = @"setFlagForAnnotations";
 static NSString * const PTImportAnnotationCommandKey = @"importAnnotationCommand";
 static NSString * const PTImportBookmarksKey = @"importBookmarkJson";
 static NSString * const PTSaveDocumentKey = @"saveDocument";
@@ -79,6 +85,10 @@ static NSString * const PTXfdfCommandArgumentKey = @"xfdfCommand";
 static NSString * const PTBookmarkJsonArgumentKey = @"bookmarkJson";
 static NSString * const PTPageNumberArgumentKey = @"pageNumber";
 static NSString * const PTLicenseArgumentKey = @"licenseKey";
+static NSString * const PTAnnotationListArgumentKey = @"annotations";
+static NSString * const PTFormsOnlyArgumentKey = @"formsOnly";
+static NSString * const PTAnnotationArgumentKey = @"annotation";
+static NSString * const PTAnnotationsWithFlagsArgumentKey = @"annotationsWithFlags";
 
 // other keys
 static NSString * const PTX1Key = @"x1";
@@ -88,10 +98,30 @@ static NSString * const PTY2Key = @"y2";
 static NSString * const PTWidthKey = @"width";
 static NSString * const PTHeightKey = @"height";
 
+static NSString * const PTAnnotPageNumberKey = @"pageNumber";
+static NSString * const PTAnnotIdKey = @"id";
+
+static NSString * const PTFlagListKey = @"flags";
+static NSString * const PTFlagKey = @"flag";
+static NSString * const PTFlagValueKey = @"flagValue";
+
+static NSString * const PTAnnotationFlagHiddenKey = @"hidden";
+static NSString * const PTAnnotationFlagInvisibleKey = @"invisible";
+static NSString * const PTAnnotationFlagLockedKey = @"locked";
+static NSString * const PTAnnotationFlagLockedContentsKey = @"lockedContents";
+static NSString * const PTAnnotationFlagNoRotateKey = @"noRotate";
+static NSString * const PTAnnotationFlagNoViewKey = @"noView";
+static NSString * const PTAnnotationFlagNoZoomKey = @"noZoom";
+static NSString * const PTAnnotationFlagPrintKey = @"print";
+static NSString * const PTAnnotationFlagReadOnlyKey = @"readOnly";
+static NSString * const PTAnnotationFlagToggleNoViewKey = @"toggleNoView";
+
 @interface PTPluginUtils : NSObject
 
 + (NSString *)PT_idAsNSString:(id)value;
 + (NSNumber *)PT_idAsNSNumber:(id)value;
++ (bool)PT_idAsBool:(id)value;
++ (NSDictionary *)PT_idAsNSDict:(id)value;
 
 + (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result documentViewController:(PTDocumentViewController *)docVC;
 @end

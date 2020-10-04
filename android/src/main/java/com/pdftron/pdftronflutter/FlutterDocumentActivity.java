@@ -85,7 +85,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
     }
 
     public Result getFlutterLoadResult() {
-        return sFlutterLoadResult.getAndSet(null);
+        return sFlutterLoadResult.get();
     }
 
     @Override
