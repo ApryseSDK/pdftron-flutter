@@ -291,6 +291,38 @@ Saves the currently opened document in the viewer and returns the absolute path 
 var path = await PdftronFlutter.saveDocument();
 ```
 
+### PdftronFlutter.commitTool()
+
+Commits the current tool.
+
+Only available for multi-stroke ink and poly-shape, and will return false for all other tools.
+
+```dart
+PdftronFlutter.commitTool().then((value) {
+  print("Tool committed: $value");
+});
+```
+
+### PdftronFlutter.getPageCount()
+
+To get the current page count of the document.
+
+```dart
+PdftronFlutter.getPageCount().then((value) {
+  print("Doc has $value pages");
+});
+```
+
+### PdftronFlutter.handleBackButton()
+
+Handles back button (Android only).
+
+```dart
+PdftronFlutter.handleBackButton().then((value) {
+  print("Back button handled: $value");
+});
+```
+
 ### PdftronFlutter.getPageCropBox()
 
 Return a map object with values for position (bottom-left: `x1`, `y1`; top-right: `x2`, `y2`) and size (`width`, `height`) of the crop box for specified page. Values all have type `double`.
