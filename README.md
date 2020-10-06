@@ -81,6 +81,23 @@ The complete installation and API guides can be found at https://www.pdftron.com
 		...
 	```
 
+4a. (Optional, required if using `DocumentView` widget) In your `MainActivity` file (either kotlin or java), change the parent class to `FlutterFragmentActivity`:
+
+  ```
+  import androidx.annotation.NonNull
+
+  import io.flutter.plugins.GeneratedPluginRegistrant
+  import io.flutter.embedding.android.FlutterFragmentActivity
+  import io.flutter.embedding.engine.FlutterEngine
+
+  class MainActivity: FlutterFragmentActivity() {
+
+      override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+          GeneratedPluginRegistrant.registerWith(flutterEngine);
+      }
+  }
+  ```
+
 5. Replace `lib/main.dart` with what is shown [here](#usage)
 6. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
 7. Run the app with the command `flutter run`.
