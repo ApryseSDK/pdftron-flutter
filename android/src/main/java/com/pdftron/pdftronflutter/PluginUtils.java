@@ -14,6 +14,7 @@ import com.pdftron.pdf.Page;
 import com.pdftron.pdf.Rect;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
+import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.BookmarkManager;
 import com.pdftron.pdf.utils.Utils;
@@ -595,8 +596,9 @@ public class PluginUtils {
     private static void setFlagForAnnotations(String annotationsWithFlags, MethodChannel.Result result, ViewActivityComponent component) throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
+        ToolManager toolManager = component.getToolManager();
 
-        if (null == pdfViewCtrl || null == pdfDoc) {
+        if (null == pdfViewCtrl || null == pdfDoc || null == toolManager) {
             result.error("InvalidState", "Activity not attached", null);
             return;
         }
@@ -614,10 +616,10 @@ public class PluginUtils {
 
                 JSONObject currentAnnotation = getJSONObjectFromJSONObject(currentAnnotationWithFlags, KEY_ANNOTATION);
                 String currentAnnotationId = currentAnnotation.getString(KEY_ANNOTATION_ID);
-                int currentAnnotationPageNuber = currentAnnotation.getInt(KEY_PAGE_NUMBER);
+                int currentAnnotationPageNumber = currentAnnotation.getInt(KEY_PAGE_NUMBER);
 
                 if (!Utils.isNullOrEmpty(currentAnnotationId)) {
-                    Annot validAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, currentAnnotationId, currentAnnotationPageNuber);
+                    Annot validAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, currentAnnotationId, currentAnnotationPageNumber);
 
                     if (validAnnotation == null || !validAnnotation.isValid()) {
                         continue;
@@ -669,8 +671,15 @@ public class PluginUtils {
                                 break;
                         }
                         if (flagNumber != -1) {
+
+                            HashMap<Annot, Integer> map = new HashMap<>(1);
+                            map.put(validAnnotation, currentAnnotationPageNumber);
+                            toolManager.raiseAnnotationsPreModifyEvent(map);
+
                             validAnnotation.setFlag(flagNumber, currentFlagValue);
-                            pdfViewCtrl.update(validAnnotation, currentAnnotationPageNuber);
+                            pdfViewCtrl.update(validAnnotation, currentAnnotationPageNumber);
+
+                            toolManager.raiseAnnotationsModifiedEvent(map, Tool.getAnnotationModificationBundle(null));
                         }
                     }
                 }

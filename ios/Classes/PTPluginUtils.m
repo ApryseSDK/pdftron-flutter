@@ -284,6 +284,8 @@
                 if (annotationId.length > 0) {
                     PTAnnot *annot = [PTPluginUtils findAnnotWithUniqueID:annotationId onPageNumber:pageNumber documentViewController:docVC];
                     if (annot && [annot IsValid]) {
+                        
+                        [docVC.toolManager willRemoveAnnotation:annot onPageNumber:pageNumber];
                         PTPage *page = [doc GetPage:pageNumber];
                         if (page && [page IsValid]) {
                             [page AnnotRemoveWithAnnot:annot];
@@ -414,7 +416,12 @@
                 }
                 
                 if (flagNumber != -1) {
+                    
+                    [docVC.toolManager willModifyAnnotation:currentAnnot onPageNumber:currentPageNumber];
+                    
                     [currentAnnot SetFlag:flagNumber value:currentFlagValue];
+                    
+                    [docVC.toolManager annotationModified:currentAnnot onPageNumber:currentPageNumber];
                 }
             }
         }
