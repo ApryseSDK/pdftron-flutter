@@ -11,8 +11,8 @@ import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
-import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
-import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.ToolManager;
 
 import org.json.JSONObject;
@@ -22,7 +22,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.MethodChannel.Result;
 
-import static com.pdftron.pdftronflutter.PluginUtils.*;
+import static com.pdftron.pdftronflutter.PluginUtils.handleDocumentLoaded;
+import static com.pdftron.pdftronflutter.PluginUtils.handleOpenDocError;
 
 public class FlutterDocumentActivity extends DocumentActivity implements ViewActivityComponent {
 
@@ -53,6 +54,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
 
         intent.putExtra("extra_nav_icon", navIconId);
         intent.putExtra("extra_config", config);
+        intent.putExtra(EXTRA_NEW_UI, true);
         packageContext.startActivity(intent);
     }
 
@@ -135,14 +137,14 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
     // Convenience
 
     @Nullable
-    public PdfViewCtrlTabHostFragment getPdfViewCtrlTabHostFragment() {
-        return mPdfViewCtrlTabHostFragment;
+    public PdfViewCtrlTabHostFragment2 getPdfViewCtrlTabHostFragment() {
+        return mPdfViewCtrlTabHostFragment2;
     }
 
     @Nullable
-    public PdfViewCtrlTabFragment getPdfViewCtrlTabFragment() {
-        if (mPdfViewCtrlTabHostFragment != null) {
-            return mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment();
+    public PdfViewCtrlTabFragment2 getPdfViewCtrlTabFragment() {
+        if (mPdfViewCtrlTabHostFragment2 != null) {
+            return mPdfViewCtrlTabHostFragment2.getCurrentPdfViewCtrlFragment();
         }
         return null;
     }

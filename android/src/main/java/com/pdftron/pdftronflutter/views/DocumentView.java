@@ -3,25 +3,25 @@ package com.pdftron.pdftronflutter.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
-import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
-import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdftronflutter.ViewActivityComponent;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
-import static com.pdftron.pdftronflutter.PluginUtils.*;
+import static com.pdftron.pdftronflutter.PluginUtils.handleDocumentLoaded;
+import static com.pdftron.pdftronflutter.PluginUtils.handleOpenDocError;
 
-public class DocumentView extends com.pdftron.pdf.controls.DocumentView implements ViewActivityComponent {
+public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 implements ViewActivityComponent {
 
     private ToolManagerBuilder mToolManagerBuilder;
     private ViewerConfig.Builder mBuilder;
@@ -141,12 +141,12 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     // Convenience
 
     @Nullable
-    public PdfViewCtrlTabHostFragment getPdfViewCtrlTabHostFragment() {
+    public PdfViewCtrlTabHostFragment2 getPdfViewCtrlTabHostFragment() {
         return mPdfViewCtrlTabHostFragment;
     }
 
     @Nullable
-    public PdfViewCtrlTabFragment getPdfViewCtrlTabFragment() {
+    public PdfViewCtrlTabFragment2 getPdfViewCtrlTabFragment() {
         if (mPdfViewCtrlTabHostFragment != null) {
             return mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment();
         }

@@ -12,7 +12,7 @@
         <item name="colorAccent">#FFA153</item>
     </style>
 
-    <style name="CustomAppTheme" parent="CustomAppThemeBase">
+    <style name="CustomAppTheme" parent="PDFTronAppTheme">
         <item name="colorPrimary">#56607D</item>
         <item name="colorPrimaryDark">#3D4763</item>
         <item name="colorAccent">#FFA153</item>

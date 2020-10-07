@@ -1,7 +1,6 @@
 package com.pdftron.pdftronflutter;
 
 import android.os.Bundle;
-
 import androidx.annotation.Nullable;
 
 import com.pdftron.common.PDFNetException;
@@ -11,7 +10,7 @@ import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.Rect;
 import com.pdftron.pdf.config.ViewerConfig;
-import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.BookmarkManager;
 
@@ -335,7 +334,7 @@ public class PluginUtils {
     }
 
     private static void saveDocument(MethodChannel.Result result, ViewActivityComponent component) {
-        PdfViewCtrlTabFragment pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
+        PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
         if (pdfViewCtrlTabFragment != null) {
             pdfViewCtrlTabFragment.setSavingEnabled(true);
             pdfViewCtrlTabFragment.save(false, true, true);

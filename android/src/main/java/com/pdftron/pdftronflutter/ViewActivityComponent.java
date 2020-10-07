@@ -4,8 +4,8 @@ import androidx.annotation.Nullable;
 
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
-import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
-import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.ToolManager;
 
 import io.flutter.plugin.common.EventChannel;
@@ -23,10 +23,10 @@ public interface ViewActivityComponent {
 
     // Convenience
     @Nullable
-    PdfViewCtrlTabHostFragment getPdfViewCtrlTabHostFragment();
+    PdfViewCtrlTabHostFragment2 getPdfViewCtrlTabHostFragment();
 
     @Nullable
-    PdfViewCtrlTabFragment getPdfViewCtrlTabFragment();
+    PdfViewCtrlTabFragment2 getPdfViewCtrlTabFragment();
 
     @Nullable
     PDFViewCtrl getPdfViewCtrl();

@@ -3,18 +3,17 @@ package com.pdftron.pdftronflutter;
 import android.content.Context;
 import android.net.Uri;
 import android.view.View;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.pdftron.pdf.config.ToolManagerBuilder;
-import com.pdftron.pdf.config.ViewerBuilder;
+import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdftronflutter.views.DocumentView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
 
 import java.util.ArrayList;
 
@@ -24,7 +23,14 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 
-import static com.pdftron.pdftronflutter.PluginUtils.*;
+import static com.pdftron.pdftronflutter.PluginUtils.EVENT_DOCUMENT_LOADED;
+import static com.pdftron.pdftronflutter.PluginUtils.EVENT_EXPORT_ANNOTATION_COMMAND;
+import static com.pdftron.pdftronflutter.PluginUtils.EVENT_EXPORT_BOOKMARK;
+import static com.pdftron.pdftronflutter.PluginUtils.FUNCTION_OPEN_DOCUMENT;
+import static com.pdftron.pdftronflutter.PluginUtils.KEY_CONFIG_CUSTOM_HEADERS;
+import static com.pdftron.pdftronflutter.PluginUtils.KEY_CONFIG_DISABLED_ELEMENTS;
+import static com.pdftron.pdftronflutter.PluginUtils.KEY_CONFIG_DISABLED_TOOLS;
+import static com.pdftron.pdftronflutter.PluginUtils.KEY_CONFIG_MULTI_TAB_ENABLED;
 
 public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCallHandler {
 
@@ -158,7 +164,7 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         documentView.setViewerConfig(builder.build());
         documentView.setFlutterLoadResult(result);
 
-        ViewerBuilder viewerBuilder = ViewerBuilder.withUri(fileLink, password)
+        ViewerBuilder2 viewerBuilder = ViewerBuilder2.withUri(fileLink, password)
                 .usingCustomHeaders(customHeaderJson)
                 .usingConfig(builder.build());
         if (documentView.mPdfViewCtrlTabHostFragment != null) {
