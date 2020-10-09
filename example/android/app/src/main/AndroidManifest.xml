@@ -22,6 +22,11 @@
         android:largeHeap="true"
         android:usesCleartextTraffic="true">
 
+        <!-- Add license key in meta-data tag here. This should be inside the application tag. -->
+        <meta-data
+            android:name="pdftron_license_key"
+            android:value="${pdftronLicenseKey}" />
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density"
