@@ -8,6 +8,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) PTTabbedDocumentViewController *tabbedDocumentViewController;
 
+@property (nonatomic) BOOL continuousAnnotationEditing;
+
 + (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config;
 
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events;

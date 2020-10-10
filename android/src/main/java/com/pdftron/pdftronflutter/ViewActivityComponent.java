@@ -1,5 +1,7 @@
 package com.pdftron.pdftronflutter;
 
+import android.content.Context;
+
 import androidx.annotation.Nullable;
 
 import com.pdftron.pdf.PDFDoc;
@@ -36,4 +38,6 @@ public interface ViewActivityComponent {
 
     @Nullable
     PDFDoc getPdfDoc();
+
+    Context getContext();
 }

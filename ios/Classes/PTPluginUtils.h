@@ -30,6 +30,12 @@ static NSString * const PTAnnotationCreatePolygonToolKey = @"AnnotationCreatePol
 static NSString * const PTAnnotationCreatePolygonCloudToolKey = @"AnnotationCreatePolygonCloud";
 static NSString * const PTAnnotationCreateFreeHighlighterToolKey = @"AnnotationCreateFreeHighlighter";
 static NSString * const PTEraserToolKey = @"Eraser";
+static NSString * const PTAnnotationCreateRubberStampToolKey = @"annotationCreateRubberStamp";
+static NSString * const PTAnnotationCreateSoundToolKey = @"annotationCreateSound";
+static NSString * const PTAnnotationCreateDistanceMeasurementToolKey = @"annotationCreateDistanceMeasurement";
+static NSString * const PTAnnotationCreatePerimeterMeasurementToolKey = @"annotationCreatePerimeterMeasurement";
+static NSString * const PTAnnotationCreateAreaMeasurementToolKey = @"annotationCreateAreaMeasurement";
+
 
 // button
 static NSString * const PTStickyToolButtonKey = @"stickyToolButton";
@@ -70,6 +76,10 @@ static NSString * const PTImportAnnotationCommandKey = @"importAnnotationCommand
 static NSString * const PTImportBookmarksKey = @"importBookmarkJson";
 static NSString * const PTSaveDocumentKey = @"saveDocument";
 static NSString * const PTGetPageCropBoxKey = @"getPageCropBox";
+static NSString * const PTSetToolModeKey = @"setToolMode";
+static NSString * const PTSetFlagForFieldsKey = @"setFlagForFields";
+static NSString * const PTSetValueForFieldsKey = @"setValueForFields";
+
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
@@ -79,6 +89,11 @@ static NSString * const PTXfdfCommandArgumentKey = @"xfdfCommand";
 static NSString * const PTBookmarkJsonArgumentKey = @"bookmarkJson";
 static NSString * const PTPageNumberArgumentKey = @"pageNumber";
 static NSString * const PTLicenseArgumentKey = @"licenseKey";
+static NSString * const PTToolModeArgumentKey = @"toolMode";
+static NSString * const PTFieldNamesArgumentKey = @"fieldNames";
+static NSString * const PTFlagArgumentKey = @"flag";
+static NSString * const PTFlagValueArgumentKey = @"flagValue";
+static NSString * const PTFieldsArgumentKey = @"fields";
 
 // other keys
 static NSString * const PTX1Key = @"x1";
@@ -88,10 +103,17 @@ static NSString * const PTY2Key = @"y2";
 static NSString * const PTWidthKey = @"width";
 static NSString * const PTHeightKey = @"height";
 
+static NSString * const PTFieldKey = @"field";
+static NSString * const PTFieldValueKey = @"fieldValue";
+
 @interface PTPluginUtils : NSObject
 
 + (NSString *)PT_idAsNSString:(id)value;
 + (NSNumber *)PT_idAsNSNumber:(id)value;
++ (NSDictionary *)PT_idAsNSDict:(id)value;
++ (NSArray *)PT_idAsNSArray:(id)value;
 
 + (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result documentViewController:(PTDocumentViewController *)docVC;
+
++ (void)setToolMode:(NSString *)toolMode resultToken:(FlutterResult)result documentViewController:(PTDocumentViewController *)docVC continuousAnnotationEditing:(bool)continuousAnnotEditing;
 @end

@@ -10,6 +10,7 @@
 @property (nonatomic, strong) UINavigationController *navigationController;
 @property (nonatomic, strong) UITextView *textView;
 @property (nonatomic, strong) FlutterResult flutterResult;
+@property (nonatomic) BOOL continuousAnnotationEditing;
 
 - (instancetype)initWithWithFrame:(CGRect)frame
                    viewIdentifier:(int64_t)viewId

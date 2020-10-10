@@ -82,6 +82,9 @@
             config = nil;
         }
         [self openDocument:document password:password config:config resultToken:result];
+    } else if ([call.method isEqualToString:PTSetToolModeKey]) {
+        NSString *toolMode = [PTPluginUtils PT_idAsNSString:call.arguments[PTToolModeArgumentKey]];
+        [PTPluginUtils setToolMode:toolMode resultToken:result documentViewController:self.documentViewController continuousAnnotationEditing:self.continuousAnnotationEditing];
     } else {
         [PTPluginUtils handleMethodCall:call result:result documentViewController:self.documentViewController];
     }

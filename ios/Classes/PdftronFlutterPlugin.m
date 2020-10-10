@@ -551,6 +551,9 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
         [PTPDFNet Initialize:licenseKey];
     } else if ([call.method isEqualToString:PTOpenDocumentKey]) {
         [self handleOpenDocumentMethod:call.arguments resultToken:result];
+    } else if ([call.method isEqualToString:PTSetToolModeKey]) {
+        NSString *toolMode = [PTPluginUtils PT_idAsNSString:call.arguments[PTToolModeArgumentKey]];
+        [PTPluginUtils setToolMode:toolMode resultToken:result documentViewController:[self getDocumentviewController] continuousAnnotationEditing:self.continuousAnnotationEditing];
     } else {
         [PTPluginUtils handleMethodCall:call result:result documentViewController:[self getDocumentviewController]];
     }

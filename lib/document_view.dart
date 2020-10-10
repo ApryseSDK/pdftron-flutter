@@ -69,4 +69,23 @@ class DocumentViewController {
       Parameters.pageNumber: pageNumber
     }).then((value) => PTRect.fromJson(jsonDecode(value)));
   }
+
+  Future<void> setToolMode(String toolMode) {
+    return _channel.invokeMethod(Functions.setToolMode,
+        <String, dynamic>{Parameters.toolMode: toolMode});
+  }
+
+  Future<void> setFlagForFields(
+      List<String> fieldNames, int flag, bool flagValue) {
+    return _channel.invokeMethod(Functions.setFlagForFields, <String, dynamic>{
+      Parameters.fieldNames: fieldNames,
+      Parameters.flag: flag,
+      Parameters.flagValue: flagValue
+    });
+  }
+
+  Future<void> setValueForFields(List<Field> fields) {
+    return _channel.invokeMethod(Functions.setValueForFields,
+        <String, dynamic>{Parameters.fields: jsonEncode(fields)});
+  }
 }

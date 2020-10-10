@@ -1,5 +1,13 @@
 part of pdftron;
 
+class Field {
+  String field;
+  dynamic fieldValue;
+  Field(this.field, this.fieldValue);
+
+  Map<String, dynamic> toJson() => {'field': field, 'fieldValue': fieldValue};
+}
+
 class PTRect {
   double x1, y1, x2, y2, width, height;
   PTRect(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
@@ -28,6 +36,9 @@ class Functions {
   static const importBookmarkJson = "importBookmarkJson";
   static const saveDocument = "saveDocument";
   static const getPageCropBox = "getPageCropBox";
+  static const setToolMode = "setToolMode";
+  static const setValueForFields = "setValueForFields";
+  static const setFlagForFields = "setFlagForFields";
 }
 
 class Parameters {
@@ -38,6 +49,11 @@ class Parameters {
   static const xfdfCommand = "xfdfCommand";
   static const bookmarkJson = "bookmarkJson";
   static const pageNumber = "pageNumber";
+  static const toolMode = "toolMode";
+  static const fieldNames = "fieldNames";
+  static const fields = "fields";
+  static const flag = "flag";
+  static const flagValue = "flagValue";
 }
 
 class Buttons {
@@ -104,4 +120,9 @@ class Tools {
       'AnnotationCreateFreeHighlighter';
   static const annotationCreateRubberStamp = 'AnnotationCreateRubberStamp';
   static const eraser = 'Eraser';
+}
+
+class FieldFlags {
+  static const ReadOnly = 0;
+  static const Required = 1;
 }
