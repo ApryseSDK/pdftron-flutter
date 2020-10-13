@@ -339,7 +339,7 @@
     [pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
         
         for (NSDictionary *fieldWithValue in fieldWithValues) {
-            NSString *fieldName = [PTPluginUtils PT_idAsNSString:fieldWithValue[PTFieldKey]];
+            NSString *fieldName = [PTPluginUtils PT_idAsNSString:fieldWithValue[PTFieldNameKey]];
             id fieldValue = fieldWithValue[PTFieldValueKey];
             PTField *field = [doc GetField:fieldName];
             

@@ -103,7 +103,7 @@ static NSString * const PTY2Key = @"y2";
 static NSString * const PTWidthKey = @"width";
 static NSString * const PTHeightKey = @"height";
 
-static NSString * const PTFieldKey = @"field";
+static NSString * const PTFieldNameKey = @"fieldName";
 static NSString * const PTFieldValueKey = @"fieldValue";
 
 @interface PTPluginUtils : NSObject

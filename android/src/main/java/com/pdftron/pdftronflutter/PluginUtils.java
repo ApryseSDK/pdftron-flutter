@@ -60,7 +60,7 @@ public class PluginUtils {
     private static final String KEY_WIDTH = "width";
     private static final String KEY_HEIGHT = "height";
 
-    private static final String KEY_FIELD = "field";
+    private static final String KEY_FIELD_NAME = "fieldName";
     private static final String KEY_FIELD_VALUE = "fieldValue";
 
     public static final String EVENT_EXPORT_ANNOTATION_COMMAND = "export_annotation_command_event";
@@ -461,7 +461,7 @@ public class PluginUtils {
             for (int i = 0; i < fieldsArray.length(); i ++) {
                 JSONObject fieldObject = fieldsArray.getJSONObject(i);
 
-                String fieldName = fieldObject.getString(KEY_FIELD);
+                String fieldName = fieldObject.getString(KEY_FIELD_NAME);
 
                 Field field = pdfDoc.getField(fieldName);
                 if (field != null && field.isValid()) {

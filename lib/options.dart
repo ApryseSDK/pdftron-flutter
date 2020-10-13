@@ -1,11 +1,12 @@
 part of pdftron;
 
 class Field {
-  String field;
+  String fieldName;
   dynamic fieldValue;
-  Field(this.field, this.fieldValue);
+  Field(this.fieldName, this.fieldValue);
 
-  Map<String, dynamic> toJson() => {'field': field, 'fieldValue': fieldValue};
+  Map<String, dynamic> toJson() =>
+      {'field': fieldName, 'fieldValue': fieldValue};
 }
 
 class PTRect {
