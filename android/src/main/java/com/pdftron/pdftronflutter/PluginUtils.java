@@ -325,6 +325,7 @@ public class PluginUtils {
                         result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
                     }
                 }
+                break;
             }
             default:
                 result.notImplemented();

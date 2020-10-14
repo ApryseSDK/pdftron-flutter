@@ -1,9 +1,9 @@
 part of pdftron;
 
-class Field {
+class PTField {
   String fieldName;
   dynamic fieldValue;
-  Field(this.fieldName, this.fieldValue);
+  PTField(this.fieldName, this.fieldValue);
 
   Map<String, dynamic> toJson() =>
       {'field': fieldName, 'fieldValue': fieldValue};
