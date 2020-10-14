@@ -308,15 +308,15 @@ var xfdfCommand = '<?xml version="1.0" encoding="UTF-8"?>\n<xfdf xmlns="http://n
 PdftronFlutter.importAnnotations(xfdfCommand);
 ```
 
-### PdftronFlutter.exportAnnotations(List<`Annot`>)
+### PdftronFlutter.exportAnnotations(List<`PTAnnot`>)
 To extract XFDF from the current document. If `annotationList` is null, export all annotations from the document; Else export the valid ones specified.
 
-For more details about `Annot`, please check `lib/options.dart` file.
+For more details about `PTAnnot`, please check `lib/options.dart` file.
 
 Params:
 Name | Type | Description
 --- | --- | ---
-annotationList | List<`Annot`> | A list of `Annot`, nullable
+annotationList | List<`PTAnnot`> | A list of `PTAnnot`, nullable
 
 Export all annotations:
 ```dart
@@ -325,9 +325,9 @@ var xfdfCommand = await PdftronFlutter.exportAnnotations(null);
 
 Export specified annotations:
 ```dart
-List<Annot> annotList = new List<Annot>();
-list.add(new Annot('Hello', 1));
-list.add(new Annot('World', 2));
+List<PTAnnot> annotList = new List<PTAnnot>();
+list.add(new PTAnnot('Hello', 1));
+list.add(new PTAnnot('World', 2));
 var xfdfCommand = await PdftronFlutter.exportAnnotations(annotList);
 ```
 
@@ -349,61 +349,61 @@ Flatten forms and annotations:
 PdftronFlutter.flattenAnnotations(false);
 ```
 
-### PdftronFlutter.deleteAnnotations(List<`Annot`>)
+### PdftronFlutter.deleteAnnotations(List<`PTAnnot`>)
 To delete the specified annotations in the current document.
 
-For more details about `Annot`, please check `lib/options.dart` file.
+For more details about `PTAnnot`, please check `lib/options.dart` file.
 
 Params:
 Name | Type | Description
 --- | --- | ---
-annotationList | List<`Annot`> | A list of `Annot`
+annotationList | List<`PTAnnot`> | A list of `PTAnnot`
 
 ```dart
-List<Annot> annotList = new List<Annot>();
-list.add(new Annot('Hello', 1));
-list.add(new Annot('World', 2));
+List<PTAnnot> annotList = new List<PTAnnot>();
+list.add(new PTAnnot('Hello', 1));
+list.add(new PTAnnot('World', 2));
 PdftronFlutter.deleteAnnotations(annotList);
 ```
 
-### PdftronFlutter.selectAnnotation(Annot)
+### PdftronFlutter.selectAnnotation(PTAnnot)
 Select the specified annotation in the current document.
 
-For more details about `Annot`, please check `lib/options.dart` file.
+For more details about `PTAnnot`, please check `lib/options.dart` file.
 
 Params:
 Name | Type | Description
 --- | --- | ---
-annotation | Annot | the annotation to be selected
+annotation | PTAnnot | the annotation to be selected
 
 ```dart
-PdftronFlutter.selectAnnotation(new Annot('Hello', 1));
+PdftronFlutter.selectAnnotation(new PTAnnot('Hello', 1));
 ```
 
-### PdftronFlutter.setFlagForAnnotations(List<`AnnotWithFlags`>)
+### PdftronFlutter.setFlagForAnnotations(List<`PTAnnotWithFlags`>)
 To set flag for specified annotations in the current document.
 
-For more details about `Annot`, `AnnotFlag` and `AnnotWithFlags`, please check `lib/options.dart` file.
+For more details about `PTAnnot`, `PTAnnotFlag` and `PTAnnotWithFlags`, please check `lib/options.dart` file.
 
 Params:
 Name | Type | Description
 --- | --- | ---
-annotationWithFlagsList | List<`AnnotWithFlags`> | a list of annotations with respective flags to be set
+annotationWithFlagsList | List<`PTAnnotWithFlags`> | a list of annotations with respective flags to be set
 
 ```dart
-List<AnnotWithFlags> annotsWithFlags = new List<AnnotWithFlags>();
+List<PTAnnotWithFlags> annotsWithFlags = new List<PTAnnotWithFlags>();
 
-Annot hello = new Annot('Hello', 1);
-Annot world = new Annot('World', 3);
-AnnotFlag printOn = new AnnotFlag(AnnotationFlags.print, true);
-AnnotFlag unlock = new AnnotFlag(AnnotationFlags.locked, false);
+PTAnnot hello = new PTAnnot('Hello', 1);
+PTAnnot world = new PTAnnot('World', 3);
+PTAnnotFlag printOn = new PTAnnotFlag(AnnotationFlags.print, true);
+PTAnnotFlag unlock = new PTAnnotFlag(AnnotationFlags.locked, false);
 
 // you can add an AnnotWithFlags object flexibly like this:
-list.add(new AnnotWithFlags.fromAnnotAndFlags(hello, [printOn, unlock]));
-list.add(new AnnotWithFlags.fromAnnotAndFlags(world, [unlock]));
+list.add(new PTAnnotWithFlags.fromAnnotAndFlags(hello, [printOn, unlock]));
+list.add(new PTAnnotWithFlags.fromAnnotAndFlags(world, [unlock]));
 
 // Or simply use the constructor like this:
-list.add(new AnnotWithFlags('Pdftron', 10, AnnotationFlags.no_zoom, true));
+list.add(new PTAnnotWithFlags('Pdftron', 10, AnnotationFlags.no_zoom, true));
 PdftronFlutter.setFlagForAnnotations(annotsWithFlags);
 ```
 

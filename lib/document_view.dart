@@ -55,7 +55,7 @@ class DocumentViewController {
         <String, dynamic>{Parameters.xfdfCommand: xfdfCommand});
   }
 
-  Future<String> exportAnnotations(List<Annot> annotationList) async {
+  Future<String> exportAnnotations(List<PTAnnot> annotationList) async {
     if (annotationList == null) {
       return _channel.invokeMethod(Functions.exportAnnotations);
     } else {
@@ -71,18 +71,18 @@ class DocumentViewController {
         <String, dynamic>{Parameters.formsOnly: formsOnly});
   }
 
-  Future<void> deleteAnnotations(List<Annot> annotationList) {
+  Future<void> deleteAnnotations(List<PTAnnot> annotationList) {
     return _channel.invokeMethod(Functions.deleteAnnotations,
         <String, dynamic>{Parameters.annotations: jsonEncode(annotationList)});
   }
 
-  Future<void> selectAnnotation(Annot annotation) {
+  Future<void> selectAnnotation(PTAnnot annotation) {
     return _channel.invokeMethod(Functions.selectAnnotation,
         <String, dynamic>{Parameters.annotation: jsonEncode(annotation)});
   }
 
   Future<void> setFlagForAnnotations(
-      List<AnnotWithFlag> annotationWithFlagsList) {
+      List<PTAnnotWithFlag> annotationWithFlagsList) {
     return _channel.invokeMethod(
         Functions.setFlagForAnnotations, <String, dynamic>{
       Parameters.annotationsWithFlags: jsonEncode(annotationWithFlagsList)

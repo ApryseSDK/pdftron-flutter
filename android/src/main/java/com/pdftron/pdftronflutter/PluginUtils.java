@@ -300,8 +300,8 @@ public class PluginUtils {
                         ex.printStackTrace();
                         result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
                     }
-                    break;
                 }
+                break;
             }
             case FUNCTION_DELETE_ANNOTATIONS: {
                 checkFunctionPrecondition(component);

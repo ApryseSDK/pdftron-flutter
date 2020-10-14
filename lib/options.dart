@@ -19,12 +19,12 @@ class PTRect {
   }
 }
 
-class Annot {
+class PTAnnot {
   // note that an annotation has its id in xfdf as name
   // page numbers are 1-indexed here, but 0-indexed in xfdf
   String id;
   int pageNumber;
-  Annot(this.id, this.pageNumber);
+  PTAnnot(this.id, this.pageNumber);
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -32,12 +32,12 @@ class Annot {
       };
 }
 
-class AnnotFlag {
+class PTAnnotFlag {
   // flag comes from AnnotationFlags constants
   // flagValue represents toggling on/off
   String flag;
   bool flagValue;
-  AnnotFlag(this.flag, this.flagValue);
+  PTAnnotFlag(this.flag, this.flagValue);
 
   Map<String, dynamic> toJson() => {
         'flag': flag,
@@ -45,16 +45,16 @@ class AnnotFlag {
       };
 }
 
-class AnnotWithFlag {
-  Annot annotation;
-  List<AnnotFlag> flags;
+class PTAnnotWithFlag {
+  PTAnnot annotation;
+  List<PTAnnotFlag> flags;
 
-  AnnotWithFlag.fromAnnotAndFlags(this.annotation, this.flags);
+  PTAnnotWithFlag.fromAnnotAndFlags(this.annotation, this.flags);
 
-  AnnotWithFlag(String annotId, int pageNumber, String flag, bool flagValue) {
-    annotation = new Annot(annotId, pageNumber);
-    flags = new List<AnnotFlag>();
-    flags.add(new AnnotFlag(flag, flagValue));
+  PTAnnotWithFlag(String annotId, int pageNumber, String flag, bool flagValue) {
+    annotation = new PTAnnot(annotId, pageNumber);
+    flags = new List<PTAnnotFlag>();
+    flags.add(new PTAnnotFlag(flag, flagValue));
   }
 
   Map<String, dynamic> toJson() =>

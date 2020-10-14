@@ -45,7 +45,7 @@ class PdftronFlutter {
         <String, dynamic>{Parameters.xfdfCommand: xfdfCommand});
   }
 
-  static Future<String> exportAnnotations(List<Annot> annotationList) async {
+  static Future<String> exportAnnotations(List<PTAnnot> annotationList) async {
     if (annotationList == null) {
       return _channel.invokeMethod(Functions.exportAnnotations);
     } else {
@@ -61,18 +61,18 @@ class PdftronFlutter {
         <String, dynamic>{Parameters.formsOnly: formsOnly});
   }
 
-  static Future<void> deleteAnnotations(List<Annot> annotationList) {
+  static Future<void> deleteAnnotations(List<PTAnnot> annotationList) {
     return _channel.invokeMethod(Functions.deleteAnnotations,
         <String, dynamic>{Parameters.annotations: jsonEncode(annotationList)});
   }
 
-  static Future<void> selectAnnotation(Annot annotation) {
+  static Future<void> selectAnnotation(PTAnnot annotation) {
     return _channel.invokeMethod(Functions.selectAnnotation,
         <String, dynamic>{Parameters.annotation: jsonEncode(annotation)});
   }
 
   static Future<void> setFlagForAnnotations(
-      List<AnnotWithFlag> annotationWithFlagsList) {
+      List<PTAnnotWithFlag> annotationWithFlagsList) {
     return _channel.invokeMethod(
         Functions.setFlagForAnnotations, <String, dynamic>{
       Parameters.annotationsWithFlags: jsonEncode(annotationWithFlagsList)
