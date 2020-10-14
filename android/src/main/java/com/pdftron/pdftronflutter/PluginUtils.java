@@ -283,6 +283,7 @@ public class PluginUtils {
             case FUNCTION_HANDLE_BACK_BUTTON: {
                 checkFunctionPrecondition(component);
                 handleBackButton(result, component);
+                break;
             }
             case FUNCTION_GET_PAGE_CROP_BOX: {
                 checkFunctionPrecondition(component);

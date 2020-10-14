@@ -326,9 +326,8 @@ Commits the current tool.
 Only available for multi-stroke ink and poly-shape, and will return false for all other tools.
 
 ```dart
-PdftronFlutter.commitTool().then((value) {
-  print("Tool committed: $value");
-});
+var committed = await PdftronFlutter.commitTool();
+print("Tool committed: $committed");
 ```
 
 ### PdftronFlutter.getPageCount()
@@ -336,9 +335,8 @@ PdftronFlutter.commitTool().then((value) {
 To get the current page count of the document.
 
 ```dart
-PdftronFlutter.getPageCount().then((value) {
-  print("Doc has $value pages");
-});
+var pageCount = await PdftronFlutter.getPageCount();
+print("The current doc has $pageCount pages");
 ```
 
 ### PdftronFlutter.handleBackButton()
@@ -346,9 +344,8 @@ PdftronFlutter.getPageCount().then((value) {
 Handles back button (Android only).
 
 ```dart
-PdftronFlutter.handleBackButton().then((value) {
-  print("Back button handled: $value");
-});
+var handled = await PdftronFlutter.handleBackButton();
+print("Back button handled: $handled");
 ```
 
 ### PdftronFlutter.getPageCropBox()
