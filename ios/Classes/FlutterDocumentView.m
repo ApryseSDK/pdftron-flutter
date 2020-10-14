@@ -29,6 +29,8 @@
     
     PdftronFlutterPlugin* instance = [[PdftronFlutterPlugin alloc] init];
     
+    
+    
 //    [registrar addMethodCallDelegate:instance channel:channel];
 //
 //    FlutterEventChannel* xfdfEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_ANNOTATION_COMMAND binaryMessenger:[registrar messenger]];
@@ -49,6 +51,8 @@
     /* OLD STUFF
     return documentView;
      */
+    
+    instance.view.frame = CGRectMake(100, 100, 300, 300);
     
     return instance;
 }
