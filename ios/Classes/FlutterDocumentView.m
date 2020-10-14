@@ -22,9 +22,35 @@
 
 - (NSObject<FlutterPlatformView> *)createWithFrame:(CGRect)frame viewIdentifier:(int64_t)viewId arguments:(id)args
 {
+    /* OLD STUFF
     FlutterDocumentView* documentView =
     [[FlutterDocumentView alloc] initWithWithFrame:frame viewIdentifier:viewId arguments:args binaryMessenger:_messenger];
+     */
+    
+    PdftronFlutterPlugin* instance = [[PdftronFlutterPlugin alloc] init];
+    
+//    [registrar addMethodCallDelegate:instance channel:channel];
+//
+//    FlutterEventChannel* xfdfEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_ANNOTATION_COMMAND binaryMessenger:[registrar messenger]];
+//
+//    FlutterEventChannel* bookmarkEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_BOOKMARK binaryMessenger:[registrar messenger]];
+//
+//    FlutterEventChannel* documentLoadedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_DOCUMENT_LOADED binaryMessenger:[registrar messenger]];
+//
+//    [xfdfEventChannel setStreamHandler:instance];
+//
+//    [bookmarkEventChannel setStreamHandler:instance];
+//
+//    [documentLoadedEventChannel setStreamHandler:instance];
+//
+//    DocumentViewFactory* documentViewFactory =
+//    [[DocumentViewFactory alloc] initWithMessenger:registrar.messenger];
+//    [registrar registerViewFactory:documentViewFactory withId:@"pdftron_flutter/documentview"];
+    /* OLD STUFF
     return documentView;
+     */
+    
+    return instance;
 }
 
 @end

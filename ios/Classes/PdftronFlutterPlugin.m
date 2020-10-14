@@ -18,6 +18,7 @@ const int documentLoadedId = 3;
 
 @implementation PTFlutterViewController
 
+
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
@@ -636,6 +637,13 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     NSLog(@"Failed to open document: %@", error);
     FlutterResult result = ((PTFlutterViewController*)documentViewController).openResult;
     result([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
+}
+
+#pragma mark - FlutterPlatformView
+
+-(UIView*)view
+{
+    return self.tabbedDocumentViewController.navigationController.view;
 }
 
 @end

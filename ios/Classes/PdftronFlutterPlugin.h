@@ -4,7 +4,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler>
+@interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
 
 @property (nonatomic, strong) PTTabbedDocumentViewController *tabbedDocumentViewController;
 
@@ -16,6 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 -(void)docVC:(PTDocumentViewController*)docVC annotationChange:(NSString*)xfdfCommand;
 -(void)docVC:(PTDocumentViewController*)docVC bookmarkChange:(NSString*)bookmarkJson;
 -(void)docVC:(PTDocumentViewController*)docVC documentLoaded:(NSString*)filePath;
+
+
+- (UIView*)view;
 
 @end
 
