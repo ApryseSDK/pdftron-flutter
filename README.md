@@ -38,8 +38,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
 3. Now add the following items in your `myapp/android/app/build.gradle` file:
 	```diff
 	android {
-	-   compileSdkVersion 27
-	+   compileSdkVersion 29
+	    compileSdkVersion 29
 
 	    lintOptions {
 		disable 'InvalidPackage'
@@ -49,9 +48,9 @@ The complete installation and API guides can be found at https://www.pdftron.com
 		applicationId "com.example.myapp"
 	-       minSdkVersion 16
 	+       minSdkVersion 21
-	-       targetSdkVersion 27
-	+       targetSdkVersion 29
+		targetSdkVersion 29
 	+       multiDexEnabled true
+	+       manifestPlaceholders = [pdftronLicenseKey:PDFTRON_LICENSE_KEY]
 		versionCode flutterVersionCode.toInteger()
 		versionName flutterVersionName
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -59,7 +58,16 @@ The complete installation and API guides can be found at https://www.pdftron.com
 		...
 	}
 	```
-4. In your `myapp\android\app\src\main\AndroidManifest.xml` file, add the following lines to the `<application>` tag:
+
+4. In your `myapp/android/gradle.properties` file. Add the following line to it:
+    ``` diff
+    # Add the PDFTRON_LICENSE_KEY variable here. 
+    # For trial purposes leave it blank.
+    # For production add a valid commercial license key.
+    PDFTRON_LICENSE_KEY=
+    ```
+    
+5. In your `myapp\android\app\src\main\AndroidManifest.xml` file, add the following lines to the `<application>` tag:
 	```diff
 	...
 	<application
@@ -68,12 +76,18 @@ The complete installation and API guides can be found at https://www.pdftron.com
 		android:icon="@mipmap/ic_launcher"
 	+	android:largeHeap="true"
 	+	android:usesCleartextTraffic="true">
-	  ...
+	
+	    	<!-- Add license key in meta-data tag here. This should be inside the application tag. -->
+	+	<meta-data
+	+		android:name="pdftron_license_key"
+	+		android:value="${pdftronLicenseKey}"/>
+	...
 	```
+	
 	Additionally, add the required permissions for your app in the `<manifest>` tag:
 	```diff
 		...
-		<uses-permission android:name="android.permission.INTERNET" />
+	+	<uses-permission android:name="android.permission.INTERNET" />
 		<!-- Required to read and write documents from device storage -->
 	+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 		<!-- Required if you want to record audio annotations -->
@@ -81,9 +95,23 @@ The complete installation and API guides can be found at https://www.pdftron.com
 		...
 	```
 
-5. Replace `lib/main.dart` with what is shown [here](#usage)
-6. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
-7. Run the app with the command `flutter run`.
+5a. (Optional, required if using `DocumentView` widget) In your `MainActivity` file (either kotlin or java), change the parent class to `FlutterFragmentActivity`:
+```
+import androidx.annotation.NonNull
+import io.flutter.embedding.android.FlutterFragmentActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugins.GeneratedPluginRegistrant
+
+class MainActivity : FlutterFragmentActivity() {
+    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+        GeneratedPluginRegistrant.registerWith(flutterEngine);
+    }
+}
+```
+
+6. Replace `lib/main.dart` with what is shown [here](#usage)
+7. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
+8. Run the app with the command `flutter run`.
 
 ### iOS
 

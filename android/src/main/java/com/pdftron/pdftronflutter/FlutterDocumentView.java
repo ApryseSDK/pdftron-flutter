@@ -113,7 +113,9 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
 
         ViewerConfig.Builder builder = new ViewerConfig.Builder()
                 .multiTabEnabled(false)
-                .openUrlCachePath(documentView.getContext().getCacheDir().getAbsolutePath());
+                .useSupportActionBar(false)
+                .openUrlCachePath(documentView.getContext().getCacheDir().getAbsolutePath())
+                .saveCopyExportPath(documentView.getContext().getCacheDir().getAbsolutePath());
 
         ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
 
