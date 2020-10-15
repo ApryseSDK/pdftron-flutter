@@ -321,7 +321,7 @@ var path = await PdftronFlutter.saveDocument();
 
 ### PdftronFlutter.commitTool()
 
-Commits the current tool.
+Commits the annotation being created by the tool to the PDF.
 
 Only available for multi-stroke ink and poly-shape, and will return false for all other tools.
 
@@ -332,7 +332,7 @@ print("Tool committed: $committed");
 
 ### PdftronFlutter.getPageCount()
 
-To get the current page count of the document.
+Returns the total number of pages in the currently displayed document.
 
 ```dart
 var pageCount = await PdftronFlutter.getPageCount();
