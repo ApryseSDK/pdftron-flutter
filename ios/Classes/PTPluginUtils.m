@@ -30,6 +30,10 @@
         [PTPluginUtils importBookmarks:bookmarkJson documentViewController:docVC];
     } else if ([call.method isEqualToString:PTSaveDocumentKey]) {
         [PTPluginUtils saveDocument:result documentViewController:docVC];
+    } else if ([call.method isEqualToString:PTCommitToolKey]) {
+        [PTPluginUtils commitTool:result documentViewController:docVC];
+    } else if ([call.method isEqualToString:PTGetPageCountKey]) {
+        [PTPluginUtils getPageCount:result documentViewController:docVC];
     } else if ([call.method isEqualToString:PTGetPageCropBoxKey]) {
         NSNumber *pageNumber = [PTPluginUtils PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [PTPluginUtils getPageCropBox:pageNumber resultToken:result documentViewController:docVC];
@@ -148,6 +152,36 @@
     {
         NSLog(@"Error: There was an error while trying to save the document. %@", error.localizedDescription);
     }
+}
+
++ (void)commitTool:(FlutterResult)flutterResult documentViewController:(PTDocumentViewController *)docVC
+{
+    PTToolManager *toolManager = docVC.toolManager;
+    if ([toolManager.tool respondsToSelector:@selector(commitAnnotation)]) {
+        [toolManager.tool performSelector:@selector(commitAnnotation)];
+        
+        [toolManager changeTool:[PTPanTool class]];
+        
+        flutterResult([NSNumber numberWithBool:YES]);
+    } else {
+        flutterResult([NSNumber numberWithBool:NO]);
+    }
+}
+
++ (void)getPageCount:(FlutterResult)flutterResult documentViewController:(PTDocumentViewController *)docVC
+{
+    if(docVC.document == Nil)
+    {
+        NSString *resultString = @"Error: The document view controller has no document.";
+        
+        // something is wrong, no document.
+        NSLog(@"%@", resultString);
+        flutterResult(resultString);
+        
+        return;
+    }
+    
+    flutterResult([NSNumber numberWithInt:docVC.pdfViewCtrl.pageCount]);
 }
 
 + (void)getPageCropBox:(NSNumber *)pageNumber resultToken:(FlutterResult)result documentViewController:(PTDocumentViewController *)docVC
