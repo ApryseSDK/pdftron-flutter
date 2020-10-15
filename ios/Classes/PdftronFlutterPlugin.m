@@ -1,6 +1,4 @@
 #import "PdftronFlutterPlugin.h"
-#import "FlutterDocumentView.h"
-#import "PTPluginUtils.h"
 
 const int exportAnnotationId = 1;
 const int exportBookmarkId = 2;
@@ -158,7 +156,7 @@ const int documentLoadedId = 3;
 
 @end
 
-@interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate, PTDocumentViewControllerDelegate>
+@interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate, PTDocumentViewControllerDelegate, FlutterPlatformViewFactory>
 
 @property (nonatomic, strong) id config;
 @property (nonatomic, strong) FlutterEventSink xfdfEventSink;
@@ -188,9 +186,9 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     
     [instance registerEventChannels:[registrar messenger]];
     
-    DocumentViewFactory* documentViewFactory =
-    [[DocumentViewFactory alloc] initWithMessenger:registrar.messenger];
-    [registrar registerViewFactory:documentViewFactory withId:@"pdftron_flutter/documentview"];
+    [instance addMessenger:[registrar messenger]];
+    
+    [registrar registerViewFactory:instance withId:@"pdftron_flutter/documentview"];
 }
 
 + (PdftronFlutterPlugin *)registerWithFrame:(CGRect)frame viewIdentifier:(int64_t)viewId messenger:(NSObject<FlutterBinaryMessenger> *)messenger
@@ -572,6 +570,23 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     }
     
     return Nil;
+}
+
+#pragma mark - FlutterDocumentFactory
+
+- (void)addMessenger:(NSObject<FlutterBinaryMessenger> *)messenger
+{
+    self.messenger = messenger;
+}
+
+- (NSObject<FlutterMessageCodec> *)createArgsCodec
+{
+    return [FlutterStandardMessageCodec sharedInstance];
+}
+
+- (NSObject<FlutterPlatformView> *)createWithFrame:(CGRect)frame viewIdentifier:(int64_t)viewId arguments:(id)args
+{
+    return [PdftronFlutterPlugin registerWithFrame:frame viewIdentifier:viewId messenger:self.messenger];
 }
 
 #pragma mark - FlutterPlatformView
