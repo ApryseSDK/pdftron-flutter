@@ -475,6 +475,10 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
         [self importBookmarks:bookmarkJson];
     } else if ([call.method isEqualToString:PTSaveDocumentKey]) {
         [self saveDocument:result];
+    } else if ([call.method isEqualToString:PTCommitToolKey]) {
+        [self commitTool:result];
+    } else if ([call.method isEqualToString:PTGetPageCountKey]) {
+        [self getPageCount:result];
     } else if ([call.method isEqualToString:PTGetPageCropBoxKey]) {
         NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self getPageCropBox:pageNumber resultToken:result];
@@ -658,6 +662,38 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     {
         NSLog(@"Error: There was an error while trying to save the document. %@", error.localizedDescription);
     }
+}
+
+- (void)commitTool:(FlutterResult)flutterResult
+{
+    PTDocumentViewController *docVC = [self getDocumentViewController];
+    PTToolManager *toolManager = docVC.toolManager;
+    if ([toolManager.tool respondsToSelector:@selector(commitAnnotation)]) {
+        [toolManager.tool performSelector:@selector(commitAnnotation)];
+
+        [toolManager changeTool:[PTPanTool class]];
+
+        flutterResult([NSNumber numberWithBool:YES]);
+    } else {
+        flutterResult([NSNumber numberWithBool:NO]);
+    }
+}
+
+- (void)getPageCount:(FlutterResult)flutterResult
+{
+    PTDocumentViewController *docVC = [self getDocumentViewController];
+    if(docVC.document == Nil)
+    {
+        NSString *resultString = @"Error: The document view controller has no document.";
+
+        // something is wrong, no document.
+        NSLog(@"%@", resultString);
+        flutterResult(resultString);
+
+        return;
+    }
+
+    flutterResult([NSNumber numberWithInt:docVC.pdfViewCtrl.pageCount]);
 }
 
 - (void)getPageCropBox:(NSNumber *)pageNumber resultToken:(FlutterResult)result
