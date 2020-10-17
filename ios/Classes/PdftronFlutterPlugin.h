@@ -93,7 +93,6 @@ static NSString * const PTHeightKey = @"height";
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
 
 @property (nonatomic, strong) PTTabbedDocumentViewController *tabbedDocumentViewController;
-@property (nonatomic, strong) NSObject<FlutterBinaryMessenger>* messenger;
 
 + (PdftronFlutterPlugin *)registerWithFrame:(CGRect)frame viewIdentifier:(int64_t)viewId messenger:(NSObject<FlutterBinaryMessenger> *)messenger;
 
