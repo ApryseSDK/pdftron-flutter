@@ -15,6 +15,9 @@ import com.pdftron.pdf.ViewChangeCollection;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.tools.Tool;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.tools.AdvancedShapeCreate;
+import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.BookmarkManager;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
@@ -74,6 +77,9 @@ public class PluginUtils {
     public static final String FUNCTION_IMPORT_ANNOTATION_COMMAND = "importAnnotationCommand";
     public static final String FUNCTION_IMPORT_BOOKMARK_JSON = "importBookmarkJson";
     public static final String FUNCTION_SAVE_DOCUMENT = "saveDocument";
+    public static final String FUNCTION_COMMIT_TOOL = "commitTool";
+    public static final String FUNCTION_GET_PAGE_COUNT = "getPageCount";
+    public static final String FUNCTION_HANDLE_BACK_BUTTON = "handleBackButton";
     public static final String FUNCTION_GET_PAGE_CROP_BOX = "getPageCropBox";
     public static final String FUNCTION_SET_TOOL_MODE = "setToolMode";
     public static final String FUNCTION_SET_FLAG_FOR_FIELDS = "setFlagForFields";
@@ -274,6 +280,26 @@ public class PluginUtils {
                 saveDocument(result, component);
                 break;
             }
+            case FUNCTION_COMMIT_TOOL: {
+                checkFunctionPrecondition(component);
+                commitTool(result, component);
+                break;
+            }
+            case FUNCTION_GET_PAGE_COUNT: {
+                checkFunctionPrecondition(component);
+                try {
+                    getPageCount(result, component);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+                break;
+            }
+            case FUNCTION_HANDLE_BACK_BUTTON: {
+                checkFunctionPrecondition(component);
+                handleBackButton(result, component);
+                break;
+            }
             case FUNCTION_GET_PAGE_CROP_BOX: {
                 checkFunctionPrecondition(component);
                 Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
@@ -396,6 +422,44 @@ public class PluginUtils {
             return;
         }
         result.error("InvalidState", "Activity not attached", null);
+    }
+
+    private static void commitTool(MethodChannel.Result result, ViewActivityComponent component) {
+        ToolManager toolManager = component.getToolManager();
+        if (toolManager != null) {
+            ToolManager.Tool currentTool = toolManager.getTool();
+            if (currentTool instanceof FreehandCreate) {
+                ((FreehandCreate) currentTool).commitAnnotation();
+                toolManager.setTool(toolManager.createTool(ToolManager.ToolMode.PAN, null));
+                result.success(true);
+            } else if (currentTool instanceof AdvancedShapeCreate) {
+                ((AdvancedShapeCreate) currentTool).commit();
+                toolManager.setTool(toolManager.createTool(ToolManager.ToolMode.PAN, null));
+                result.success(true);
+            }
+            result.success(false);
+            return;
+        }
+        result.error("InvalidState", "Tool manager not found", null);
+    }
+
+    private static void getPageCount(MethodChannel.Result result, ViewActivityComponent component) throws PDFNetException {
+        PDFDoc pdfDoc = component.getPdfDoc();
+        if (pdfDoc == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        result.success(pdfDoc.getPageCount());
+    }
+
+    private static void handleBackButton(MethodChannel.Result result, ViewActivityComponent component) {
+        PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        result.success(pdfViewCtrlTabHostFragment.handleBackPressed());
     }
 
     private static void getPageCropBox(int pageNumber, MethodChannel.Result result, ViewActivityComponent component) throws PDFNetException, JSONException {

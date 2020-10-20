@@ -56,6 +56,10 @@
         [PTPluginUtils importBookmarks:bookmarkJson documentViewController:docVC];
     } else if ([call.method isEqualToString:PTSaveDocumentKey]) {
         [PTPluginUtils saveDocument:result documentViewController:docVC];
+    } else if ([call.method isEqualToString:PTCommitToolKey]) {
+        [PTPluginUtils commitTool:result documentViewController:docVC];
+    } else if ([call.method isEqualToString:PTGetPageCountKey]) {
+        [PTPluginUtils getPageCount:result documentViewController:docVC];
     } else if ([call.method isEqualToString:PTGetPageCropBoxKey]) {
         NSNumber *pageNumber = [PTPluginUtils PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [PTPluginUtils getPageCropBox:pageNumber resultToken:result documentViewController:docVC];
@@ -184,6 +188,36 @@
     }
 }
 
++ (void)commitTool:(FlutterResult)flutterResult documentViewController:(PTDocumentViewController *)docVC
+{
+    PTToolManager *toolManager = docVC.toolManager;
+    if ([toolManager.tool respondsToSelector:@selector(commitAnnotation)]) {
+        [toolManager.tool performSelector:@selector(commitAnnotation)];
+        
+        [toolManager changeTool:[PTPanTool class]];
+        
+        flutterResult([NSNumber numberWithBool:YES]);
+    } else {
+        flutterResult([NSNumber numberWithBool:NO]);
+    }
+}
+
++ (void)getPageCount:(FlutterResult)flutterResult documentViewController:(PTDocumentViewController *)docVC
+{
+    if(docVC.document == Nil)
+    {
+        NSString *resultString = @"Error: The document view controller has no document.";
+        
+        // something is wrong, no document.
+        NSLog(@"%@", resultString);
+        flutterResult(resultString);
+        
+        return;
+    }
+    
+    flutterResult([NSNumber numberWithInt:docVC.pdfViewCtrl.pageCount]);
+}
+
 + (void)getPageCropBox:(NSNumber *)pageNumber resultToken:(FlutterResult)result documentViewController:(PTDocumentViewController *)docVC
 {
     NSError *error;
@@ -299,6 +333,7 @@
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
+        result([FlutterError errorWithCode:@"set_flag_for_fields" message:@"Failed to set flag for fields" details:@"Error: The document view controller has no document."]);
         return;
     }
     
@@ -317,7 +352,8 @@
     } error:&error];
    
     if (error) {
-        @throw [NSException exceptionWithName:NSGenericException reason:error.localizedFailureReason userInfo:error.userInfo];
+        NSLog(@"Error: Failed to set field flags to doc. %@", error.localizedDescription);
+        result([FlutterError errorWithCode:@"set_flag_for_fields" message:@"Failed to set flag for fields" details:@"Error: Failed to set field flags to doc."]);
     }
     
     result(nil);
@@ -330,6 +366,7 @@
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
+        result([FlutterError errorWithCode:@"set_value_for_fields" message:@"Failed to set value for fields" details:@"Error: The document view controller has no document."]);
         return;
     }
     
@@ -351,10 +388,11 @@
     } error:&error];
     
     if (error) {
-        @throw [NSException exceptionWithName:NSGenericException reason:error.localizedFailureReason userInfo:error.userInfo];
+        NSLog(@"Error: Failed to set field values to doc. %@", error.localizedDescription);
+        result([FlutterError errorWithCode:@"set_value_for_fields" message:@"Failed to set value for fields" details:@"Error: Failed to set field values to doc."]);
+    } else {
+        result(nil);
     }
-    
-    result(nil);
 }
 
 // write-lock required around this method

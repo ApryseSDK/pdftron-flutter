@@ -531,7 +531,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     [presentingViewController presentViewController:navigationController animated:YES completion:nil];
 }
 
-- (PTDocumentViewController *)getDocumentviewController {
+- (PTDocumentViewController *)getDocumentViewController {
     PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
     
     if(docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
@@ -555,7 +555,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
         NSString *toolMode = [PTPluginUtils PT_idAsNSString:call.arguments[PTToolModeArgumentKey]];
         [PTPluginUtils setToolMode:toolMode resultToken:result documentViewController:[self getDocumentviewController] continuousAnnotationEditing:self.continuousAnnotationEditing];
     } else {
-        [PTPluginUtils handleMethodCall:call result:result documentViewController:[self getDocumentviewController]];
+        [PTPluginUtils handleMethodCall:call result:result documentViewController:[self getDocumentViewController]];
     }
 }
 

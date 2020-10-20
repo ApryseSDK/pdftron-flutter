@@ -60,14 +60,26 @@ class DocumentViewController {
         <String, dynamic>{Parameters.bookmarkJson: bookmarkJson});
   }
 
-  Future<String> saveDocument() async {
+  Future<String> saveDocument() {
     return _channel.invokeMethod(Functions.saveDocument);
   }
 
-  Future<PTRect> getPageCropBox(int pageNumber) {
-    return _channel.invokeMethod(Functions.getPageCropBox, <String, dynamic>{
-      Parameters.pageNumber: pageNumber
-    }).then((value) => PTRect.fromJson(jsonDecode(value)));
+  Future<bool> commitTool() {
+    return _channel.invokeMethod(Functions.commitTool);
+  }
+
+  Future<int> getPageCount() {
+    return _channel.invokeMethod(Functions.getPageCount);
+  }
+
+  Future<bool> handleBackButton() {
+    return _channel.invokeMethod(Functions.handleBackButton);
+  }
+
+  Future<PTRect> getPageCropBox(int pageNumber) async {
+    String cropBoxString = await _channel.invokeMethod(Functions.getPageCropBox,
+        <String, dynamic>{Parameters.pageNumber: pageNumber});
+    return PTRect.fromJson(jsonDecode(cropBoxString));
   }
 
   Future<void> setToolMode(String toolMode) {

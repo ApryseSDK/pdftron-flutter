@@ -36,6 +36,9 @@ class Functions {
   static const importAnnotationCommand = "importAnnotationCommand";
   static const importBookmarkJson = "importBookmarkJson";
   static const saveDocument = "saveDocument";
+  static const commitTool = "commitTool";
+  static const getPageCount = "getPageCount";
+  static const handleBackButton = "handleBackButton";
   static const getPageCropBox = "getPageCropBox";
   static const setToolMode = "setToolMode";
   static const setValueForFields = "setValueForFields";
