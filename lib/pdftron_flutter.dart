@@ -89,13 +89,25 @@ class PdftronFlutter {
         <String, dynamic>{Parameters.bookmarkJson: bookmarkJson});
   }
 
-  static Future<String> saveDocument() async {
+  static Future<String> saveDocument() {
     return _channel.invokeMethod(Functions.saveDocument);
   }
 
-  static Future<PTRect> getPageCropBox(int pageNumber) {
-    return _channel.invokeMethod(Functions.getPageCropBox, <String, dynamic>{
-      Parameters.pageNumber: pageNumber
-    }).then((value) => PTRect.fromJson(jsonDecode(value)));
+  static Future<bool> commitTool() {
+    return _channel.invokeMethod(Functions.commitTool);
+  }
+
+  static Future<int> getPageCount() {
+    return _channel.invokeMethod(Functions.getPageCount);
+  }
+
+  static Future<bool> handleBackButton() {
+    return _channel.invokeMethod(Functions.handleBackButton);
+  }
+
+  static Future<PTRect> getPageCropBox(int pageNumber) async {
+    String cropBoxString = await _channel.invokeMethod(Functions.getPageCropBox,
+        <String, dynamic>{Parameters.pageNumber: pageNumber});
+    return PTRect.fromJson(jsonDecode(cropBoxString));
   }
 }

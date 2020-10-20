@@ -75,6 +75,8 @@ static NSString * const PTSetFlagForAnnotationsKey = @"setFlagForAnnotations";
 static NSString * const PTImportAnnotationCommandKey = @"importAnnotationCommand";
 static NSString * const PTImportBookmarksKey = @"importBookmarkJson";
 static NSString * const PTSaveDocumentKey = @"saveDocument";
+static NSString * const PTCommitToolKey = @"commitTool";
+static NSString * const PTGetPageCountKey = @"getPageCount";
 static NSString * const PTGetPageCropBoxKey = @"getPageCropBox";
 
 // argument

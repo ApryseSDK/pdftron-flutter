@@ -623,7 +623,37 @@
     }
 }
 
-+ (void)getPageCropBox:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult documentViewController:(PTDocumentViewController *)docVC
++ (void)commitTool:(FlutterResult)flutterResult documentViewController:(PTDocumentViewController *)docVC
+{
+    PTToolManager *toolManager = docVC.toolManager;
+    if ([toolManager.tool respondsToSelector:@selector(commitAnnotation)]) {
+        [toolManager.tool performSelector:@selector(commitAnnotation)];
+        
+        [toolManager changeTool:[PTPanTool class]];
+        
+        flutterResult([NSNumber numberWithBool:YES]);
+    } else {
+        flutterResult([NSNumber numberWithBool:NO]);
+    }
+}
+
++ (void)getPageCount:(FlutterResult)flutterResult documentViewController:(PTDocumentViewController *)docVC
+{
+    if(docVC.document == Nil)
+    {
+        NSString *resultString = @"Error: The document view controller has no document.";
+        
+        // something is wrong, no document.
+        NSLog(@"%@", resultString);
+        flutterResult(resultString);
+        
+        return;
+    }
+    
+    flutterResult([NSNumber numberWithInt:docVC.pdfViewCtrl.pageCount]);
+}
+
++ (void)getPageCropBox:(NSNumber *)pageNumber resultToken:(FlutterResult)result documentViewController:(PTDocumentViewController *)docVC
 {
     if(docVC.document == Nil)
     {
