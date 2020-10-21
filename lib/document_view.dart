@@ -55,7 +55,7 @@ class DocumentViewController {
         <String, dynamic>{Parameters.xfdfCommand: xfdfCommand});
   }
 
-  Future<String> exportAnnotations(List<PTAnnot> annotationList) async {
+  Future<String> exportAnnotations(List<Annot> annotationList) async {
     if (annotationList == null) {
       return _channel.invokeMethod(Functions.exportAnnotations);
     } else {
@@ -71,18 +71,18 @@ class DocumentViewController {
         <String, dynamic>{Parameters.formsOnly: formsOnly});
   }
 
-  Future<void> deleteAnnotations(List<PTAnnot> annotationList) {
+  Future<void> deleteAnnotations(List<Annot> annotationList) {
     return _channel.invokeMethod(Functions.deleteAnnotations,
         <String, dynamic>{Parameters.annotations: jsonEncode(annotationList)});
   }
 
-  Future<void> selectAnnotation(PTAnnot annotation) {
+  Future<void> selectAnnotation(Annot annotation) {
     return _channel.invokeMethod(Functions.selectAnnotation,
         <String, dynamic>{Parameters.annotation: jsonEncode(annotation)});
   }
 
   Future<void> setFlagForAnnotations(
-      List<PTAnnotWithFlag> annotationWithFlagsList) {
+      List<AnnotWithFlag> annotationWithFlagsList) {
     return _channel.invokeMethod(
         Functions.setFlagForAnnotations, <String, dynamic>{
       Parameters.annotationsWithFlags: jsonEncode(annotationWithFlagsList)
@@ -115,9 +115,9 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.handleBackButton);
   }
 
-  Future<PTRect> getPageCropBox(int pageNumber) async {
+  Future<Rect> getPageCropBox(int pageNumber) async {
     String cropBoxString = await _channel.invokeMethod(Functions.getPageCropBox,
         <String, dynamic>{Parameters.pageNumber: pageNumber});
-    return PTRect.fromJson(jsonDecode(cropBoxString));
+    return Rect.fromJson(jsonDecode(cropBoxString));
   }
 }

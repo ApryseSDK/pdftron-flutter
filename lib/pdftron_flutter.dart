@@ -45,7 +45,7 @@ class PdftronFlutter {
         <String, dynamic>{Parameters.xfdfCommand: xfdfCommand});
   }
 
-  static Future<String> exportAnnotations(List<PTAnnot> annotationList) async {
+  static Future<String> exportAnnotations(List<Annot> annotationList) async {
     if (annotationList == null) {
       return _channel.invokeMethod(Functions.exportAnnotations);
     } else {
@@ -61,18 +61,18 @@ class PdftronFlutter {
         <String, dynamic>{Parameters.formsOnly: formsOnly});
   }
 
-  static Future<void> deleteAnnotations(List<PTAnnot> annotationList) {
+  static Future<void> deleteAnnotations(List<Annot> annotationList) {
     return _channel.invokeMethod(Functions.deleteAnnotations,
         <String, dynamic>{Parameters.annotations: jsonEncode(annotationList)});
   }
 
-  static Future<void> selectAnnotation(PTAnnot annotation) {
+  static Future<void> selectAnnotation(Annot annotation) {
     return _channel.invokeMethod(Functions.selectAnnotation,
         <String, dynamic>{Parameters.annotation: jsonEncode(annotation)});
   }
 
   static Future<void> setFlagForAnnotations(
-      List<PTAnnotWithFlag> annotationWithFlagsList) {
+      List<AnnotWithFlag> annotationWithFlagsList) {
     return _channel.invokeMethod(
         Functions.setFlagForAnnotations, <String, dynamic>{
       Parameters.annotationsWithFlags: jsonEncode(annotationWithFlagsList)
@@ -105,9 +105,9 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.handleBackButton);
   }
 
-  static Future<PTRect> getPageCropBox(int pageNumber) async {
+  static Future<Rect> getPageCropBox(int pageNumber) async {
     String cropBoxString = await _channel.invokeMethod(Functions.getPageCropBox,
         <String, dynamic>{Parameters.pageNumber: pageNumber});
-    return PTRect.fromJson(jsonDecode(cropBoxString));
+    return Rect.fromJson(jsonDecode(cropBoxString));
   }
 }

@@ -1,11 +1,11 @@
 part of pdftron;
 
-class PTRect {
+class Rect {
   double x1, y1, x2, y2, width, height;
-  PTRect(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
+  Rect(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
 
-  factory PTRect.fromJson(dynamic json) {
-    return PTRect(getInt(json['x1']), getInt(json['y1']), getInt(json['x2']),
+  factory Rect.fromJson(dynamic json) {
+    return Rect(getInt(json['x1']), getInt(json['y1']), getInt(json['x2']),
         getInt(json['y2']), getInt(json['width']), getInt(json['height']));
   }
 
@@ -19,12 +19,12 @@ class PTRect {
   }
 }
 
-class PTAnnot {
+class Annot {
   // note that an annotation has its id in xfdf as name
   // page numbers are 1-indexed here, but 0-indexed in xfdf
   String id;
   int pageNumber;
-  PTAnnot(this.id, this.pageNumber);
+  Annot(this.id, this.pageNumber);
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -32,12 +32,12 @@ class PTAnnot {
       };
 }
 
-class PTAnnotFlag {
+class AnnotFlag {
   // flag comes from AnnotationFlags constants
   // flagValue represents toggling on/off
   String flag;
   bool flagValue;
-  PTAnnotFlag(this.flag, this.flagValue);
+  AnnotFlag(this.flag, this.flagValue);
 
   Map<String, dynamic> toJson() => {
         'flag': flag,
@@ -45,16 +45,16 @@ class PTAnnotFlag {
       };
 }
 
-class PTAnnotWithFlag {
-  PTAnnot annotation;
-  List<PTAnnotFlag> flags;
+class AnnotWithFlag {
+  Annot annotation;
+  List<AnnotFlag> flags;
 
-  PTAnnotWithFlag.fromAnnotAndFlags(this.annotation, this.flags);
+  AnnotWithFlag.fromAnnotAndFlags(this.annotation, this.flags);
 
-  PTAnnotWithFlag(String annotId, int pageNumber, String flag, bool flagValue) {
-    annotation = new PTAnnot(annotId, pageNumber);
-    flags = new List<PTAnnotFlag>();
-    flags.add(new PTAnnotFlag(flag, flagValue));
+  AnnotWithFlag(String annotId, int pageNumber, String flag, bool flagValue) {
+    annotation = new Annot(annotId, pageNumber);
+    flags = new List<AnnotFlag>();
+    flags.add(new AnnotFlag(flag, flagValue));
   }
 
   Map<String, dynamic> toJson() =>
