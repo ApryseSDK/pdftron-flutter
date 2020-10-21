@@ -8,7 +8,7 @@
 {
     self = [super init];
     if (self) {
-        self.messenger = messenger;
+        _messenger = messenger;
     }
     return self;
 }
