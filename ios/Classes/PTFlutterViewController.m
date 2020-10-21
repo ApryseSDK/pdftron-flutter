@@ -109,9 +109,17 @@
             [removedV add:annot];
         }
         
-        PTFDFDoc* fdfDoc = [pdfDoc FDFExtractCommand:addedV annot_modified:modifiedV annot_deleted:removedV];
+        NSError *error;
         
-        return [fdfDoc SaveAsXFDFToString];
+        __block PTFDFDoc* fdfDoc;
+        [self.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+            fdfDoc = [pdfDoc FDFExtractCommand:addedV annot_modified:modifiedV annot_deleted:removedV];
+        } error:&error];
+        
+        if (!error) {
+            return [fdfDoc SaveAsXFDFToString];
+        }
+        NSLog(@"Error: %@", error.description);
     }
     return Nil;
 }
