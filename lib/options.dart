@@ -1,11 +1,11 @@
 part of pdftron;
 
-class PTRect {
+class Rect {
   double x1, y1, x2, y2, width, height;
-  PTRect(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
+  Rect(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
 
-  factory PTRect.fromJson(dynamic json) {
-    return PTRect(getInt(json['x1']), getInt(json['y1']), getInt(json['x2']),
+  factory Rect.fromJson(dynamic json) {
+    return Rect(getInt(json['x1']), getInt(json['y1']), getInt(json['x2']),
         getInt(json['y2']), getInt(json['width']), getInt(json['height']));
   }
 
