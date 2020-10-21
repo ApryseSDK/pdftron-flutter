@@ -153,7 +153,7 @@
         NSNumber *pageNumber = [PTPluginUtils PT_idAsNSNumber:idPageNumberPair[PTAnnotPageNumberKey]];
         NSString *annotId = [PTPluginUtils PT_idAsNSString:idPageNumberPair[PTAnnotIdKey]];
         NSMutableArray <NSString *> *annotArray;
-        if (![pageNumberAnnotDict objectForKey:pageNumber]) {
+        if (!pageNumberAnnotDict[pageNumber]) {
             annotArray = [[NSMutableArray alloc] init];
 
         } else {
@@ -223,6 +223,7 @@
         {
             // too soon
             NSLog(@"Error: The document is still being downloaded.");
+            flutterResult([FlutterError errorWithCode:@"import_annotations" message:@"Failed to import annotations" details:@"Error: The document is still being downloaded."]);
             return;
         }
         
@@ -359,26 +360,25 @@
         return;
     }
     
-    for (PTAnnot *annot in matchingAnnots) {
-        [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        for (PTAnnot *annot in matchingAnnots) {
             PTPage *page = [annot GetPage];
             if (page && [page IsValid]) {
                 int pageNumber = [page GetIndex];
                 [docVC.toolManager willRemoveAnnotation:annot onPageNumber:pageNumber];
                 
                 [page AnnotRemoveWithAnnot:annot];
-                [docVC.pdfViewCtrl UpdateWithAnnot:annot page_num:pageNumber];
-                
                 [docVC.toolManager annotationRemoved:annot onPageNumber:pageNumber];
             }
-        } error:&error];
-        
-        if (error) {
-            NSLog(@"Error: Failed to delete annotations from doc. %@", error.localizedDescription);
-            
-            flutterResult([FlutterError errorWithCode:@"delete_annotations" message:@"Failed to delete annotations" details:@"Error: Failed to delete annotations from doc."]);
-            return;
         }
+        [docVC.pdfViewCtrl Update:YES];
+    } error:&error];
+        
+    if (error) {
+        NSLog(@"Error: Failed to delete annotations from doc. %@", error.localizedDescription);
+            
+        flutterResult([FlutterError errorWithCode:@"delete_annotations" message:@"Failed to delete annotations" details:@"Error: Failed to delete annotations from doc."]);
+        return;
     }
     
     [docVC.toolManager changeTool:[PTPanTool class]];
@@ -659,7 +659,7 @@
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
-        flutterResult([FlutterError errorWithCode:@"get_page_crop_box" message:@"Failed to get page crop box" details:@"Error: The document view controller has no document."]);
+        result([FlutterError errorWithCode:@"get_page_crop_box" message:@"Failed to get page crop box" details:@"Error: The document view controller has no document."]);
         return;
     }
     
@@ -678,7 +678,7 @@
                 PTHeightKey: @([rect Height]),
             };
             
-            flutterResult([PTPluginUtils PT_idToJSONString:map]);
+            result([PTPluginUtils PT_idToJSONString:map]);
         }
 
     } error:&error];
@@ -686,7 +686,7 @@
     if(error)
     {
         NSLog(@"Error: Failed to get the page crop box from doc. %@", error.localizedDescription);
-        flutterResult([FlutterError errorWithCode:@"get_page_crop_box" message:@"Failed to get page crop box" details:@"Error: Failed to get the page crop box from doc."]);
+        result([FlutterError errorWithCode:@"get_page_crop_box" message:@"Failed to get page crop box" details:@"Error: Failed to get the page crop box from doc."]);
     }
 }
 
