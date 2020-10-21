@@ -76,10 +76,10 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.handleBackButton);
   }
 
-  Future<PTRect> getPageCropBox(int pageNumber) async {
+  Future<Rect> getPageCropBox(int pageNumber) async {
     String cropBoxString = await _channel.invokeMethod(Functions.getPageCropBox,
         <String, dynamic>{Parameters.pageNumber: pageNumber});
-    return PTRect.fromJson(jsonDecode(cropBoxString));
+    return Rect.fromJson(jsonDecode(cropBoxString));
   }
 
   Future<void> setToolMode(String toolMode) {
