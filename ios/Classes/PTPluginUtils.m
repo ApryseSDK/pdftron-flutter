@@ -20,6 +20,16 @@
     return nil;
 }
 
++ (NSString *)PT_idToJSONString:(id)infoId {
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:infoId options:0 error:nil];
+    return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+}
+
++ (id)PT_JSONStringToId:(NSString *)jsonString {
+    NSData *annotListData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    return [NSJSONSerialization JSONObjectWithData:annotListData options:kNilOptions error:nil];
+}
+
 + (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result documentViewController:(PTDocumentViewController *)docVC
 {
     if ([call.method isEqualToString:PTImportAnnotationCommandKey]) {

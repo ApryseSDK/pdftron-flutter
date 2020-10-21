@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
+import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.ToolManagerBuilder;
@@ -15,6 +16,8 @@ import com.pdftron.pdftronflutter.ViewActivityComponent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.util.HashMap;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
@@ -30,8 +33,13 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     private EventChannel.EventSink sExportAnnotationCommandEventEmitter;
     private EventChannel.EventSink sExportBookmarkEventEmitter;
     private EventChannel.EventSink sDocumentLoadedEventEmitter;
-
+    private EventChannel.EventSink sDocumentErrorEventEmitter;
+    private EventChannel.EventSink sAnnotationChangedEventEmitter;
+    private EventChannel.EventSink sAnnotationsSelectedEventEmitter;
+    private EventChannel.EventSink sFormFieldValueChangedEventEmitter;
     private MethodChannel.Result sFlutterLoadResult;
+
+    private HashMap<Annot, Integer> mSelectedAnnots;
 
     public DocumentView(@NonNull Context context) {
         this(context, null);
@@ -106,6 +114,13 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
         return handleOpenDocError(this);
     }
 
+    @Override
+    public void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+
+        handleOnDetach(this);
+    }
+
     public void setExportAnnotationCommandEventEmitter(EventChannel.EventSink emitter) {
         sExportAnnotationCommandEventEmitter = emitter;
     }
@@ -118,24 +133,75 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
         sDocumentLoadedEventEmitter = emitter;
     }
 
+    public void setDocumentErrorEventEmitter(EventChannel.EventSink emitter) {
+        sDocumentErrorEventEmitter = emitter;
+    }
+
+    public void setAnnotationChangedEventEmitter(EventChannel.EventSink emitter) {
+        sAnnotationChangedEventEmitter = emitter;
+    }
+
+    public void setAnnotationsSelectedEventEmitter(EventChannel.EventSink emitter) {
+        sAnnotationsSelectedEventEmitter = emitter;
+    }
+
+    public void setFormFieldValueChangedEventEmitter(EventChannel.EventSink emitter) {
+        sFormFieldValueChangedEventEmitter = emitter;
+    }
+
     public void setFlutterLoadResult(MethodChannel.Result result) {
         sFlutterLoadResult = result;
     }
 
+    public void setSelectedAnnots(HashMap<Annot, Integer> selectedAnnots) {
+        mSelectedAnnots = selectedAnnots;
+    }
+
+    @Override
     public EventChannel.EventSink getExportAnnotationCommandEventEmitter() {
         return sExportAnnotationCommandEventEmitter;
     }
 
+    @Override
     public EventChannel.EventSink getExportBookmarkEventEmitter() {
         return sExportBookmarkEventEmitter;
     }
 
+    @Override
     public EventChannel.EventSink getDocumentLoadedEventEmitter() {
         return sDocumentLoadedEventEmitter;
     }
 
+    @Override
+    public EventChannel.EventSink getDocumentErrorEventEmitter() {
+        return sDocumentErrorEventEmitter;
+    }
+
+    @Override
+    public EventChannel.EventSink getAnnotationChangedEventEmitter() {
+        return sAnnotationChangedEventEmitter;
+    }
+
+    @Override
+    public EventChannel.EventSink getAnnotationsSelectedEventEmitter() {
+        return sAnnotationsSelectedEventEmitter;
+    }
+
+    @Override
+    public EventChannel.EventSink getFormFieldValueChangedEventEmitter() {
+        return sFormFieldValueChangedEventEmitter;
+    }
+
+    @Override
     public MethodChannel.Result getFlutterLoadResult() {
-        return sFlutterLoadResult;
+        MethodChannel.Result result = sFlutterLoadResult;
+        sFlutterLoadResult = null;
+        return result;
+    }
+
+    @Override
+    public HashMap<Annot, Integer> getSelectedAnnots() {
+        return mSelectedAnnots;
     }
 
     // Convenience

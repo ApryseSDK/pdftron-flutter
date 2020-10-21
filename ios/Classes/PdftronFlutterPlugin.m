@@ -5,6 +5,14 @@
 const int exportAnnotationId = 1;
 const int exportBookmarkId = 2;
 const int documentLoadedId = 3;
+const int documentErrorId = 4;
+const int annotationChangedId = 5;
+const int annotationsSelectedId = 6;
+const int formFieldValueChangedId = 7;
+
+const NSString *actionAdd = @"add";
+const NSString *actionModify = @"modify";
+const NSString *actionDelete = @"delete";
 
 @interface PTFlutterViewController : PTDocumentViewController
 @property (nonatomic, strong) FlutterResult openResult;
@@ -28,7 +36,7 @@ const int documentLoadedId = 3;
         self.documentLoaded = YES;
 
         NSString *filePath = self.coordinatedDocument.fileURL.path;
-        [self.plugin docVC:self documentLoaded:filePath];
+        [self.plugin docVCDocumentLoaded:filePath];
     }
 }
 
@@ -77,25 +85,120 @@ const int documentLoadedId = 3;
         NSLog(@"Error: %@", error.description);
     }
 
-    [self.plugin docVC:self bookmarkChange:json];
+    [self.plugin docVCBookmarkChange:json];
 }
 
 -(void)toolManager:(PTToolManager*)toolManager willRemoveAnnotation:(nonnull PTAnnot *)annotation onPageNumber:(int)pageNumber
 {
+    NSString* annotationWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTDeleteActionKey];
+    if (annotationWithActionString) {
+        [self.plugin docVCAnnotationChanged:annotationWithActionString];
+    }
+    
     NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:Nil removed:@[annotation]];
-    [self.plugin docVC:self annotationChange:xfdf];
+    [self.plugin docVCExportAnnotationCommand:xfdf];
+    
 }
 
 - (void)toolManager:(PTToolManager *)toolManager annotationAdded:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
 {
+    NSString* annotationWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTAddActionKey];
+    if (annotationWithActionString) {
+        [self.plugin docVCAnnotationChanged:annotationWithActionString];
+    }
+    
     NSString* xfdf = [self generateXfdfCommandWithAdded:@[annotation] modified:Nil removed:Nil];
-    [self.plugin docVC:self annotationChange:xfdf];
+    [self.plugin docVCExportAnnotationCommand:xfdf];
 }
 
 - (void)toolManager:(PTToolManager *)toolManager annotationModified:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
 {
+    NSString* annotationWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTModifyActionKey];
+    if (annotationWithActionString) {
+        [self.plugin docVCAnnotationChanged:annotationWithActionString];
+    }
+  
     NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:@[annotation] removed:Nil];
-    [self.plugin docVC:self annotationChange:xfdf];
+    [self.plugin docVCExportAnnotationCommand:xfdf];
+}
+
+- (void)toolManager:(PTToolManager *)toolManager didSelectAnnotation:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
+{
+    if (annotation.IsValid) {
+        
+        __block NSString *uniqueId;
+        __block PTPDFRect *screenRect;
+        
+        NSError *error;
+        [self.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+            PTObj *uniqueIdObj = [annotation GetUniqueID];
+            if ([uniqueIdObj IsValid] && [uniqueIdObj IsString]) {
+                uniqueId = [uniqueIdObj GetAsPDFText];
+            }
+            screenRect = [self.pdfViewCtrl GetScreenRectForAnnot:annotation
+                                                                   page_num:(int)pageNumber];
+        } error:&error];
+        
+        if (error) {
+            NSLog(@"An error occurred: %@", error);
+            return;
+        }
+        
+        NSDictionary *annotDict = @{
+            PTAnnotationIdKey: uniqueId ?: @"",
+            PTAnnotationPageNumberKey: [NSNumber numberWithLong:pageNumber],
+            PTRectKey: @{
+                    PTX1Key: @([screenRect GetX1]),
+                    PTY1Key: @([screenRect GetY1]),
+                    PTX2Key: @([screenRect GetX2]),
+                    PTY2Key: @([screenRect GetY2]),
+                    PTWidthKey: @([screenRect Width]),
+                    PTHeightKey: @([screenRect Height]),
+            },
+        };
+        
+        [self.plugin docVCAnnotationsSelected:[PTPluginUtils PT_idToJSONString:@[annotDict]]];
+    }
+   
+}
+
+- (void)toolManager:(PTToolManager *)toolManager formFieldDataModified:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber {
+    if (annotation.GetType == e_ptWidget) {
+        NSError *error;
+        
+        __block NSString *fieldName;
+        __block NSString *fieldValue;
+        
+        [self.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+            PTWidget *widget = [[PTWidget alloc] initWithAnn:annotation];
+            PTField *field = [widget GetField];
+            fieldName = [field IsValid] ? [field GetName] : @"";
+            fieldValue = [field IsValid] ? [field GetValueAsString] : @"";
+        } error:&error];
+        if (error) {
+            NSLog(@"An error occurred: %@", error);
+            return;
+        }
+        
+        if (fieldName && fieldValue) {
+            NSDictionary *fieldDict = @{
+                PTFormFieldNameKey: fieldName,
+                PTFormFieldValueKey: fieldValue,
+            };
+            
+            [self.plugin docVCFormFieldValueChanged: [PTPluginUtils PT_idToJSONString:@[fieldDict]]];
+        }
+        // TODO: collab manager
+        /*
+         copied from RN
+         
+         if (!self.collaborationManager) {
+             PTVectorAnnot *annots = [[PTVectorAnnot alloc] init];
+             [annots add:annot];
+             [self rnt_sendExportAnnotationCommandWithAction:PTModifyAnnotationActionKey xfdfCommand:[self generateXfdfCommand:[[PTVectorAnnot alloc] init] modified:annots deleted:[[PTVectorAnnot alloc] init]]];
+         }
+         */
+    }
 }
 
 -(NSString*)generateXfdfCommandWithAdded:(NSArray<PTAnnot*>*)added modified:(NSArray<PTAnnot*>*)modified removed:(NSArray<PTAnnot*>*)removed
@@ -127,6 +230,41 @@ const int documentLoadedId = 3;
         return [fdfDoc SaveAsXFDFToString];
     }
     return Nil;
+}
+
+-(NSString*)generateAnnotationWithActionString:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber action:(NSString *)action
+{
+    
+    if (annotation.IsValid) {
+        
+        __block NSString *uniqueId;
+        
+        NSError *error;
+        [self.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+            PTObj *uniqueIdObj = [annotation GetUniqueID];
+            if ([uniqueIdObj IsValid] && [uniqueIdObj IsString]) {
+                uniqueId = [uniqueIdObj GetAsPDFText];
+            }
+        } error:&error];
+        
+        if (error) {
+            NSLog(@"An error occurred: %@", error);
+            return nil;
+        }
+        
+        NSDictionary *annotDict = @{
+            PTAnnotationIdKey: uniqueId,
+            PTAnnotationPageNumberKey: [NSNumber numberWithLong:pageNumber],
+        };
+        
+        NSDictionary *resultDict = @{
+            PTAnnotationListKey: @[annotDict],
+            PTActionKey: action,
+        };
+        
+        return [PTPluginUtils PT_idToJSONString:resultDict];
+    }
+    return nil;
 }
 
 #pragma mark - <PTPDFViewCtrlDelegate>
@@ -163,6 +301,10 @@ const int documentLoadedId = 3;
 @property (nonatomic, strong) FlutterEventSink xfdfEventSink;
 @property (nonatomic, strong) FlutterEventSink bookmarkEventSink;
 @property (nonatomic, strong) FlutterEventSink documentLoadedEventSink;
+@property (nonatomic, strong) FlutterEventSink documentErrorEventSink;
+@property (nonatomic, strong) FlutterEventSink annotationChangedEventSink;
+@property (nonatomic, strong) FlutterEventSink annotationsSelectedEventSink;
+@property (nonatomic, strong) FlutterEventSink formFieldValueChangedEventSink;
 
 @end
 
@@ -171,6 +313,10 @@ const int documentLoadedId = 3;
 static NSString * const EVENT_EXPORT_ANNOTATION_COMMAND = @"export_annotation_command_event";
 static NSString * const EVENT_EXPORT_BOOKMARK = @"export_bookmark_event";
 static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
+static NSString * const EVENT_DOCUMENT_ERROR = @"document_error_event";
+static NSString * const EVENT_ANNOTATION_CHANGED = @"annotation_changed_event";
+static NSString * const EVENT_ANNOTATIONS_SELECTED = @"annotations_selected_event";
+static NSString * const EVENT_FORM_FIELD_VALUE_CHANGED = @"form_field_value_changed_event";
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
     FlutterMethodChannel* channel = [FlutterMethodChannel
@@ -187,12 +333,28 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     FlutterEventChannel* bookmarkEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_BOOKMARK binaryMessenger:[registrar messenger]];
 
     FlutterEventChannel* documentLoadedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_DOCUMENT_LOADED binaryMessenger:[registrar messenger]];
+    
+    FlutterEventChannel* documentErrorEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_DOCUMENT_ERROR binaryMessenger:[registrar messenger]];
+    
+    FlutterEventChannel* annotationChangedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_ANNOTATION_CHANGED binaryMessenger:[registrar messenger]];
+    
+    FlutterEventChannel* annotationsSelectedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_ANNOTATIONS_SELECTED binaryMessenger:[registrar messenger]];
+    
+    FlutterEventChannel* formFieldValueChangedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_FORM_FIELD_VALUE_CHANGED binaryMessenger:[registrar messenger]];
 
     [xfdfEventChannel setStreamHandler:instance];
     
     [bookmarkEventChannel setStreamHandler:instance];
     
     [documentLoadedEventChannel setStreamHandler:instance];
+    
+    [documentErrorEventChannel setStreamHandler:instance];
+    
+    [annotationChangedEventChannel setStreamHandler:instance];
+    
+    [annotationsSelectedEventChannel setStreamHandler:instance];
+    
+    [formFieldValueChangedEventChannel setStreamHandler:instance];
 
     DocumentViewFactory* documentViewFactory =
     [[DocumentViewFactory alloc] initWithMessenger:registrar.messenger];
@@ -565,7 +727,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     }
 }
 
--(void)docVC:(PTDocumentViewController*)docVC bookmarkChange:(NSString*)bookmarkJson
+-(void)docVCBookmarkChange:(NSString*)bookmarkJson
 {
     if(self.bookmarkEventSink != nil)
     {
@@ -573,7 +735,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     }
 }
 
--(void)docVC:(PTDocumentViewController*)docVC annotationChange:(NSString*)xfdfCommand
+-(void)docVCExportAnnotationCommand:(NSString*)xfdfCommand
 {
     if(self.xfdfEventSink != nil)
     {
@@ -581,11 +743,43 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     }
 }
 
--(void)docVC:(PTDocumentViewController*)docVC documentLoaded:(NSString*)filePath
+-(void)docVCDocumentLoaded:(NSString*)filePath
 {
     if(self.documentLoadedEventSink != nil)
     {
         self.documentLoadedEventSink(filePath);
+    }
+}
+
+-(void)docVCDocumentError
+{
+    if(self.documentErrorEventSink != nil)
+    {
+        self.documentErrorEventSink(nil);
+    }
+}
+
+-(void)docVCAnnotationChanged:(NSString*)annotationsWithActionString
+{
+    if(self.annotationChangedEventSink != nil)
+    {
+        self.annotationChangedEventSink(annotationsWithActionString);
+    }
+}
+
+-(void)docVCAnnotationsSelected:(NSString*)annotationsString
+{
+    if(self.annotationsSelectedEventSink != nil)
+    {
+        self.annotationsSelectedEventSink(annotationsString);
+    }
+}
+
+-(void)docVCFormFieldValueChanged:(NSString*)fieldsString
+{
+    if(self.formFieldValueChangedEventSink != nil)
+    {
+        self.formFieldValueChangedEventSink(fieldsString);
     }
 }
 
@@ -603,6 +797,22 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     else if([arguments intValue] == documentLoadedId)
     {
         self.documentLoadedEventSink = events;
+    }
+    else if([arguments intValue] == documentErrorId)
+    {
+        self.documentErrorEventSink = events;
+    }
+    else if([arguments intValue] == annotationChangedId)
+    {
+        self.annotationChangedEventSink = events;
+    }
+    else if([arguments intValue] == annotationsSelectedId)
+    {
+        self.annotationsSelectedEventSink = events;
+    }
+    else if([arguments intValue] == formFieldValueChangedId)
+    {
+        self.formFieldValueChangedEventSink = events;
     }
     
     return Nil;
@@ -636,6 +846,8 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     NSLog(@"Failed to open document: %@", error);
     FlutterResult result = ((PTFlutterViewController*)documentViewController).openResult;
     result([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
+    
+    [self docVCDocumentError];
 }
 
 @end

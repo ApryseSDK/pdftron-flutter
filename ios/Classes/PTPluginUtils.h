@@ -89,11 +89,27 @@ static NSString * const PTX2Key = @"x2";
 static NSString * const PTY2Key = @"y2";
 static NSString * const PTWidthKey = @"width";
 static NSString * const PTHeightKey = @"height";
+static NSString * const PTRectKey = @"rect";
+
+static NSString * const PTAddActionKey = @"add";
+static NSString * const PTDeleteActionKey = @"delete";
+static NSString * const PTModifyActionKey = @"modify";
+static NSString * const PTActionKey = @"action";
+
+static NSString * const PTAnnotationIdKey = @"id";
+static NSString * const PTAnnotationPageNumberKey = @"pageNumber";
+static NSString * const PTAnnotationListKey = @"annotations";
+
+static NSString * const PTFormFieldNameKey = @"fieldName";
+static NSString * const PTFormFieldValueKey = @"fieldValue";
 
 @interface PTPluginUtils : NSObject
 
 + (NSString *)PT_idAsNSString:(id)value;
 + (NSNumber *)PT_idAsNSNumber:(id)value;
+
++ (NSString *)PT_idToJSONString:(id)infoId;
++ (id)PT_JSONStringToId:(NSString *)jsonString;
 
 + (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result documentViewController:(PTDocumentViewController *)docVC;
 @end

@@ -1,16 +1,66 @@
 part of pdftron;
 
+class PTAnnot {
+  // note that an annotation has its id in xfdf as name
+  // page numbers are 1-indexed here, but 0-indexed in xfdf
+  String id;
+  int pageNumber;
+  PTAnnot(this.id, this.pageNumber);
+
+  factory PTAnnot.fromJson(dynamic json) {
+    return PTAnnot(json['id'], json['pageNumber']);
+  }
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'pageNumber': pageNumber,
+      };
+}
+
+class PTAnnotWithRect {
+  String id;
+  int pageNumber;
+  PTRect rect;
+
+  PTAnnotWithRect(this.id, this.pageNumber, this.rect);
+
+  factory PTAnnotWithRect.fromJson(dynamic json) {
+    return PTAnnotWithRect(
+        json['id'], json['pageNumber'], PTRect.fromJson(json['rect']));
+  }
+}
+
+class PTField {
+  String fieldName;
+  dynamic fieldValue;
+  PTField(this.fieldName, this.fieldValue);
+
+  factory PTField.fromJson(dynamic json) {
+    print(json['fieldValue'] is int);
+    print(json['fieldValue'] is bool);
+    print(json['fieldValue'] is String);
+    return PTField(json['fieldName'], (json['fieldValue']));
+  }
+
+  Map<String, dynamic> toJson() =>
+      {'fieldName': fieldName, 'fieldValue': fieldValue};
+}
+
 class PTRect {
   double x1, y1, x2, y2, width, height;
   PTRect(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
 
   factory PTRect.fromJson(dynamic json) {
-    return PTRect(getInt(json['x1']), getInt(json['y1']), getInt(json['x2']),
-        getInt(json['y2']), getInt(json['width']), getInt(json['height']));
+    return PTRect(
+        getDouble(json['x1']),
+        getDouble(json['y1']),
+        getDouble(json['x2']),
+        getDouble(json['y2']),
+        getDouble(json['width']),
+        getDouble(json['height']));
   }
 
   // a helper for JSON number decoding
-  static getInt(dynamic value) {
+  static getDouble(dynamic value) {
     if (value is int) {
       return value.toDouble();
     } else {
@@ -41,6 +91,12 @@ class Parameters {
   static const xfdfCommand = "xfdfCommand";
   static const bookmarkJson = "bookmarkJson";
   static const pageNumber = "pageNumber";
+}
+
+class EventParameters {
+  static const action = "action";
+  static const annotations = "annotations";
+  static const xfdfCommand = "xfdfCommand";
 }
 
 class Buttons {

@@ -13,9 +13,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events;
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments;
 
--(void)docVC:(PTDocumentViewController*)docVC annotationChange:(NSString*)xfdfCommand;
--(void)docVC:(PTDocumentViewController*)docVC bookmarkChange:(NSString*)bookmarkJson;
--(void)docVC:(PTDocumentViewController*)docVC documentLoaded:(NSString*)filePath;
+-(void)docVCExportAnnotationCommand:(NSString*)xfdfCommand;
+-(void)docVCBookmarkChange:(NSString*)bookmarkJson;
+-(void)docVCDocumentLoaded:(NSString*)filePath;
+-(void)docVCDocumentError;
+-(void)docVCAnnotationChanged:(NSString*)annotationsWithActionString;
+-(void)docVCAnnotationsSelected:(NSString*)annotationsString;
+-(void)docVCFormFieldValueChanged:(NSString*)fieldsString;
 
 @end
 

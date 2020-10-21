@@ -83,6 +83,58 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
+        final EventChannel documentErrorEventChannel = new EventChannel(registrar.messenger(), EVENT_DOCUMENT_ERROR);
+        documentErrorEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setDocumentErrorEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setDocumentErrorEventEmitter(null);
+            }
+        });
+
+        final EventChannel annotationChangedEventChannel = new EventChannel(registrar.messenger(), EVENT_ANNOTATION_CHANGED);
+        annotationChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setAnnotationChangedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setAnnotationChangedEventEmitter(null);
+            }
+        });
+
+        final EventChannel annotationSelectedEventChannel = new EventChannel(registrar.messenger(), EVENT_ANNOTATIONS_SELECTED);
+        annotationSelectedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setAnnotationsSelectedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setAnnotationsSelectedEventEmitter(null);
+            }
+        });
+
+        final EventChannel formFieldValueChangedEventChannel = new EventChannel(registrar.messenger(), EVENT_FORM_FIELD_VALUE_CHANGED);
+        formFieldValueChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setFormFieldValueChangedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setFormFieldValueChangedEventEmitter(null);
+            }
+        });
+
         registrar.platformViewRegistry().registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(registrar.messenger(), registrar.activeContext()));
     }
 
@@ -101,7 +153,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                     result.error(Long.toString(e.getErrorCode()), "PDFTronException Error: " + e, null);
                 }
                 break;
-            case FUNCTION_INITALIZE:
+            case FUNCTION_INITIALIZE:
                 try {
                     String licenseKey = call.argument(KEY_LICENSE_KEY);
                     com.pdftron.pdf.utils.AppUtils.initializePDFNetApplication(mContext.getApplicationContext(), licenseKey);
