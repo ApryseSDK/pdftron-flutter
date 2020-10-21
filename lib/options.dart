@@ -1,14 +1,14 @@
 part of pdftron;
 
-class PTAnnot {
+class Annot {
   // note that an annotation has its id in xfdf as name
   // page numbers are 1-indexed here, but 0-indexed in xfdf
   String id;
   int pageNumber;
-  PTAnnot(this.id, this.pageNumber);
+  Annot(this.id, this.pageNumber);
 
-  factory PTAnnot.fromJson(dynamic json) {
-    return PTAnnot(json['id'], json['pageNumber']);
+  factory Annot.fromJson(dynamic json) {
+    return Annot(json['id'], json['pageNumber']);
   }
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -16,41 +16,41 @@ class PTAnnot {
       };
 }
 
-class PTAnnotWithRect {
+class AnnotWithRect {
   String id;
   int pageNumber;
-  PTRect rect;
+  Rect rect;
 
-  PTAnnotWithRect(this.id, this.pageNumber, this.rect);
+  AnnotWithRect(this.id, this.pageNumber, this.rect);
 
-  factory PTAnnotWithRect.fromJson(dynamic json) {
-    return PTAnnotWithRect(
-        json['id'], json['pageNumber'], PTRect.fromJson(json['rect']));
+  factory AnnotWithRect.fromJson(dynamic json) {
+    return AnnotWithRect(
+        json['id'], json['pageNumber'], Rect.fromJson(json['rect']));
   }
 }
 
-class PTField {
+class Field {
   String fieldName;
   dynamic fieldValue;
-  PTField(this.fieldName, this.fieldValue);
+  Field(this.fieldName, this.fieldValue);
 
-  factory PTField.fromJson(dynamic json) {
+  factory Field.fromJson(dynamic json) {
     print(json['fieldValue'] is int);
     print(json['fieldValue'] is bool);
     print(json['fieldValue'] is String);
-    return PTField(json['fieldName'], (json['fieldValue']));
+    return Field(json['fieldName'], (json['fieldValue']));
   }
 
   Map<String, dynamic> toJson() =>
       {'fieldName': fieldName, 'fieldValue': fieldValue};
 }
 
-class PTRect {
+class Rect {
   double x1, y1, x2, y2, width, height;
-  PTRect(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
+  Rect(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
 
-  factory PTRect.fromJson(dynamic json) {
-    return PTRect(
+  factory Rect.fromJson(dynamic json) {
+    return Rect(
         getDouble(json['x1']),
         getDouble(json['y1']),
         getDouble(json['x2']),

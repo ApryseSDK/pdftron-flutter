@@ -36,7 +36,7 @@ const NSString *actionDelete = @"delete";
         self.documentLoaded = YES;
 
         NSString *filePath = self.coordinatedDocument.fileURL.path;
-        [self.plugin docVCDocumentLoaded:filePath];
+        [self.plugin docVCDocumentLoaded:self filePath:filePath];
     }
 }
 
@@ -85,18 +85,18 @@ const NSString *actionDelete = @"delete";
         NSLog(@"Error: %@", error.description);
     }
 
-    [self.plugin docVCBookmarkChange:json];
+    [self.plugin docVCBookmarkChange:self bookmarkJson:json];
 }
 
 -(void)toolManager:(PTToolManager*)toolManager willRemoveAnnotation:(nonnull PTAnnot *)annotation onPageNumber:(int)pageNumber
 {
     NSString* annotationWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTDeleteActionKey];
     if (annotationWithActionString) {
-        [self.plugin docVCAnnotationChanged:annotationWithActionString];
+        [self.plugin docVCAnnotationChanged:self annotationsWithActionString:annotationWithActionString];
     }
     
     NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:Nil removed:@[annotation]];
-    [self.plugin docVCExportAnnotationCommand:xfdf];
+    [self.plugin docVCExportAnnotationCommand:self xfdfCommand:xfdf];
     
 }
 
@@ -104,22 +104,22 @@ const NSString *actionDelete = @"delete";
 {
     NSString* annotationWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTAddActionKey];
     if (annotationWithActionString) {
-        [self.plugin docVCAnnotationChanged:annotationWithActionString];
+        [self.plugin docVCAnnotationChanged:self annotationsWithActionString:annotationWithActionString];
     }
     
     NSString* xfdf = [self generateXfdfCommandWithAdded:@[annotation] modified:Nil removed:Nil];
-    [self.plugin docVCExportAnnotationCommand:xfdf];
+    [self.plugin docVCExportAnnotationCommand:self xfdfCommand:xfdf];
 }
 
 - (void)toolManager:(PTToolManager *)toolManager annotationModified:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
 {
     NSString* annotationWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTModifyActionKey];
     if (annotationWithActionString) {
-        [self.plugin docVCAnnotationChanged:annotationWithActionString];
+        [self.plugin docVCAnnotationChanged:self annotationsWithActionString:annotationWithActionString];
     }
   
     NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:@[annotation] removed:Nil];
-    [self.plugin docVCExportAnnotationCommand:xfdf];
+    [self.plugin docVCExportAnnotationCommand:self xfdfCommand:xfdf];
 }
 
 - (void)toolManager:(PTToolManager *)toolManager didSelectAnnotation:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
@@ -157,7 +157,7 @@ const NSString *actionDelete = @"delete";
             },
         };
         
-        [self.plugin docVCAnnotationsSelected:[PTPluginUtils PT_idToJSONString:@[annotDict]]];
+        [self.plugin docVCAnnotationsSelected:self annotationsString:[PTPluginUtils PT_idToJSONString:@[annotDict]]];
     }
    
 }
@@ -186,7 +186,7 @@ const NSString *actionDelete = @"delete";
                 PTFormFieldValueKey: fieldValue,
             };
             
-            [self.plugin docVCFormFieldValueChanged: [PTPluginUtils PT_idToJSONString:@[fieldDict]]];
+            [self.plugin docVCFormFieldValueChanged:self fieldsString:[PTPluginUtils PT_idToJSONString:@[fieldDict]]];
         }
         // TODO: collab manager
         /*
@@ -727,7 +727,7 @@ static NSString * const EVENT_FORM_FIELD_VALUE_CHANGED = @"form_field_value_chan
     }
 }
 
--(void)docVCBookmarkChange:(NSString*)bookmarkJson
+-(void)docVCBookmarkChange:(PTDocumentViewController*)docVC bookmarkJson:(NSString*)bookmarkJson
 {
     if(self.bookmarkEventSink != nil)
     {
@@ -735,7 +735,7 @@ static NSString * const EVENT_FORM_FIELD_VALUE_CHANGED = @"form_field_value_chan
     }
 }
 
--(void)docVCExportAnnotationCommand:(NSString*)xfdfCommand
+-(void)docVCExportAnnotationCommand:(PTDocumentViewController*)docVC xfdfCommand:(NSString*)xfdfCommand
 {
     if(self.xfdfEventSink != nil)
     {
@@ -743,7 +743,7 @@ static NSString * const EVENT_FORM_FIELD_VALUE_CHANGED = @"form_field_value_chan
     }
 }
 
--(void)docVCDocumentLoaded:(NSString*)filePath
+-(void)docVCDocumentLoaded:(PTDocumentViewController*)docVC filePath:(NSString*)filePath
 {
     if(self.documentLoadedEventSink != nil)
     {
@@ -751,7 +751,7 @@ static NSString * const EVENT_FORM_FIELD_VALUE_CHANGED = @"form_field_value_chan
     }
 }
 
--(void)docVCDocumentError
+-(void)docVCDocumentError:(PTDocumentViewController*)docVC
 {
     if(self.documentErrorEventSink != nil)
     {
@@ -759,7 +759,7 @@ static NSString * const EVENT_FORM_FIELD_VALUE_CHANGED = @"form_field_value_chan
     }
 }
 
--(void)docVCAnnotationChanged:(NSString*)annotationsWithActionString
+-(void)docVCAnnotationChanged:(PTDocumentViewController*)docVC annotationsWithActionString:(NSString*)annotationsWithActionString
 {
     if(self.annotationChangedEventSink != nil)
     {
@@ -767,7 +767,7 @@ static NSString * const EVENT_FORM_FIELD_VALUE_CHANGED = @"form_field_value_chan
     }
 }
 
--(void)docVCAnnotationsSelected:(NSString*)annotationsString
+-(void)docVCAnnotationsSelected:(PTDocumentViewController*)docVC annotationsString:(NSString*)annotationsString
 {
     if(self.annotationsSelectedEventSink != nil)
     {
@@ -775,7 +775,7 @@ static NSString * const EVENT_FORM_FIELD_VALUE_CHANGED = @"form_field_value_chan
     }
 }
 
--(void)docVCFormFieldValueChanged:(NSString*)fieldsString
+-(void)docVCFormFieldValueChanged:(PTDocumentViewController*)docVC fieldsString:(NSString*)fieldsString
 {
     if(self.formFieldValueChangedEventSink != nil)
     {
@@ -847,7 +847,7 @@ static NSString * const EVENT_FORM_FIELD_VALUE_CHANGED = @"form_field_value_chan
     FlutterResult result = ((PTFlutterViewController*)documentViewController).openResult;
     result([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
     
-    [self docVCDocumentError];
+    [self docVCDocumentError:[self getDocumentViewController]];
 }
 
 @end

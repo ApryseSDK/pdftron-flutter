@@ -81,9 +81,9 @@ CancelListener startAnnotationChangedListener(
     String action = annotationsWithAction[EventParameters.action];
     List<dynamic> annotations =
         annotationsWithAction[EventParameters.annotations];
-    List<PTAnnot> annotList = new List<PTAnnot>();
+    List<Annot> annotList = new List<Annot>();
     for (dynamic annotation in annotations) {
-      annotList.add(new PTAnnot.fromJson(annotation));
+      annotList.add(new Annot.fromJson(annotation));
     }
     listener(action, annotList);
   }, cancelOnError: true);
@@ -99,9 +99,9 @@ CancelListener startAnnotationsSelectedListener(
       .receiveBroadcastStream(annotationsSelectedId)
       .listen((annotationWithRectsString) {
     List<dynamic> annotationWithRects = jsonDecode(annotationWithRectsString);
-    List<PTAnnotWithRect> annotWithRectList = new List<PTAnnotWithRect>();
+    List<AnnotWithRect> annotWithRectList = new List<AnnotWithRect>();
     for (dynamic annotationWithRect in annotationWithRects) {
-      annotWithRectList.add(new PTAnnotWithRect.fromJson(annotationWithRect));
+      annotWithRectList.add(new AnnotWithRect.fromJson(annotationWithRect));
     }
     listener(annotWithRectList);
   }, cancelOnError: true);
@@ -117,9 +117,9 @@ CancelListener startFormFieldValueChangedListener(
       .receiveBroadcastStream(formFieldValueChangedId)
       .listen((fieldsString) {
     List<dynamic> fields = jsonDecode(fieldsString);
-    List<PTField> fieldList = new List<PTField>();
+    List<Field> fieldList = new List<Field>();
     for (dynamic field in fields) {
-      fieldList.add(new PTField.fromJson(field));
+      fieldList.add(new Field.fromJson(field));
     }
     listener(fieldList);
   }, cancelOnError: true);

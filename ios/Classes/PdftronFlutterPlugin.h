@@ -13,13 +13,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events;
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments;
 
--(void)docVCExportAnnotationCommand:(NSString*)xfdfCommand;
--(void)docVCBookmarkChange:(NSString*)bookmarkJson;
--(void)docVCDocumentLoaded:(NSString*)filePath;
--(void)docVCDocumentError;
--(void)docVCAnnotationChanged:(NSString*)annotationsWithActionString;
--(void)docVCAnnotationsSelected:(NSString*)annotationsString;
--(void)docVCFormFieldValueChanged:(NSString*)fieldsString;
+-(void)docVCBookmarkChange:(PTDocumentViewController*)docVC bookmarkJson:(NSString*)bookmarkJson;
+-(void)docVCExportAnnotationCommand:(PTDocumentViewController*)docVC xfdfCommand:(NSString*)xfdfCommand;
+-(void)docVCDocumentLoaded:(PTDocumentViewController*)docVC filePath:(NSString*)filePath;
+-(void)docVCDocumentError:(PTDocumentViewController*)docVC;
+-(void)docVCAnnotationChanged:(PTDocumentViewController*)docVC annotationsWithActionString:(NSString*)annotationsWithActionString;
+-(void)docVCAnnotationsSelected:(PTDocumentViewController*)docVC annotationsString:(NSString*)annotationsString;
+-(void)docVCFormFieldValueChanged:(PTDocumentViewController*)docVC fieldsString:(NSString*)fieldsString;
 
 @end
 

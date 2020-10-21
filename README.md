@@ -410,7 +410,7 @@ Event is raised when there is a change to annotations to the document.
 var annotChangedCancel = startAnnotationChangedListener((action, annotations) 
 {
   print("flutter annotation action: ${action}");
-  for (PTAnnot annot in annotations) {
+  for (Annot annot in annotations) {
     print("annotation has id: ${annot.id}");
     print("annotation is in page: ${annot.pageNumber}")
   }
@@ -424,7 +424,7 @@ Event is raised when annotations are selected.
 ```dart
 var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects) 
 {
-  for (PTAnnotWithRect annotWithRect in annotationWithRects) {
+  for (AnnotWithRect annotWithRect in annotationWithRects) {
     print("annotation has id: ${annotWithRect.id}");
     print("annotation is in page: ${annotWithRect.pageNumber}");
     print("annotation has width: ${annotWithRect.rect.width}");
@@ -440,7 +440,7 @@ Event is raised when there are changes to form field values.
 ```dart
 var fieldChangedCancel = startFormFieldValueChangedListener((fields)
 {
-  for (PTField field in fields) {
+  for (Field field in fields) {
     print("Field has name ${field.fieldName}");
     print("Field has value ${field.fieldValue}");
   }
