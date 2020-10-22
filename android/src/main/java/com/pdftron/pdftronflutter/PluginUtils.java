@@ -62,6 +62,8 @@ public class PluginUtils {
     private static final String KEY_FIELD_NAME = "fieldName";
     private static final String KEY_FIELD_VALUE = "fieldValue";
 
+    private static final String KEY_PREVIOUS_PAGE_NUMBER = "previousPageNumber";
+
     public static final String KEY_ANNOTATION_ID = "id";
 
     private static final String KEY_ACTION_ADD = "add";
@@ -76,6 +78,9 @@ public class PluginUtils {
     public static final String EVENT_ANNOTATION_CHANGED = "annotation_changed_event";
     public static final String EVENT_ANNOTATIONS_SELECTED = "annotations_selected_event";
     public static final String EVENT_FORM_FIELD_VALUE_CHANGED = "form_field_value_changed_event";
+    public static final String EVENT_LEADING_NAV_BUTTON_PRESSED = "leading_nav_button_pressed_event";
+    public static final String EVENT_PAGE_CHANGED = "page_changed_event";
+    public static final String EVENT_ZOOM_CHANGED = "zoom_changed_event";
 
     public static final String FUNCTION_GET_PLATFORM_VERSION = "getPlatformVersion";
     public static final String FUNCTION_GET_VERSION = "getVersion";
@@ -452,6 +457,8 @@ public class PluginUtils {
     private static ToolManager.AnnotationModificationListener annotationModificationListener;
     private static ToolManager.PdfDocModificationListener pdfDocModificationListener;
     private static ToolManager.AnnotationsSelectionListener annotationsSelectionListener;
+    private static PDFViewCtrl.PageChangeListener pageChangeListener;
+    private static PDFViewCtrl.OnCanvasSizeChangeListener onCanvasSizeChangeListener;
 
     public static void handleDocumentLoaded(ViewActivityComponent component) {
         addListeners(component);
@@ -505,6 +512,24 @@ public class PluginUtils {
                 toolManager.removePdfDocModificationListener(pdfDocModificationListener);
             }
         }
+
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl != null) {
+            if (pageChangeListener != null) {
+                pdfViewCtrl.removePageChangeListener(pageChangeListener);
+            }
+
+            if (onCanvasSizeChangeListener != null) {
+                pdfViewCtrl.removeOnCanvasSizeChangeListener(onCanvasSizeChangeListener);
+            }
+        }
+    }
+
+    public static void handleNavButtonPressed(ViewActivityComponent component) {
+        EventChannel.EventSink leadingNavButtonPressedSink = component.getLeadingNavButtonPressedEventEmitter();
+        if (leadingNavButtonPressedSink != null) {
+            leadingNavButtonPressedSink.success(null);
+        }
     }
 
     private static void addListeners(ViewActivityComponent component) {
@@ -514,6 +539,12 @@ public class PluginUtils {
             toolManager.addAnnotationModificationListener(annotationModificationListener);
             toolManager.addAnnotationsSelectionListener(annotationsSelectionListener);
             toolManager.addPdfDocModificationListener(pdfDocModificationListener);
+        }
+
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl != null) {
+            pdfViewCtrl.addPageChangeListener(pageChangeListener);
+            pdfViewCtrl.addOnCanvasSizeChangeListener(onCanvasSizeChangeListener);
         }
     }
 
@@ -659,6 +690,38 @@ public class PluginUtils {
                 @Override
                 public void onAnnotationAction() {
 
+                }
+            };
+        }
+
+        if (pageChangeListener == null) {
+            pageChangeListener = new PDFViewCtrl.PageChangeListener() {
+                @Override
+                public void onPageChange(int old_page, int cur_page, PDFViewCtrl.PageChangeState pageChangeState) {
+                    EventChannel.EventSink eventSink = component.getPageChangedEventEmitter();
+                    if (eventSink != null && (old_page != cur_page || pageChangeState == PDFViewCtrl.PageChangeState.END)) {
+                        JSONObject resultObject = new JSONObject();
+                        try {
+                            resultObject.put(KEY_PREVIOUS_PAGE_NUMBER, old_page);
+                            resultObject.put(KEY_PAGE_NUMBER, cur_page);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        eventSink.success(resultObject.toString());
+                    }
+                }
+            };
+        }
+
+        if (onCanvasSizeChangeListener == null) {
+            onCanvasSizeChangeListener = new PDFViewCtrl.OnCanvasSizeChangeListener() {
+                @Override
+                public void onCanvasSizeChanged() {
+                    EventChannel.EventSink eventSink = component.getZoomChangedEventEmitter();
+                    if (eventSink != null && component.getPdfViewCtrl() != null) {
+                        eventSink.success(component.getPdfViewCtrl().getZoom());
+                    }
                 }
             };
         }

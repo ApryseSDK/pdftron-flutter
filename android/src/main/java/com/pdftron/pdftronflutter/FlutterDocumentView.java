@@ -141,6 +141,45 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
                 documentView.setFormFieldValueChangedEventEmitter(null);
             }
         });
+
+        final EventChannel leadingNavButtonPressedEventChannel = new EventChannel(messenger, EVENT_LEADING_NAV_BUTTON_PRESSED);
+        leadingNavButtonPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                documentView.setLeadingNavButtonPressedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                documentView.setLeadingNavButtonPressedEventEmitter(null);
+            }
+        });
+
+        final EventChannel pageChangedEventChannel = new EventChannel(messenger, EVENT_PAGE_CHANGED);
+        pageChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                documentView.setPageChangedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                documentView.setPageChangedEventEmitter(null);
+            }
+        });
+
+        final EventChannel zoomChangedEventChannel = new EventChannel(messenger, EVENT_ZOOM_CHANGED);
+        zoomChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                documentView.setZoomChangedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                documentView.setZoomChangedEventEmitter(null);
+            }
+        });
     }
 
     @Override

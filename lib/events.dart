@@ -11,6 +11,10 @@ const _annotationsSelectedChannel =
     const EventChannel('annotations_selected_event');
 const _formFieldValueChangedChannel =
     const EventChannel('form_field_value_changed_event');
+const _leadingNavButtonPressedChannel =
+    const EventChannel('leading_nav_button_pressed_event');
+const _pageChangedChannel = const EventChannel('page_changed_event');
+const _zoomChangedChannel = const EventChannel('zoom_changed_event');
 
 typedef void ExportAnnotationCommandListener(dynamic xfdfCommand);
 typedef void ExportBookmarkListener(dynamic bookmarkJson);
@@ -19,6 +23,10 @@ typedef void DocumentErrorListener();
 typedef void AnnotationChangedListener(dynamic action, dynamic annotations);
 typedef void AnnotationsSelectedListener(dynamic annotationWithRects);
 typedef void FormFieldValueChangedListener(dynamic fields);
+typedef void LeadingNavbuttonPressedlistener();
+typedef void PageChangedListener(
+    dynamic previousPageNumber, dynamic pageNumber);
+typedef void ZoomChangedListener(dynamic zoom);
 typedef void CancelListener();
 
 const int exportAnnotationId = 1;
@@ -28,6 +36,9 @@ const int documentErrorId = 4;
 const int annotationChangedId = 5;
 const int annotationsSelectedId = 6;
 const int formFieldValueChangedId = 7;
+const int leadingNavButtonPressedChannelId = 8;
+const int pageChangedId = 9;
+const int zoomChangedId = 10;
 
 CancelListener startExportAnnotationCommandListener(
     ExportAnnotationCommandListener listener) {
@@ -123,6 +134,45 @@ CancelListener startFormFieldValueChangedListener(
     }
     listener(fieldList);
   }, cancelOnError: true);
+
+  return () {
+    subscription.cancel();
+  };
+}
+
+CancelListener startLeadingNavButtonPressedListener(
+    LeadingNavbuttonPressedlistener listener) {
+  var subscription = _leadingNavButtonPressedChannel
+      .receiveBroadcastStream(leadingNavButtonPressedChannelId)
+      .listen((stub) {
+    listener();
+  }, cancelOnError: true);
+
+  return () {
+    subscription.cancel();
+  };
+}
+
+CancelListener startPageChangedListener(PageChangedListener listener) {
+  var subscription = _pageChangedChannel
+      .receiveBroadcastStream(pageChangedId)
+      .listen((pagesString) {
+    dynamic pagesObject = jsonDecode(pagesString);
+    dynamic previousPageNumber =
+        pagesObject[EventParameters.previousPageNumber];
+    dynamic pageNumber = pagesObject[EventParameters.pageNumber];
+    listener(previousPageNumber, pageNumber);
+  }, cancelOnError: true);
+
+  return () {
+    subscription.cancel();
+  };
+}
+
+CancelListener startZoomChangedListener(ZoomChangedListener listener) {
+  var subscription = _zoomChangedChannel
+      .receiveBroadcastStream(zoomChangedId)
+      .listen(listener, cancelOnError: true);
 
   return () {
     subscription.cancel();

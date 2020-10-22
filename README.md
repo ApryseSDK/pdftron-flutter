@@ -446,6 +446,38 @@ var fieldChangedCancel = startFormFieldValueChangedListener((fields)
   }
 });
 ```
+### startLeadingNavButtonPressedListener
+
+Event is raised when the leading navigation button is pressed.
+
+```dart
+var navPressedCancel = startLeadingNavButtonPressedListener(()
+{
+  print("flutter nav button pressed");
+});
+```
+
+### startPageChangedListener
+
+Event is raised when page changes.
+
+```dart
+var pageChangedCancel = startPageChangedListener((previousPageNumber, pageNumber)
+{
+  print("flutter page changed. from $previousPageNumber to $pageNumber");
+});
+```
+
+### startZoomChangedListener
+
+Event is raised when zoom ratio is changed in the current document.
+
+```dart
+var zoomChangedCancel = startZoomChangedListener((zoom) 
+{
+  print("flutter zoom changed. Current zoom is: $zoom");
+});
+```
 
 ## Contributing
 See [Contributing](./CONTRIBUTING.md)

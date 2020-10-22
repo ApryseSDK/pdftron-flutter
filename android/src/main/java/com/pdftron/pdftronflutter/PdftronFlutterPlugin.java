@@ -135,6 +135,45 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
+        final EventChannel leadingNavButtonPressedEventChannel = new EventChannel(registrar.messenger(), EVENT_LEADING_NAV_BUTTON_PRESSED);
+        leadingNavButtonPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setLeadingNavButtonPressedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setLeadingNavButtonPressedEventEmitter(null);
+            }
+        });
+
+        final EventChannel pageChangedEventChannel = new EventChannel(registrar.messenger(), EVENT_PAGE_CHANGED);
+        pageChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setPageChangedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setPageChangedEventEmitter(null);
+            }
+        });
+
+        final EventChannel zoomChangedEventChannel = new EventChannel(registrar.messenger(), EVENT_ZOOM_CHANGED);
+        zoomChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setZoomChangedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setZoomChangedEventEmitter(null);
+            }
+        });
+
         registrar.platformViewRegistry().registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(registrar.messenger(), registrar.activeContext()));
     }
 

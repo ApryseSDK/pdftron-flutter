@@ -14,14 +14,15 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _version = 'Unknown';
-  String _document = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
+  String _document =
+      "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
 
-    showViewer();
+    // showViewer();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -45,7 +46,6 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-
   void showViewer() async {
     // opening without a config file will have all functionality enabled.
     // await PdftronFlutter.openDocument(_document);
@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
     // shows how to disale functionality
 //      var disabledElements = [Buttons.shareButton, Buttons.searchButton];
 //      var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
-     var config = Config();
+    var config = Config();
 //      config.disabledElements = disabledElements;
 //      config.disabledTools = disabledTools;
 //      config.multiTabEnabled = true;
@@ -63,25 +63,26 @@ class _MyAppState extends State<MyApp> {
       print("document loaded: $filePath");
     });
 
-     await PdftronFlutter.openDocument(_document, config: config);
+    await PdftronFlutter.openDocument(_document, config: config);
 
     try {
-      PdftronFlutter.importAnnotationCommand("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
-                "      <add>\n" +
-                "        <square style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20200619203211Z\" flags=\"print\" date=\"D:20200619203211Z\" name=\"c684da06-12d2-4ccd-9361-0a1bf2e089e3\" page=\"1\" rect=\"113.312,277.056,235.43,350.173\" title=\"\" />\n" +
-                "      </add>\n" +
-                "      <modify />\n" +
-                "      <delete />\n" +
-                "      <pdf-info import-version=\"3\" version=\"2\" xmlns=\"http://www.pdftron.com/pdfinfo\" />\n" +
-                "    </xfdf>");
-    } on PlatformException catch(e) {
+      PdftronFlutter.importAnnotationCommand(
+          "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+              "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
+              "      <add>\n" +
+              "        <square style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20200619203211Z\" flags=\"print\" date=\"D:20200619203211Z\" name=\"c684da06-12d2-4ccd-9361-0a1bf2e089e3\" page=\"1\" rect=\"113.312,277.056,235.43,350.173\" title=\"\" />\n" +
+              "      </add>\n" +
+              "      <modify />\n" +
+              "      <delete />\n" +
+              "      <pdf-info import-version=\"3\" version=\"2\" xmlns=\"http://www.pdftron.com/pdfinfo\" />\n" +
+              "    </xfdf>");
+    } on PlatformException catch (e) {
       print("Failed to importAnnotationCommand '${e.message}'.");
     }
 
     try {
       PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
-    } on PlatformException catch(e) {
+    } on PlatformException catch (e) {
       print("Failed to importBookmarkJson '${e.message}'.");
     }
 
@@ -101,6 +102,28 @@ class _MyAppState extends State<MyApp> {
     // to cancel event:
     // annotCancel();
     // bookmarkCancel();
+
+    var pageCancel = startPageChangedListener((p1, p2) {
+      print("p1");
+      print(p1);
+      print(p1 is int);
+      print(p1 is String);
+      print("p2");
+      print(p2);
+      print(p2 is int);
+      print(p2 is String);
+    });
+
+    var zoomCancel = startZoomChangedListener((zoom) {
+      print("zoom");
+      print(zoom.toString());
+      print(zoom is double);
+      print(zoom is String);
+    });
+
+    var navCancel = startLeadingNavButtonPressedListener(() {
+      print("Jesus Christ");
+    });
   }
 
   @override
@@ -111,9 +134,9 @@ class _MyAppState extends State<MyApp> {
           child: Container(
             width: double.infinity,
             height: double.infinity,
-            // child: DocumentView(
-            //   onCreated: _onDocumentViewCreated,
-            // ),
+            child: DocumentView(
+              onCreated: _onDocumentViewCreated,
+            ),
           ),
         ),
       ),
@@ -122,5 +145,18 @@ class _MyAppState extends State<MyApp> {
 
   void _onDocumentViewCreated(DocumentViewController controller) {
     controller.openDocument(_document);
+
+    var navPressedCancel = startLeadingNavButtonPressedListener(() {
+      print("flutter nav button pressed");
+    });
+
+    var pageChangedCancel =
+        startPageChangedListener((previousPageNumber, pageNumber) {
+      print("flutter page changed. from $previousPageNumber to $pageNumber");
+    });
+
+    var zoomChangedCancel = startZoomChangedListener((zoom) {
+      print("flutter zoom changed. Current zoom is: $zoom");
+    });
   }
 }

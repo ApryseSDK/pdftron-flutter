@@ -38,6 +38,9 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
     private static AtomicReference<EventSink> sAnnotationChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sAnnotationsSelectedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sFormFieldChangedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sLeadingNavButtonPressedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sPageChangedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sZoomChangedEventEmitter = new AtomicReference<>();
 
     private static HashMap<Annot, Integer> mSelectedAnnots;
 
@@ -92,6 +95,18 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
         sFormFieldChangedEventEmitter.set(emitter);
     }
 
+    public static void setLeadingNavButtonPressedEventEmitter(EventSink emitter) {
+        sLeadingNavButtonPressedEventEmitter.set(emitter);
+    }
+
+    public static void setPageChangedEventEmitter(EventSink emitter) {
+        sPageChangedEventEmitter.set(emitter);
+    }
+
+    public static void setZoomChangedEventEmitter(EventSink emitter) {
+        sZoomChangedEventEmitter.set(emitter);
+    }
+
     public static void setFlutterLoadResult(Result result) {
         sFlutterLoadResult.set(result);
     }
@@ -135,6 +150,21 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
     }
 
     @Override
+    public EventSink getLeadingNavButtonPressedEventEmitter() {
+        return sLeadingNavButtonPressedEventEmitter.get();
+    }
+
+    @Override
+    public EventSink getPageChangedEventEmitter() {
+        return sPageChangedEventEmitter.get();
+    }
+
+    @Override
+    public EventSink getZoomChangedEventEmitter() {
+        return sZoomChangedEventEmitter.get();
+    }
+
+    @Override
     public Result getFlutterLoadResult() {
         return sFlutterLoadResult.getAndSet(null);
     }
@@ -172,6 +202,13 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
         super.onOpenDocError();
 
         return handleOpenDocError(this);
+    }
+
+    @Override
+    public void onNavButtonPressed() {
+        super.onNavButtonPressed();
+
+        handleNavButtonPressed(this);
     }
 
     private void attachActivity() {

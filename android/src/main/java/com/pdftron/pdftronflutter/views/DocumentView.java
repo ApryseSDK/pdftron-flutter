@@ -37,6 +37,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     private EventChannel.EventSink sAnnotationChangedEventEmitter;
     private EventChannel.EventSink sAnnotationsSelectedEventEmitter;
     private EventChannel.EventSink sFormFieldValueChangedEventEmitter;
+    private EventChannel.EventSink sLeadingNavButtonPressedEventEmitter;
+    private EventChannel.EventSink sPageChangedEventEmitter;
+    private EventChannel.EventSink sZoomChangedEventEmitter;
+
     private MethodChannel.Result sFlutterLoadResult;
 
     private HashMap<Annot, Integer> mSelectedAnnots;
@@ -121,6 +125,13 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
         handleOnDetach(this);
     }
 
+    @Override
+    public void onNavButtonPressed() {
+        super.onNavButtonPressed();
+
+        handleNavButtonPressed(this);
+    }
+
     public void setExportAnnotationCommandEventEmitter(EventChannel.EventSink emitter) {
         sExportAnnotationCommandEventEmitter = emitter;
     }
@@ -147,6 +158,18 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
 
     public void setFormFieldValueChangedEventEmitter(EventChannel.EventSink emitter) {
         sFormFieldValueChangedEventEmitter = emitter;
+    }
+
+    public void setLeadingNavButtonPressedEventEmitter(EventChannel.EventSink emitter) {
+        sLeadingNavButtonPressedEventEmitter = emitter;
+    }
+
+    public void setPageChangedEventEmitter(EventChannel.EventSink emitter) {
+        sPageChangedEventEmitter = emitter;
+    }
+
+    public void setZoomChangedEventEmitter(EventChannel.EventSink emitter) {
+        sZoomChangedEventEmitter = emitter;
     }
 
     public void setFlutterLoadResult(MethodChannel.Result result) {
@@ -190,6 +213,21 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     @Override
     public EventChannel.EventSink getFormFieldValueChangedEventEmitter() {
         return sFormFieldValueChangedEventEmitter;
+    }
+
+    @Override
+    public EventChannel.EventSink getLeadingNavButtonPressedEventEmitter() {
+        return sLeadingNavButtonPressedEventEmitter;
+    }
+
+    @Override
+    public EventChannel.EventSink getPageChangedEventEmitter() {
+        return sPageChangedEventEmitter;
+    }
+
+    @Override
+    public EventChannel.EventSink getZoomChangedEventEmitter() {
+        return sZoomChangedEventEmitter;
     }
 
     @Override
