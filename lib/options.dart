@@ -5,12 +5,17 @@ class Rect {
   Rect(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
 
   factory Rect.fromJson(dynamic json) {
-    return Rect(getInt(json['x1']), getInt(json['y1']), getInt(json['x2']),
-        getInt(json['y2']), getInt(json['width']), getInt(json['height']));
+    return Rect(
+        getDouble(json['x1']),
+        getDouble(json['y1']),
+        getDouble(json['x2']),
+        getDouble(json['y2']),
+        getDouble(json['width']),
+        getDouble(json['height']));
   }
 
   // a helper for JSON number decoding
-  static getInt(dynamic value) {
+  static getDouble(dynamic value) {
     if (value is int) {
       return value.toDouble();
     } else {
