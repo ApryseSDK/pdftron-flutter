@@ -178,6 +178,27 @@
     }
 }
 
+- (void)navButtonClicked
+{
+    [self.plugin docVCLeadingNavButtonPressed:self];
+}
+
+- (void)pdfViewCtrl:(PTPDFViewCtrl*)pdfViewCtrl pdfScrollViewDidZoom:(UIScrollView *)scrollView
+{
+    const double zoom = self.pdfViewCtrl.zoom * self.pdfViewCtrl.zoomScale;
+    [self.plugin docVCZoomChanged:self zoom:[NSNumber numberWithDouble:zoom]];
+}
+
+- (void)pdfViewCtrl:(PTPDFViewCtrl*)pdfViewCtrl pageNumberChangedFrom:(int)oldPageNumber To:(int)newPageNumber
+{
+    NSDictionary *resultDict = @{
+        PTPreviousPageNumberKey: [NSNumber numberWithInt:oldPageNumber],
+        PTPageNumberKey: [NSNumber numberWithInt:newPageNumber],
+    };
+    
+    [self.plugin docVCPageChanged:self pageNumbersString:[PdftronFlutterPlugin PT_idToJSONString:resultDict]];
+}
+
 -(NSString*)generateXfdfCommandWithAdded:(NSArray<PTAnnot*>*)added modified:(NSArray<PTAnnot*>*)modified removed:(NSArray<PTAnnot*>*)removed
 {
     

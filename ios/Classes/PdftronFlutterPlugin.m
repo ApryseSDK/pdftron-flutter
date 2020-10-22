@@ -9,6 +9,9 @@ const int documentErrorId = 4;
 const int annotationChangedId = 5;
 const int annotationsSelectedId = 6;
 const int formFieldValueChangedId = 7;
+const int leadingNavButtonPressedId = 8;
+const int pageChangedId = 9;
+const int zoomChangedId = 10;
 
 @interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate, PTDocumentViewControllerDelegate>
 
@@ -20,6 +23,9 @@ const int formFieldValueChangedId = 7;
 @property (nonatomic, strong) FlutterEventSink annotationChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink annotationsSelectedEventSink;
 @property (nonatomic, strong) FlutterEventSink formFieldValueChangedEventSink;
+@property (nonatomic, strong) FlutterEventSink leadingNavButtonPressedEventSink;
+@property (nonatomic, strong) FlutterEventSink pageChangedEventSink;
+@property (nonatomic, strong) FlutterEventSink zoomChangedEventSink;
 
 @end
 
@@ -79,6 +85,12 @@ const int formFieldValueChangedId = 7;
     FlutterEventChannel* annotationsSelectedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_ANNOTATIONS_SELECTED binaryMessenger:messenger];
     
     FlutterEventChannel* formFieldValueChangedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_FORM_FIELD_VALUE_CHANGED binaryMessenger:messenger];
+    
+    FlutterEventChannel* leadingNavButtonPressedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_LEADING_NAV_BUTTON_PRESSED binaryMessenger:messenger];
+    
+    FlutterEventChannel* pageChangedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_PAGE_CHANGED binaryMessenger:messenger];
+    
+    FlutterEventChannel* zoomChangedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_ZOOM_CHANGED binaryMessenger:messenger];
 
     [xfdfEventChannel setStreamHandler:self];
     
@@ -93,6 +105,12 @@ const int formFieldValueChangedId = 7;
     [annotationsSelectedEventChannel setStreamHandler:self];
     
     [formFieldValueChangedEventChannel setStreamHandler:self];
+    
+    [leadingNavButtonPressedEventChannel setStreamHandler:self];
+    
+    [pageChangedEventChannel setStreamHandler:self];
+    
+    [zoomChangedEventChannel setStreamHandler:self];
 }
 
 #pragma mark - Configurations
@@ -436,6 +454,18 @@ const int formFieldValueChangedId = 7;
     {
         self.formFieldValueChangedEventSink = events;
     }
+    else if([arguments intValue] == leadingNavButtonPressedId)
+    {
+        self.leadingNavButtonPressedEventSink = events;
+    }
+    else if([arguments intValue] == pageChangedId)
+    {
+        self.pageChangedEventSink = events;
+    }
+    else if([arguments intValue] == zoomChangedId)
+    {
+        self.zoomChangedEventSink = events;
+    }
     
     return Nil;
 }
@@ -469,6 +499,18 @@ const int formFieldValueChangedId = 7;
     else if([arguments intValue] == formFieldValueChangedId)
     {
         self.formFieldValueChangedEventSink = Nil;
+    }
+    else if([arguments intValue] == leadingNavButtonPressedId)
+    {
+        self.leadingNavButtonPressedEventSink = Nil;
+    }
+    else if ([arguments intValue] == pageChangedId)
+    {
+        self.pageChangedEventSink = Nil;
+    }
+    else if ([arguments intValue] == zoomChangedId)
+    {
+        self.zoomChangedEventSink = Nil;
     }
     
     return Nil;
@@ -536,6 +578,30 @@ const int formFieldValueChangedId = 7;
     if(self.formFieldValueChangedEventSink != nil)
     {
         self.formFieldValueChangedEventSink(fieldsString);
+    }
+}
+
+-(void)docVCLeadingNavButtonPressed:(PTDocumentViewController *)docVC
+{
+    if (self.leadingNavButtonPressedEventSink != nil)
+    {
+        self.leadingNavButtonPressedEventSink(nil);
+    }
+}
+
+-(void)docVCPageChanged:(PTDocumentViewController *)docVC pageNumbersString:(NSString*)pageNumbersString
+{
+    if (self.pageChangedEventSink != nil)
+    {
+        self.pageChangedEventSink(pageNumbersString);
+    }
+}
+
+-(void)docVCZoomChanged:(PTDocumentViewController *)docVC zoom:(NSNumber*)zoom
+{
+    if (self.zoomChangedEventSink != nil)
+    {
+        self.zoomChangedEventSink(zoom);
     }
 }
 

@@ -92,6 +92,9 @@ static NSString * const EVENT_DOCUMENT_ERROR = @"document_error_event";
 static NSString * const EVENT_ANNOTATION_CHANGED = @"annotation_changed_event";
 static NSString * const EVENT_ANNOTATIONS_SELECTED = @"annotations_selected_event";
 static NSString * const EVENT_FORM_FIELD_VALUE_CHANGED = @"form_field_value_changed_event";
+static NSString * const EVENT_LEADING_NAV_BUTTON_PRESSED = @"leading_nav_button_pressed_event";
+static NSString * const EVENT_PAGE_CHANGED = @"page_changed_event";
+static NSString * const EVENT_ZOOM_CHANGED = @"zoom_changed_event";
 
 // other keys
 static NSString * const PTX1Key = @"x1";
@@ -114,6 +117,9 @@ static NSString * const PTAnnotationListKey = @"annotations";
 static NSString * const PTFormFieldNameKey = @"fieldName";
 static NSString * const PTFormFieldValueKey = @"fieldValue";
 
+static NSString * const PTPreviousPageNumberKey = @"previousPageNumber";
+static NSString * const PTPageNumberKey = @"pageNumber";
+
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
 
 @property (nonatomic, strong) PTTabbedDocumentViewController *tabbedDocumentViewController;
@@ -127,6 +133,9 @@ static NSString * const PTFormFieldValueKey = @"fieldValue";
 -(void)docVCAnnotationChanged:(PTDocumentViewController*)docVC annotationsWithActionString:(NSString*)annotationsWithActionString;
 -(void)docVCAnnotationsSelected:(PTDocumentViewController*)docVC annotationsString:(NSString*)annotationsString;
 -(void)docVCFormFieldValueChanged:(PTDocumentViewController*)docVC fieldsString:(NSString*)fieldsString;
+-(void)docVCLeadingNavButtonPressed:(PTDocumentViewController*)docVC;
+-(void)docVCPageChanged:(PTDocumentViewController*)docVC pageNumbersString:(NSString*)pageNumbersString;
+-(void)docVCZoomChanged:(PTDocumentViewController*)docVC zoom:(NSNumber*)zoom;
 
 - (UIView*)view;
 
