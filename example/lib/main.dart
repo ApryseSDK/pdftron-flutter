@@ -22,7 +22,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     initPlatformState();
 
-    // showViewer();
+    showViewer();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
     }
 
     try {
-      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
+      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
     } on PlatformException catch (e) {
       print("Failed to importBookmarkJson '${e.message}'.");
     }
@@ -102,28 +102,6 @@ class _MyAppState extends State<MyApp> {
     // to cancel event:
     // annotCancel();
     // bookmarkCancel();
-
-    var pageCancel = startPageChangedListener((p1, p2) {
-      print("p1");
-      print(p1);
-      print(p1 is int);
-      print(p1 is String);
-      print("p2");
-      print(p2);
-      print(p2 is int);
-      print(p2 is String);
-    });
-
-    var zoomCancel = startZoomChangedListener((zoom) {
-      print("zoom");
-      print(zoom.toString());
-      print(zoom is double);
-      print(zoom is String);
-    });
-
-    var navCancel = startLeadingNavButtonPressedListener(() {
-      print("Jesus Christ");
-    });
   }
 
   @override
@@ -134,9 +112,9 @@ class _MyAppState extends State<MyApp> {
           child: Container(
             width: double.infinity,
             height: double.infinity,
-            child: DocumentView(
-              onCreated: _onDocumentViewCreated,
-            ),
+            // child: DocumentView(
+            //   onCreated: _onDocumentViewCreated,
+            // ),
           ),
         ),
       ),
@@ -145,18 +123,5 @@ class _MyAppState extends State<MyApp> {
 
   void _onDocumentViewCreated(DocumentViewController controller) {
     controller.openDocument(_document);
-
-    var navPressedCancel = startLeadingNavButtonPressedListener(() {
-      print("flutter nav button pressed");
-    });
-
-    var pageChangedCancel =
-        startPageChangedListener((previousPageNumber, pageNumber) {
-      print("flutter page changed. from $previousPageNumber to $pageNumber");
-    });
-
-    var zoomChangedCancel = startZoomChangedListener((zoom) {
-      print("flutter zoom changed. Current zoom is: $zoom");
-    });
   }
 }
