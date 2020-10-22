@@ -1,161 +1,10 @@
 #import "PdftronFlutterPlugin.h"
-#import "FlutterDocumentView.h"
-#import "PTPluginUtils.h"
+#import "PTFlutterViewController.h"
+#import "DocumentViewFactory.h"
 
 const int exportAnnotationId = 1;
 const int exportBookmarkId = 2;
 const int documentLoadedId = 3;
-
-@interface PTFlutterViewController : PTDocumentViewController
-@property (nonatomic, strong) FlutterResult openResult;
-@property (nonatomic, strong) PdftronFlutterPlugin* plugin;
-
-@property (nonatomic) BOOL local;
-@property (nonatomic) BOOL needsDocumentLoaded;
-@property (nonatomic) BOOL needsRemoteDocumentLoaded;
-@property (nonatomic) BOOL documentLoaded;
-@end
-
-@implementation PTFlutterViewController
-
-- (void)viewWillLayoutSubviews
-{
-    [super viewWillLayoutSubviews];
-
-    if (self.needsDocumentLoaded) {
-        self.needsDocumentLoaded = NO;
-        self.needsRemoteDocumentLoaded = NO;
-        self.documentLoaded = YES;
-
-        NSString *filePath = self.coordinatedDocument.fileURL.path;
-        [self.plugin docVC:self documentLoaded:filePath];
-    }
-}
-
-- (void)openDocumentWithURL:(NSURL *)url password:(NSString *)password
-{
-    if ([url isFileURL]) {
-        self.local = YES;
-    } else {
-        self.local = NO;
-    }
-    self.documentLoaded = NO;
-    self.needsDocumentLoaded = NO;
-    self.needsRemoteDocumentLoaded = NO;
-
-    [super openDocumentWithURL:url password:password];
-}
-
-- (void)bookmarkViewController:(PTBookmarkViewController *)bookmarkViewController didAddBookmark:(PTUserBookmark *)bookmark
-{
-    [super bookmarkViewController:bookmarkViewController didAddBookmark:bookmark];
-    [self bookmarksModified];
-}
-
-- (void)bookmarkViewController:(PTBookmarkViewController *)bookmarkViewController didRemoveBookmark:(PTUserBookmark *)bookmark
-{
-    [super bookmarkViewController:bookmarkViewController didRemoveBookmark:bookmark];
-    [self bookmarksModified];
-}
-
-- (void)bookmarkViewController:(PTBookmarkViewController *)bookmarkViewController didModifyBookmark:(PTUserBookmark *)bookmark
-{
-    [super bookmarkViewController:bookmarkViewController didModifyBookmark:bookmark];
-    [self bookmarksModified];
-}
-
--(void)bookmarksModified
-{
-    __block NSString* json;
-    NSError* error;
-    BOOL exceptionOccurred = [self.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
-        json = [PTBookmarkManager.defaultManager exportBookmarksFromDoc:doc];
-    } error:&error];
-    
-    if(exceptionOccurred)
-    {
-        NSLog(@"Error: %@", error.description);
-    }
-
-    [self.plugin docVC:self bookmarkChange:json];
-}
-
--(void)toolManager:(PTToolManager*)toolManager willRemoveAnnotation:(nonnull PTAnnot *)annotation onPageNumber:(int)pageNumber
-{
-    NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:Nil removed:@[annotation]];
-    [self.plugin docVC:self annotationChange:xfdf];
-}
-
-- (void)toolManager:(PTToolManager *)toolManager annotationAdded:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
-{
-    NSString* xfdf = [self generateXfdfCommandWithAdded:@[annotation] modified:Nil removed:Nil];
-    [self.plugin docVC:self annotationChange:xfdf];
-}
-
-- (void)toolManager:(PTToolManager *)toolManager annotationModified:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
-{
-    NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:@[annotation] removed:Nil];
-    [self.plugin docVC:self annotationChange:xfdf];
-}
-
--(NSString*)generateXfdfCommandWithAdded:(NSArray<PTAnnot*>*)added modified:(NSArray<PTAnnot*>*)modified removed:(NSArray<PTAnnot*>*)removed
-{
-    
-    PTPDFDoc* pdfDoc = self.document;
-    
-    if (pdfDoc) {
-        PTVectorAnnot* addedV = [[PTVectorAnnot alloc] init];
-        for(PTAnnot* annot in added)
-        {
-            [addedV add:annot];
-        }
-        
-        PTVectorAnnot* modifiedV = [[PTVectorAnnot alloc] init];
-        for(PTAnnot* annot in modified)
-        {
-            [modifiedV add:annot];
-        }
-        
-        PTVectorAnnot* removedV = [[PTVectorAnnot alloc] init];
-        for(PTAnnot* annot in removed)
-        {
-            [removedV add:annot];
-        }
-        
-        PTFDFDoc* fdfDoc = [pdfDoc FDFExtractCommand:addedV annot_modified:modifiedV annot_deleted:removedV];
-        
-        return [fdfDoc SaveAsXFDFToString];
-    }
-    return Nil;
-}
-
-#pragma mark - <PTPDFViewCtrlDelegate>
-
-- (void)pdfViewCtrl:(PTPDFViewCtrl *)pdfViewCtrl onSetDoc:(PTPDFDoc *)doc
-{
-    [super pdfViewCtrl:pdfViewCtrl onSetDoc:doc];
-
-    if (self.local && !self.documentLoaded) {
-        self.needsDocumentLoaded = YES;
-    }
-    else if (!self.local && !self.documentLoaded && self.needsRemoteDocumentLoaded) {
-        self.needsDocumentLoaded = YES;
-    }
-    else if (!self.local && !self.documentLoaded && self.coordinatedDocument.fileURL) {
-        self.needsDocumentLoaded = YES;
-    }
-}
-
-- (void)pdfViewCtrl:(PTPDFViewCtrl *)pdfViewCtrl downloadEventType:(PTDownloadedType)type pageNumber:(int)pageNum message:(NSString *)message
-{
-    if (type == e_ptdownloadedtype_finished && !self.documentLoaded) {
-        self.needsRemoteDocumentLoaded = YES;
-    }
-
-    [super pdfViewCtrl:pdfViewCtrl downloadEventType:type pageNumber:pageNum message:message];
-}
-
-@end
 
 @interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate, PTDocumentViewControllerDelegate>
 
@@ -172,7 +21,10 @@ static NSString * const EVENT_EXPORT_ANNOTATION_COMMAND = @"export_annotation_co
 static NSString * const EVENT_EXPORT_BOOKMARK = @"export_bookmark_event";
 static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 
-+ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
+#pragma mark - Initialization
+
++ (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar
+{
     FlutterMethodChannel* channel = [FlutterMethodChannel
                                      methodChannelWithName:@"pdftron_flutter"
                                      binaryMessenger:[registrar messenger]];
@@ -182,21 +34,170 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     PdftronFlutterPlugin* instance = [[PdftronFlutterPlugin alloc] init];
     [registrar addMethodCallDelegate:instance channel:channel];
     
-    FlutterEventChannel* xfdfEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_ANNOTATION_COMMAND binaryMessenger:[registrar messenger]];
-
-    FlutterEventChannel* bookmarkEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_BOOKMARK binaryMessenger:[registrar messenger]];
-
-    FlutterEventChannel* documentLoadedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_DOCUMENT_LOADED binaryMessenger:[registrar messenger]];
-
-    [xfdfEventChannel setStreamHandler:instance];
+    [instance registerEventChannels:[registrar messenger]];
     
-    [bookmarkEventChannel setStreamHandler:instance];
-    
-    [documentLoadedEventChannel setStreamHandler:instance];
-
     DocumentViewFactory* documentViewFactory =
     [[DocumentViewFactory alloc] initWithMessenger:registrar.messenger];
     [registrar registerViewFactory:documentViewFactory withId:@"pdftron_flutter/documentview"];
+}
+
++ (PdftronFlutterPlugin *)registerWithFrame:(CGRect)frame viewIdentifier:(int64_t)viewId messenger:(NSObject<FlutterBinaryMessenger> *)messenger
+{
+    NSString* channelName = [NSString stringWithFormat:@"pdftron_flutter/documentview_%lld", viewId];
+    FlutterMethodChannel* channel = [FlutterMethodChannel methodChannelWithName:channelName binaryMessenger:messenger];
+    
+    PdftronFlutterPlugin* instance = [[PdftronFlutterPlugin alloc] init];
+    
+    __weak __typeof__(instance) weakInstance = instance;
+    [channel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
+        __strong __typeof__(weakInstance) instance = weakInstance;
+        if (instance) {
+            [instance handleMethodCall:call result:result];
+        }
+    }];
+    
+    [instance registerEventChannels:messenger];
+    return instance;
+}
+
+- (void)registerEventChannels:(NSObject<FlutterBinaryMessenger> *)messenger
+{
+    FlutterEventChannel* xfdfEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_ANNOTATION_COMMAND binaryMessenger:messenger];
+
+    FlutterEventChannel* bookmarkEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_BOOKMARK binaryMessenger:messenger];
+
+    FlutterEventChannel* documentLoadedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_DOCUMENT_LOADED binaryMessenger:messenger];
+
+    [xfdfEventChannel setStreamHandler:self];
+    
+    [bookmarkEventChannel setStreamHandler:self];
+    
+    [documentLoadedEventChannel setStreamHandler:self];
+}
+
+#pragma mark - Configurations
+
++ (void)configureTabbedDocumentViewController:(PTTabbedDocumentViewController*)tabbedDocumentViewController withConfig:(NSString*)config
+{
+    if(config && ![config isEqualToString:@"null"])
+    {
+        //convert from json to dict
+        NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
+        id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
+        
+        NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
+        
+        if([foundationObject isKindOfClass:[NSDictionary class]])
+        {
+            NSDictionary* configPairs = (NSDictionary*)foundationObject;
+            
+            for (NSString* key in configPairs.allKeys) {
+                if ([key isEqualToString:PTMultiTabEnabledKey]) {
+                    id multiTabEnabledValue = configPairs[PTMultiTabEnabledKey];
+                    if ([multiTabEnabledValue isKindOfClass:[NSNumber class]]) {
+                        BOOL multiTabEnabled = ((NSNumber *)multiTabEnabledValue).boolValue;
+                        tabbedDocumentViewController.tabsEnabled = multiTabEnabled;
+                    }
+                }
+            }
+        }
+        else
+        {
+            NSLog(@"config JSON object not in expected dictionary format.");
+        }
+    }
+}
+
++ (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
+{
+    if (config.length == 0 || [config isEqualToString:@"null"]) {
+        return;
+    }
+    
+    //convert from json to dict
+    NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
+    id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
+    
+    NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
+    
+    if([foundationObject isKindOfClass:[NSDictionary class]])
+    {
+        //convert from json to dict
+        NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
+        id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
+
+        NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
+        
+        if([foundationObject isKindOfClass:[NSDictionary class]])
+        {
+            NSDictionary* configPairs = (NSDictionary*)foundationObject;
+            
+            for (NSString* key in configPairs.allKeys) {
+                if([key isEqualToString:PTDisabledToolsKey])
+                {
+                    id toolsToDisable = configPairs[PTDisabledToolsKey];
+                    if(![toolsToDisable isEqual:[NSNull null]])
+                    {
+                        NSAssert([toolsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format.");
+                        if([toolsToDisable isKindOfClass:[NSArray class]])
+                        {
+                            [self disableTools:(NSArray*)toolsToDisable documentViewController:documentViewController];
+                        }
+                        else
+                        {
+                            NSLog(@"disabledTools JSON object not in expected array format.");
+                        }
+                    }
+                }
+                else if([key isEqualToString:PTDisabledElementsKey])
+                {
+                    id elementsToDisable = configPairs[PTDisabledElementsKey];
+                    
+                    if(![elementsToDisable isEqual:[NSNull null]])
+                    {
+                        NSAssert([elementsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format.");
+                        if([elementsToDisable isKindOfClass:[NSArray class]])
+                        {
+                            [self disableElements:(NSArray*)elementsToDisable documentViewController:documentViewController];
+                        }
+                        else
+                        {
+                            NSLog(@"disabledTools JSON object not in expected array format.");
+                        }
+                    }
+                }
+                else if ([key isEqualToString:PTCustomHeadersKey]) {
+                    id customHeadersValue = configPairs[PTCustomHeadersKey];
+                    if ([customHeadersValue isKindOfClass:[NSDictionary class]]) {
+                        NSDictionary *customHeaders = (NSDictionary *)customHeadersValue;
+                        
+                        documentViewController.additionalHTTPHeaders = customHeaders;
+                    }
+                }
+                else if ([key isEqualToString:PTMultiTabEnabledKey]) {
+                    // Handled by tabbed config.
+                }
+                else
+                {
+                    NSLog(@"Unknown JSON key in config: %@.", key);
+                    NSAssert(false, @"Unknown JSON key in config.");
+                }
+            }
+        }
+        else
+        {
+            NSLog(@"config JSON object not in expected dictionary format.");
+        }
+    }
+}
+
+- (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem
+{
+    if (self.tabbedDocumentViewController) {
+        [self.tabbedDocumentViewController dismissViewControllerAnimated:YES completion:nil];
+    } else {
+        [UIApplication.sharedApplication.keyWindow.rootViewController.presentedViewController dismissViewControllerAnimated:YES completion:Nil];
+    }
 }
 
 + (void)disableTools:(NSArray<id> *)toolsToDisable documentViewController:(PTDocumentViewController *)documentViewController
@@ -354,117 +355,146 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     [self disableTools:elementsToDisable documentViewController:documentViewController];
 }
 
-+ (void)configureTabbedDocumentViewController:(PTTabbedDocumentViewController*)tabbedDocumentViewController withConfig:(NSString*)config
+
+#pragma mark - PTTabbedDocumentViewControllerDelegate
+
+- (void)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController willAddDocumentViewController:(PTDocumentViewController *)documentViewController
 {
-    if(config && ![config isEqualToString:@"null"])
+    documentViewController.delegate = self;
+    
+    [[self class] configureDocumentViewController:documentViewController
+                                       withConfig:self.config];
+}
+
+
+
+#pragma mark - PTDocumentViewControllerDelegate
+
+- (void)documentViewControllerDidOpenDocument:(PTDocumentViewController *)documentViewController
+{
+    NSLog(@"Document opened successfully");
+    FlutterResult result = ((PTFlutterViewController*)documentViewController).openResult;
+    result(@"Opened Document Successfully");
+}
+
+- (void)documentViewController:(PTDocumentViewController *)documentViewController didFailToOpenDocumentWithError:(NSError *)error
+{
+    NSLog(@"Failed to open document: %@", error);
+    FlutterResult result = ((PTFlutterViewController*)documentViewController).openResult;
+    result([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
+}
+
+#pragma mark - FlutterStreamHandler
+
+- (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events
+{
+    if([arguments intValue] == exportAnnotationId)
     {
-        //convert from json to dict
-        NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
-        id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
-        
-        NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
-        
-        if([foundationObject isKindOfClass:[NSDictionary class]])
-        {
-            NSDictionary* configPairs = (NSDictionary*)foundationObject;
-            
-            for (NSString* key in configPairs.allKeys) {
-                if ([key isEqualToString:PTMultiTabEnabledKey]) {
-                    id multiTabEnabledValue = configPairs[PTMultiTabEnabledKey];
-                    if ([multiTabEnabledValue isKindOfClass:[NSNumber class]]) {
-                        BOOL multiTabEnabled = ((NSNumber *)multiTabEnabledValue).boolValue;
-                        tabbedDocumentViewController.tabsEnabled = multiTabEnabled;
-                    }
-                }
-            }
-        }
-        else
-        {
-            NSLog(@"config JSON object not in expected dictionary format.");
-        }
+        self.xfdfEventSink = events;
+    }
+    else if([arguments intValue] == exportBookmarkId)
+    {
+        self.bookmarkEventSink = events;
+    }
+    else if([arguments intValue] == documentLoadedId)
+    {
+        self.documentLoadedEventSink = events;
+    }
+    
+    return Nil;
+}
+
+- (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments
+{
+    if([arguments intValue] == exportAnnotationId)
+    {
+        self.xfdfEventSink = Nil;
+    }
+    else if([arguments intValue] == exportBookmarkId)
+    {
+        self.bookmarkEventSink = Nil;
+    }
+    else if([arguments intValue] == documentLoadedId)
+    {
+        self.documentLoadedEventSink = Nil;
+    }
+    
+    return Nil;
+}
+
+#pragma mark - FlutterPlatformView
+
+-(UIView*)view
+{
+    return self.tabbedDocumentViewController.navigationController.view;
+}
+
+#pragma mark - EventSinks
+
+-(void)docVC:(PTDocumentViewController*)docVC bookmarkChange:(NSString*)bookmarkJson
+{
+    if(self.bookmarkEventSink != nil)
+    {
+        self.bookmarkEventSink(bookmarkJson);
     }
 }
 
-+ (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
+-(void)docVC:(PTDocumentViewController*)docVC annotationChange:(NSString*)xfdfCommand
 {
-    if (config.length == 0 || [config isEqualToString:@"null"]) {
-        return;
-    }
-    
-    //convert from json to dict
-    NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
-    id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
-    
-    NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
-    
-    if([foundationObject isKindOfClass:[NSDictionary class]])
+    if(self.xfdfEventSink != nil)
     {
-        //convert from json to dict
-        NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
-        id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
+        self.xfdfEventSink(xfdfCommand);
+    }
+}
 
-        NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
-        
-        if([foundationObject isKindOfClass:[NSDictionary class]])
-        {
-            NSDictionary* configPairs = (NSDictionary*)foundationObject;
-            
-            for (NSString* key in configPairs.allKeys) {
-                if([key isEqualToString:PTDisabledToolsKey])
-                {
-                    id toolsToDisable = configPairs[PTDisabledToolsKey];
-                    if(![toolsToDisable isEqual:[NSNull null]])
-                    {
-                        NSAssert([toolsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format.");
-                        if([toolsToDisable isKindOfClass:[NSArray class]])
-                        {
-                            [self disableTools:(NSArray*)toolsToDisable documentViewController:documentViewController];
-                        }
-                        else
-                        {
-                            NSLog(@"disabledTools JSON object not in expected array format.");
-                        }
-                    }
-                }
-                else if([key isEqualToString:PTDisabledElementsKey])
-                {
-                    id elementsToDisable = configPairs[PTDisabledElementsKey];
-                    
-                    if(![elementsToDisable isEqual:[NSNull null]])
-                    {
-                        NSAssert([elementsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format.");
-                        if([elementsToDisable isKindOfClass:[NSArray class]])
-                        {
-                            [self disableElements:(NSArray*)elementsToDisable documentViewController:documentViewController];
-                        }
-                        else
-                        {
-                            NSLog(@"disabledTools JSON object not in expected array format.");
-                        }
-                    }
-                }
-                else if ([key isEqualToString:PTCustomHeadersKey]) {
-                    id customHeadersValue = configPairs[PTCustomHeadersKey];
-                    if ([customHeadersValue isKindOfClass:[NSDictionary class]]) {
-                        NSDictionary *customHeaders = (NSDictionary *)customHeadersValue;
-                        
-                        documentViewController.additionalHTTPHeaders = customHeaders;
-                    }
-                }
-                else if ([key isEqualToString:PTMultiTabEnabledKey]) {
-                    // Handled by tabbed config.
-                }
-                else
-                {
-                    NSLog(@"Unknown JSON key in config: %@.", key);
-                    NSAssert(false, @"Unknown JSON key in config.");
-                }
-            }
-        }
-        else
-        {
-            NSLog(@"config JSON object not in expected dictionary format.");
-        }
+-(void)docVC:(PTDocumentViewController*)docVC documentLoaded:(NSString*)filePath
+{
+    if(self.documentLoadedEventSink != nil)
+    {
+        self.documentLoadedEventSink(filePath);
+    }
+}
+
+#pragma mark - Functions
+
+- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
+    if ([call.method isEqualToString:PTGetPlatformVersionKey]) {
+        result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
+    } else if ([call.method isEqualToString:PTGetVersionKey]) {
+        result([@"PDFNet " stringByAppendingFormat:@"%f", [PTPDFNet GetVersion]]);
+    } else if ([call.method isEqualToString:PTInitializeKey]) {
+        NSString *licenseKey = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTLicenseArgumentKey]];
+        [PTPDFNet Initialize:licenseKey];
+    } else if ([call.method isEqualToString:PTOpenDocumentKey]) {
+        [self handleOpenDocumentMethod:call.arguments resultToken:result];
+    } else if ([call.method isEqualToString:PTImportAnnotationCommandKey]) {
+        NSString *xfdfCommand = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTXfdfCommandArgumentKey]];
+        [self importAnnotationCommand:xfdfCommand];
+    } else if ([call.method isEqualToString:PTImportBookmarksKey]) {
+        NSString *bookmarkJson = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTBookmarkJsonArgumentKey]];
+        [self importBookmarks:bookmarkJson];
+    } else if ([call.method isEqualToString:PTSaveDocumentKey]) {
+        [self saveDocument:result];
+    } else if ([call.method isEqualToString:PTCommitToolKey]) {
+        [self commitTool:result];
+    } else if ([call.method isEqualToString:PTGetPageCountKey]) {
+        [self getPageCount:result];
+    } else if ([call.method isEqualToString:PTGetPageCropBoxKey]) {
+        NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
+        [self getPageCropBox:pageNumber resultToken:result];
+    } else if ([call.method isEqualToString:PTSetToolModeKey]) {
+           NSString *toolMode = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTToolModeArgumentKey]];
+           [self setToolMode:toolMode resultToken:result];
+    } else if ([call.method isEqualToString:PTSetFlagForFieldsKey]) {
+        NSArray *fieldNames = [PdftronFlutterPlugin PT_idAsArray:call.arguments[PTFieldNamesArgumentKey]];
+        NSNumber *flag = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTFlagArgumentKey]];
+        bool flagValue = [[PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTFlagValueArgumentKey]] boolValue];
+        [self setFlagForFields:fieldNames flag:flag flagValue:flagValue resultToken:result];
+    } else if ([call.method isEqualToString:PTSetValueForFieldsKey]) {
+        NSString *fieldWithValuesString = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTFieldsArgumentKey]];
+        [self setValueForFields:fieldWithValuesString resultToken:result];
+    } else {
+        result(FlutterMethodNotImplemented);
     }
 }
 
@@ -492,7 +522,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
         password = (NSString *)passwordValue;
     }
     
-    // Create and wrap a tabbed controller in a navigation controller.    
+    // Create and wrap a tabbed controller in a navigation controller.
     self.tabbedDocumentViewController = [[PTTabbedDocumentViewController alloc] init];
     self.tabbedDocumentViewController.delegate = self;
     self.tabbedDocumentViewController.tabsEnabled = NO;
@@ -531,6 +561,368 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     [presentingViewController presentViewController:navigationController animated:YES completion:nil];
 }
 
+- (void)importAnnotationCommand:(NSString *)xfdfCommand
+{
+    PTDocumentViewController *docVC = [self getDocumentViewController];
+    if(docVC.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        return;
+    }
+    
+    NSError* error;
+    
+    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        if([doc HasDownloader])
+        {
+            // too soon
+            NSLog(@"Error: The document is still being downloaded.");
+            return;
+        }
+
+        PTFDFDoc* fdfDoc = [doc FDFExtract:e_ptboth];
+        [fdfDoc MergeAnnots:xfdfCommand permitted_user:@""];
+        [doc FDFUpdate:fdfDoc];
+
+        [docVC.pdfViewCtrl Update:YES];
+
+    } error:&error];
+    
+    if(error)
+    {
+        NSLog(@"Error: There was an error while trying to import annotation commands. %@", error.localizedDescription);
+    }
+}
+
+- (void)importBookmarks:(NSString *)bookmarkJson
+{
+    PTDocumentViewController *docVC = [self getDocumentViewController];
+    if(docVC.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        return;
+    }
+    
+    NSError* error;
+    
+    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        if([doc HasDownloader])
+        {
+            // too soon
+            NSLog(@"Error: The document is still being downloaded.");
+            return;
+        }
+
+        [PTBookmarkManager.defaultManager importBookmarksForDoc:doc fromJSONString:bookmarkJson];
+
+    } error:&error];
+    
+    if(error)
+    {
+        NSLog(@"Error: There was an error while trying to import bookmarks. %@", error.localizedDescription);
+    }
+}
+
+- (void)saveDocument:(FlutterResult)flutterResult
+{
+    PTDocumentViewController *docVC = [self getDocumentViewController];
+    __block NSString* resultString;
+
+    if(docVC.document == Nil)
+    {
+        resultString = @"Error: The document view controller has no document.";
+        
+        // something is wrong, no document.
+        NSLog(@"%@", resultString);
+        flutterResult(resultString);
+        
+        return;
+    }
+    
+    NSError* error;
+    
+    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        if([doc HasDownloader])
+        {
+            // too soon
+            resultString = @"Error: The document is still being downloaded and cannot be saved.";
+            NSLog(@"%@", resultString);
+            flutterResult(resultString);
+            return;
+        }
+
+        [docVC saveDocument:0 completionHandler:^(BOOL success) {
+            if(!success)
+            {
+                resultString = @"Error: The file could not be saved.";
+                NSLog(@"%@", resultString);
+                flutterResult(resultString);
+            }
+            else
+            {
+                resultString = @"The file was successfully saved.";
+                flutterResult(resultString);
+            }
+        }];
+
+    } error:&error];
+    
+    if(error)
+    {
+        NSLog(@"Error: There was an error while trying to save the document. %@", error.localizedDescription);
+    }
+}
+
+- (void)commitTool:(FlutterResult)flutterResult
+{
+    PTDocumentViewController *docVC = [self getDocumentViewController];
+    PTToolManager *toolManager = docVC.toolManager;
+    if ([toolManager.tool respondsToSelector:@selector(commitAnnotation)]) {
+        [toolManager.tool performSelector:@selector(commitAnnotation)];
+
+        [toolManager changeTool:[PTPanTool class]];
+
+        flutterResult([NSNumber numberWithBool:YES]);
+    } else {
+        flutterResult([NSNumber numberWithBool:NO]);
+    }
+}
+
+- (void)getPageCount:(FlutterResult)flutterResult
+{
+    PTDocumentViewController *docVC = [self getDocumentViewController];
+    if(docVC.document == Nil)
+    {
+        NSString *resultString = @"Error: The document view controller has no document.";
+
+        // something is wrong, no document.
+        NSLog(@"%@", resultString);
+        flutterResult(resultString);
+
+        return;
+    }
+
+    flutterResult([NSNumber numberWithInt:docVC.pdfViewCtrl.pageCount]);
+}
+
+- (void)getPageCropBox:(NSNumber *)pageNumber resultToken:(FlutterResult)result
+{
+    PTDocumentViewController *docVC = [self getDocumentViewController];
+    NSError *error;
+    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        if([doc HasDownloader])
+        {
+            // too soon
+            NSLog(@"Error: The document is still being downloaded.");
+            return;
+        }
+        
+        PTPage *page = [doc GetPage:(int)pageNumber];
+        if (page) {
+            PTPDFRect *rect = [page GetCropBox];
+            NSDictionary<NSString *, NSNumber *> *map = @{
+                PTX1Key: @([rect GetX1]),
+                PTY1Key: @([rect GetY1]),
+                PTX2Key: @([rect GetX2]),
+                PTY2Key: @([rect GetY2]),
+                PTWidthKey: @([rect Width]),
+                PTHeightKey: @([rect Height]),
+            };
+            NSData *jsonData = [NSJSONSerialization dataWithJSONObject:map options:0 error:nil];
+            NSString *res = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+            
+            result(res);
+        }
+
+    } error:&error];
+    
+    if(error)
+    {
+        NSLog(@"Error: There was an error while trying to get the page crop box. %@", error.localizedDescription);
+    }
+}
+
+- (void)setToolMode:(NSString *)toolMode resultToken:(FlutterResult)result;
+{
+    PTDocumentViewController *docVC = [self getDocumentViewController];
+    Class toolClass = Nil;
+
+    if ([toolMode isEqualToString:PTAnnotationEditToolKey]) {
+        // multi-select not implemented
+    } else if([toolMode isEqualToString:PTAnnotationCreateStickyToolKey]) {
+        toolClass = [PTStickyNoteCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateFreeHandToolKey]) {
+        toolClass = [PTFreeHandCreate class];
+    } else if ([toolMode isEqualToString:PTTextSelectToolKey]) {
+        toolClass = [PTTextSelectTool class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateSoundToolKey]) {
+        toolClass = [PTSound class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateTextHighlightToolKey]) {
+        toolClass = [PTTextHighlightCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateTextUnderlineToolKey]) {
+        toolClass = [PTTextUnderlineCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateTextSquigglyToolKey]) {
+        toolClass = [PTTextSquigglyCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateTextStrikeoutToolKey]) {
+        toolClass = [PTTextStrikeoutCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateFreeTextToolKey]) {
+        toolClass = [PTFreeTextCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateCalloutToolKey]) {
+        toolClass = [PTCalloutCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateSignatureToolKey]) {
+        toolClass = [PTDigitalSignatureTool class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateLineToolKey]) {
+        toolClass = [PTLineCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateArrowToolKey]) {
+        toolClass = [PTArrowCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreatePolylineToolKey]) {
+        toolClass = [PTPolylineCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateStampToolKey]) {
+        toolClass = [PTImageStampCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateRectangleToolKey]) {
+        toolClass = [PTRectangleCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateEllipseToolKey]) {
+        toolClass = [PTEllipseCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreatePolygonToolKey]) {
+        toolClass = [PTPolygonCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreatePolygonCloudToolKey]) {
+        toolClass = [PTCloudCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateDistanceMeasurementToolKey]) {
+        toolClass = [PTRulerCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreatePerimeterMeasurementToolKey]) {
+        toolClass = [PTPerimeterCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateAreaMeasurementToolKey]) {
+        toolClass = [PTAreaCreate class];
+    } else if ([toolMode isEqualToString:PTEraserToolKey]) {
+        toolClass = [PTEraser class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateFreeHighlighterToolKey]) {
+        toolClass = [PTFreeHandHighlightCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateRubberStampToolKey]) {
+        toolClass = [PTRubberStampCreate class];
+
+    }
+
+    if (toolClass) {
+        PTTool *tool = [docVC.toolManager changeTool:toolClass];
+
+        tool.backToPanToolAfterUse = !self.continuousAnnotationEditing;
+
+        if ([tool isKindOfClass:[PTFreeHandCreate class]]
+            && ![tool isKindOfClass:[PTFreeHandHighlightCreate class]]) {
+            ((PTFreeHandCreate *)tool).multistrokeMode = self.continuousAnnotationEditing;
+        }
+    }
+
+    result(nil);
+}
+
+- (void)setFlagForFields:(NSArray <NSString *> *)fieldNames flag:(NSNumber *)flag flagValue:(bool)flagValue resultToken:(FlutterResult)result
+{
+    PTDocumentViewController *docVC = [self getDocumentViewController];
+    if(docVC.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        result([FlutterError errorWithCode:@"set_flag_for_fields" message:@"Failed to set flag for fields" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+
+    PTPDFViewCtrl *pdfViewCtrl = docVC.pdfViewCtrl;
+    PTFieldFlag fieldFlag = (PTFieldFlag)flag.intValue;
+    NSError *error;
+
+    [pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        for (NSString *fieldName in fieldNames) {
+            PTField *field = [doc GetField:fieldName];
+            if ([field IsValid]) {
+                [field SetFlag:fieldFlag value:flagValue];
+                [pdfViewCtrl UpdateWithField:field];
+            }
+        }
+    } error:&error];
+
+    if (error) {
+        NSLog(@"Error: Failed to set field flags to doc. %@", error.localizedDescription);
+        result([FlutterError errorWithCode:@"set_flag_for_fields" message:@"Failed to set flag for fields" details:@"Error: Failed to set field flags to doc."]);
+    }
+
+    result(nil);
+}
+
+- (void)setValueForFields:(NSString *)fieldWithValuesString resultToken:(FlutterResult)result
+{
+    PTDocumentViewController *docVC = [self getDocumentViewController];
+    NSArray *fieldWithValues = [PdftronFlutterPlugin PT_idAsArray:[PdftronFlutterPlugin PT_JSONStringToId:fieldWithValuesString]];
+    if(docVC.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        result([FlutterError errorWithCode:@"set_value_for_fields" message:@"Failed to set value for fields" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+
+    PTPDFViewCtrl *pdfViewCtrl = docVC.pdfViewCtrl;
+    NSError *error;
+
+    [pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+
+        for (NSDictionary *fieldWithValue in fieldWithValues) {
+            NSString *fieldName = [PdftronFlutterPlugin PT_idAsNSString:fieldWithValue[PTFieldNameKey]];
+            id fieldValue = fieldWithValue[PTFieldValueKey];
+            PTField *field = [doc GetField:fieldName];
+
+            if ([field IsValid]) {
+                [self setFieldValue:field value:fieldValue pdfViewCtrl:pdfViewCtrl];
+            }
+        }
+
+    } error:&error];
+
+    if (error) {
+        NSLog(@"Error: Failed to set field values to doc. %@", error.localizedDescription);
+        result([FlutterError errorWithCode:@"set_value_for_fields" message:@"Failed to set value for fields" details:@"Error: Failed to set field values to doc."]);
+    } else {
+        result(nil);
+    }
+}
+
+// write-lock required around this method
+- (void)setFieldValue:(PTField *)field value:(id)value pdfViewCtrl:(PTPDFViewCtrl *)pdfViewCtrl
+{
+    const PTFieldType fieldType = [field GetType];
+
+    // boolean or number
+    if ([value isKindOfClass:[NSNumber class]]) {
+        NSNumber *numberValue = (NSNumber *)value;
+
+        if (fieldType == e_ptcheck) {
+            const BOOL fieldValue = numberValue.boolValue;
+            PTViewChangeCollection *changeCollection = [field SetValueWithBool:fieldValue];
+            [pdfViewCtrl RefreshAndUpdate:changeCollection];
+        }
+        else if (fieldType == e_pttext) {
+            NSString *fieldValue = numberValue.stringValue;
+
+            PTViewChangeCollection *changeCollection = [field SetValueWithString:fieldValue];
+            [pdfViewCtrl RefreshAndUpdate:changeCollection];
+        }
+    }
+    // string
+    else if ([value isKindOfClass:[NSString class]]) {
+        NSString *fieldValue = (NSString *)value;
+
+        if (fieldValue &&
+            (fieldType == e_pttext || fieldType == e_ptradio || fieldType == e_ptchoice)) {
+            PTViewChangeCollection *changeCollection = [field SetValueWithString:fieldValue];
+            [pdfViewCtrl RefreshAndUpdate:changeCollection];
+        }
+    }
+}
+
+#pragma mark - Helper
+
 - (PTDocumentViewController *)getDocumentViewController {
     PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
     
@@ -541,104 +933,53 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     return docVC;
 }
 
-- (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-    if ([call.method isEqualToString:PTGetPlatformVersionKey]) {
-        result([@"iOS " stringByAppendingString:[[UIDevice currentDevice] systemVersion]]);
-    } else if ([call.method isEqualToString:PTGetVersionKey]) {
-        result([@"PDFNet " stringByAppendingFormat:@"%f", [PTPDFNet GetVersion]]);
-    } else if ([call.method isEqualToString:PTInitializeKey]) {
-        NSString *licenseKey = [PTPluginUtils PT_idAsNSString:call.arguments[PTLicenseArgumentKey]];
-        [PTPDFNet Initialize:licenseKey];
-    } else if ([call.method isEqualToString:PTOpenDocumentKey]) {
-        [self handleOpenDocumentMethod:call.arguments resultToken:result];
-    } else if ([call.method isEqualToString:PTSetToolModeKey]) {
-        NSString *toolMode = [PTPluginUtils PT_idAsNSString:call.arguments[PTToolModeArgumentKey]];
-        [PTPluginUtils setToolMode:toolMode resultToken:result documentViewController:[self getDocumentviewController] continuousAnnotationEditing:self.continuousAnnotationEditing];
-    } else {
-        [PTPluginUtils handleMethodCall:call result:result documentViewController:[self getDocumentViewController]];
++ (NSString *)PT_idAsNSString:(id)value
+{
+    if ([value isKindOfClass:[NSString class]]) {
+        return (NSString *)value;
     }
+    return nil;
 }
 
-- (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem
++ (NSNumber *)PT_idAsNSNumber:(id)value
 {
-    if (self.tabbedDocumentViewController) {
-        [self.tabbedDocumentViewController dismissViewControllerAnimated:YES completion:nil];
-    } else {
-        [UIApplication.sharedApplication.keyWindow.rootViewController.presentedViewController dismissViewControllerAnimated:YES completion:Nil];
+    if ([value isKindOfClass:[NSNumber class]]) {
+        return (NSNumber *)value;
     }
+    return nil;
 }
 
--(void)docVC:(PTDocumentViewController*)docVC bookmarkChange:(NSString*)bookmarkJson
++ (bool)PT_idAsBool:(id)value
 {
-    if(self.bookmarkEventSink != nil)
-    {
-        self.bookmarkEventSink(bookmarkJson);
+    NSNumber* numericVal = [PdftronFlutterPlugin PT_idAsNSNumber:value];
+    bool result = [numericVal boolValue];
+    return result;
+}
+
++ (NSDictionary *)PT_idAsNSDict:(id)value
+{
+    if ([value isKindOfClass:[NSDictionary class]]) {
+        return (NSDictionary *)value;
     }
+    return nil;
 }
 
--(void)docVC:(PTDocumentViewController*)docVC annotationChange:(NSString*)xfdfCommand
++ (NSArray *)PT_idAsArray:(id)value
 {
-    if(self.xfdfEventSink != nil)
-    {
-        self.xfdfEventSink(xfdfCommand);
+    if ([value isKindOfClass:[NSArray class]]) {
+        return (NSArray *)value;
     }
+    return nil;
 }
 
--(void)docVC:(PTDocumentViewController*)docVC documentLoaded:(NSString*)filePath
-{
-    if(self.documentLoadedEventSink != nil)
-    {
-        self.documentLoadedEventSink(filePath);
-    }
++ (NSString *)PT_idToJSONString:(id)infoId {
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:infoId options:0 error:nil];
+    return [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
 }
 
-
-- (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events
-{
-    if([arguments intValue] == exportAnnotationId)
-    {
-        self.xfdfEventSink = events;
-    }
-    else if([arguments intValue] == exportBookmarkId)
-    {
-        self.bookmarkEventSink = events;
-    }
-    else if([arguments intValue] == documentLoadedId)
-    {
-        self.documentLoadedEventSink = events;
-    }
-    
-    return Nil;
-}
-
-- (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments
-{
-    self.xfdfEventSink = Nil;
-    
-    return Nil;
-}
-
-
-- (void)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController willAddDocumentViewController:(PTDocumentViewController *)documentViewController
-{
-    documentViewController.delegate = self;
-    
-    [[self class] configureDocumentViewController:documentViewController
-                                       withConfig:self.config];
-}
-
-- (void)documentViewControllerDidOpenDocument:(PTDocumentViewController *)documentViewController
-{
-    NSLog(@"Document opened successfully");
-    FlutterResult result = ((PTFlutterViewController*)documentViewController).openResult;
-    result(@"Opened Document Successfully");
-}
-
-- (void)documentViewController:(PTDocumentViewController *)documentViewController didFailToOpenDocumentWithError:(NSError *)error
-{
-    NSLog(@"Failed to open document: %@", error);
-    FlutterResult result = ((PTFlutterViewController*)documentViewController).openResult;
-    result([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
++ (id)PT_JSONStringToId:(NSString *)jsonString {
+    NSData *annotListData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+    return [NSJSONSerialization JSONObjectWithData:annotListData options:kNilOptions error:nil];
 }
 
 @end

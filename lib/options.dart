@@ -6,7 +6,7 @@ class Field {
   Field(this.fieldName, this.fieldValue);
 
   Map<String, dynamic> toJson() =>
-      {'field': fieldName, 'fieldValue': fieldValue};
+      {'fieldName': fieldName, 'fieldValue': fieldValue};
 }
 
 class Rect {
