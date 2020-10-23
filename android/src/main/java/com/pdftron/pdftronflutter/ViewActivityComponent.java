@@ -1,7 +1,5 @@
 package com.pdftron.pdftronflutter;
 
-import android.content.Context;
-
 import androidx.annotation.Nullable;
 
 import com.pdftron.pdf.PDFDoc;
