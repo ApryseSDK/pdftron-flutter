@@ -38,6 +38,4 @@ public interface ViewActivityComponent {
 
     @Nullable
     PDFDoc getPdfDoc();
-
-    Context getContext();
 }

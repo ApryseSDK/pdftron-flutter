@@ -1,5 +1,6 @@
 package com.pdftron.pdftronflutter;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -567,14 +568,15 @@ public class PluginUtils {
 
     private static void setToolMode(String toolModeString, MethodChannel.Result result, ViewActivityComponent component) {
         ToolManager toolManager = component.getToolManager();
-        if (toolManager == null) {
-            result.error("InvalidState", "Toolmode not found", null);
+        Context context = component.getPdfViewCtrl() != null ? component.getPdfViewCtrl().getContext() : null;
+        if (toolManager == null || context == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
             return;
         }
 
         ToolManager.ToolMode mode = convStringToToolMode(toolModeString);
         Tool tool = (Tool) toolManager.createTool(mode, null);
-        boolean continuousAnnot = PdfViewCtrlSettingsManager.getContinuousAnnotationEdit(component.getContext());
+        boolean continuousAnnot = PdfViewCtrlSettingsManager.getContinuousAnnotationEdit(context);
         tool.setForceSameNextToolMode(continuousAnnot);
         toolManager.setTool(tool);
         result.success(null);

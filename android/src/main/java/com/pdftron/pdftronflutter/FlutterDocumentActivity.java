@@ -33,8 +33,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
     private static AtomicReference<EventSink> sExportBookmarkEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sDocumentLoadedEventEmitter = new AtomicReference<>();
 
-    private static Context context;
-
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
         openDocument(packageContext, fileUri, password, customHeaders, config, DEFAULT_NAV_ICON_ID);
     }
@@ -56,7 +54,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
         intent.putExtra("extra_nav_icon", navIconId);
         intent.putExtra("extra_config", config);
 
-        context = packageContext;
         packageContext.startActivity(intent);
     }
 
@@ -173,9 +170,5 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
             return getPdfViewCtrlTabFragment().getPdfDoc();
         }
         return null;
-    }
-
-    public Context getContext() {
-        return context;
     }
 }
