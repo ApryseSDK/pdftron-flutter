@@ -86,6 +86,7 @@ static NSString * const PTDocumentArgumentKey = @"document";
 static NSString * const PTPasswordArgumentKey = @"password";
 static NSString * const PTConfigArgumentKey = @"config";
 static NSString * const PTXfdfCommandArgumentKey = @"xfdfCommand";
+static NSString * const PTXfdfArgumentKey = @"xfdf";
 static NSString * const PTBookmarkJsonArgumentKey = @"bookmarkJson";
 static NSString * const PTPageNumberArgumentKey = @"pageNumber";
 static NSString * const PTLicenseArgumentKey = @"licenseKey";

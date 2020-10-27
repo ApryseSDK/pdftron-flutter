@@ -40,9 +40,9 @@ class PdftronFlutter {
     });
   }
 
-  static Future<void> importAnnotations(String xfdfCommand) {
-    return _channel.invokeMethod(Functions.importAnnotations,
-        <String, dynamic>{Parameters.xfdfCommand: xfdfCommand});
+  static Future<void> importAnnotations(String xfdf) {
+    return _channel.invokeMethod(
+        Functions.importAnnotations, <String, dynamic>{Parameters.xfdf: xfdf});
   }
 
   static Future<String> exportAnnotations(List<Annot> annotationList) async {

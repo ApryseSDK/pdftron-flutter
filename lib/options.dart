@@ -92,6 +92,7 @@ class Parameters {
   static const password = "password";
   static const config = "config";
   static const xfdfCommand = "xfdfCommand";
+  static const xfdf = "xfdf";
   static const bookmarkJson = "bookmarkJson";
   static const pageNumber = "pageNumber";
   static const formsOnly = "formsOnly";

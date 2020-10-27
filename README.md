@@ -305,8 +305,8 @@ Imports XFDF string to current document.
 
 ```dart
 
-var xfdfCommand = '<?xml version="1.0" encoding="UTF-8"?>\n<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">\n\t<annots>\n\t\t<circle style="solid" width="5" color="#E44234" opacity="1" creationdate="D:20190729202215Z" flags="print" date="D:20190729202215Z" page="0" rect="138.824,653.226,236.28,725.159" title="" /></annots>\n\t<pages>\n\t\t<defmtx matrix="1.333333,0.000000,0.000000,-1.333333,0.000000,1056.000000" />\n\t</pages>\n\t<pdf-info version="2" xmlns="http://www.pdftron.com/pdfinfo" />\n</xfdf>';
-PdftronFlutter.importAnnotations(xfdfCommand);
+var xfdf = '<?xml version="1.0" encoding="UTF-8"?>\n<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">\n\t<annots>\n\t\t<circle style="solid" width="5" color="#E44234" opacity="1" creationdate="D:20190729202215Z" flags="print" date="D:20190729202215Z" page="0" rect="138.824,653.226,236.28,725.159" title="" /></annots>\n\t<pages>\n\t\t<defmtx matrix="1.333333,0.000000,0.000000,-1.333333,0.000000,1056.000000" />\n\t</pages>\n\t<pdf-info version="2" xmlns="http://www.pdftron.com/pdfinfo" />\n</xfdf>';
+PdftronFlutter.importAnnotations(xfdf);
 ```
 
 ### PdftronFlutter.exportAnnotations(List<`Annot`>)
@@ -321,7 +321,7 @@ annotationList | List<`Annot`> | A list of `Annot`, nullable
 
 Export all annotations:
 ```dart
-var xfdfCommand = await PdftronFlutter.exportAnnotations(null);
+var xfdf = await PdftronFlutter.exportAnnotations(null);
 ```
 
 Export specified annotations:
@@ -329,7 +329,7 @@ Export specified annotations:
 List<Annot> annotList = new List<Annot>();
 list.add(new Annot('Hello', 1));
 list.add(new Annot('World', 2));
-var xfdfCommand = await PdftronFlutter.exportAnnotations(annotList);
+var xfdf = await PdftronFlutter.exportAnnotations(annotList);
 ```
 
 ### PdftronFlutter.flattenAnnotations(bool)

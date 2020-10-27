@@ -50,9 +50,9 @@ class DocumentViewController {
     });
   }
 
-  Future<void> importAnnotations(String xfdfCommand) {
-    return _channel.invokeMethod(Functions.importAnnotations,
-        <String, dynamic>{Parameters.xfdfCommand: xfdfCommand});
+  Future<void> importAnnotations(String xfdf) {
+    return _channel.invokeMethod(
+        Functions.importAnnotations, <String, dynamic>{Parameters.xfdf: xfdf});
   }
 
   Future<String> exportAnnotations(List<Annot> annotationList) async {

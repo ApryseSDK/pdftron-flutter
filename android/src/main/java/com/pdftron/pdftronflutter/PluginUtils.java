@@ -45,6 +45,7 @@ public class PluginUtils {
     public static final String KEY_PASSWORD = "password";
     public static final String KEY_CONFIG = "config";
     public static final String KEY_XFDF_COMMAND = "xfdfCommand";
+    public static final String KEY_XFDF = "xfdf";
     public static final String KEY_BOOKMARK_JSON = "bookmarkJson";
     public static final String KEY_PAGE_NUMBER = "pageNumber";
     public static final String KEY_ANNOTATION_LIST = "annotations";
@@ -273,9 +274,9 @@ public class PluginUtils {
         switch (call.method) {
             case FUNCTION_IMPORT_ANNOTATIONS: {
                 checkFunctionPrecondition(component);
-                String xfdfCommand = call.argument(KEY_XFDF_COMMAND);
+                String xfdf = call.argument(KEY_XFDF);
                 try {
-                    importAnnotations(xfdfCommand, result, component);
+                    importAnnotations(xfdf, result, component);
                 } catch (PDFNetException ex) {
                     ex.printStackTrace();
                     result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
@@ -423,10 +424,10 @@ public class PluginUtils {
     // Methods
 
 
-    private static void importAnnotations(String xfdfCommand, MethodChannel.Result result, ViewActivityComponent component) throws PDFNetException {
+    private static void importAnnotations(String xfdf, MethodChannel.Result result, ViewActivityComponent component) throws PDFNetException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
-        if (null == pdfViewCtrl || null == pdfDoc || null == xfdfCommand) {
+        if (null == pdfViewCtrl || null == pdfDoc || null == xfdf) {
             result.error("InvalidState", "Activity not attached", null);
             return;
         }
@@ -451,7 +452,7 @@ public class PluginUtils {
             pdfViewCtrl.docLock(true);
             shouldUnlock = true;
 
-            FDFDoc fdfDoc = FDFDoc.createFromXFDF(xfdfCommand);
+            FDFDoc fdfDoc = FDFDoc.createFromXFDF(xfdf);
 
             pdfDoc.fdfUpdate(fdfDoc);
             pdfViewCtrl.update(true);
@@ -605,17 +606,7 @@ public class PluginUtils {
         int annotationPageNumber = annotationJson.getInt(KEY_PAGE_NUMBER);
 
         if (!Utils.isNullOrEmpty(annotationId)) {
-            boolean shouldUnlock = false;
-
-            try {
-                pdfViewCtrl.docLock(true);
-                shouldUnlock = true;
-                toolManager.selectAnnot(annotationId, annotationPageNumber);
-            } finally {
-                if (shouldUnlock) {
-                    pdfViewCtrl.docUnlock();
-                }
-            }
+            toolManager.selectAnnot(annotationId, annotationPageNumber);
         }
     }
 

@@ -468,8 +468,8 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     } else if ([call.method isEqualToString:PTOpenDocumentKey]) {
         [self handleOpenDocumentMethod:call.arguments resultToken:result];
     } else if ([call.method isEqualToString:PTImportAnnotationsKey]) {
-        NSString *xfdfCommand = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTXfdfCommandArgumentKey]];;
-        [self importAnnotations:xfdfCommand resultToken:result];
+        NSString *xfdf = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTXfdfArgumentKey]];;
+        [self importAnnotations:xfdf resultToken:result];
     } else if ([call.method isEqualToString:PTExportAnnotationsKey]) {
         NSString *annotationList = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationListArgumentKey]];;
         [self exportAnnotations:annotationList resultToken:result];
@@ -680,7 +680,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     [presentingViewController presentViewController:navigationController animated:YES completion:nil];
 }
 
-- (void)importAnnotations:(NSString *)xfdfCommand resultToken:(FlutterResult)flutterResult
+- (void)importAnnotations:(NSString *)xfdf resultToken:(FlutterResult)flutterResult
 {
     PTDocumentViewController *docVC = [self getDocumentViewController];
     if(docVC.document == Nil)
@@ -703,7 +703,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
             return;
         }
         
-        PTFDFDoc *fdfDoc = [PTFDFDoc CreateFromXFDF:xfdfCommand];
+        PTFDFDoc *fdfDoc = [PTFDFDoc CreateFromXFDF:xfdf];
         
         [doc FDFUpdate:fdfDoc];
         [docVC.pdfViewCtrl Update:YES];
