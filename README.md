@@ -291,6 +291,20 @@ Optional parameters:
 - `password`: String, password to an encrypted document
 - `config`: Config, viewer configuration options
 
+configs (more info could be found in `lib/config.dart`):
+
+Name | Type | Default | Explanation
+-- | -- | -- | -- | 
+disabledElements | array of `Buttons` constants | N/A | Buttons to be disabled for the viewer
+disabledTools | array of `Tools` constants | N/A | Tools to be disabled for the viewer
+customerHeaders | N/A | N/A | N/A
+showLeadingNavButton | boolean | N/A | Whether to show the leading navigation button
+leadingNavButtonIcon | string | N/A | the icon path to the navigation button, if `showLeadingNavButton` is true
+readOnly | boolean | false | whether the document is read-only
+thumbnailViewEditingEnabled | boolean | true | whether use could modify through thumbnail view
+annotationAuthor | string | N/A | the author name for all annotations in the current document
+continuousAnnotationEditing | boolean | false | whether annotations could be continuously edited
+
 ```dart
 var disabledElements = [Buttons.shareButton, Buttons.searchButton];
 var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
@@ -298,6 +312,12 @@ var config = Config();
 config.disabledElements = disabledElements;
 config.disabledTools = disabledTools;
 config.customHeaders = {'headerName': 'headerValue'};
+config.showLeadingNavButton = true;
+config.leadingNavButtonIcon = Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp';
+config.readOnly = false;
+config.thumbnailViewEditingEnabled = false;
+annotationAuthor = "PDFTron";
+continuousAnnotationEditing = true;
 PdftronFlutter.openDocument(_document, config: config);
 ```
 

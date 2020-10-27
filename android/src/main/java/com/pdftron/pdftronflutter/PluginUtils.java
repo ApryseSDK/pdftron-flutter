@@ -46,6 +46,12 @@ public class PluginUtils {
     public static final String KEY_CONFIG_DISABLED_TOOLS = "disabledTools";
     public static final String KEY_CONFIG_MULTI_TAB_ENABLED = "multiTabEnabled";
     public static final String KEY_CONFIG_CUSTOM_HEADERS = "customHeaders";
+    public static final String KEY_CONFIG_LEADING_NAV_BUTTON_ICON = "leadingNavButtonIcon";
+    public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
+    public static final String KEY_CONFIG_READ_ONLY = "readOnly";
+    public static final String KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED = "thumbnailViewEditingEnabled";
+    public static final String KEY_CONFIG_ANNOTATION_AUTHOR = "annotationAuthor";
+    public static final String KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING = "continuousAnnotationEditing";
 
     private static final String KEY_X1 = "x1";
     private static final String KEY_Y1 = "y1";

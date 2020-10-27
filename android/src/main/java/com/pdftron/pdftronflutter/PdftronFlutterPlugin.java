@@ -8,6 +8,8 @@ import com.pdftron.pdf.PDFNet;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
+import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.factories.DocumentViewFactory;
 
 import org.json.JSONArray;
@@ -133,6 +135,13 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
         ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
 
         JSONObject customHeaderJson = null;
+
+        boolean showLeadingNavButton = true;
+        int navButtonResId = 0;
+
+        boolean readOnly = false;
+        boolean thumbnailViewEditingEnabled = true;
+
         if (configStr != null && !configStr.equals("null")) {
             try {
                 JSONObject configJson = new JSONObject(configStr);
@@ -151,6 +160,30 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 if (!configJson.isNull(KEY_CONFIG_CUSTOM_HEADERS)) {
                     customHeaderJson = configJson.getJSONObject(KEY_CONFIG_CUSTOM_HEADERS);
                 }
+                if (!configJson.isNull(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON)) {
+                    showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
+                }
+                if (!configJson.isNull(KEY_CONFIG_LEADING_NAV_BUTTON_ICON)) {
+                    String navButtonIconPath = configJson.getString(KEY_CONFIG_LEADING_NAV_BUTTON_ICON);
+                    navButtonResId = Utils.getResourceDrawable(mContext, navButtonIconPath);
+                }
+                if (!configJson.isNull(KEY_CONFIG_READ_ONLY)) {
+                    readOnly = configJson.getBoolean(KEY_CONFIG_READ_ONLY);
+                }
+                if (!configJson.isNull(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED)) {
+                    thumbnailViewEditingEnabled = configJson.getBoolean(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED);
+                }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_AUTHOR)) {
+                    String annotationAuthor = configJson.getString(KEY_CONFIG_ANNOTATION_AUTHOR);
+                    if (!Utils.isNullOrEmpty(annotationAuthor)) {
+                        PdfViewCtrlSettingsManager.updateAuthorName(mContext, annotationAuthor);
+                        PdfViewCtrlSettingsManager.setAnnotListShowAuthor(mContext, true);
+                    }
+                }
+                if (!configJson.isNull(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING)) {
+                    boolean continuousAnnotationEditing = configJson.getBoolean(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING);
+                    PdfViewCtrlSettingsManager.setContinuousAnnotationEdit(mContext, continuousAnnotationEditing);
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -163,9 +196,12 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         }
 
-        builder = builder.toolManagerBuilder(toolManagerBuilder);
+        builder = builder.toolManagerBuilder(toolManagerBuilder)
+                .documentEditingEnabled(!readOnly)
+                .thumbnailViewEditingEnabled(thumbnailViewEditingEnabled);
 
         final Uri fileLink = Uri.parse(document);
-        FlutterDocumentActivity.openDocument(mContext, fileLink, password, customHeaderJson, builder.build());
+
+        FlutterDocumentActivity.openDocument(mContext, fileLink, password, customHeaderJson, builder.build(), navButtonResId, showLeadingNavButton);
     }
 }

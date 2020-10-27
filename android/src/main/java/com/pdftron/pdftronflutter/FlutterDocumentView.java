@@ -8,6 +8,8 @@ import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
+import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.views.DocumentView;
 
 import org.json.JSONArray;
@@ -120,6 +122,11 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
 
         JSONObject customHeaderJson = null;
+        boolean readOnly = false;
+        boolean thumbnailViewEditingEnabled = true;
+        String annotationAuthor = null;
+        boolean continuousAnnotationEditing = true;
+
         if (configStr != null && !configStr.equals("null")) {
             try {
                 JSONObject configJson = new JSONObject(configStr);
@@ -138,6 +145,27 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
                 if (!configJson.isNull(KEY_CONFIG_CUSTOM_HEADERS)) {
                     customHeaderJson = configJson.getJSONObject(KEY_CONFIG_CUSTOM_HEADERS);
                 }
+                if (!configJson.isNull(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON)) {
+                    boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
+                    documentView.setShowNavIcon(showLeadingNavButton);
+                }
+                if (!configJson.isNull(KEY_CONFIG_LEADING_NAV_BUTTON_ICON)) {
+                    String leadingNavButtonIcon = configJson.getString(KEY_CONFIG_LEADING_NAV_BUTTON_ICON);
+                    documentView.setNavIconResName(leadingNavButtonIcon);
+                }
+                if (!configJson.isNull(KEY_CONFIG_READ_ONLY)) {
+                    readOnly = configJson.getBoolean(KEY_CONFIG_READ_ONLY);
+                }
+                if (!configJson.isNull(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED)) {
+                    thumbnailViewEditingEnabled = configJson.getBoolean(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED);
+                }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_AUTHOR)) {
+                    annotationAuthor = configJson.getString(KEY_CONFIG_ANNOTATION_AUTHOR);
+                }
+                if (!configJson.isNull(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING)) {
+                    continuousAnnotationEditing = configJson.getBoolean(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING);
+                }
+
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -150,7 +178,9 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
             }
         }
 
-        builder = builder.toolManagerBuilder(toolManagerBuilder);
+        builder = builder.toolManagerBuilder(toolManagerBuilder)
+                .documentEditingEnabled(!readOnly)
+                .thumbnailViewEditingEnabled(thumbnailViewEditingEnabled);
 
         final Uri fileLink = Uri.parse(document);
 
@@ -160,9 +190,19 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         documentView.setViewerConfig(builder.build());
         documentView.setFlutterLoadResult(result);
 
+        Context context = documentView.getContext();
+        if (context != null) {
+            PdfViewCtrlSettingsManager.setContinuousAnnotationEdit(context, continuousAnnotationEditing);
+            if (!Utils.isNullOrEmpty(annotationAuthor)) {
+                PdfViewCtrlSettingsManager.updateAuthorName(context, annotationAuthor);
+                PdfViewCtrlSettingsManager.setAnnotListShowAuthor(context, true);
+            }
+        }
+
         ViewerBuilder viewerBuilder = ViewerBuilder.withUri(fileLink, password)
                 .usingCustomHeaders(customHeaderJson)
-                .usingConfig(builder.build());
+                .usingConfig(builder.build())
+                .usingNavIcon(documentView.mShowNavIcon ? documentView.mNavIconRes : 0);
         if (documentView.mPdfViewCtrlTabHostFragment != null) {
             documentView.mPdfViewCtrlTabHostFragment.onOpenAddNewTab(viewerBuilder.createBundle(documentView.getContext()));
         } else {

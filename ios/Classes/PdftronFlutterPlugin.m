@@ -114,11 +114,16 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
         return;
     }
     
+    [(PTFlutterViewController*)documentViewController initViewerSettings];
+    
     //convert from json to dict
     NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
     id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
     
     NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
+    
+    bool showLeadingNavButton = NO;
+    NSString* leadingNavButtonIcon;
     
     if([foundationObject isKindOfClass:[NSDictionary class]])
     {
@@ -177,6 +182,100 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
                     // Handled by tabbed config.
                 }
+                else if ([key isEqualToString:PTShowLeadingNavButtonKey]) {
+                    id showLeadingNavButtonValue = configPairs[PTShowLeadingNavButtonKey];
+                    if (![showLeadingNavButtonValue isEqual:[NSNull null]])
+                    {
+                        NSAssert([showLeadingNavButtonValue isKindOfClass:[NSNumber class]], @"showLeadingNavButton not in expected boolean format.");
+                        if ([showLeadingNavButtonValue isKindOfClass:[NSNumber class]]) {
+                            
+                            showLeadingNavButton = ((NSNumber *)showLeadingNavButtonValue).boolValue;
+                        }
+                        else
+                        {
+                            NSLog(@"showLeadingNavButton not in expected boolean format.");
+                        }
+                    }
+                }
+                else if ([key isEqualToString:PTLeadingNavButtonIconKey]) {
+                    id leadingNavButtonIconValue = configPairs[PTLeadingNavButtonIconKey];
+                    if (![leadingNavButtonIconValue isEqual:[NSNull null]])
+                    {
+                        NSAssert([leadingNavButtonIconValue isKindOfClass:[NSString class]], @"leadingNavButtonIcon not in expected string format.");
+                        if ([leadingNavButtonIconValue isKindOfClass:[NSString class]]) {
+                            
+                            leadingNavButtonIcon = leadingNavButtonIconValue;
+                        }
+                        else
+                        {
+                            NSLog(@"leadingNavButtonIcon not in expected string format.");
+                        }
+                    }
+                }
+                else if ([key isEqualToString:PTReadOnlyKey]) {
+                    id readOnlyValue = configPairs[PTReadOnlyKey];
+                    if (![readOnlyValue isEqual:[NSNull null]])
+                    {
+                        NSAssert([readOnlyValue isKindOfClass:[NSNumber class]], @"readOnly not in expected boolean format.");
+                        if ([readOnlyValue isKindOfClass:[NSNumber class]]) {
+                            
+                            bool readOnly = [(NSNumber *)readOnlyValue boolValue];
+                            [(PTFlutterViewController *)documentViewController setReadOnly:readOnly];
+                        }
+                        else
+                        {
+                            NSLog(@"readOnly not in expected boolean format.");
+                        }
+                    }
+                }
+                else if ([key isEqualToString:PTThumbnailViewEditingEnabledKey]) {
+                    id thumbnailViewEditingEnabledValue = configPairs[PTThumbnailViewEditingEnabledKey];
+                    if (![thumbnailViewEditingEnabledValue isEqual:[NSNull null]])
+                    {
+                        NSAssert([thumbnailViewEditingEnabledValue isKindOfClass:[NSNumber class]], @"thumbnailViewEditingEnabled not in expected boolean format.");
+                        if ([thumbnailViewEditingEnabledValue isKindOfClass:[NSNumber class]]) {
+                            
+                            bool thumbnailViewEditingEnabled = [(NSNumber *)thumbnailViewEditingEnabledValue boolValue];
+                            [(PTFlutterViewController *)documentViewController setThumbnailViewEditingEnabled:thumbnailViewEditingEnabled];
+                        }
+                        else
+                        {
+                            NSLog(@"thumbnailViewEditingEnabled not in expected boolean format.");
+                        }
+                    }
+                }
+                else if ([key isEqualToString:PTAnnotationAuthorKey]) {
+                    id annotAuthorValue = configPairs[PTAnnotationAuthorKey];
+                    if (![annotAuthorValue isEqual:[NSNull null]])
+                    {
+                        NSAssert([annotAuthorValue isKindOfClass:[NSString class]], @"annotationAuthor not in expected string format.");
+                        if ([annotAuthorValue isKindOfClass:[NSString class]]) {
+                            NSString* annotAuthor = annotAuthorValue;
+                            [(PTFlutterViewController *)documentViewController setAnnotationAuthor:annotAuthor];
+                            
+                        }
+                        else
+                        {
+                            NSLog(@"annotationAuthor not in expected string format.");
+                        }
+                    }
+                }
+                else if ([key isEqualToString:PTContinuousAnnotationEditingKey]) {
+                    id contAnnotEditingValue = configPairs[PTContinuousAnnotationEditingKey];
+                    if (![contAnnotEditingValue isEqual:[NSNull null]])
+                    {
+                        NSAssert([contAnnotEditingValue isKindOfClass:[NSNumber class]], @"continuousAnnotationEditing not in expected boolean format.");
+                        if ([contAnnotEditingValue isKindOfClass:[NSNumber class]]) {
+                            
+                            bool contAnnotEditing = [(NSNumber *)contAnnotEditingValue boolValue];
+                            [(PTFlutterViewController *)documentViewController setContinuousAnnotationEditing:contAnnotEditing];
+                        }
+                        else
+                        {
+                            NSLog(@"continuousAnnotationEditing not in expected boolean format.");
+                        }
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
@@ -188,7 +287,15 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
         {
             NSLog(@"config JSON object not in expected dictionary format.");
         }
+        
+        
     }
+    
+    if (showLeadingNavButton) {
+        [self handleNavIconDisplay:leadingNavButtonIcon documentViewController:documentViewController];
+    }
+    
+    [(PTFlutterViewController *)documentViewController applyViewerSettings];
 }
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem
@@ -355,6 +462,23 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     [self disableTools:elementsToDisable documentViewController:documentViewController];
 }
 
++ (void)handleNavIconDisplay:(NSString *)leadingNavButtonIcon documentViewController:(PTDocumentViewController *)docVC
+{
+    if (leadingNavButtonIcon) {
+        UIImage *navImage = [UIImage imageNamed:leadingNavButtonIcon];
+        if (navImage) {
+            UIBarButtonItem *navButton = [[UIBarButtonItem alloc] initWithImage:navImage
+                                                                          style:UIBarButtonItemStylePlain
+                                                                         target:(PTFlutterViewController*)docVC
+                                                                         action:@selector(topLeftButtonPressed:)];
+            docVC.navigationItem.leftBarButtonItem = navButton;
+            return;
+        }
+    }
+    
+    docVC.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:(PTFlutterViewController*)docVC action:@selector(topLeftButtonPressed:)];
+}
+
 
 #pragma mark - PTTabbedDocumentViewControllerDelegate
 
@@ -519,8 +643,6 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     self.tabbedDocumentViewController.restorationIdentifier = [NSUUID UUID].UUIDString;
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.tabbedDocumentViewController];
-    
-    self.tabbedDocumentViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
     
     NSString* config = arguments[PTConfigArgumentKey];
     self.config = config;

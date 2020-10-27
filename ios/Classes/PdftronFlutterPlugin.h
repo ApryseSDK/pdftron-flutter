@@ -9,6 +9,12 @@ static NSString * const PTDisabledToolsKey = @"disabledTools";
 static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
 static NSString * const PTCustomHeadersKey = @"customHeaders";
+static NSString * const PTLeadingNavButtonIconKey = @"leadingNavButtonIcon";
+static NSString * const PTShowLeadingNavButtonKey = @"showLeadingNavButton";
+static NSString * const PTReadOnlyKey = @"readOnly";
+static NSString * const PTThumbnailViewEditingEnabledKey = @"thumbnailViewEditingEnabled";
+static NSString * const PTAnnotationAuthorKey = @"annotationAuthor";
+static NSString * const PTContinuousAnnotationEditingKey = @"continuousAnnotationEditing";
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";
@@ -101,6 +107,8 @@ static NSString * const PTHeightKey = @"height";
 -(void)docVC:(PTDocumentViewController*)docVC annotationChange:(NSString*)xfdfCommand;
 -(void)docVC:(PTDocumentViewController*)docVC bookmarkChange:(NSString*)bookmarkJson;
 -(void)docVC:(PTDocumentViewController*)docVC documentLoaded:(NSString*)filePath;
+
+- (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 
 - (UIView*)view;
 

@@ -33,6 +33,17 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
     private static AtomicReference<EventSink> sExportBookmarkEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sDocumentLoadedEventEmitter = new AtomicReference<>();
 
+    public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config, @DrawableRes int navIconId, boolean showNavIcon) {
+        if (showNavIcon) {
+            if (navIconId == 0) {
+                navIconId = DEFAULT_NAV_ICON_ID;
+            }
+        } else {
+            navIconId = 0;
+        }
+        openDocument(packageContext, fileUri, password, customHeaders, config, navIconId);
+    }
+
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
         openDocument(packageContext, fileUri, password, customHeaders, config, DEFAULT_NAV_ICON_ID);
     }

@@ -16,6 +16,10 @@
         NSString *filePath = self.coordinatedDocument.fileURL.path;
         [self.plugin docVC:self documentLoaded:filePath];
     }
+
+    if (![self.toolManager isReadonly] && _readOnly) {
+        self.toolManager.readonly = YES;
+    }
 }
 
 - (void)openDocumentWithURL:(NSURL *)url password:(NSString *)password
@@ -148,6 +152,51 @@
     }
 
     [super pdfViewCtrl:pdfViewCtrl downloadEventType:type pageNumber:pageNum message:message];
+}
+
+#pragma mark - Viewer Settings
+
+- (void)initViewerSettings
+{
+    [self setReadOnly:NO];
+    [self setThumbnailViewEditingEnabled:YES];
+}
+
+- (void)applyViewerSettings
+{
+    [self applyReadOnly];
+    
+    // Thumbnail editing enabled.
+    self.thumbnailsViewController.editingEnabled = self.thumbnailViewEditingEnabled;
+    
+    // Continuous annotation editing.
+    self.toolManager.tool.backToPanToolAfterUse = !self.continuousAnnotationEditing;
+    
+    // Annotation author.
+    self.toolManager.annotationAuthor = self.annotationAuthor;
+}
+
+- (void)applyReadOnly
+{
+    // Enable readonly flag on tool manager *only* when not already readonly.
+    // If the document is being streamed or converted, we don't want to accidentally allow editing by
+    // disabling the readonly flag.
+    if (![self.toolManager isReadonly]) {
+        self.toolManager.readonly = _readOnly;
+    }
+    
+    self.thumbnailsViewController.editingEnabled = !_readOnly;
+}
+
+- (void)setAnnotationAuthor:(NSString *)annotationAuthor {
+    _annotationAuthor = [annotationAuthor copy];
+}
+
+#pragma mark - Other
+
+- (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem
+{
+    [self.plugin topLeftButtonPressed:barButtonItem];
 }
 
 @end
