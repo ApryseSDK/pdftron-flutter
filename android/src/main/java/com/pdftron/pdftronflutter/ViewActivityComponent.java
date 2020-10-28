@@ -42,6 +42,25 @@ public interface ViewActivityComponent {
 
     HashMap<Annot, Integer> getSelectedAnnots();
 
+    ToolManager.AnnotationModificationListener getAnnotationModificationListener();
+
+    ToolManager.PdfDocModificationListener getPdfDocModificationListener();
+
+    ToolManager.AnnotationsSelectionListener getAnnotationsSelectionListener();
+
+    PDFViewCtrl.PageChangeListener getPageChangeListener();
+
+    PDFViewCtrl.OnCanvasSizeChangeListener getOnCanvasSizeChangeListener();
+
+    void setAnnotationModificationListener(ToolManager.AnnotationModificationListener listener);
+
+    void setPdfDocModificationListener(ToolManager.PdfDocModificationListener listener);
+
+    void setAnnotationsSelectionListener(ToolManager.AnnotationsSelectionListener listener);
+
+    void setPageChangeListener(PDFViewCtrl.PageChangeListener listener);
+
+    void setOnCanvasSizeChangeListener(PDFViewCtrl.OnCanvasSizeChangeListener listener);
     // Convenience
     @Nullable
     PdfViewCtrlTabHostFragment getPdfViewCtrlTabHostFragment();

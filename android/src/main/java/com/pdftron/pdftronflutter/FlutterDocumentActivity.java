@@ -42,6 +42,12 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
     private static AtomicReference<EventSink> sPageChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sZoomChangedEventEmitter = new AtomicReference<>();
 
+    private static AtomicReference<ToolManager.AnnotationModificationListener> sAnnotationModificationListener = new AtomicReference<>();
+    private static AtomicReference<ToolManager.PdfDocModificationListener> sPdfDocModificationListener = new AtomicReference<>();
+    private static AtomicReference<ToolManager.AnnotationsSelectionListener> sAnnotationsSelectionListener = new AtomicReference<>();
+    private static AtomicReference<PDFViewCtrl.PageChangeListener> sPageChangeListener = new AtomicReference<>();
+    private static AtomicReference<PDFViewCtrl.OnCanvasSizeChangeListener> sOnCanvasSizeChangeListener = new AtomicReference<>();
+
     private static HashMap<Annot, Integer> mSelectedAnnots;
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
@@ -109,6 +115,46 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
 
     public static void setFlutterLoadResult(Result result) {
         sFlutterLoadResult.set(result);
+    }
+
+    public ToolManager.AnnotationModificationListener getAnnotationModificationListener() {
+        return sAnnotationModificationListener.get();
+    }
+
+    public ToolManager.PdfDocModificationListener getPdfDocModificationListener() {
+        return sPdfDocModificationListener.get();
+    }
+
+    public ToolManager.AnnotationsSelectionListener getAnnotationsSelectionListener() {
+        return sAnnotationsSelectionListener.get();
+    }
+
+    public PDFViewCtrl.PageChangeListener getPageChangeListener() {
+        return sPageChangeListener.get();
+    }
+
+    public PDFViewCtrl.OnCanvasSizeChangeListener getOnCanvasSizeChangeListener() {
+        return sOnCanvasSizeChangeListener.get();
+    }
+
+    public void setAnnotationModificationListener(ToolManager.AnnotationModificationListener listener) {
+        sAnnotationModificationListener.set(listener);
+    }
+
+    public void setPdfDocModificationListener(ToolManager.PdfDocModificationListener listener) {
+        sPdfDocModificationListener.set(listener);
+    }
+
+    public void setAnnotationsSelectionListener(ToolManager.AnnotationsSelectionListener listener) {
+        sAnnotationsSelectionListener.set(listener);
+    }
+
+    public void setPageChangeListener(PDFViewCtrl.PageChangeListener listener) {
+        sPageChangeListener.set(listener);
+    }
+
+    public void setOnCanvasSizeChangeListener(PDFViewCtrl.OnCanvasSizeChangeListener listener) {
+        sOnCanvasSizeChangeListener.set(listener);
     }
 
     public void setSelectedAnnots(HashMap<Annot, Integer> selectedAnnots) {

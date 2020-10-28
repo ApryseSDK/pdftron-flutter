@@ -452,14 +452,6 @@ public class PluginUtils {
         result.success(jsonObject.toString());
     }
 
-    // Events
-
-    private static ToolManager.AnnotationModificationListener annotationModificationListener;
-    private static ToolManager.PdfDocModificationListener pdfDocModificationListener;
-    private static ToolManager.AnnotationsSelectionListener annotationsSelectionListener;
-    private static PDFViewCtrl.PageChangeListener pageChangeListener;
-    private static PDFViewCtrl.OnCanvasSizeChangeListener onCanvasSizeChangeListener;
-
     public static void handleDocumentLoaded(ViewActivityComponent component) {
         addListeners(component);
 
@@ -500,27 +492,27 @@ public class PluginUtils {
 
         ToolManager toolManager = component.getToolManager();
         if (toolManager != null) {
-            if (annotationModificationListener != null) {
-                toolManager.removeAnnotationModificationListener(annotationModificationListener);
+            if (component.getAnnotationModificationListener() != null) {
+                toolManager.removeAnnotationModificationListener(component.getAnnotationModificationListener());
             }
 
-            if (annotationsSelectionListener != null) {
-                toolManager.removeAnnotationsSelectionListener(annotationsSelectionListener);
+            if (component.getAnnotationsSelectionListener() != null) {
+                toolManager.removeAnnotationsSelectionListener(component.getAnnotationsSelectionListener());
             }
 
-            if (annotationModificationListener != null) {
-                toolManager.removePdfDocModificationListener(pdfDocModificationListener);
+            if (component.getPdfDocModificationListener() != null) {
+                toolManager.removePdfDocModificationListener(component.getPdfDocModificationListener());
             }
         }
 
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         if (pdfViewCtrl != null) {
-            if (pageChangeListener != null) {
-                pdfViewCtrl.removePageChangeListener(pageChangeListener);
+            if (component.getPageChangeListener() != null) {
+                pdfViewCtrl.removePageChangeListener(component.getPageChangeListener());
             }
 
-            if (onCanvasSizeChangeListener != null) {
-                pdfViewCtrl.removeOnCanvasSizeChangeListener(onCanvasSizeChangeListener);
+            if (component.getOnCanvasSizeChangeListener() != null) {
+                pdfViewCtrl.removeOnCanvasSizeChangeListener(component.getOnCanvasSizeChangeListener());
             }
         }
     }
@@ -536,22 +528,22 @@ public class PluginUtils {
         initializeListeners(component);
         ToolManager toolManager = component.getToolManager();
         if (toolManager != null) {
-            toolManager.addAnnotationModificationListener(annotationModificationListener);
-            toolManager.addAnnotationsSelectionListener(annotationsSelectionListener);
-            toolManager.addPdfDocModificationListener(pdfDocModificationListener);
+            toolManager.addAnnotationModificationListener(component.getAnnotationModificationListener());
+            toolManager.addAnnotationsSelectionListener(component.getAnnotationsSelectionListener());
+            toolManager.addPdfDocModificationListener(component.getPdfDocModificationListener());
         }
 
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         if (pdfViewCtrl != null) {
-            pdfViewCtrl.addPageChangeListener(pageChangeListener);
-            pdfViewCtrl.addOnCanvasSizeChangeListener(onCanvasSizeChangeListener);
+            pdfViewCtrl.addPageChangeListener(component.getPageChangeListener());
+            pdfViewCtrl.addOnCanvasSizeChangeListener(component.getOnCanvasSizeChangeListener());
         }
     }
 
     private static void initializeListeners(final ViewActivityComponent component) {
 
-        if (annotationModificationListener == null) {
-            annotationModificationListener = new ToolManager.AnnotationModificationListener() {
+        if (component.getAnnotationModificationListener() == null) {
+            component.setAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
                 @Override
                 public void onAnnotationsAdded(Map<Annot, Integer> map) {
                     emitAnnotationChangedEvent(KEY_ACTION_ADD, map, component);
@@ -623,20 +615,20 @@ public class PluginUtils {
                 public void annotationsCouldNotBeAdded(String s) {
 
                 }
-            };
+            });
         }
 
-        if (annotationsSelectionListener == null) {
-            annotationsSelectionListener = new ToolManager.AnnotationsSelectionListener() {
+        if (component.getAnnotationsSelectionListener() == null) {
+            component.setAnnotationsSelectionListener(new ToolManager.AnnotationsSelectionListener() {
                 @Override
                 public void onAnnotationsSelectionChanged(HashMap<Annot, Integer> hashMap) {
                     emitAnnotationsSelectedEvent(hashMap, component);
                 }
-            };
+            });
         }
 
-        if (pdfDocModificationListener == null) {
-            pdfDocModificationListener = new ToolManager.PdfDocModificationListener() {
+        if (component.getPdfDocModificationListener() == null) {
+            component.setPdfDocModificationListener(new ToolManager.PdfDocModificationListener() {
                 @Override
                 public void onBookmarkModified() {
                     String bookmarkJson = null;
@@ -691,11 +683,11 @@ public class PluginUtils {
                 public void onAnnotationAction() {
 
                 }
-            };
+            });
         }
 
-        if (pageChangeListener == null) {
-            pageChangeListener = new PDFViewCtrl.PageChangeListener() {
+        if (component.getPageChangeListener() == null) {
+            component.setPageChangeListener(new PDFViewCtrl.PageChangeListener() {
                 @Override
                 public void onPageChange(int old_page, int cur_page, PDFViewCtrl.PageChangeState pageChangeState) {
                     EventChannel.EventSink eventSink = component.getPageChangedEventEmitter();
@@ -711,11 +703,11 @@ public class PluginUtils {
                         eventSink.success(resultObject.toString());
                     }
                 }
-            };
+            });
         }
 
-        if (onCanvasSizeChangeListener == null) {
-            onCanvasSizeChangeListener = new PDFViewCtrl.OnCanvasSizeChangeListener() {
+        if (component.getOnCanvasSizeChangeListener() == null) {
+            component.setOnCanvasSizeChangeListener(new PDFViewCtrl.OnCanvasSizeChangeListener() {
                 @Override
                 public void onCanvasSizeChanged() {
                     EventChannel.EventSink eventSink = component.getZoomChangedEventEmitter();
@@ -723,7 +715,7 @@ public class PluginUtils {
                         eventSink.success(component.getPdfViewCtrl().getZoom());
                     }
                 }
-            };
+            });
         }
     }
 
