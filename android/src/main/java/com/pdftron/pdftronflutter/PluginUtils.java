@@ -494,14 +494,17 @@ public class PluginUtils {
         if (toolManager != null) {
             if (component.getAnnotationModificationListener() != null) {
                 toolManager.removeAnnotationModificationListener(component.getAnnotationModificationListener());
+                component.setAnnotationModificationListener(null);
             }
 
             if (component.getAnnotationsSelectionListener() != null) {
                 toolManager.removeAnnotationsSelectionListener(component.getAnnotationsSelectionListener());
+                component.setAnnotationsSelectionListener(null);
             }
 
             if (component.getPdfDocModificationListener() != null) {
                 toolManager.removePdfDocModificationListener(component.getPdfDocModificationListener());
+                component.setPdfDocModificationListener(null);
             }
         }
 
@@ -509,10 +512,12 @@ public class PluginUtils {
         if (pdfViewCtrl != null) {
             if (component.getPageChangeListener() != null) {
                 pdfViewCtrl.removePageChangeListener(component.getPageChangeListener());
+                component.setPageChangeListener(null);
             }
 
             if (component.getOnCanvasSizeChangeListener() != null) {
                 pdfViewCtrl.removeOnCanvasSizeChangeListener(component.getOnCanvasSizeChangeListener());
+                component.setOnCanvasSizeChangeListener(null);
             }
         }
     }
