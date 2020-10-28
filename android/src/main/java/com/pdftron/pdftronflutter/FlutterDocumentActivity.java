@@ -39,6 +39,10 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
     private static AtomicReference<EventSink> sAnnotationsSelectedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sFormFieldChangedEventEmitter = new AtomicReference<>();
 
+    private static AtomicReference<ToolManager.AnnotationModificationListener> sAnnotationModificationListener = new AtomicReference<>();
+    private static AtomicReference<ToolManager.PdfDocModificationListener> sPdfDocModificationListener = new AtomicReference<>();
+    private static AtomicReference<ToolManager.AnnotationsSelectionListener> sAnnotationsSelectionListener = new AtomicReference<>();
+
     private static HashMap<Annot, Integer> mSelectedAnnots;
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
@@ -137,6 +141,30 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
     @Override
     public Result getFlutterLoadResult() {
         return sFlutterLoadResult.getAndSet(null);
+    }
+
+    public ToolManager.AnnotationModificationListener getAnnotationModificationListener() {
+        return sAnnotationModificationListener.get();
+    }
+
+    public ToolManager.PdfDocModificationListener getPdfDocModificationListener() {
+        return sPdfDocModificationListener.get();
+    }
+
+    public ToolManager.AnnotationsSelectionListener getAnnotationsSelectionListener() {
+        return sAnnotationsSelectionListener.get();
+    }
+
+    public void setAnnotationModificationListener(ToolManager.AnnotationModificationListener listener) {
+        sAnnotationModificationListener.set(listener);
+    }
+
+    public void setPdfDocModificationListener(ToolManager.PdfDocModificationListener listener) {
+        sPdfDocModificationListener.set(listener);
+    }
+
+    public void setAnnotationsSelectionListener(ToolManager.AnnotationsSelectionListener listener) {
+        sAnnotationsSelectionListener.set(listener);
     }
 
     @Override

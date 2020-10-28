@@ -41,6 +41,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
 
     private HashMap<Annot, Integer> mSelectedAnnots;
 
+    private ToolManager.AnnotationModificationListener sAnnotationModificationListener;
+    private ToolManager.PdfDocModificationListener sPdfDocModificationListener;
+    private ToolManager.AnnotationsSelectionListener sAnnotationsSelectionListener;
+
     public DocumentView(@NonNull Context context) {
         this(context, null);
     }
@@ -151,6 +155,30 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
 
     public void setFlutterLoadResult(MethodChannel.Result result) {
         sFlutterLoadResult = result;
+    }
+
+    public ToolManager.AnnotationModificationListener getAnnotationModificationListener() {
+        return sAnnotationModificationListener;
+    }
+
+    public ToolManager.PdfDocModificationListener getPdfDocModificationListener() {
+        return sPdfDocModificationListener;
+    }
+
+    public ToolManager.AnnotationsSelectionListener getAnnotationsSelectionListener() {
+        return sAnnotationsSelectionListener;
+    }
+
+    public void setAnnotationModificationListener(ToolManager.AnnotationModificationListener listener) {
+        sAnnotationModificationListener = listener;
+    }
+
+    public void setPdfDocModificationListener(ToolManager.PdfDocModificationListener listener) {
+        sPdfDocModificationListener = listener;
+    }
+
+    public void setAnnotationsSelectionListener(ToolManager.AnnotationsSelectionListener listener) {
+        sAnnotationsSelectionListener = listener;
     }
 
     public void setSelectedAnnots(HashMap<Annot, Integer> selectedAnnots) {

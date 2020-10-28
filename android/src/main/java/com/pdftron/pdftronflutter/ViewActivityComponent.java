@@ -36,6 +36,18 @@ public interface ViewActivityComponent {
 
     HashMap<Annot, Integer> getSelectedAnnots();
 
+    ToolManager.AnnotationModificationListener getAnnotationModificationListener();
+
+    ToolManager.PdfDocModificationListener getPdfDocModificationListener();
+
+    ToolManager.AnnotationsSelectionListener getAnnotationsSelectionListener();
+
+    void setAnnotationModificationListener(ToolManager.AnnotationModificationListener listener);
+
+    void setPdfDocModificationListener(ToolManager.PdfDocModificationListener listener);
+
+    void setAnnotationsSelectionListener(ToolManager.AnnotationsSelectionListener listener);
+
     // Convenience
     @Nullable
     PdfViewCtrlTabHostFragment getPdfViewCtrlTabHostFragment();

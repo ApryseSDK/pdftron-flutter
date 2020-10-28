@@ -449,10 +449,6 @@ public class PluginUtils {
 
     // Events
 
-    private static ToolManager.AnnotationModificationListener annotationModificationListener;
-    private static ToolManager.PdfDocModificationListener pdfDocModificationListener;
-    private static ToolManager.AnnotationsSelectionListener annotationsSelectionListener;
-
     public static void handleDocumentLoaded(ViewActivityComponent component) {
         addListeners(component);
 
@@ -493,16 +489,16 @@ public class PluginUtils {
 
         ToolManager toolManager = component.getToolManager();
         if (toolManager != null) {
-            if (annotationModificationListener != null) {
-                toolManager.removeAnnotationModificationListener(annotationModificationListener);
+            if (component.getAnnotationModificationListener() != null) {
+                toolManager.removeAnnotationModificationListener(component.getAnnotationModificationListener());
             }
 
-            if (annotationsSelectionListener != null) {
-                toolManager.removeAnnotationsSelectionListener(annotationsSelectionListener);
+            if (component.getAnnotationsSelectionListener() != null) {
+                toolManager.removeAnnotationsSelectionListener(component.getAnnotationsSelectionListener());
             }
 
-            if (annotationModificationListener != null) {
-                toolManager.removePdfDocModificationListener(pdfDocModificationListener);
+            if (component.getPdfDocModificationListener() != null) {
+                toolManager.removePdfDocModificationListener(component.getPdfDocModificationListener());
             }
         }
     }
@@ -511,16 +507,16 @@ public class PluginUtils {
         initializeListeners(component);
         ToolManager toolManager = component.getToolManager();
         if (toolManager != null) {
-            toolManager.addAnnotationModificationListener(annotationModificationListener);
-            toolManager.addAnnotationsSelectionListener(annotationsSelectionListener);
-            toolManager.addPdfDocModificationListener(pdfDocModificationListener);
+            toolManager.addAnnotationModificationListener(component.getAnnotationModificationListener());
+            toolManager.addAnnotationsSelectionListener(component.getAnnotationsSelectionListener());
+            toolManager.addPdfDocModificationListener(component.getPdfDocModificationListener());
         }
     }
 
     private static void initializeListeners(final ViewActivityComponent component) {
 
-        if (annotationModificationListener == null) {
-            annotationModificationListener = new ToolManager.AnnotationModificationListener() {
+        if (component.getAnnotationModificationListener() == null) {
+            component.setAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
                 @Override
                 public void onAnnotationsAdded(Map<Annot, Integer> map) {
                     emitAnnotationChangedEvent(KEY_ACTION_ADD, map, component);
@@ -592,20 +588,20 @@ public class PluginUtils {
                 public void annotationsCouldNotBeAdded(String s) {
 
                 }
-            };
+            });
         }
 
-        if (annotationsSelectionListener == null) {
-            annotationsSelectionListener = new ToolManager.AnnotationsSelectionListener() {
+        if (component.getAnnotationsSelectionListener() == null) {
+            component.setAnnotationsSelectionListener(new ToolManager.AnnotationsSelectionListener() {
                 @Override
                 public void onAnnotationsSelectionChanged(HashMap<Annot, Integer> hashMap) {
                     emitAnnotationsSelectedEvent(hashMap, component);
                 }
-            };
+            });
         }
 
-        if (pdfDocModificationListener == null) {
-            pdfDocModificationListener = new ToolManager.PdfDocModificationListener() {
+        if (component.getPdfDocModificationListener() == null) {
+            component.setPdfDocModificationListener(new ToolManager.PdfDocModificationListener() {
                 @Override
                 public void onBookmarkModified() {
                     String bookmarkJson = null;
@@ -660,7 +656,7 @@ public class PluginUtils {
                 public void onAnnotationAction() {
 
                 }
-            };
+            });
         }
     }
 
