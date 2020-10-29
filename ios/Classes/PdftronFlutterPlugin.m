@@ -122,7 +122,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     
     NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
     
-    bool showLeadingNavButton = NO;
+    bool showLeadingNavButton = YES;
     NSString* leadingNavButtonIcon;
     
     if([foundationObject isKindOfClass:[NSDictionary class]])
@@ -615,6 +615,8 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 {
 
     [PTOverrides overrideClass:[PTDocumentViewController class] withClass:[PTFlutterViewController class]];
+    
+    [PTOverrides overrideClass:[PTThumbnailsViewController class] withClass:[FLPTThumbnailsViewController class]];
     
     // Get document argument.
     NSString *document = nil;

@@ -200,3 +200,14 @@
 }
 
 @end
+
+#pragma mark - FLPTThumbnailsViewController
+@implementation FLPTThumbnailsViewController
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationController.toolbarHidden = !self.editingEnabled;
+}
+
+@end

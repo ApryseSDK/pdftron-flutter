@@ -27,4 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface FLPTThumbnailsViewController : PTThumbnailsViewController
+
+@end
+
 NS_ASSUME_NONNULL_END

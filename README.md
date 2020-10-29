@@ -295,14 +295,14 @@ configs (more info could be found in `lib/config.dart`):
 
 Name | Type | Default | Explanation
 -- | -- | -- | -- | 
-disabledElements | array of `Buttons` constants | N/A | Buttons to be disabled for the viewer
-disabledTools | array of `Tools` constants | N/A | Tools to be disabled for the viewer
-customerHeaders | N/A | N/A | N/A
-showLeadingNavButton | boolean | N/A | Whether to show the leading navigation button
-leadingNavButtonIcon | string | N/A | the icon path to the navigation button, if `showLeadingNavButton` is true
+disabledElements | array of `Buttons` constants | empty | Buttons to be disabled for the viewer
+disabledTools | array of `Tools` constants | empty | Tools to be disabled for the viewer
+customerHeaders | map<string, string> | empty | custom headers to use with HTTP/HTTPS requests
+showLeadingNavButton | boolean | true | Whether to show the leading navigation button
+leadingNavButtonIcon | string | | the icon path to the navigation button, if `showLeadingNavButton` is true
 readOnly | boolean | false | whether the document is read-only
 thumbnailViewEditingEnabled | boolean | true | whether use could modify through thumbnail view
-annotationAuthor | string | N/A | the author name for all annotations in the current document
+annotationAuthor | string | | the author name for all annotations in the current document
 continuousAnnotationEditing | boolean | false | whether annotations could be continuously edited
 
 ```dart
