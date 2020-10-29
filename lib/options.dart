@@ -14,12 +14,17 @@ class Rect {
   Rect(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
 
   factory Rect.fromJson(dynamic json) {
-    return Rect(getInt(json['x1']), getInt(json['y1']), getInt(json['x2']),
-        getInt(json['y2']), getInt(json['width']), getInt(json['height']));
+    return Rect(
+        getDouble(json['x1']),
+        getDouble(json['y1']),
+        getDouble(json['x2']),
+        getDouble(json['y2']),
+        getDouble(json['width']),
+        getDouble(json['height']));
   }
 
   // a helper for JSON number decoding
-  static getInt(dynamic value) {
+  static getDouble(dynamic value) {
     if (value is int) {
       return value.toDouble();
     } else {
@@ -28,11 +33,59 @@ class Rect {
   }
 }
 
+class Annot {
+  // note that an annotation has its id in xfdf as name
+  // page numbers are 1-indexed here, but 0-indexed in xfdf
+  String id;
+  int pageNumber;
+  Annot(this.id, this.pageNumber);
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'pageNumber': pageNumber,
+      };
+}
+
+class AnnotFlag {
+  // flag comes from AnnotationFlags constants
+  // flagValue represents toggling on/off
+  String flag;
+  bool flagValue;
+  AnnotFlag(this.flag, this.flagValue);
+
+  Map<String, dynamic> toJson() => {
+        'flag': flag,
+        'flagValue': flagValue,
+      };
+}
+
+class AnnotWithFlag {
+  Annot annotation;
+  List<AnnotFlag> flags;
+
+  AnnotWithFlag.fromAnnotAndFlags(this.annotation, this.flags);
+
+  AnnotWithFlag(String annotId, int pageNumber, String flag, bool flagValue) {
+    annotation = new Annot(annotId, pageNumber);
+    flags = new List<AnnotFlag>();
+    flags.add(new AnnotFlag(flag, flagValue));
+  }
+
+  Map<String, dynamic> toJson() =>
+      {'annotation': jsonEncode(annotation), 'flags': jsonEncode(flags)};
+}
+
 class Functions {
   static const getPlatformVersion = "getPlatformVersion";
   static const getVersion = "getVersion";
   static const initialize = "initialize";
   static const openDocument = "openDocument";
+  static const importAnnotations = "importAnnotations";
+  static const exportAnnotations = "exportAnnotations";
+  static const flattenAnnotations = "flattenAnnotations";
+  static const deleteAnnotations = "deleteAnnotations";
+  static const selectAnnotation = "selectAnnotation";
+  static const setFlagForAnnotations = "setFlagForAnnotations";
   static const importAnnotationCommand = "importAnnotationCommand";
   static const importBookmarkJson = "importBookmarkJson";
   static const saveDocument = "saveDocument";
@@ -51,6 +104,7 @@ class Parameters {
   static const password = "password";
   static const config = "config";
   static const xfdfCommand = "xfdfCommand";
+  static const xfdf = "xfdf";
   static const bookmarkJson = "bookmarkJson";
   static const pageNumber = "pageNumber";
   static const toolMode = "toolMode";
@@ -58,6 +112,10 @@ class Parameters {
   static const fields = "fields";
   static const flag = "flag";
   static const flagValue = "flagValue";
+  static const formsOnly = "formsOnly";
+  static const annotations = "annotations";
+  static const annotation = "annotation";
+  static const annotationsWithFlags = "annotationsWithFlags";
 }
 
 class Buttons {
@@ -129,4 +187,16 @@ class Tools {
 class FieldFlags {
   static const ReadOnly = 0;
   static const Required = 1;
+  
+class AnnotationFlags {
+  static const hidden = "hidden";
+  static const invisible = "invisible";
+  static const locked = "locked";
+  static const lockedContents = "lockedContents";
+  static const noRotate = "noRotate";
+  static const noView = "noView";
+  static const noZoom = "noZoom";
+  static const print = "print";
+  static const readOnly = "readOnly";
+  static const toggleNoView = "toggleNoView";
 }
