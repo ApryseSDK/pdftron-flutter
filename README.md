@@ -297,6 +297,7 @@ Name | Type | Default | Explanation
 -- | -- | -- | -- | 
 disabledElements | array of `Buttons` constants | empty | Buttons to be disabled for the viewer
 disabledTools | array of `Tools` constants | empty | Tools to be disabled for the viewer
+multiTabEnabled | boolean | false | enable document multi-tab mode
 customerHeaders | map<string, string> | empty | custom headers to use with HTTP/HTTPS requests
 showLeadingNavButton | boolean | true | Whether to show the leading navigation button
 leadingNavButtonIcon | string | | the icon path to the navigation button, if `showLeadingNavButton` is true
@@ -311,6 +312,7 @@ var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle
 var config = Config();
 config.disabledElements = disabledElements;
 config.disabledTools = disabledTools;
+config.multiTabEnabled = false;
 config.customHeaders = {'headerName': 'headerValue'};
 config.showLeadingNavButton = true;
 config.leadingNavButtonIcon = Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp';
