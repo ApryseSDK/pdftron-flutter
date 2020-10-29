@@ -86,8 +86,8 @@ class PdftronFlutter {
     });
   }
 
-  static Future<void> setValueForFields(List<Field> fields) {
-    return _channel.invokeMethod(Functions.setValueForFields,
+  static Future<void> setValuesForFields(List<Field> fields) {
+    return _channel.invokeMethod(Functions.setValuesForFields,
         <String, dynamic>{Parameters.fields: jsonEncode(fields)});
   }
 }

@@ -380,14 +380,14 @@ flagValue | bool | To turn on/off the flag for the fields
  PdftronFlutter.setFlagForFields(['First Name', 'Last Name'], FieldFlags.Required, true);
 ```
 
-### PdftronFlutter.setValueForFields(List<`Field`>)
+### PdftronFlutter.setValuesForFields(List<`Field`>)
 
 Set field values on one or more form fields of different types. Field values to be set could be in type number, bool or string.
 
 For more details about `Field`, please check `lib/options.dart` file.
 
 ```dart
-PdftronFlutter.setValueForFields([
+PdftronFlutter.setValuesForFields([
       new Field('textField1', "Pdftron"),
       new Field('textField2', 12.34),
       new Field('checkboxField1', true),

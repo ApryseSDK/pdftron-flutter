@@ -41,7 +41,7 @@ class Functions {
   static const handleBackButton = "handleBackButton";
   static const getPageCropBox = "getPageCropBox";
   static const setToolMode = "setToolMode";
-  static const setValueForFields = "setValueForFields";
+  static const setValuesForFields = "setValuesForFields";
   static const setFlagForFields = "setFlagForFields";
 }
 

@@ -84,7 +84,7 @@ public class PluginUtils {
     public static final String FUNCTION_GET_PAGE_CROP_BOX = "getPageCropBox";
     public static final String FUNCTION_SET_TOOL_MODE = "setToolMode";
     public static final String FUNCTION_SET_FLAG_FOR_FIELDS = "setFlagForFields";
-    public static final String FUNCTION_SET_VALUE_FOR_FIELDS = "setValueForFields";
+    public static final String FUNCTION_SET_VALUES_FOR_FIELDS = "setValuesForFields";
 
     private static final String BUTTON_TOOLS = "toolsButton";
     private static final String BUTTON_SEARCH = "searchButton";
@@ -338,12 +338,12 @@ public class PluginUtils {
                 }
                 break;
             }
-            case FUNCTION_SET_VALUE_FOR_FIELDS: {
+            case FUNCTION_SET_VALUES_FOR_FIELDS: {
                 checkFunctionPrecondition(component);
                 String fieldsString = call.argument(KEY_FIELDS);
                 if (fieldsString != null) {
                     try {
-                        setValueForFields(fieldsString, result, component);
+                        setValuesForFields(fieldsString, result, component);
                     } catch (JSONException ex) {
                         ex.printStackTrace();
                         result.error(Integer.toString(ex.hashCode()), "JSONException Error: " + ex, null);
@@ -509,7 +509,7 @@ public class PluginUtils {
         result.success(null);
     }
 
-    private static void setValueForFields(String fieldsString, MethodChannel.Result result, ViewActivityComponent component) throws PDFNetException, JSONException {
+    private static void setValuesForFields(String fieldsString, MethodChannel.Result result, ViewActivityComponent component) throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         if (null == pdfViewCtrl || null == pdfDoc) {

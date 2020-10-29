@@ -490,9 +490,9 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
         NSNumber *flag = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTFlagArgumentKey]];
         bool flagValue = [[PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTFlagValueArgumentKey]] boolValue];
         [self setFlagForFields:fieldNames flag:flag flagValue:flagValue resultToken:result];
-    } else if ([call.method isEqualToString:PTSetValueForFieldsKey]) {
+    } else if ([call.method isEqualToString:PTSetValuesForFieldsKey]) {
         NSString *fieldWithValuesString = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTFieldsArgumentKey]];
-        [self setValueForFields:fieldWithValuesString resultToken:result];
+        [self setValuesForFields:fieldWithValuesString resultToken:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -851,7 +851,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     result(nil);
 }
 
-- (void)setValueForFields:(NSString *)fieldWithValuesString resultToken:(FlutterResult)result
+- (void)setValuesForFields:(NSString *)fieldWithValuesString resultToken:(FlutterResult)result
 {
     PTDocumentViewController *docVC = [self getDocumentViewController];
     NSArray *fieldWithValues = [PdftronFlutterPlugin PT_idAsArray:[PdftronFlutterPlugin PT_JSONStringToId:fieldWithValuesString]];

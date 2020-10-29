@@ -81,7 +81,7 @@ static NSString * const PTGetPageCountKey = @"getPageCount";
 static NSString * const PTGetPageCropBoxKey = @"getPageCropBox";
 static NSString * const PTSetToolModeKey = @"setToolMode";
 static NSString * const PTSetFlagForFieldsKey = @"setFlagForFields";
-static NSString * const PTSetValueForFieldsKey = @"setValueForFields";
+static NSString * const PTSetValuesForFieldsKey = @"setValuesForFields";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
