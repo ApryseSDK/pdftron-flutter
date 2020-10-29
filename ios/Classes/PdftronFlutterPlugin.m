@@ -482,9 +482,9 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     } else if ([call.method isEqualToString:PTSelectAnnotationKey]) {
         NSString *annotation = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationArgumentKey]];
         [self selectAnnotation:annotation resultToken:result];
-    } else if ([call.method isEqualToString:PTSetFlagForAnnotationsKey]) {
+    } else if ([call.method isEqualToString:PTSetFlagsForAnnotationsKey]) {
         NSString *annotationsWithFlags = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationsWithFlagsArgumentKey]];
-        [self setFlagForAnnotations:annotationsWithFlags resultToken:result];
+        [self setFlagsForAnnotations:annotationsWithFlags resultToken:result];
     } else if ([call.method isEqualToString:PTImportAnnotationCommandKey]) {
         NSString *xfdfCommand = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTXfdfCommandArgumentKey]];
         [self importAnnotationCommand:xfdfCommand];
@@ -905,7 +905,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     }
 }
 
-- (void)setFlagForAnnotations:(NSString *)annotationsWithFlags resultToken:(FlutterResult)flutterResult
+- (void)setFlagsForAnnotations:(NSString *)annotationsWithFlags resultToken:(FlutterResult)flutterResult
 {
     PTDocumentViewController *docVC = [self getDocumentViewController];
     if(docVC.document == Nil)
