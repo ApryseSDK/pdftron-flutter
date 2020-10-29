@@ -76,7 +76,7 @@ class Functions {
   static const flattenAnnotations = "flattenAnnotations";
   static const deleteAnnotations = "deleteAnnotations";
   static const selectAnnotation = "selectAnnotation";
-  static const setFlagForAnnotations = "setFlagForAnnotations";
+  static const setFlagsForAnnotations = "setFlagsForAnnotations";
   static const importAnnotationCommand = "importAnnotationCommand";
   static const importBookmarkJson = "importBookmarkJson";
   static const saveDocument = "saveDocument";
