@@ -21,18 +21,20 @@ typedef void AnnotationsSelectedListener(dynamic annotationWithRects);
 typedef void FormFieldValueChangedListener(dynamic fields);
 typedef void CancelListener();
 
-const int exportAnnotationId = 1;
-const int exportBookmarkId = 2;
-const int documentLoadedId = 3;
-const int documentErrorId = 4;
-const int annotationChangedId = 5;
-const int annotationsSelectedId = 6;
-const int formFieldValueChangedId = 7;
+enum eventSinkId {
+  exportAnnotationId,
+  exportBookmarkId,
+  documentLoadedId,
+  documentErrorId,
+  annotationChangedId,
+  annotationsSelectedId,
+  formFieldValueChangedId
+}
 
 CancelListener startExportAnnotationCommandListener(
     ExportAnnotationCommandListener listener) {
   var subscription = _exportAnnotationCommandChannel
-      .receiveBroadcastStream(exportAnnotationId)
+      .receiveBroadcastStream(eventSinkId.exportAnnotationId.index)
       .listen(listener, cancelOnError: true);
 
   return () {
@@ -42,7 +44,7 @@ CancelListener startExportAnnotationCommandListener(
 
 CancelListener startExportBookmarkListener(ExportBookmarkListener listener) {
   var subscription = _exportBookmarkChannel
-      .receiveBroadcastStream(exportBookmarkId)
+      .receiveBroadcastStream(eventSinkId.exportBookmarkId.index)
       .listen(listener, cancelOnError: true);
 
   return () {
@@ -52,7 +54,7 @@ CancelListener startExportBookmarkListener(ExportBookmarkListener listener) {
 
 CancelListener startDocumentLoadedListener(DocumentLoadedListener listener) {
   var subscription = _documentLoadedChannel
-      .receiveBroadcastStream(documentLoadedId)
+      .receiveBroadcastStream(eventSinkId.documentLoadedId.index)
       .listen(listener, cancelOnError: true);
 
   return () {
@@ -62,7 +64,7 @@ CancelListener startDocumentLoadedListener(DocumentLoadedListener listener) {
 
 CancelListener startDocumentErrorListener(DocumentErrorListener listener) {
   var subscription = _documentErrorChannel
-      .receiveBroadcastStream(documentErrorId)
+      .receiveBroadcastStream(eventSinkId.documentErrorId.index)
       .listen((stub) {
     listener();
   }, cancelOnError: true);
@@ -75,7 +77,7 @@ CancelListener startDocumentErrorListener(DocumentErrorListener listener) {
 CancelListener startAnnotationChangedListener(
     AnnotationChangedListener listener) {
   var subscription = _annotationChangedChannel
-      .receiveBroadcastStream(annotationChangedId)
+      .receiveBroadcastStream(eventSinkId.annotationChangedId.index)
       .listen((annotationsWithActionString) {
     dynamic annotationsWithAction = jsonDecode(annotationsWithActionString);
     String action = annotationsWithAction[EventParameters.action];
@@ -96,7 +98,7 @@ CancelListener startAnnotationChangedListener(
 CancelListener startAnnotationsSelectedListener(
     AnnotationsSelectedListener listener) {
   var subscription = _annotationsSelectedChannel
-      .receiveBroadcastStream(annotationsSelectedId)
+      .receiveBroadcastStream(eventSinkId.annotationsSelectedId.index)
       .listen((annotationWithRectsString) {
     List<dynamic> annotationWithRects = jsonDecode(annotationWithRectsString);
     List<AnnotWithRect> annotWithRectList = new List<AnnotWithRect>();
@@ -114,7 +116,7 @@ CancelListener startAnnotationsSelectedListener(
 CancelListener startFormFieldValueChangedListener(
     FormFieldValueChangedListener listener) {
   var subscription = _formFieldValueChangedChannel
-      .receiveBroadcastStream(formFieldValueChangedId)
+      .receiveBroadcastStream(eventSinkId.formFieldValueChangedId.index)
       .listen((fieldsString) {
     List<dynamic> fields = jsonDecode(fieldsString);
     List<Field> fieldList = new List<Field>();

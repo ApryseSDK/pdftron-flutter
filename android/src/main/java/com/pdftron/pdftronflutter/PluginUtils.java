@@ -1,7 +1,6 @@
 package com.pdftron.pdftronflutter;
 
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.annotation.Nullable;
 
@@ -77,8 +76,6 @@ public class PluginUtils {
     private static final String KEY_ACTION_MODIFY = "modify";
     private static final String KEY_ACTION_DELETE = "delete";
     private static final String KEY_ACTION = "action";
-
-    public static final String KEY_ANNOTATION_ID = "id";
 
     public static final String KEY_ANNOTATION_FLAG_LISTS = "flags";
     public static final String KEY_ANNOTATION_FLAG = "flag";
@@ -1207,6 +1204,7 @@ public class PluginUtils {
 
     private static boolean hasAnnotationsSelected(ViewActivityComponent component) {
         return component.getSelectedAnnots() != null && !component.getSelectedAnnots().isEmpty();
+    }
 
     private static JSONArray getJSONArrayFromJSONObject(JSONObject jsonObject, String key) throws JSONException {
         String jsonArrayString = jsonObject.getString(key);

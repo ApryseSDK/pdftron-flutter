@@ -2,14 +2,6 @@
 #import "PTFlutterViewController.h"
 #import "DocumentViewFactory.h"
 
-const int exportAnnotationId = 1;
-const int exportBookmarkId = 2;
-const int documentLoadedId = 3;
-const int documentErrorId = 4;
-const int annotationChangedId = 5;
-const int annotationsSelectedId = 6;
-const int formFieldValueChangedId = 7;
-
 @interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate, PTDocumentViewControllerDelegate>
 
 @property (nonatomic, strong) id config;
@@ -401,6 +393,7 @@ const int formFieldValueChangedId = 7;
 {
     NSLog(@"Failed to open document: %@", error);
     FlutterResult result = ((PTFlutterViewController*)documentViewController).openResult;
+    [self documentViewController:documentViewController documentError:nil];
     result([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
 }
 
@@ -408,33 +401,32 @@ const int formFieldValueChangedId = 7;
 
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events
 {
-    if([arguments intValue] == exportAnnotationId)
+    
+    int sinkId = [arguments intValue];
+    
+    switch (sinkId)
     {
-        self.xfdfEventSink = events;
-    }
-    else if([arguments intValue] == exportBookmarkId)
-    {
-        self.bookmarkEventSink = events;
-    }
-    else if([arguments intValue] == documentLoadedId)
-    {
-        self.documentLoadedEventSink = events;
-    }
-    else if([arguments intValue] == documentErrorId)
-    {
-        self.documentErrorEventSink = events;
-    }
-    else if([arguments intValue] == annotationChangedId)
-    {
-        self.annotationChangedEventSink = events;
-    }
-    else if([arguments intValue] == annotationsSelectedId)
-    {
-        self.annotationsSelectedEventSink = events;
-    }
-    else if([arguments intValue] == formFieldValueChangedId)
-    {
-        self.formFieldValueChangedEventSink = events;
+        case exportAnnotationId:
+            self.xfdfEventSink = events;
+            break;
+        case exportBookmarkId:
+            self.bookmarkEventSink = events;
+            break;
+        case documentLoadedId:
+            self.documentLoadedEventSink = events;
+            break;
+        case documentErrorId:
+            self.documentErrorEventSink = events;
+            break;
+        case annotationChangedId:
+            self.annotationChangedEventSink = events;
+            break;
+        case annotationsSelectedId:
+            self.annotationsSelectedEventSink = events;
+            break;
+        case formFieldValueChangedId:
+            self.formFieldValueChangedEventSink = events;
+            break;
     }
     
     return Nil;
@@ -442,33 +434,31 @@ const int formFieldValueChangedId = 7;
 
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments
 {
-    if([arguments intValue] == exportAnnotationId)
+    int sinkId = [arguments intValue];
+    
+    switch (sinkId)
     {
-        self.xfdfEventSink = Nil;
-    }
-    else if([arguments intValue] == exportBookmarkId)
-    {
-        self.bookmarkEventSink = Nil;
-    }
-    else if([arguments intValue] == documentLoadedId)
-    {
-        self.documentLoadedEventSink = Nil;
-    }
-    else if([arguments intValue] == documentErrorId)
-    {
-        self.documentErrorEventSink = Nil;
-    }
-    else if([arguments intValue] == annotationChangedId)
-    {
-        self.annotationChangedEventSink = Nil;
-    }
-    else if([arguments intValue] == annotationsSelectedId)
-    {
-        self.annotationsSelectedEventSink = Nil;
-    }
-    else if([arguments intValue] == formFieldValueChangedId)
-    {
-        self.formFieldValueChangedEventSink = Nil;
+        case exportAnnotationId:
+            self.xfdfEventSink = nil;
+            break;
+        case exportBookmarkId:
+            self.bookmarkEventSink = nil;
+            break;
+        case documentLoadedId:
+            self.documentLoadedEventSink = nil;
+            break;
+        case documentErrorId:
+            self.documentErrorEventSink = nil;
+            break;
+        case annotationChangedId:
+            self.annotationChangedEventSink = nil;
+            break;
+        case annotationsSelectedId:
+            self.annotationsSelectedEventSink = nil;
+            break;
+        case formFieldValueChangedId:
+            self.formFieldValueChangedEventSink = nil;
+            break;
     }
     
     return Nil;
@@ -483,7 +473,7 @@ const int formFieldValueChangedId = 7;
 
 #pragma mark - EventSinks
 
--(void)docVCBookmarkChange:(PTDocumentViewController*)docVC bookmarkJson:(NSString*)bookmarkJson
+-(void)documentViewController:(PTDocumentViewController*)docVC bookmarksDidChange:(NSString*)bookmarkJson
 {
     if(self.bookmarkEventSink != nil)
     {
@@ -491,7 +481,7 @@ const int formFieldValueChangedId = 7;
     }
 }
 
--(void)docVCExportAnnotationCommand:(PTDocumentViewController*)docVC xfdfCommand:(NSString*)xfdfCommand
+-(void)documentViewController:(PTDocumentViewController*)docVC annotationsAsXFDFCommand:(NSString*)xfdfCommand
 {
     if(self.xfdfEventSink != nil)
     {
@@ -499,7 +489,7 @@ const int formFieldValueChangedId = 7;
     }
 }
 
--(void)docVCDocumentLoaded:(PTDocumentViewController*)docVC filePath:(NSString*)filePath
+-(void)documentViewController:(PTDocumentViewController*)docVC documentLoadedFromFilePath:(NSString*)filePath
 {
     if(self.documentLoadedEventSink != nil)
     {
@@ -507,7 +497,7 @@ const int formFieldValueChangedId = 7;
     }
 }
 
--(void)docVCDocumentError:(PTDocumentViewController*)docVC
+-(void)documentViewController:(PTDocumentViewController*)docVC documentError:(nullable NSError*)error
 {
     if(self.documentErrorEventSink != nil)
     {
@@ -515,7 +505,7 @@ const int formFieldValueChangedId = 7;
     }
 }
 
--(void)docVCAnnotationChanged:(PTDocumentViewController*)docVC annotationsWithActionString:(NSString*)annotationsWithActionString
+-(void)documentViewController:(PTDocumentViewController*)docVC annotationsChangedWithActionString:(NSString*)annotationsWithActionString
 {
     if(self.annotationChangedEventSink != nil)
     {
@@ -523,7 +513,7 @@ const int formFieldValueChangedId = 7;
     }
 }
 
--(void)docVCAnnotationsSelected:(PTDocumentViewController*)docVC annotationsString:(NSString*)annotationsString
+-(void)documentViewController:(PTDocumentViewController*)docVC annotationsSelection:(NSString*)annotationsString
 {
     if(self.annotationsSelectedEventSink != nil)
     {
@@ -531,7 +521,7 @@ const int formFieldValueChangedId = 7;
     }
 }
 
--(void)docVCFormFieldValueChanged:(PTDocumentViewController*)docVC fieldsString:(NSString*)fieldsString
+-(void)documentViewController:(PTDocumentViewController*)docVC formFieldValueChanged:(NSString*)fieldsString
 {
     if(self.formFieldValueChangedEventSink != nil)
     {

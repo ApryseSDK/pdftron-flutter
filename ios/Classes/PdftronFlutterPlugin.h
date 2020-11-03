@@ -143,19 +143,29 @@ static NSString * const PTAnnotationFlagPrintKey = @"print";
 static NSString * const PTAnnotationFlagReadOnlyKey = @"readOnly";
 static NSString * const PTAnnotationFlagToggleNoViewKey = @"toggleNoView";
 
+typedef enum {
+    exportAnnotationId = 0,
+    exportBookmarkId,
+    documentLoadedId,
+    documentErrorId,
+    annotationChangedId,
+    annotationsSelectedId,
+    formFieldValueChangedId
+} EventSinkId;
+
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
 
 @property (nonatomic, strong) PTTabbedDocumentViewController *tabbedDocumentViewController;
 
 + (PdftronFlutterPlugin *)registerWithFrame:(CGRect)frame viewIdentifier:(int64_t)viewId messenger:(NSObject<FlutterBinaryMessenger> *)messenger;
 
--(void)docVCBookmarkChange:(PTDocumentViewController*)docVC bookmarkJson:(NSString*)bookmarkJson;
--(void)docVCExportAnnotationCommand:(PTDocumentViewController*)docVC xfdfCommand:(NSString*)xfdfCommand;
--(void)docVCDocumentLoaded:(PTDocumentViewController*)docVC filePath:(NSString*)filePath;
--(void)docVCDocumentError:(PTDocumentViewController*)docVC;
--(void)docVCAnnotationChanged:(PTDocumentViewController*)docVC annotationsWithActionString:(NSString*)annotationsWithActionString;
--(void)docVCAnnotationsSelected:(PTDocumentViewController*)docVC annotationsString:(NSString*)annotationsString;
--(void)docVCFormFieldValueChanged:(PTDocumentViewController*)docVC fieldsString:(NSString*)fieldsString;
+-(void)documentViewController:(PTDocumentViewController*)docVC bookmarksDidChange:(NSString*)bookmarkJson;
+-(void)documentViewController:(PTDocumentViewController*)docVC annotationsAsXFDFCommand:(NSString*)xfdfCommand;
+-(void)documentViewController:(PTDocumentViewController*)docVC documentLoadedFromFilePath:(NSString*)filePath;
+-(void)documentViewController:(PTDocumentViewController*)docVC documentError:(nullable NSError*)error;
+-(void)documentViewController:(PTDocumentViewController*)docVC annotationsChangedWithActionString:(NSString*)actionString;
+-(void)documentViewController:(PTDocumentViewController*)docVC annotationsSelection:(NSString*)annotations;
+-(void)documentViewController:(PTDocumentViewController*)docVC formFieldValueChanged:(NSString*)fieldString;
 
 - (UIView*)view;
 

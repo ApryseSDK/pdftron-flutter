@@ -69,19 +69,6 @@ class Rect {
   }
 }
 
-class Annot {
-  // note that an annotation has its id in xfdf as name
-  // page numbers are 1-indexed here, but 0-indexed in xfdf
-  String id;
-  int pageNumber;
-  Annot(this.id, this.pageNumber);
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'pageNumber': pageNumber,
-      };
-}
-
 class AnnotFlag {
   // flag comes from AnnotationFlags constants
   // flagValue represents toggling on/off
