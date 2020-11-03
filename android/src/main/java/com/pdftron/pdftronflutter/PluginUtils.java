@@ -1,7 +1,12 @@
 package com.pdftron.pdftronflutter;
 
+import android.content.ContentResolver;
+import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Base64;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.pdftron.common.PDFNetException;
@@ -10,6 +15,8 @@ import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.Rect;
+import com.pdftron.pdf.config.PDFViewCtrlConfig;
+import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
@@ -17,11 +24,17 @@ import com.pdftron.pdf.tools.AdvancedShapeCreate;
 import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.BookmarkManager;
+import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
+import com.pdftron.pdf.utils.Utils;
 
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +104,7 @@ public class PluginUtils {
     private static final String BUTTON_REFLOW_MODE = "reflowModeButton";
 
     private static final String TOOL_BUTTON_FREE_HAND = "freeHandToolButton";
-    private static final String TOOL_BUTTON_HIGHTLIGHT = "hightlightToolButton";
+    private static final String TOOL_BUTTON_HIGHLIGHT = "highlightToolButton";
     private static final String TOOL_BUTTON_UNDERLINE = "underlineToolButton";
     private static final String TOOL_BUTTON_SQUIGGLY = "squigglyToolButton";
     private static final String TOOL_BUTTON_STRIKEOUT = "strikeoutToolButton";
@@ -135,7 +148,182 @@ public class PluginUtils {
     private static final String TOOL_ANNOTATION_CREATE_RUBBER_STAMP = "AnnotationCreateRubberStamp";
     private static final String TOOL_ERASER = "Eraser";
 
-    public static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
+    public static class ConfigInfo {
+        private JSONObject customHeaderJson;
+        private Uri fileUri;
+        private boolean showLeadingNavButton;
+        private String leadingNavButtonIcon;
+
+        public ConfigInfo() {
+            this.customHeaderJson = null;
+            this.fileUri = null;
+            this.showLeadingNavButton = true;
+            this.leadingNavButtonIcon = null;
+        }
+
+        public void setCustomHeaderJson(JSONObject customHeaderJson) {
+            this.customHeaderJson = customHeaderJson;
+        }
+
+        public void setFileUri(Uri fileUri) {
+            this.fileUri = fileUri;
+        }
+
+        public void setShowLeadingNavButton(boolean showLeadingNavButton) {
+            this.showLeadingNavButton = showLeadingNavButton;
+        }
+
+        public void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
+            this.leadingNavButtonIcon = leadingNavButtonIcon;
+        }
+
+        public JSONObject getCustomHeaderJson() {
+            return customHeaderJson;
+        }
+
+        public Uri getFileUri() {
+            return fileUri;
+        }
+
+        public boolean isShowLeadingNavButton() {
+            return showLeadingNavButton;
+        }
+
+        public String getLeadingNavButtonIcon() {
+            return leadingNavButtonIcon;
+        }
+    }
+
+    public static ConfigInfo handleOpenDocument(@NonNull ViewerConfig.Builder builder, @NonNull ToolManagerBuilder toolManagerBuilder,
+                                                @NonNull PDFViewCtrlConfig pdfViewCtrlConfig, @NonNull String document, @NonNull Context context,
+                                                String configStr) {
+
+        ConfigInfo configInfo = new ConfigInfo();
+
+        toolManagerBuilder.setOpenToolbar(true);
+        ArrayList<ToolManager.ToolMode> disabledTools = new ArrayList<>();
+
+        boolean isBase64 = false;
+        String cacheDir = context.getCacheDir().getAbsolutePath();
+
+        if (configStr != null && !configStr.equals("null")) {
+            try {
+                JSONObject configJson = new JSONObject(configStr);
+                if (!configJson.isNull(KEY_CONFIG_DISABLED_ELEMENTS)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_DISABLED_ELEMENTS);
+                    disabledTools.addAll(disableElements(builder, array));
+                }
+                if (!configJson.isNull(KEY_CONFIG_DISABLED_TOOLS)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_DISABLED_TOOLS);
+                    disabledTools.addAll(disableTools(array));
+                }
+                if (!configJson.isNull(KEY_CONFIG_MULTI_TAB_ENABLED)) {
+                    boolean val = configJson.getBoolean(KEY_CONFIG_MULTI_TAB_ENABLED);
+                    builder.multiTabEnabled(val);
+                }
+                if (!configJson.isNull(KEY_CONFIG_CUSTOM_HEADERS)) {
+                    JSONObject customHeaderJson = configJson.getJSONObject(KEY_CONFIG_CUSTOM_HEADERS);
+                    configInfo.setCustomHeaderJson(customHeaderJson);
+                }
+                if (!configJson.isNull(KEY_CONFIG_LEADING_NAV_BUTTON_ICON)) {
+                    String leadingNavButtonIcon = configJson.getString(KEY_CONFIG_LEADING_NAV_BUTTON_ICON);
+                    configInfo.setLeadingNavButtonIcon(leadingNavButtonIcon);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON)) {
+                    boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
+                    configInfo.setShowLeadingNavButton(showLeadingNavButton);
+                }
+                if (!configJson.isNull(KEY_CONFIG_READ_ONLY)) {
+                    boolean readOnly = configJson.getBoolean(KEY_CONFIG_READ_ONLY);
+                    builder.documentEditingEnabled(!readOnly);
+                }
+                if (!configJson.isNull(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED)) {
+                    boolean thumbnailViewEditingEnabled = configJson.getBoolean(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED);
+                    builder.thumbnailViewEditingEnabled(thumbnailViewEditingEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_AUTHOR)) {
+                    String annotationAuthor = configJson.getString(KEY_CONFIG_ANNOTATION_AUTHOR);
+                    if (!annotationAuthor.isEmpty()) {
+                        PdfViewCtrlSettingsManager.updateAuthorName(context, annotationAuthor);
+                        PdfViewCtrlSettingsManager.setAnnotListShowAuthor(context, true);
+                    }
+                }
+                if (!configJson.isNull(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING)) {
+                    boolean continuousAnnotationEditing = configJson.getBoolean(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING);
+                    PdfViewCtrlSettingsManager.setContinuousAnnotationEdit(context, continuousAnnotationEditing);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        final Uri fileUri = getUri(context, document, isBase64);
+        configInfo.setFileUri(fileUri);
+
+        if (fileUri != null) {
+            builder.openUrlCachePath(cacheDir)
+                    .saveCopyExportPath(cacheDir);
+            if (disabledTools.size() > 0) {
+                ToolManager.ToolMode[] modes = disabledTools.toArray(new ToolManager.ToolMode[0]);
+                if (modes.length > 0) {
+                    toolManagerBuilder.disableToolModes(modes);
+                }
+            }
+
+//        TODO: ViewModePickerItems
+//        if (mViewModePickerItems.size() > 0) {
+//            builder = builder.hideViewModeItems(mViewModePickerItems.toArray(new ViewModePickerDialogFragment.ViewModePickerItems[0]));
+//        }
+        }
+
+        builder.pdfViewCtrlConfig(pdfViewCtrlConfig)
+                .toolManagerBuilder(toolManagerBuilder);
+
+        return configInfo;
+    }
+
+    private static Uri getUri(Context context, String path, boolean isBase64) {
+        if (context == null || path == null) {
+            return null;
+        }
+        try {
+            if (isBase64) {
+                byte[] data = Base64.decode(path, Base64.DEFAULT);
+                File tempFile = File.createTempFile("tmp", ".pdf");
+                FileOutputStream fos = null;
+                try {
+                    fos = new FileOutputStream(tempFile);
+                    IOUtils.write(data, fos);
+                    return Uri.fromFile(tempFile);
+                } finally {
+                    IOUtils.closeQuietly(fos);
+                }
+            }
+            Uri fileUri = Uri.parse(path);
+            if (ContentResolver.SCHEME_ANDROID_RESOURCE.equals(fileUri.getScheme())) {
+                String resNameWithExtension = fileUri.getLastPathSegment();
+                String extension = FilenameUtils.getExtension(resNameWithExtension);
+                String resName = FilenameUtils.removeExtension(resNameWithExtension);
+                int resId = Utils.getResourceRaw(context, resName);
+                if (resId != 0) {
+                    File file = Utils.copyResourceToLocal(context, resId,
+                            resName, "." + extension);
+                    if (null != file && file.exists()) {
+                        fileUri = Uri.fromFile(file);
+                    }
+                }
+            } else if (ContentResolver.SCHEME_FILE.equals(fileUri.getScheme())) {
+                File file = new File(fileUri.getPath());
+                fileUri = Uri.fromFile(file);
+            }
+            return fileUri;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    private static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
         for (int i = 0; i < args.length(); i++) {
             String item = args.getString(i);
             if (BUTTON_TOOLS.equals(item)) {
@@ -172,7 +360,7 @@ public class PluginUtils {
         return disableTools(args);
     }
 
-    public static ArrayList<ToolManager.ToolMode> disableTools(JSONArray args) throws JSONException {
+    private static ArrayList<ToolManager.ToolMode> disableTools(JSONArray args) throws JSONException {
         ArrayList<ToolManager.ToolMode> tools = new ArrayList<>();
         for (int i = 0; i < args.length(); i++) {
             String item = args.getString(i);
@@ -184,11 +372,11 @@ public class PluginUtils {
         return tools;
     }
 
-    public static ToolManager.ToolMode convStringToToolMode(String item) {
+    private static ToolManager.ToolMode convStringToToolMode(String item) {
         ToolManager.ToolMode mode = null;
         if (TOOL_BUTTON_FREE_HAND.equals(item) || TOOL_ANNOTATION_CREATE_FREE_HAND.equals(item)) {
             mode = ToolManager.ToolMode.INK_CREATE;
-        } else if (TOOL_BUTTON_HIGHTLIGHT.equals(item) || TOOL_ANNOTATION_CREATE_TEXT_HIGHLIGHT.equals(item)) {
+        } else if (TOOL_BUTTON_HIGHLIGHT.equals(item) || TOOL_ANNOTATION_CREATE_TEXT_HIGHLIGHT.equals(item)) {
             mode = ToolManager.ToolMode.TEXT_HIGHLIGHT;
         } else if (TOOL_BUTTON_UNDERLINE.equals(item) || TOOL_ANNOTATION_CREATE_TEXT_UNDERLINE.equals(item)) {
             mode = ToolManager.ToolMode.TEXT_UNDERLINE;
@@ -423,7 +611,6 @@ public class PluginUtils {
             result.error("InvalidState", "Activity not attached", null);
             return;
         }
-
         Rect rect = pdfDoc.getPage(pageNumber).getCropBox();
         jsonObject.put(KEY_X1, rect.getX1());
         jsonObject.put(KEY_Y1, rect.getY1());

@@ -1,52 +1,54 @@
 part of pdftron;
 
 class Config {
-  var _dElements;
-  var _dTools;
-  var _multiTab;
-  var _mCustomHeaders;
-  var _lNavButtonIcon;
-  var _sLeadingNavButton;
-  var _rOnly;
-  var _thumbnailViewEditing;
-  var _annotAuthor;
-  var _cAnnotationEditing;
+  var _disabledElements;
+  var _disabledTools;
+  var _multiTabEnabled;
+  var _customHeaders;
+  var _leadingNavButtonIcon;
+  var _showLeadingNavButton;
+  var _readOnly;
+  var _thumbnailViewEditingEnabled;
+  var _annotationAuthor;
+  var _continuousAnnotationEditing;
 
   Config();
 
-  set disabledElements(List value) => _dElements = value;
-  set disabledTools(List value) => _dTools = value;
-  set multiTabEnabled(bool value) => _multiTab = value;
-  set customHeaders(Map<String, String> value) => _mCustomHeaders = value;
-  set leadingNavButtonIcon(String value) => _lNavButtonIcon = value;
-  set showleadingNavButton(bool value) => _sLeadingNavButton = value;
-  set readOnly(bool value) => _rOnly = value;
-  set thumbnailViewEditingEnabled(bool value) => _thumbnailViewEditing = value;
-  set annotationAuthor(String value) => _annotAuthor = value;
-  set continuousAnnotationEditing(bool value) => _cAnnotationEditing = value;
+  set disabledElements(List value) => _disabledElements = value;
+  set disabledTools(List value) => _disabledTools = value;
+  set multiTabEnabled(bool value) => _multiTabEnabled = value;
+  set customHeaders(Map<String, String> value) => _customHeaders = value;
+  set leadingNavButtonIcon(String value) => _leadingNavButtonIcon = value;
+  set showleadingNavButton(bool value) => _showLeadingNavButton = value;
+  set readOnly(bool value) => _readOnly = value;
+  set thumbnailViewEditingEnabled(bool value) =>
+      _thumbnailViewEditingEnabled = value;
+  set annotationAuthor(String value) => _annotationAuthor = value;
+  set continuousAnnotationEditing(bool value) =>
+      _continuousAnnotationEditing = value;
 
   Config.fromJson(Map<String, dynamic> json)
-      : _dElements = json['disabledElements'],
-        _dTools = json['disabledTools'],
-        _multiTab = json['multiTabEnabled'],
-        _mCustomHeaders = json['customHeaders'],
-        _lNavButtonIcon = json['leadingNavButtonIcon'],
-        _sLeadingNavButton = json['showLeadingNavButton'],
-        _rOnly = json['readOnly'],
-        _thumbnailViewEditing = json['thumbnailViewEditingEnabled'],
-        _annotAuthor = json['annotationAuthor'],
-        _cAnnotationEditing = json['continuousAnnotationEditing'];
+      : _disabledElements = json['disabledElements'],
+        _disabledTools = json['disabledTools'],
+        _multiTabEnabled = json['multiTabEnabled'],
+        _customHeaders = json['customHeaders'],
+        _leadingNavButtonIcon = json['leadingNavButtonIcon'],
+        _showLeadingNavButton = json['showLeadingNavButton'],
+        _readOnly = json['readOnly'],
+        _thumbnailViewEditingEnabled = json['thumbnailViewEditingEnabled'],
+        _annotationAuthor = json['annotationAuthor'],
+        _continuousAnnotationEditing = json['continuousAnnotationEditing'];
 
   Map<String, dynamic> toJson() => {
-        'disabledElements': _dElements,
-        'disabledTools': _dTools,
-        'multiTabEnabled': _multiTab,
-        'customHeaders': _mCustomHeaders,
-        'leadingNavButtonIcon': _lNavButtonIcon,
-        'showLeadingNavButton': _sLeadingNavButton,
-        'readOnly': _rOnly,
-        'thumbnailViewEditingEnabled': _thumbnailViewEditing,
-        'annotationAuthor': _annotAuthor,
-        'continuousAnnotationEditing': _cAnnotationEditing,
+        'disabledElements': _disabledElements,
+        'disabledTools': _disabledTools,
+        'multiTabEnabled': _multiTabEnabled,
+        'customHeaders': _customHeaders,
+        'leadingNavButtonIcon': _leadingNavButtonIcon,
+        'showLeadingNavButton': _showLeadingNavButton,
+        'readOnly': _readOnly,
+        'thumbnailViewEditingEnabled': _thumbnailViewEditingEnabled,
+        'annotationAuthor': _annotationAuthor,
+        'continuousAnnotationEditing': _continuousAnnotationEditing,
       };
 }

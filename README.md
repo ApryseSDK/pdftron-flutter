@@ -318,8 +318,8 @@ config.showLeadingNavButton = true;
 config.leadingNavButtonIcon = Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp';
 config.readOnly = false;
 config.thumbnailViewEditingEnabled = false;
-annotationAuthor = "PDFTron";
-continuousAnnotationEditing = true;
+config.annotationAuthor = "PDFTron";
+config.continuousAnnotationEditing = true;
 PdftronFlutter.openDocument(_document, config: config);
 ```
 

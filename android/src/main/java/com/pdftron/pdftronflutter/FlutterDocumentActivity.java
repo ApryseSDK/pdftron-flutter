@@ -9,11 +9,14 @@ import androidx.annotation.Nullable;
 
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.config.PDFViewCtrlConfig;
+import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.Utils;
 
 import org.json.JSONObject;
 
@@ -33,15 +36,25 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
     private static AtomicReference<EventSink> sExportBookmarkEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sDocumentLoadedEventEmitter = new AtomicReference<>();
 
-    public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config, @DrawableRes int navIconId, boolean showNavIcon) {
-        if (showNavIcon) {
-            if (navIconId == 0) {
-                navIconId = DEFAULT_NAV_ICON_ID;
+    public static void openDocument(Context packageContext, String document, String password, String configStr) {
+
+        ViewerConfig.Builder builder = new ViewerConfig.Builder().multiTabEnabled(false);
+
+        ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
+        PDFViewCtrlConfig pdfViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(packageContext);
+        ConfigInfo configInfo = handleOpenDocument(builder, toolManagerBuilder, pdfViewCtrlConfig, document, packageContext, configStr);
+
+        boolean showLeadingNavButton = configInfo.isShowLeadingNavButton();
+        @DrawableRes int leadingNavButtonIcon = Utils.getResourceDrawable(packageContext, configInfo.getLeadingNavButtonIcon());
+        if (showLeadingNavButton) {
+            if (leadingNavButtonIcon == 0) {
+                leadingNavButtonIcon = DEFAULT_NAV_ICON_ID;
             }
         } else {
-            navIconId = 0;
+            leadingNavButtonIcon = 0;
         }
-        openDocument(packageContext, fileUri, password, customHeaders, config, navIconId);
+
+        openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build(), leadingNavButtonIcon);
     }
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
