@@ -50,6 +50,45 @@ class DocumentViewController {
     });
   }
 
+  Future<void> importAnnotations(String xfdf) {
+    return _channel.invokeMethod(
+        Functions.importAnnotations, <String, dynamic>{Parameters.xfdf: xfdf});
+  }
+
+  Future<String> exportAnnotations(List<Annot> annotationList) async {
+    if (annotationList == null) {
+      return _channel.invokeMethod(Functions.exportAnnotations);
+    } else {
+      return _channel.invokeMethod(
+          Functions.exportAnnotations, <String, dynamic>{
+        Parameters.annotations: jsonEncode(annotationList)
+      });
+    }
+  }
+
+  Future<void> flattenAnnotations(bool formsOnly) {
+    return _channel.invokeMethod(Functions.flattenAnnotations,
+        <String, dynamic>{Parameters.formsOnly: formsOnly});
+  }
+
+  Future<void> deleteAnnotations(List<Annot> annotationList) {
+    return _channel.invokeMethod(Functions.deleteAnnotations,
+        <String, dynamic>{Parameters.annotations: jsonEncode(annotationList)});
+  }
+
+  Future<void> selectAnnotation(Annot annotation) {
+    return _channel.invokeMethod(Functions.selectAnnotation,
+        <String, dynamic>{Parameters.annotation: jsonEncode(annotation)});
+  }
+
+  Future<void> setFlagsForAnnotations(
+      List<AnnotWithFlag> annotationWithFlagsList) {
+    return _channel.invokeMethod(
+        Functions.setFlagsForAnnotations, <String, dynamic>{
+      Parameters.annotationsWithFlags: jsonEncode(annotationWithFlagsList)
+    });
+  }
+
   Future<void> importAnnotationCommand(String xfdfCommand) {
     return _channel.invokeMethod(Functions.importAnnotationCommand,
         <String, dynamic>{Parameters.xfdfCommand: xfdfCommand});
