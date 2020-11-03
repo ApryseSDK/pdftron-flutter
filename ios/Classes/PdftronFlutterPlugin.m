@@ -746,7 +746,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 
     [PTOverrides overrideClass:[PTDocumentViewController class] withClass:[PTFlutterViewController class]];
     
-    [PTOverrides overrideClass:[PTThumbnailsViewController class] withClass:[FLPTThumbnailsViewController class]];
+    [PTOverrides overrideClass:[PTThumbnailsViewController class] withClass:[FLThumbnailsViewController class]];
     
     // Get document argument.
     NSString *document = nil;

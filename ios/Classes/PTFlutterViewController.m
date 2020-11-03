@@ -17,7 +17,7 @@
         [self.plugin docVC:self documentLoaded:filePath];
     }
 
-    if (![self.toolManager isReadonly] && _readOnly) {
+    if (![self.toolManager isReadonly] && self.readOnly) {
         self.toolManager.readonly = YES;
     }
 }
@@ -168,12 +168,6 @@
     
     // Thumbnail editing enabled.
     self.thumbnailsViewController.editingEnabled = self.thumbnailViewEditingEnabled;
-    
-    // Continuous annotation editing.
-    self.toolManager.tool.backToPanToolAfterUse = !self.continuousAnnotationEditing;
-    
-    // Annotation author.
-    self.toolManager.annotationAuthor = self.annotationAuthor;
 }
 
 - (void)applyReadOnly
@@ -182,14 +176,18 @@
     // If the document is being streamed or converted, we don't want to accidentally allow editing by
     // disabling the readonly flag.
     if (![self.toolManager isReadonly]) {
-        self.toolManager.readonly = _readOnly;
+        self.toolManager.readonly = self.readOnly;
     }
     
-    self.thumbnailsViewController.editingEnabled = !_readOnly;
+    self.thumbnailsViewController.editingEnabled = !self.readOnly;
 }
 
 - (void)setAnnotationAuthor:(NSString *)annotationAuthor {
-    _annotationAuthor = [annotationAuthor copy];
+    self.toolManager.annotationAuthor = [annotationAuthor copy];
+}
+
+- (void)setContinuousAnnotationEditing:(BOOL)continuousAnnotationEditing {
+    self.toolManager.tool.backToPanToolAfterUse = !continuousAnnotationEditing;
 }
 
 #pragma mark - Other
@@ -201,8 +199,8 @@
 
 @end
 
-#pragma mark - FLPTThumbnailsViewController
-@implementation FLPTThumbnailsViewController
+#pragma mark - FLThumbnailsViewController
+@implementation FLThumbnailsViewController
 
 - (void)viewWillAppear:(BOOL)animated
 {

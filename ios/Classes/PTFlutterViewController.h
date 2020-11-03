@@ -15,19 +15,18 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL documentLoaded;
 
 // viewer options
-@property (nonatomic, assign, getter=isReadOnly, setter=setReadOnly:) BOOL readOnly;
-@property (nonatomic, assign, getter=isThumbnailViewEditingEnabled, setter=setThumbnailViewEditingEnabled:) BOOL thumbnailViewEditingEnabled;
-@property (nonatomic, copy, getter=getAnnotationAuthor) NSString * annotationAuthor;
-@property (nonatomic, assign, getter=isContinuousAnnotationEditing, setter=setContinuousAnnotationEditing:) BOOL continuousAnnotationEditing;
-
-- (void)setAnnotationAuthor:(NSString*)annotationAuthor;
+@property (nonatomic, assign) BOOL readOnly;
+@property (nonatomic, assign) BOOL thumbnailViewEditingEnabled;
 
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
 
+- (void)setAnnotationAuthor:(NSString *)annotationAuthor;
+- (void)setContinuousAnnotationEditing:(BOOL)continuousAnnotationEditing;
+
 @end
 
-@interface FLPTThumbnailsViewController : PTThumbnailsViewController
+@interface FLThumbnailsViewController : PTThumbnailsViewController
 
 @end
 
