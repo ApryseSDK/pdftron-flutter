@@ -291,13 +291,31 @@ Optional parameters:
 - `password`: String, password to an encrypted document
 - `config`: Config, viewer configuration options
 
+configs (more info could be found in `lib/config.dart`):
+
+Name | Type | Default | Explanation
+-- | -- | -- | -- | 
+disabledElements | array of `Buttons` constants | empty | Buttons to be disabled for the viewer
+disabledTools | array of `Tools` constants | empty | Tools to be disabled for the viewer
+multiTabEnabled | boolean | false | enable document multi-tab mode
+customerHeaders | map<string, string> | empty | custom headers to use with HTTP/HTTPS requests
+fitMode | `FitModes` constant | `FitModes`.`fitWidth` | the fit mode for the document window
+layoutMode | `LayoutModes` constant | `LayoutModes`.`continuous` | the layout mode for the document window
+initialPageNumber | int | 1 | the initial page number that viewer lands on when the document opens
+isBase64 | boolean | false | whether the document is in base64 format
+
 ```dart
 var disabledElements = [Buttons.shareButton, Buttons.searchButton];
 var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
 var config = Config();
 config.disabledElements = disabledElements;
 config.disabledTools = disabledTools;
+config.multiTabEnabled = false;
 config.customHeaders = {'headerName': 'headerValue'};
+config.fitMode = FitModes.zoom;
+config.layoutMode = LayoutModes.single;
+config.initialPageNumber = 3;
+config.isBase64 = false;
 PdftronFlutter.openDocument(_document, config: config);
 ```
 
@@ -355,6 +373,26 @@ Return a map object with values for position (bottom-left: `x1`, `y1`; top-right
 ```dart
 var cropBox = await controller.getPageCropBox(1);
 print('The width of crop box for page 1 is: ' + cropBox.width.toString());
+```
+
+### PdftronFlutter.setCurrentPage()
+
+Set current page of the document. Page numbers are 1-indexed.
+
+Return whether the setting process is successful.
+
+```dart
+var setResult = await controller.setCurrentPage(5);
+print('Page set ' + setResult ? 'successfully' : 'unsuccessfully');
+```
+
+### PdftronFlutter.getDocumentPath()
+
+Return the path of the current document.
+
+```dart
+var documentPath = await controller.getDocumentPath();
+print('The path to current document is: ' + documentPath);
 ```
 
 ## Events

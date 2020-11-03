@@ -9,6 +9,10 @@ static NSString * const PTDisabledToolsKey = @"disabledTools";
 static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
 static NSString * const PTCustomHeadersKey = @"customHeaders";
+static NSString * const PTFitModeKey = @"fitMode";
+static NSString * const PTLayoutModeKey = @"layoutMode";
+static NSString * const PTInitialPageNumberKey = @"initialPageNumber";
+static NSString * const PTIsBase64Key = @"isBase64";
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";
@@ -74,6 +78,8 @@ static NSString * const PTSaveDocumentKey = @"saveDocument";
 static NSString * const PTCommitToolKey = @"commitTool";
 static NSString * const PTGetPageCountKey = @"getPageCount";
 static NSString * const PTGetPageCropBoxKey = @"getPageCropBox";
+static NSString * const PTSetCurrentPageKey = @"setCurrentPage";
+static NSString * const PTGetDocumentPathKey = @"getDocumentPath";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
@@ -83,6 +89,20 @@ static NSString * const PTXfdfCommandArgumentKey = @"xfdfCommand";
 static NSString * const PTBookmarkJsonArgumentKey = @"bookmarkJson";
 static NSString * const PTPageNumberArgumentKey = @"pageNumber";
 static NSString * const PTLicenseArgumentKey = @"licenseKey";
+
+// fit mode
+static NSString * const PTFitPageKey = @"FitPage";
+static NSString * const PTFitWidthKey = @"FitWidth";
+static NSString * const PTFitHeightKey = @"FitHeight";
+static NSString * const PTZoomKey = @"Zoom";
+
+// layout mode
+static NSString * const PTSingleKey = @"Single";
+static NSString * const PTContinuousKey = @"Continuous";
+static NSString * const PTFacingKey = @"Facing";
+static NSString * const PTFacingContinuousKey = @"FacingContinuous";
+static NSString * const PTFacingCoverKey = @"FacingCover";
+static NSString * const PTFacingCoverContinuousKey = @"FacingCoverContinuous";
 
 // other keys
 static NSString * const PTX1Key = @"x1";
@@ -95,12 +115,15 @@ static NSString * const PTHeightKey = @"height";
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
 
 @property (nonatomic, strong) PTTabbedDocumentViewController *tabbedDocumentViewController;
+@property (nonatomic) BOOL isBase64;
 
 + (PdftronFlutterPlugin *)registerWithFrame:(CGRect)frame viewIdentifier:(int64_t)viewId messenger:(NSObject<FlutterBinaryMessenger> *)messenger;
 
 -(void)docVC:(PTDocumentViewController*)docVC annotationChange:(NSString*)xfdfCommand;
 -(void)docVC:(PTDocumentViewController*)docVC bookmarkChange:(NSString*)bookmarkJson;
 -(void)docVC:(PTDocumentViewController*)docVC documentLoaded:(NSString*)filePath;
+
+- (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 
 - (UIView*)view;
 

@@ -108,17 +108,49 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     }
 }
 
+- (bool)getBase64:(NSString*)config
+{
+    if(config && ![config isEqualToString:@"null"])
+    {
+        //convert from json to dict
+        NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
+        id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
+        
+        NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
+        
+        if([foundationObject isKindOfClass:[NSDictionary class]])
+        {
+            NSDictionary* configPairs = (NSDictionary*)foundationObject;
+            id isBase64 = configPairs[PTIsBase64Key];
+            
+            if ([isBase64 isKindOfClass:[NSNumber class]]) {
+                return [isBase64 boolValue];
+            }
+        }
+        else
+        {
+            NSLog(@"config JSON object not in expected dictionary format.");
+        }
+    }
+    return NO;
+}
+
 + (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
 {
     if (config.length == 0 || [config isEqualToString:@"null"]) {
         return;
     }
     
+    [(PTFlutterViewController*)documentViewController initViewerSettings];
+    
     //convert from json to dict
     NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
     id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
     
     NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
+    
+    bool showLeadingNavButton = NO;
+    NSString* leadingNavButtonIcon;
     
     if([foundationObject isKindOfClass:[NSDictionary class]])
     {
@@ -177,6 +209,68 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
                     // Handled by tabbed config.
                 }
+                else if ([key isEqualToString:PTFitModeKey]) {
+                    id fitModeValue = configPairs[PTFitModeKey];
+                    if (![fitModeValue isEqual:[NSNull null]])
+                    {
+                        NSAssert([fitModeValue isKindOfClass:[NSString class]], @"fitMode not in expected string format.");
+                        if ([fitModeValue isKindOfClass:[NSString class]]) {
+                            NSString* fitMode = fitModeValue;
+                            [(PTFlutterViewController *)documentViewController setFitMode:fitMode];
+                        }
+                        else
+                        {
+                            NSLog(@"fitMode not in expected string format.");
+                        }
+                    }
+                }
+                else if ([key isEqualToString:PTLayoutModeKey]) {
+                    id layoutModeValue = configPairs[PTLayoutModeKey];
+                    if (![layoutModeValue isEqual:[NSNull null]])
+                    {
+                        NSAssert([layoutModeValue isKindOfClass:[NSString class]], @"layoutMode not in expected string format.");
+                        if ([layoutModeValue isKindOfClass:[NSString class]]) {
+                            NSString* layoutMode = layoutModeValue;
+                            [(PTFlutterViewController *)documentViewController setLayoutMode:layoutMode];
+                        }
+                        else
+                        {
+                            NSLog(@"layoutMode not in expected string format.");
+                        }
+                    }
+                }
+                else if ([key isEqualToString:PTInitialPageNumberKey]) {
+                    id initialPageNumberValue = configPairs[PTInitialPageNumberKey];
+                    if (![initialPageNumberValue isEqual:[NSNull null]])
+                    {
+                        NSAssert([initialPageNumberValue isKindOfClass:[NSNumber class]], @"initialPageNumber not in expected integer format.");
+                        if ([initialPageNumberValue isKindOfClass:[NSNumber class]]) {
+                            
+                            int initialPageNumber = [initialPageNumberValue intValue];
+                            [(PTFlutterViewController *)documentViewController setInitialPageNumber:initialPageNumber];
+                        }
+                        else
+                        {
+                            NSLog(@"initialPageNumber not in expected integer format.");
+                        }
+                    }
+                }
+                else if ([key isEqualToString:PTIsBase64Key]) {
+                    id isBase64Value = configPairs[PTIsBase64Key];
+                    if (![isBase64Value isEqual:[NSNull null]])
+                    {
+                        NSAssert([isBase64Value isKindOfClass:[NSNumber class]], @"isBase64 not in expected boolean format.");
+                        if ([isBase64Value isKindOfClass:[NSNumber class]]) {
+                            
+                            bool isBase64 = [isBase64Value intValue];
+                            [(PTFlutterViewController *)documentViewController setIsBase64:isBase64];
+                        }
+                        else
+                        {
+                            NSLog(@"isBase64 not in expected boolean format.");
+                        }
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
@@ -188,7 +282,15 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
         {
             NSLog(@"config JSON object not in expected dictionary format.");
         }
+        
+        
     }
+    
+    if (showLeadingNavButton) {
+        [self handleNavIconDisplay:leadingNavButtonIcon documentViewController:documentViewController];
+    }
+    
+    [(PTFlutterViewController *)documentViewController applyViewerSettings];
 }
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem
@@ -355,6 +457,23 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     [self disableTools:elementsToDisable documentViewController:documentViewController];
 }
 
++ (void)handleNavIconDisplay:(NSString *)leadingNavButtonIcon documentViewController:(PTDocumentViewController *)docVC
+{
+    if (leadingNavButtonIcon) {
+        UIImage *navImage = [UIImage imageNamed:leadingNavButtonIcon];
+        if (navImage) {
+            UIBarButtonItem *navButton = [[UIBarButtonItem alloc] initWithImage:navImage
+                                                                          style:UIBarButtonItemStylePlain
+                                                                         target:(PTFlutterViewController*)docVC
+                                                                         action:@selector(topLeftButtonPressed:)];
+            docVC.navigationItem.leftBarButtonItem = navButton;
+            return;
+        }
+    }
+    
+    docVC.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:(PTFlutterViewController*)docVC action:@selector(topLeftButtonPressed:)];
+}
+
 
 #pragma mark - PTTabbedDocumentViewControllerDelegate
 
@@ -482,6 +601,11 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     } else if ([call.method isEqualToString:PTGetPageCropBoxKey]) {
         NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self getPageCropBox:pageNumber resultToken:result];
+    } else if ([call.method isEqualToString:PTSetCurrentPageKey]) {
+        NSNumber* pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
+        [self setCurrentPage:pageNumber resultToken:result];
+    } else if ([call.method isEqualToString:PTGetDocumentPathKey]) {
+        [self getDocumentPath:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -520,24 +644,27 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.tabbedDocumentViewController];
     
-    self.tabbedDocumentViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
-    
     NSString* config = arguments[PTConfigArgumentKey];
     self.config = config;
     
     [[self class] configureTabbedDocumentViewController:self.tabbedDocumentViewController
                                              withConfig:config];
-    
-    // Open a file URL.
-    NSURL *fileURL = [[NSBundle mainBundle] URLForResource:document withExtension:@"pdf"];
-    if ([document containsString:@"://"]) {
-        fileURL = [NSURL URLWithString:document];
-    } else if ([document hasPrefix:@"/"]) {
-        fileURL = [NSURL fileURLWithPath:document];
-    }
+
+    if (![self getBase64:config]) {
+        // Open a file URL.
+        NSURL *fileURL = [[NSBundle mainBundle] URLForResource:document withExtension:@"pdf"];
+        if ([document containsString:@"://"]) {
+            fileURL = [NSURL URLWithString:document];
+        } else if ([document hasPrefix:@"/"]) {
+            fileURL = [NSURL fileURLWithPath:document];
+        }
+            
+        [self.tabbedDocumentViewController openDocumentWithURL:fileURL
+                                                      password:password];
+    } else {
+        // TODO: update when tabbedDocumentViewController supports base64
         
-    [self.tabbedDocumentViewController openDocumentWithURL:fileURL
-                                                  password:password];
+    }
     
     ((PTFlutterViewController*)self.tabbedDocumentViewController.childViewControllers.lastObject).openResult = result;
     ((PTFlutterViewController*)self.tabbedDocumentViewController.childViewControllers.lastObject).plugin = self;
@@ -625,43 +752,56 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
         
         // something is wrong, no document.
         NSLog(@"%@", resultString);
-        flutterResult(resultString);
+        flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: The document view controller has no document."]);
         
         return;
     }
     
-    NSError* error;
-    
-    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if([doc HasDownloader])
+    if (![(PTFlutterViewController*)docVC isBase64]) {
+        NSError* error;
+        
+        [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+            [docVC saveDocument:0 completionHandler:^(BOOL success) {
+                if(!success)
+                {
+                    resultString = @"Error: The file could not be saved.";
+                    NSLog(@"%@", resultString);
+                    flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: The file could not be saved."]);
+                }
+                else
+                {
+                    resultString = @"The file was successfully saved.";
+                    flutterResult(resultString);
+                }
+            }];
+
+        } error:&error];
+        
+        if(error)
         {
-            // too soon
-            resultString = @"Error: The document is still being downloaded and cannot be saved.";
-            NSLog(@"%@", resultString);
-            flutterResult(resultString);
-            return;
+            NSLog(@"Error: There was an error while trying to save the document. %@", error.localizedDescription);
+            flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: There was an error while trying to save the document."]);
         }
-
-        [docVC saveDocument:0 completionHandler:^(BOOL success) {
-            if(!success)
-            {
-                resultString = @"Error: The file could not be saved.";
-                NSLog(@"%@", resultString);
-                flutterResult(resultString);
-            }
-            else
-            {
-                resultString = @"The file was successfully saved.";
-                flutterResult(resultString);
-            }
-        }];
-
-    } error:&error];
-    
-    if(error)
-    {
-        NSLog(@"Error: There was an error while trying to save the document. %@", error.localizedDescription);
+    } else {
+        __block NSString *base64String = nil;
+        __block BOOL success = NO;
+        NSError *error;
+        [docVC.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+            NSData *data = [doc SaveToBuf:0];
+            
+            base64String = [data base64EncodedStringWithOptions:0];
+            success = YES;
+        } error:&error];
+       
+        if (error)
+        {
+            NSLog(@"Error: There was an error while trying to save the document. %@", error.localizedDescription);
+            flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: There was an error while trying to save the document."]);
+        } else {
+            flutterResult(base64String);
+        }
     }
+    
 }
 
 - (void)commitTool:(FlutterResult)flutterResult
@@ -730,6 +870,20 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     if(error)
     {
         NSLog(@"Error: There was an error while trying to get the page crop box. %@", error.localizedDescription);
+    }
+}
+
+- (void)setCurrentPage:(NSNumber *)pageNumber resultToken:(FlutterResult)result {
+    PTDocumentViewController *docVC = [self getDocumentViewController];
+    result([NSNumber numberWithBool:[docVC.pdfViewCtrl SetCurrentPage:[pageNumber intValue]]]);
+}
+
+- (void) getDocumentPath:(FlutterResult)result {
+    PTFlutterViewController *docVC = (PTFlutterViewController *)[self getDocumentViewController];
+    if (![docVC isBase64]) {
+        result(docVC.coordinatedDocument.fileURL.path);
+    } else {
+        result(nil);
     }
 }
 

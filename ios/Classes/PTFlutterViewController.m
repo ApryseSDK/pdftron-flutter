@@ -15,6 +15,12 @@
 
         NSString *filePath = self.coordinatedDocument.fileURL.path;
         [self.plugin docVC:self documentLoaded:filePath];
+        
+        if (self.initialPageNumber > 0) {
+            [self.pdfViewCtrl SetCurrentPage:self.initialPageNumber];
+        }
+        
+        [self applyLayoutMode];
     }
 }
 
@@ -148,6 +154,71 @@
     }
 
     [super pdfViewCtrl:pdfViewCtrl downloadEventType:type pageNumber:pageNum message:message];
+}
+
+#pragma mark - Viewer Settings
+
+- (void)initViewerSettings
+{
+    // left for other configs
+}
+
+- (void)applyViewerSettings
+{
+    // FitMode
+    [self applyFitMode];
+    
+    // LayoutMode
+    [self applyLayoutMode];
+}
+
+- (void)applyFitMode
+{
+    if ([self.fitMode isEqualToString:PTFitPageKey]) {
+        [self.pdfViewCtrl SetPageViewMode:e_trn_fit_page];
+        [self.pdfViewCtrl SetPageRefViewMode:e_trn_fit_page];
+    }
+    else if ([self.fitMode isEqualToString:PTFitWidthKey]) {
+        [self.pdfViewCtrl SetPageViewMode:e_trn_fit_width];
+        [self.pdfViewCtrl SetPageRefViewMode:e_trn_fit_width];
+    }
+    else if ([self.fitMode isEqualToString:PTFitHeightKey]) {
+        [self.pdfViewCtrl SetPageViewMode:e_trn_fit_height];
+        [self.pdfViewCtrl SetPageRefViewMode:e_trn_fit_height];
+    }
+    else if ([self.fitMode isEqualToString:PTZoomKey]) {
+        [self.pdfViewCtrl SetPageViewMode:e_trn_zoom];
+        [self.pdfViewCtrl SetPageRefViewMode:e_trn_zoom];
+    }
+}
+
+- (void)applyLayoutMode
+{
+    if ([self.layoutMode isEqualToString:PTSingleKey]) {
+        [self.pdfViewCtrl SetPagePresentationMode:e_trn_single_page];
+    }
+    else if ([self.layoutMode isEqualToString:PTContinuousKey]) {
+        [self.pdfViewCtrl SetPagePresentationMode:e_trn_single_continuous];
+    }
+    else if ([self.layoutMode isEqualToString:PTFacingKey]) {
+        [self.pdfViewCtrl SetPagePresentationMode:e_trn_facing];
+    }
+    else if ([self.layoutMode isEqualToString:PTFacingContinuousKey]) {
+        [self.pdfViewCtrl SetPagePresentationMode:e_trn_facing_continuous];
+    }
+    else if ([self.layoutMode isEqualToString:PTFacingCoverKey]) {
+        [self.pdfViewCtrl SetPagePresentationMode:e_trn_facing_cover];
+    }
+    else if ([self.layoutMode isEqualToString:PTFacingCoverContinuousKey]) {
+        [self.pdfViewCtrl SetPagePresentationMode:e_trn_facing_continuous_cover];
+    }
+}
+
+#pragma mark - Other
+
+- (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem
+{
+    [self.plugin topLeftButtonPressed:barButtonItem];
 }
 
 @end

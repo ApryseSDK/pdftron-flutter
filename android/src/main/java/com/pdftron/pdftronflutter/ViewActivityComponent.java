@@ -8,10 +8,18 @@ import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.ToolManager;
 
+import java.io.File;
+
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
 public interface ViewActivityComponent {
+
+    int getInitialPageNumber();
+
+    boolean isBase64();
+
+    File getTempFile();
 
     EventChannel.EventSink getExportAnnotationCommandEventEmitter();
 

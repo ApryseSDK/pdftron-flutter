@@ -81,4 +81,13 @@ class DocumentViewController {
         <String, dynamic>{Parameters.pageNumber: pageNumber});
     return Rect.fromJson(jsonDecode(cropBoxString));
   }
+
+  Future<bool> setCurrentPage(int pageNumber) {
+    return _channel.invokeMethod(Functions.setCurrentPage,
+        <String, dynamic>{Parameters.pageNumber: pageNumber});
+  }
+
+  Future<String> getDocumentPath() {
+    return _channel.invokeMethod(Functions.getDocumentPath);
+  }
 }

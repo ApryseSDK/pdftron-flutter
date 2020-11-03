@@ -2,19 +2,26 @@ package com.pdftron.pdftronflutter.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
+import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.ActionUtils;
+import com.pdftron.pdftronflutter.PluginUtils;
 import com.pdftron.pdftronflutter.ViewActivityComponent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import java.io.File;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
@@ -24,8 +31,15 @@ import static com.pdftron.pdftronflutter.PluginUtils.*;
 public class DocumentView extends com.pdftron.pdf.controls.DocumentView implements ViewActivityComponent {
 
     private ToolManagerBuilder mToolManagerBuilder;
+    private PDFViewCtrlConfig mPDFViewCtrlConfig;
     private ViewerConfig.Builder mBuilder;
+
     private String mCacheDir;
+
+    private int mInitialPageNumber;
+
+    private boolean mIsBase64;
+    private File mTempFile;
 
     private EventChannel.EventSink sExportAnnotationCommandEventEmitter;
     private EventChannel.EventSink sExportBookmarkEventEmitter;
@@ -47,6 +61,39 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
         init(context);
     }
 
+    public void openDocument(String document, String password, String configStr, MethodChannel.Result result) {
+
+       ConfigInfo configInfo = PluginUtils.handleOpenDocument(mBuilder, mToolManagerBuilder, mPDFViewCtrlConfig, document, getContext(), configStr);
+
+       mInitialPageNumber = configInfo.getInitialPageNumber();
+       mIsBase64 = configInfo.isBase64();
+       mCacheDir = configInfo.getCacheDir();
+       mTempFile = configInfo.getTempFile();
+       setDocumentUri(configInfo.getFileUri());
+       setPassword(password);
+       setCustomHeaders(configInfo.getCustomHeaderJson());
+       setViewerConfig(mBuilder.build());
+       setFlutterLoadResult(result);
+
+        ViewerBuilder viewerBuilder = ViewerBuilder.withUri(configInfo.getFileUri(), password)
+                .usingCustomHeaders(configInfo.getCustomHeaderJson())
+                .usingConfig(mBuilder.build())
+                .usingNavIcon(mShowNavIcon ? mNavIconRes : 0);
+        if (mPdfViewCtrlTabHostFragment != null) {
+            mPdfViewCtrlTabHostFragment.onOpenAddNewTab(viewerBuilder.createBundle(getContext()));
+        } else {
+            mPdfViewCtrlTabHostFragment = viewerBuilder.build(getContext());
+            if (mFragmentManager != null) {
+                mFragmentManager.beginTransaction().add(mPdfViewCtrlTabHostFragment, "document_view").commitNow();
+                View fragmentView = mPdfViewCtrlTabHostFragment.getView();
+                if (fragmentView != null) {
+                    addView(fragmentView, -1, -1);
+                }
+            }
+        }
+        attachListeners();
+    }
+
     private void init(Context context) {
         int width = ViewGroup.LayoutParams.MATCH_PARENT;
         int height = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -61,6 +108,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
                 .multiTabEnabled(false)
                 .showCloseTabOption(false)
                 .useSupportActionBar(false);
+
+        mPDFViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(context);
     }
 
     public void attachListeners() {
@@ -74,9 +123,11 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
 
     private ViewerConfig getConfig() {
         if (mCacheDir != null) {
-            mBuilder.openUrlCachePath(mCacheDir);
+            mBuilder.openUrlCachePath(mCacheDir)
+            .saveCopyExportPath(mCacheDir);
         }
         return mBuilder
+                .pdfViewCtrlConfig(mPDFViewCtrlConfig)
                 .toolManagerBuilder(mToolManagerBuilder)
                 .build();
     }
@@ -85,6 +136,19 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     protected void onAttachedToWindow() {
         setViewerConfig(getConfig());
         super.onAttachedToWindow();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+
+        ActionUtils.getInstance().setActionInterceptCallback(null);
+
+        super.onDetachedFromWindow();
+
+        // TODO: move this into PluginUtils - handleDetach, after events are merged into master
+        if (mTempFile != null && mTempFile.exists()) {
+            mTempFile.delete();
+        }
     }
 
     @Override
@@ -104,6 +168,18 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
         super.onOpenDocError();
 
         return handleOpenDocError(this);
+    }
+
+    public int getInitialPageNumber() {
+        return mInitialPageNumber;
+    }
+
+    public boolean isBase64() {
+        return mIsBase64;
+    }
+
+    public File getTempFile() {
+        return mTempFile;
     }
 
     public void setExportAnnotationCommandEventEmitter(EventChannel.EventSink emitter) {

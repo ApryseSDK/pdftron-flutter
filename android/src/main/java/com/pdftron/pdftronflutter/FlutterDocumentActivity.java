@@ -9,6 +9,8 @@ import androidx.annotation.Nullable;
 
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.config.PDFViewCtrlConfig;
+import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
@@ -17,6 +19,7 @@ import com.pdftron.pdf.tools.ToolManager;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.flutter.plugin.common.EventChannel.EventSink;
@@ -27,11 +30,33 @@ import static com.pdftron.pdftronflutter.PluginUtils.*;
 public class FlutterDocumentActivity extends DocumentActivity implements ViewActivityComponent {
 
     private static FlutterDocumentActivity sCurrentActivity;
+
+    private static File mTempFile;
+
+    private static boolean mIsBase64;
+    private static int mInitialPageNumber;
+
     private static AtomicReference<Result> sFlutterLoadResult = new AtomicReference<>();
 
     private static AtomicReference<EventSink> sExportAnnotationCommandEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sExportBookmarkEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sDocumentLoadedEventEmitter = new AtomicReference<>();
+
+    public static void openDocument(Context packageContext, String document, String password, String configStr) {
+
+        ViewerConfig.Builder builder = new ViewerConfig.Builder().multiTabEnabled(false);
+
+        ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
+        PDFViewCtrlConfig pdfViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(packageContext);
+        ConfigInfo configInfo = handleOpenDocument(builder, toolManagerBuilder, pdfViewCtrlConfig, document, packageContext, configStr);
+
+        mTempFile = configInfo.getTempFile();
+
+        mIsBase64 = configInfo.isBase64();
+        mInitialPageNumber = configInfo.getInitialPageNumber();
+
+        openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build());
+    }
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
         openDocument(packageContext, fileUri, password, customHeaders, config, DEFAULT_NAV_ICON_ID);
@@ -54,6 +79,18 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
         intent.putExtra("extra_nav_icon", navIconId);
         intent.putExtra("extra_config", config);
         packageContext.startActivity(intent);
+    }
+
+    public int getInitialPageNumber() {
+        return mInitialPageNumber;
+    }
+
+    public boolean isBase64() {
+        return mIsBase64;
+    }
+
+    public File getTempFile() {
+        return mTempFile;
     }
 
     public static void setExportAnnotationCommandEventEmitter(EventSink emitter) {
@@ -126,6 +163,11 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
             result.success(false);
         }
         sCurrentActivity = null;
+
+        // TODO: move this into PluginUtils after events are merged into master
+        if (mTempFile != null && mTempFile.exists()) {
+            mTempFile.delete();
+        }
     }
 
     public static FlutterDocumentActivity getCurrentActivity() {

@@ -31,6 +31,8 @@ class Functions {
   static const getPageCount = "getPageCount";
   static const handleBackButton = "handleBackButton";
   static const getPageCropBox = "getPageCropBox";
+  static const setCurrentPage = "setCurrentPage";
+  static const getDocumentPath = "getDocumentPath";
 }
 
 class Parameters {
@@ -107,4 +109,20 @@ class Tools {
       'AnnotationCreateFreeHighlighter';
   static const annotationCreateRubberStamp = 'AnnotationCreateRubberStamp';
   static const eraser = 'Eraser';
+}
+
+class FitModes {
+  static const fitPage = 'FitPage';
+  static const fitWidth = 'FitWidth';
+  static const fitHeight = 'FitHeight';
+  static const zoom = 'Zoom';
+}
+
+class LayoutModes {
+  static const single = 'Single';
+  static const continuous = 'Continuous';
+  static const facing = 'Facing';
+  static const facingContinuous = 'FacingContinuous';
+  static const facingCover = 'FacingCover';
+  static const facingCoverContinuous = 'FacingCoverContinuous';
 }
