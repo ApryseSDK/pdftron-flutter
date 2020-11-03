@@ -513,7 +513,7 @@
     }
 }
 
--(void)documentViewController:(PTDocumentViewController*)docVC annotationsSelection:(NSString*)annotationsString
+-(void)documentViewController:(PTDocumentViewController*)docVC annotationsSelected:(NSString*)annotationsString
 {
     if(self.annotationsSelectedEventSink != nil)
     {

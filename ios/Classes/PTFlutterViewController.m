@@ -135,7 +135,7 @@
             },
         };
         
-        [self.plugin documentViewController:self annotationsSelection:[PdftronFlutterPlugin PT_idToJSONString:@[annotDict]]];
+        [self.plugin documentViewController:self annotationsSelected:[PdftronFlutterPlugin PT_idToJSONString:@[annotDict]]];
     }
 }
 

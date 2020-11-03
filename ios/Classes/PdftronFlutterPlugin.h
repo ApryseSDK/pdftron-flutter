@@ -164,7 +164,7 @@ typedef enum {
 -(void)documentViewController:(PTDocumentViewController*)docVC documentLoadedFromFilePath:(NSString*)filePath;
 -(void)documentViewController:(PTDocumentViewController*)docVC documentError:(nullable NSError*)error;
 -(void)documentViewController:(PTDocumentViewController*)docVC annotationsChangedWithActionString:(NSString*)actionString;
--(void)documentViewController:(PTDocumentViewController*)docVC annotationsSelection:(NSString*)annotations;
+-(void)documentViewController:(PTDocumentViewController*)docVC annotationsSelected:(NSString*)annotations;
 -(void)documentViewController:(PTDocumentViewController*)docVC formFieldValueChanged:(NSString*)fieldString;
 
 - (UIView*)view;
