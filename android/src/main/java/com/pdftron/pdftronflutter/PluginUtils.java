@@ -201,12 +201,36 @@ public class PluginUtils {
         private JSONObject customHeaderJson;
         private Uri fileUri;
 
-        public ConfigInfo(int initialPageNumber, boolean isBase64, String cacheDir, File tempFile, JSONObject customHeaderJson, Uri fileUri) {
+        public ConfigInfo() {
+            this.initialPageNumber = -1;
+            this.isBase64 = false;
+            this.cacheDir = null;
+            this.tempFile = null;
+            this.customHeaderJson = null;
+            this.fileUri = null;
+        }
+
+        public void setInitialPageNumber(int initialPageNumber) {
             this.initialPageNumber = initialPageNumber;
+        }
+
+        public void setIsBase64(boolean isBase64) {
             this.isBase64 = isBase64;
+        }
+
+        public void setCacheDir(String cacheDir) {
             this.cacheDir = cacheDir;
+        }
+
+        public void setTempFile(File tempFile) {
             this.tempFile = tempFile;
+        }
+
+        public void setCustomHeaderJson(JSONObject customHeaderJson) {
             this.customHeaderJson = customHeaderJson;
+        }
+
+        public void setFileUri(Uri fileUri) {
             this.fileUri = fileUri;
         }
 
@@ -239,15 +263,15 @@ public class PluginUtils {
                                                 @NonNull PDFViewCtrlConfig pdfViewCtrlConfig, @NonNull String document, @NonNull Context context,
                                                 String configStr) {
 
+        ConfigInfo configInfo = new ConfigInfo();
+
         toolManagerBuilder.setOpenToolbar(true);
         ArrayList<ToolManager.ToolMode> disabledTools = new ArrayList<>();
 
         boolean isBase64 = false;
-        int initialPageNumber = -1;
         String cacheDir = context.getCacheDir().getAbsolutePath();
-        File tempFile = null;
+        configInfo.setCacheDir(cacheDir);
 
-        JSONObject customHeaderJson = null;
         if (configStr != null && !configStr.equals("null")) {
             try {
                 JSONObject configJson = new JSONObject(configStr);
@@ -264,7 +288,8 @@ public class PluginUtils {
                     builder.multiTabEnabled(val);
                 }
                 if (!configJson.isNull(KEY_CONFIG_CUSTOM_HEADERS)) {
-                    customHeaderJson = configJson.getJSONObject(KEY_CONFIG_CUSTOM_HEADERS);
+                    JSONObject customHeaderJson = configJson.getJSONObject(KEY_CONFIG_CUSTOM_HEADERS);
+                    configInfo.setCustomHeaderJson(customHeaderJson);
                 }
                 if (!configJson.isNull(KEY_CONFIG_FIT_MODE)) {
                     String fitString = configJson.getString(KEY_CONFIG_FIT_MODE);
@@ -277,10 +302,12 @@ public class PluginUtils {
                     PdfViewCtrlSettingsManager.updateViewMode(context, layoutMode);
                 }
                 if (!configJson.isNull(KEY_CONFIG_INITIAL_PAGE_NUMBER)) {
-                    initialPageNumber = configJson.getInt(KEY_CONFIG_INITIAL_PAGE_NUMBER);
+                    int initialPageNumber = configJson.getInt(KEY_CONFIG_INITIAL_PAGE_NUMBER);
+                    configInfo.setInitialPageNumber(initialPageNumber);
                 }
                 if (!configJson.isNull(KEY_CONFIG_IS_BASE_64)) {
                     isBase64 = configJson.getBoolean(KEY_CONFIG_IS_BASE_64);
+                    configInfo.setIsBase64(isBase64);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -288,6 +315,7 @@ public class PluginUtils {
         }
 
         final Uri fileUri = getUri(context, document, isBase64);
+        configInfo.setFileUri(fileUri);
 
         if (fileUri != null) {
             builder.openUrlCachePath(cacheDir)
@@ -305,14 +333,15 @@ public class PluginUtils {
 //        }
 
             if (isBase64 && fileUri.getPath() != null) {
-                tempFile = new File(fileUri.getPath());
+                File tempFile = new File(fileUri.getPath());
+                configInfo.setTempFile(tempFile);
             }
         }
 
         builder.pdfViewCtrlConfig(pdfViewCtrlConfig)
                 .toolManagerBuilder(toolManagerBuilder);
 
-        return new ConfigInfo(initialPageNumber, isBase64, cacheDir, tempFile, customHeaderJson, fileUri);
+        return configInfo;
     }
 
     private static Uri getUri(Context context, String path, boolean isBase64) {
