@@ -211,7 +211,9 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     }
 
     public MethodChannel.Result getFlutterLoadResult() {
-        return sFlutterLoadResult;
+        MethodChannel.Result result = sFlutterLoadResult;
+        sFlutterLoadResult = null;
+        return result;
     }
 
     // Convenience
