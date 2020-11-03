@@ -183,6 +183,7 @@ class LayoutModes {
   static const facingContinuous = 'FacingContinuous';
   static const facingCover = 'FacingCover';
   static const facingCoverContinuous = 'FacingCoverContinuous';
+}
 
 class AnnotationFlags {
   static const hidden = "hidden";
