@@ -82,21 +82,26 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     if(config && ![config isEqualToString:@"null"])
     {
         //convert from json to dict
-        NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
-        id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
+        id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
         
-        NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
+        if([foundationObject isKindOfClass:[NSNull class]]) {
+            return;
+        }
         
-        if([foundationObject isKindOfClass:[NSDictionary class]])
+        NSDictionary* configPairs = [PdftronFlutterPlugin PT_idAsNSDict:foundationObject];
+        
+        if(configPairs)
         {
-            NSDictionary* configPairs = (NSDictionary*)foundationObject;
-            
             for (NSString* key in configPairs.allKeys) {
                 if ([key isEqualToString:PTMultiTabEnabledKey]) {
-                    id multiTabEnabledValue = configPairs[PTMultiTabEnabledKey];
-                    if ([multiTabEnabledValue isKindOfClass:[NSNumber class]]) {
-                        BOOL multiTabEnabled = ((NSNumber *)multiTabEnabledValue).boolValue;
-                        tabbedDocumentViewController.tabsEnabled = multiTabEnabled;
+                    NSError* error;
+                    NSNumber* multiTabValue = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTMultiTabEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (error) {
+                        NSLog(@"An error occurs with config %@: %@", PTMultiTabEnabledKey, error.localizedDescription);
+                        continue;
+                    } else if (multiTabValue) {
+                        tabbedDocumentViewController.tabsEnabled = [multiTabValue boolValue];
                     }
                 }
             }
@@ -117,65 +122,44 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     [(PTFlutterViewController*)documentViewController initViewerSettings];
     
     //convert from json to dict
-    NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
-    id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
+    id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
     
-    NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
-    
-    bool showLeadingNavButton = YES;
+    bool showLeadingNavButton = NO;
     NSString* leadingNavButtonIcon;
     
-    if([foundationObject isKindOfClass:[NSDictionary class]])
-    {
-        //convert from json to dict
-        NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
-        id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
-
-        NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
+    if (![foundationObject isKindOfClass:[NSNull class]]) {
         
-        if([foundationObject isKindOfClass:[NSDictionary class]])
+        NSDictionary* configPairs = [PdftronFlutterPlugin PT_idAsNSDict:foundationObject];
+        
+        if(configPairs)
         {
-            NSDictionary* configPairs = (NSDictionary*)foundationObject;
+            
+            NSError* error;
             
             for (NSString* key in configPairs.allKeys) {
                 if([key isEqualToString:PTDisabledToolsKey])
                 {
-                    id toolsToDisable = configPairs[PTDisabledToolsKey];
-                    if(![toolsToDisable isEqual:[NSNull null]])
-                    {
-                        NSAssert([toolsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format.");
-                        if([toolsToDisable isKindOfClass:[NSArray class]])
-                        {
-                            [self disableTools:(NSArray*)toolsToDisable documentViewController:documentViewController];
-                        }
-                        else
-                        {
-                            NSLog(@"disabledTools JSON object not in expected array format.");
-                        }
+                    
+                    NSArray* toolsToDisable = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDisabledToolsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && toolsToDisable) {
+                        [self disableTools:toolsToDisable documentViewController:documentViewController];
                     }
                 }
                 else if([key isEqualToString:PTDisabledElementsKey])
                 {
-                    id elementsToDisable = configPairs[PTDisabledElementsKey];
                     
-                    if(![elementsToDisable isEqual:[NSNull null]])
-                    {
-                        NSAssert([elementsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format.");
-                        if([elementsToDisable isKindOfClass:[NSArray class]])
-                        {
-                            [self disableElements:(NSArray*)elementsToDisable documentViewController:documentViewController];
-                        }
-                        else
-                        {
-                            NSLog(@"disabledTools JSON object not in expected array format.");
-                        }
+                    NSArray* elementsToDisable = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDisabledElementsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && elementsToDisable) {
+                        [self disableElements:(NSArray*)elementsToDisable documentViewController:documentViewController];
                     }
                 }
                 else if ([key isEqualToString:PTCustomHeadersKey]) {
-                    id customHeadersValue = configPairs[PTCustomHeadersKey];
-                    if ([customHeadersValue isKindOfClass:[NSDictionary class]]) {
-                        NSDictionary *customHeaders = (NSDictionary *)customHeadersValue;
-                        
+                    
+                    NSDictionary* customHeaders = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTCustomHeadersKey class:[NSDictionary class] error:&error];
+                    
+                    if (!error && customHeaders) {
                         documentViewController.additionalHTTPHeaders = customHeaders;
                     }
                 }
@@ -183,103 +167,60 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
                     // Handled by tabbed config.
                 }
                 else if ([key isEqualToString:PTShowLeadingNavButtonKey]) {
-                    id showLeadingNavButtonValue = configPairs[PTShowLeadingNavButtonKey];
-                    if (![showLeadingNavButtonValue isEqual:[NSNull null]])
-                    {
-                        NSAssert([showLeadingNavButtonValue isKindOfClass:[NSNumber class]], @"showLeadingNavButton not in expected boolean format.");
-                        if ([showLeadingNavButtonValue isKindOfClass:[NSNumber class]]) {
-                            
-                            showLeadingNavButton = ((NSNumber *)showLeadingNavButtonValue).boolValue;
-                        }
-                        else
-                        {
-                            NSLog(@"showLeadingNavButton not in expected boolean format.");
-                        }
+                    
+                    NSNumber* showLeadingNavButtonNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowLeadingNavButtonKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && showLeadingNavButtonNumber) {
+                        showLeadingNavButton = [showLeadingNavButtonNumber boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTLeadingNavButtonIconKey]) {
-                    id leadingNavButtonIconValue = configPairs[PTLeadingNavButtonIconKey];
-                    if (![leadingNavButtonIconValue isEqual:[NSNull null]])
-                    {
-                        NSAssert([leadingNavButtonIconValue isKindOfClass:[NSString class]], @"leadingNavButtonIcon not in expected string format.");
-                        if ([leadingNavButtonIconValue isKindOfClass:[NSString class]]) {
-                            
-                            leadingNavButtonIcon = leadingNavButtonIconValue;
-                        }
-                        else
-                        {
-                            NSLog(@"leadingNavButtonIcon not in expected string format.");
-                        }
+                    
+                    NSString* navIcon = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLeadingNavButtonIconKey class:[NSString class] error:&error];
+                    
+                    if (!error && navIcon) {
+                        leadingNavButtonIcon = navIcon;
                     }
                 }
                 else if ([key isEqualToString:PTReadOnlyKey]) {
-                    id readOnlyValue = configPairs[PTReadOnlyKey];
-                    if (![readOnlyValue isEqual:[NSNull null]])
-                    {
-                        NSAssert([readOnlyValue isKindOfClass:[NSNumber class]], @"readOnly not in expected boolean format.");
-                        if ([readOnlyValue isKindOfClass:[NSNumber class]]) {
-                            
-                            bool readOnly = [(NSNumber *)readOnlyValue boolValue];
-                            [(PTFlutterViewController *)documentViewController setReadOnly:readOnly];
-                        }
-                        else
-                        {
-                            NSLog(@"readOnly not in expected boolean format.");
-                        }
+                    
+                    NSNumber* readOnlyNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTReadOnlyKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && readOnlyNumber) {
+                        [(PTFlutterViewController *)documentViewController setReadOnly:[readOnlyNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTThumbnailViewEditingEnabledKey]) {
-                    id thumbnailViewEditingEnabledValue = configPairs[PTThumbnailViewEditingEnabledKey];
-                    if (![thumbnailViewEditingEnabledValue isEqual:[NSNull null]])
-                    {
-                        NSAssert([thumbnailViewEditingEnabledValue isKindOfClass:[NSNumber class]], @"thumbnailViewEditingEnabled not in expected boolean format.");
-                        if ([thumbnailViewEditingEnabledValue isKindOfClass:[NSNumber class]]) {
-                            
-                            bool thumbnailViewEditingEnabled = [(NSNumber *)thumbnailViewEditingEnabledValue boolValue];
-                            [(PTFlutterViewController *)documentViewController setThumbnailViewEditingEnabled:thumbnailViewEditingEnabled];
-                        }
-                        else
-                        {
-                            NSLog(@"thumbnailViewEditingEnabled not in expected boolean format.");
-                        }
+                    
+                    NSNumber* enabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTThumbnailViewEditingEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && enabledNumber) {
+                        [(PTFlutterViewController *)documentViewController setThumbnailViewEditingEnabled:[enabledNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTAnnotationAuthorKey]) {
-                    id annotAuthorValue = configPairs[PTAnnotationAuthorKey];
-                    if (![annotAuthorValue isEqual:[NSNull null]])
-                    {
-                        NSAssert([annotAuthorValue isKindOfClass:[NSString class]], @"annotationAuthor not in expected string format.");
-                        if ([annotAuthorValue isKindOfClass:[NSString class]]) {
-                            NSString* annotAuthor = annotAuthorValue;
-                            [(PTFlutterViewController *)documentViewController setAnnotationAuthor:annotAuthor];
-                            
-                        }
-                        else
-                        {
-                            NSLog(@"annotationAuthor not in expected string format.");
-                        }
+                    
+                    NSString* annotationAuthor = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationAuthorKey class:[NSString class] error:&error];
+                    
+                    if (!error && annotationAuthor) {
+                        [(PTFlutterViewController *)documentViewController setAnnotationAuthor:annotationAuthor];
                     }
                 }
                 else if ([key isEqualToString:PTContinuousAnnotationEditingKey]) {
-                    id contAnnotEditingValue = configPairs[PTContinuousAnnotationEditingKey];
-                    if (![contAnnotEditingValue isEqual:[NSNull null]])
-                    {
-                        NSAssert([contAnnotEditingValue isKindOfClass:[NSNumber class]], @"continuousAnnotationEditing not in expected boolean format.");
-                        if ([contAnnotEditingValue isKindOfClass:[NSNumber class]]) {
-                            
-                            bool contAnnotEditing = [(NSNumber *)contAnnotEditingValue boolValue];
-                            [(PTFlutterViewController *)documentViewController setContinuousAnnotationEditing:contAnnotEditing];
-                        }
-                        else
-                        {
-                            NSLog(@"continuousAnnotationEditing not in expected boolean format.");
-                        }
+                    
+                    NSNumber* contEditingNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTContinuousAnnotationEditingKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && contEditingNumber) {
+                        [(PTFlutterViewController *)documentViewController setContinuousAnnotationEditing:[contEditingNumber boolValue]];
                     }
                 }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
-                    NSAssert(false, @"Unknown JSON key in config.");
+                }
+                
+                if (error) {
+                    NSLog(@"An error occurs with config %@: %@", key, error.localizedDescription);
                 }
             }
         }
@@ -296,6 +237,20 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     }
     
     [(PTFlutterViewController *)documentViewController applyViewerSettings];
+}
+
++ (id)getConfigValue:(NSDictionary*)configDict configKey:(NSString*)configKey class:(Class)class error:(NSError**)error
+{
+    id configResult = configDict[configKey];
+
+    if (![configResult isKindOfClass:[NSNull class]]) {
+        if (![configResult isKindOfClass:class]) {
+            NSString* errorString = [NSString stringWithFormat:@"config %@ is not in expected %@ format.", configKey, class];
+            *error = [NSError errorWithDomain:@"com.flutter.pdftron" code:NSFormattingError userInfo:@{@"message": errorString}];
+        }
+        return configResult;
+    }
+    return nil;
 }
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem
