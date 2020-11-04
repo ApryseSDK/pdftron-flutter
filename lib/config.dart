@@ -19,7 +19,7 @@ class Config {
   set multiTabEnabled(bool value) => _multiTabEnabled = value;
   set customHeaders(Map<String, String> value) => _customHeaders = value;
   set leadingNavButtonIcon(String value) => _leadingNavButtonIcon = value;
-  set showleadingNavButton(bool value) => _showLeadingNavButton = value;
+  set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
   set readOnly(bool value) => _readOnly = value;
   set thumbnailViewEditingEnabled(bool value) =>
       _thumbnailViewEditingEnabled = value;
