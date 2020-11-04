@@ -507,7 +507,7 @@ Event is raised when the document has errors when loading.
 ```dart
 var documentErrorCancel = startDocumentErrorListener((){
   print("flutter document loaded unsuccessfully");
-})
+});
 ```
 
 ### startAnnotationChangedListener
@@ -537,7 +537,7 @@ var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects
     print("annotation is in page: ${annotWithRect.pageNumber}");
     print("annotation has width: ${annotWithRect.rect.width}");
   }
-})
+});
 
 ```
 

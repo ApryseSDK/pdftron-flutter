@@ -120,9 +120,9 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
 
     @Override
     public void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-
         handleOnDetach(this);
+
+        super.onDetachedFromWindow();
     }
 
     public void setExportAnnotationCommandEventEmitter(EventChannel.EventSink emitter) {

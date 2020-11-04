@@ -181,9 +181,9 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-
         handleOnDetach(this);
+
+        super.onDestroy();
 
         detachActivity();
     }
