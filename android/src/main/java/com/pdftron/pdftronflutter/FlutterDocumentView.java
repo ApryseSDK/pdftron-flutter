@@ -3,10 +3,10 @@ package com.pdftron.pdftronflutter;
 import android.content.Context;
 import android.view.View;
 
-import com.pdftron.pdftronflutter.views.DocumentView;
-
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+
+import com.pdftron.pdftronflutter.views.DocumentView;
 
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
@@ -14,7 +14,10 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 
-import static com.pdftron.pdftronflutter.PluginUtils.*;
+import static com.pdftron.pdftronflutter.PluginUtils.EVENT_DOCUMENT_LOADED;
+import static com.pdftron.pdftronflutter.PluginUtils.EVENT_EXPORT_ANNOTATION_COMMAND;
+import static com.pdftron.pdftronflutter.PluginUtils.EVENT_EXPORT_BOOKMARK;
+import static com.pdftron.pdftronflutter.PluginUtils.FUNCTION_OPEN_DOCUMENT;
 
 public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCallHandler {
 

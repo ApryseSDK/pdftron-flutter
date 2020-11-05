@@ -20,10 +20,10 @@ import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
-import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.AdvancedShapeCreate;
 import com.pdftron.pdf.tools.FreehandCreate;
+import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.BookmarkManager;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
@@ -68,12 +68,10 @@ public class PluginUtils {
     public static final String KEY_CONFIG_DISABLED_TOOLS = "disabledTools";
     public static final String KEY_CONFIG_MULTI_TAB_ENABLED = "multiTabEnabled";
     public static final String KEY_CONFIG_CUSTOM_HEADERS = "customHeaders";
-    public static final String KEY_CONFIG_LEADING_NAV_BUTTON_ICON = "leadingNavButtonIcon";
-    public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
-    public static final String KEY_CONFIG_READ_ONLY = "readOnly";
-    public static final String KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED = "thumbnailViewEditingEnabled";
-    public static final String KEY_CONFIG_ANNOTATION_AUTHOR = "annotationAuthor";
-    public static final String KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING = "continuousAnnotationEditing";
+    public static final String KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION = "selectAnnotationAfterCreation";
+    public static final String KEY_CONFIG_BOTTOM_TOOLBAR_ENABLED = "bottomToolbarEnabled";
+    public static final String KEY_CONFIG_PAGE_INDICATOR_ENABLED = "pageIndicatorEnabled";
+    public static final String KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE = "followSystemDarkMode";
 
     private static final String KEY_X1 = "x1";
     private static final String KEY_Y1 = "y1";
@@ -168,7 +166,7 @@ public class PluginUtils {
     private static final String TOOL_ANNOTATION_CREATE_FREE_HIGHLIGHTER = "AnnotationCreateFreeHighlighter";
     private static final String TOOL_ANNOTATION_CREATE_RUBBER_STAMP = "AnnotationCreateRubberStamp";
     private static final String TOOL_ERASER = "Eraser";
-  
+
     private static final String ANNOTATION_FLAG_HIDDEN = "hidden";
     private static final String ANNOTATION_FLAG_INVISIBLE = "invisible";
     private static final String ANNOTATION_FLAG_LOCKED = "locked";
@@ -183,14 +181,10 @@ public class PluginUtils {
     public static class ConfigInfo {
         private JSONObject customHeaderJson;
         private Uri fileUri;
-        private boolean showLeadingNavButton;
-        private String leadingNavButtonIcon;
 
         public ConfigInfo() {
             this.customHeaderJson = null;
             this.fileUri = null;
-            this.showLeadingNavButton = true;
-            this.leadingNavButtonIcon = null;
         }
 
         public void setCustomHeaderJson(JSONObject customHeaderJson) {
@@ -201,28 +195,12 @@ public class PluginUtils {
             this.fileUri = fileUri;
         }
 
-        public void setShowLeadingNavButton(boolean showLeadingNavButton) {
-            this.showLeadingNavButton = showLeadingNavButton;
-        }
-
-        public void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
-            this.leadingNavButtonIcon = leadingNavButtonIcon;
-        }
-
         public JSONObject getCustomHeaderJson() {
             return customHeaderJson;
         }
 
         public Uri getFileUri() {
             return fileUri;
-        }
-
-        public boolean isShowLeadingNavButton() {
-            return showLeadingNavButton;
-        }
-
-        public String getLeadingNavButtonIcon() {
-            return leadingNavButtonIcon;
         }
     }
 
@@ -257,32 +235,21 @@ public class PluginUtils {
                     JSONObject customHeaderJson = configJson.getJSONObject(KEY_CONFIG_CUSTOM_HEADERS);
                     configInfo.setCustomHeaderJson(customHeaderJson);
                 }
-                if (!configJson.isNull(KEY_CONFIG_LEADING_NAV_BUTTON_ICON)) {
-                    String leadingNavButtonIcon = configJson.getString(KEY_CONFIG_LEADING_NAV_BUTTON_ICON);
-                    configInfo.setLeadingNavButtonIcon(leadingNavButtonIcon);
+                if (!configJson.isNull(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION)) {
+                    boolean selectAnnotationAfterCreation = configJson.getBoolean(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION);
+                    toolManagerBuilder.setAutoSelect(selectAnnotationAfterCreation);
                 }
-                if (!configJson.isNull(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON)) {
-                    boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
-                    configInfo.setShowLeadingNavButton(showLeadingNavButton);
+                if (!configJson.isNull(KEY_CONFIG_BOTTOM_TOOLBAR_ENABLED)) {
+                    boolean bottomToolbarEnabled = configJson.getBoolean(KEY_CONFIG_BOTTOM_TOOLBAR_ENABLED);
+                    builder = builder.showBottomNavBar(bottomToolbarEnabled);
                 }
-                if (!configJson.isNull(KEY_CONFIG_READ_ONLY)) {
-                    boolean readOnly = configJson.getBoolean(KEY_CONFIG_READ_ONLY);
-                    builder.documentEditingEnabled(!readOnly);
+                if (!configJson.isNull(KEY_CONFIG_PAGE_INDICATOR_ENABLED)) {
+                    boolean pageIndicatorEnabled = configJson.getBoolean(KEY_CONFIG_PAGE_INDICATOR_ENABLED);
+                    builder = builder.showPageNumberIndicator(pageIndicatorEnabled);
                 }
-                if (!configJson.isNull(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED)) {
-                    boolean thumbnailViewEditingEnabled = configJson.getBoolean(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED);
-                    builder.thumbnailViewEditingEnabled(thumbnailViewEditingEnabled);
-                }
-                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_AUTHOR)) {
-                    String annotationAuthor = configJson.getString(KEY_CONFIG_ANNOTATION_AUTHOR);
-                    if (!annotationAuthor.isEmpty()) {
-                        PdfViewCtrlSettingsManager.updateAuthorName(context, annotationAuthor);
-                        PdfViewCtrlSettingsManager.setAnnotListShowAuthor(context, true);
-                    }
-                }
-                if (!configJson.isNull(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING)) {
-                    boolean continuousAnnotationEditing = configJson.getBoolean(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING);
-                    PdfViewCtrlSettingsManager.setContinuousAnnotationEdit(context, continuousAnnotationEditing);
+                if (!configJson.isNull(KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE)) {
+                    boolean followSystem = configJson.getBoolean(KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE);
+                    PdfViewCtrlSettingsManager.setFollowSystemDarkMode(context, followSystem);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -677,18 +644,18 @@ public class PluginUtils {
             } else {
                 JSONArray annotationJsonArray = new JSONArray(annotationList);
                 ArrayList<Annot> validAnnotationList = new ArrayList<>(annotationJsonArray.length());
-                for (int i = 0; i < annotationJsonArray.length(); i ++) {
-                     JSONObject currAnnot = annotationJsonArray.getJSONObject(i);
-                     if (currAnnot != null) {
-                         String currAnnotId = currAnnot.getString(KEY_ANNOTATION_ID);
-                         int currAnnotPageNumber = currAnnot.getInt(KEY_PAGE_NUMBER);
-                         if (!Utils.isNullOrEmpty(currAnnotId)) {
-                             Annot validAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, currAnnotId, currAnnotPageNumber);
-                             if (validAnnotation != null && validAnnotation.isValid()) {
-                                 validAnnotationList.add(validAnnotation);
-                             }
-                         }
-                     }
+                for (int i = 0; i < annotationJsonArray.length(); i++) {
+                    JSONObject currAnnot = annotationJsonArray.getJSONObject(i);
+                    if (currAnnot != null) {
+                        String currAnnotId = currAnnot.getString(KEY_ANNOTATION_ID);
+                        int currAnnotPageNumber = currAnnot.getInt(KEY_PAGE_NUMBER);
+                        if (!Utils.isNullOrEmpty(currAnnotId)) {
+                            Annot validAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, currAnnotId, currAnnotPageNumber);
+                            if (validAnnotation != null && validAnnotation.isValid()) {
+                                validAnnotationList.add(validAnnotation);
+                            }
+                        }
+                    }
                 }
 
                 if (validAnnotationList.size() > 0) {
@@ -744,7 +711,7 @@ public class PluginUtils {
 
         JSONArray annotationJsonArray = new JSONArray(annotationList);
 
-        for (int i = 0; i < annotationJsonArray.length(); i ++) {
+        for (int i = 0; i < annotationJsonArray.length(); i++) {
             JSONObject currAnnot = annotationJsonArray.getJSONObject(i);
 
             if (currAnnot != null) {
@@ -820,7 +787,7 @@ public class PluginUtils {
             shouldUnlock = true;
 
             // for each annotation
-            for (int i = 0; i < annotationWithFlagsArray.length(); i ++) {
+            for (int i = 0; i < annotationWithFlagsArray.length(); i++) {
                 JSONObject currentAnnotationWithFlags = annotationWithFlagsArray.getJSONObject(i);
 
                 JSONObject currentAnnotation = getJSONObjectFromJSONObject(currentAnnotationWithFlags, KEY_ANNOTATION);
@@ -837,7 +804,7 @@ public class PluginUtils {
                     JSONArray currentFlagArray = getJSONArrayFromJSONObject(currentAnnotationWithFlags, KEY_ANNOTATION_FLAG_LISTS);
 
                     // for each flag
-                    for (int j = 0; j < currentFlagArray.length(); j ++) {
+                    for (int j = 0; j < currentFlagArray.length(); j++) {
                         JSONObject currentFlagObject = currentFlagArray.getJSONObject(j);
                         String currentFlag = currentFlagObject.getString(KEY_ANNOTATION_FLAG);
                         boolean currentFlagValue = currentFlagObject.getBoolean(KEY_ANNOTATION_FLAG_VALUE);
@@ -847,7 +814,7 @@ public class PluginUtils {
                         }
 
                         int flagNumber = -1;
-                        switch(currentFlag) {
+                        switch (currentFlag) {
                             case ANNOTATION_FLAG_HIDDEN:
                                 flagNumber = Annot.e_hidden;
                                 break;

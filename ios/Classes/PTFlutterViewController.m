@@ -4,6 +4,12 @@
 
 @implementation PTFlutterViewController
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.thumbnailSliderEnabled = self.thumbnailSliderOn;
+}
+
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
@@ -15,10 +21,6 @@
 
         NSString *filePath = self.coordinatedDocument.fileURL.path;
         [self.plugin docVC:self documentLoaded:filePath];
-    }
-
-    if (![self.toolManager isReadonly] && self.readOnly) {
-        self.toolManager.readonly = YES;
     }
 }
 
@@ -158,36 +160,15 @@
 
 - (void)initViewerSettings
 {
-    [self setReadOnly:NO];
-    [self setThumbnailViewEditingEnabled:YES];
 }
 
 - (void)applyViewerSettings
 {
-    [self applyReadOnly];
-    
-    // Thumbnail editing enabled.
-    self.thumbnailsViewController.editingEnabled = self.thumbnailViewEditingEnabled;
 }
 
-- (void)applyReadOnly
+- (void)setSelectAnnotationAfterCreation:(BOOL)selectAnnotationAfterCreation
 {
-    // Enable readonly flag on tool manager *only* when not already readonly.
-    // If the document is being streamed or converted, we don't want to accidentally allow editing by
-    // disabling the readonly flag.
-    if (![self.toolManager isReadonly]) {
-        self.toolManager.readonly = self.readOnly;
-    }
-    
-    self.thumbnailsViewController.editingEnabled = !self.readOnly;
-}
-
-- (void)setAnnotationAuthor:(NSString *)annotationAuthor {
-    self.toolManager.annotationAuthor = [annotationAuthor copy];
-}
-
-- (void)setContinuousAnnotationEditing:(BOOL)continuousAnnotationEditing {
-    self.toolManager.tool.backToPanToolAfterUse = !continuousAnnotationEditing;
+    self.toolManager.selectAnnotationAfterCreation = selectAnnotationAfterCreation;
 }
 
 #pragma mark - Other

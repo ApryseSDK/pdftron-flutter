@@ -16,7 +16,17 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
-import static com.pdftron.pdftronflutter.PluginUtils.*;
+import static com.pdftron.pdftronflutter.PluginUtils.EVENT_DOCUMENT_LOADED;
+import static com.pdftron.pdftronflutter.PluginUtils.EVENT_EXPORT_ANNOTATION_COMMAND;
+import static com.pdftron.pdftronflutter.PluginUtils.EVENT_EXPORT_BOOKMARK;
+import static com.pdftron.pdftronflutter.PluginUtils.FUNCTION_GET_PLATFORM_VERSION;
+import static com.pdftron.pdftronflutter.PluginUtils.FUNCTION_GET_VERSION;
+import static com.pdftron.pdftronflutter.PluginUtils.FUNCTION_INITALIZE;
+import static com.pdftron.pdftronflutter.PluginUtils.FUNCTION_OPEN_DOCUMENT;
+import static com.pdftron.pdftronflutter.PluginUtils.KEY_CONFIG;
+import static com.pdftron.pdftronflutter.PluginUtils.KEY_DOCUMENT;
+import static com.pdftron.pdftronflutter.PluginUtils.KEY_LICENSE_KEY;
+import static com.pdftron.pdftronflutter.PluginUtils.KEY_PASSWORD;
 
 /**
  * PdftronFlutterPlugin

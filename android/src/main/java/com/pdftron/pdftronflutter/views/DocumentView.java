@@ -5,6 +5,9 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.PDFViewCtrlConfig;
@@ -17,13 +20,12 @@ import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdftronflutter.PluginUtils;
 import com.pdftron.pdftronflutter.ViewActivityComponent;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
-import static com.pdftron.pdftronflutter.PluginUtils.*;
+import static com.pdftron.pdftronflutter.PluginUtils.ConfigInfo;
+import static com.pdftron.pdftronflutter.PluginUtils.handleDocumentLoaded;
+import static com.pdftron.pdftronflutter.PluginUtils.handleOpenDocError;
 
 public class DocumentView extends com.pdftron.pdf.controls.DocumentView implements ViewActivityComponent {
 
@@ -54,15 +56,13 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
 
     public void openDocument(String document, String password, String configStr, MethodChannel.Result result) {
 
-       ConfigInfo configInfo = PluginUtils.handleOpenDocument(mBuilder, mToolManagerBuilder, mPDFViewCtrlConfig, document, getContext(), configStr);
+        ConfigInfo configInfo = PluginUtils.handleOpenDocument(mBuilder, mToolManagerBuilder, mPDFViewCtrlConfig, document, getContext(), configStr);
 
-       setDocumentUri(configInfo.getFileUri());
-       setPassword(password);
-       setCustomHeaders(configInfo.getCustomHeaderJson());
-       setShowNavIcon(configInfo.isShowLeadingNavButton());
-       setNavIconResName(configInfo.getLeadingNavButtonIcon());
-       setViewerConfig(mBuilder.build());
-       setFlutterLoadResult(result);
+        setDocumentUri(configInfo.getFileUri());
+        setPassword(password);
+        setCustomHeaders(configInfo.getCustomHeaderJson());
+        setViewerConfig(mBuilder.build());
+        setFlutterLoadResult(result);
 
         ViewerBuilder viewerBuilder = ViewerBuilder.withUri(configInfo.getFileUri(), password)
                 .usingCustomHeaders(configInfo.getCustomHeaderJson())
@@ -113,7 +113,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     private ViewerConfig getConfig() {
         if (mCacheDir != null) {
             mBuilder.openUrlCachePath(mCacheDir)
-            .saveCopyExportPath(mCacheDir);
+                    .saveCopyExportPath(mCacheDir);
         }
         return mBuilder
                 .pdfViewCtrlConfig(mPDFViewCtrlConfig)
