@@ -2,24 +2,20 @@
 #import "PTFlutterViewController.h"
 #import "DocumentViewFactory.h"
 
-const int exportAnnotationId = 1;
-const int exportBookmarkId = 2;
-const int documentLoadedId = 3;
-
 @interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate, PTDocumentViewControllerDelegate>
 
 @property (nonatomic, strong) id config;
 @property (nonatomic, strong) FlutterEventSink xfdfEventSink;
 @property (nonatomic, strong) FlutterEventSink bookmarkEventSink;
 @property (nonatomic, strong) FlutterEventSink documentLoadedEventSink;
+@property (nonatomic, strong) FlutterEventSink documentErrorEventSink;
+@property (nonatomic, strong) FlutterEventSink annotationChangedEventSink;
+@property (nonatomic, strong) FlutterEventSink annotationsSelectedEventSink;
+@property (nonatomic, strong) FlutterEventSink formFieldValueChangedEventSink;
 
 @end
 
 @implementation PdftronFlutterPlugin
-
-static NSString * const EVENT_EXPORT_ANNOTATION_COMMAND = @"export_annotation_command_event";
-static NSString * const EVENT_EXPORT_BOOKMARK = @"export_bookmark_event";
-static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 
 #pragma mark - Initialization
 
@@ -67,12 +63,28 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     FlutterEventChannel* bookmarkEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_BOOKMARK binaryMessenger:messenger];
 
     FlutterEventChannel* documentLoadedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_DOCUMENT_LOADED binaryMessenger:messenger];
+    
+    FlutterEventChannel* documentErrorEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_DOCUMENT_ERROR binaryMessenger:messenger];
+    
+    FlutterEventChannel* annotationChangedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_ANNOTATION_CHANGED binaryMessenger:messenger];
+    
+    FlutterEventChannel* annotationsSelectedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_ANNOTATIONS_SELECTED binaryMessenger:messenger];
+    
+    FlutterEventChannel* formFieldValueChangedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_FORM_FIELD_VALUE_CHANGED binaryMessenger:messenger];
 
     [xfdfEventChannel setStreamHandler:self];
     
     [bookmarkEventChannel setStreamHandler:self];
     
     [documentLoadedEventChannel setStreamHandler:self];
+    
+    [documentErrorEventChannel setStreamHandler:self];
+    
+    [annotationChangedEventChannel setStreamHandler:self];
+    
+    [annotationsSelectedEventChannel setStreamHandler:self];
+    
+    [formFieldValueChangedEventChannel setStreamHandler:self];
 }
 
 #pragma mark - Configurations
@@ -381,6 +393,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 {
     NSLog(@"Failed to open document: %@", error);
     FlutterResult result = ((PTFlutterViewController*)documentViewController).openResult;
+    [self documentViewController:documentViewController documentError:nil];
     result([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
 }
 
@@ -388,17 +401,32 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 
 - (FlutterError* _Nullable)onListenWithArguments:(id _Nullable)arguments eventSink:(FlutterEventSink)events
 {
-    if([arguments intValue] == exportAnnotationId)
+    
+    int sinkId = [arguments intValue];
+    
+    switch (sinkId)
     {
-        self.xfdfEventSink = events;
-    }
-    else if([arguments intValue] == exportBookmarkId)
-    {
-        self.bookmarkEventSink = events;
-    }
-    else if([arguments intValue] == documentLoadedId)
-    {
-        self.documentLoadedEventSink = events;
+        case exportAnnotationId:
+            self.xfdfEventSink = events;
+            break;
+        case exportBookmarkId:
+            self.bookmarkEventSink = events;
+            break;
+        case documentLoadedId:
+            self.documentLoadedEventSink = events;
+            break;
+        case documentErrorId:
+            self.documentErrorEventSink = events;
+            break;
+        case annotationChangedId:
+            self.annotationChangedEventSink = events;
+            break;
+        case annotationsSelectedId:
+            self.annotationsSelectedEventSink = events;
+            break;
+        case formFieldValueChangedId:
+            self.formFieldValueChangedEventSink = events;
+            break;
     }
     
     return Nil;
@@ -406,17 +434,31 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 
 - (FlutterError* _Nullable)onCancelWithArguments:(id _Nullable)arguments
 {
-    if([arguments intValue] == exportAnnotationId)
+    int sinkId = [arguments intValue];
+    
+    switch (sinkId)
     {
-        self.xfdfEventSink = Nil;
-    }
-    else if([arguments intValue] == exportBookmarkId)
-    {
-        self.bookmarkEventSink = Nil;
-    }
-    else if([arguments intValue] == documentLoadedId)
-    {
-        self.documentLoadedEventSink = Nil;
+        case exportAnnotationId:
+            self.xfdfEventSink = nil;
+            break;
+        case exportBookmarkId:
+            self.bookmarkEventSink = nil;
+            break;
+        case documentLoadedId:
+            self.documentLoadedEventSink = nil;
+            break;
+        case documentErrorId:
+            self.documentErrorEventSink = nil;
+            break;
+        case annotationChangedId:
+            self.annotationChangedEventSink = nil;
+            break;
+        case annotationsSelectedId:
+            self.annotationsSelectedEventSink = nil;
+            break;
+        case formFieldValueChangedId:
+            self.formFieldValueChangedEventSink = nil;
+            break;
     }
     
     return Nil;
@@ -431,7 +473,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
 
 #pragma mark - EventSinks
 
--(void)docVC:(PTDocumentViewController*)docVC bookmarkChange:(NSString*)bookmarkJson
+-(void)documentViewController:(PTDocumentViewController*)docVC bookmarksDidChange:(NSString*)bookmarkJson
 {
     if(self.bookmarkEventSink != nil)
     {
@@ -439,7 +481,7 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     }
 }
 
--(void)docVC:(PTDocumentViewController*)docVC annotationChange:(NSString*)xfdfCommand
+-(void)documentViewController:(PTDocumentViewController*)docVC annotationsAsXFDFCommand:(NSString*)xfdfCommand
 {
     if(self.xfdfEventSink != nil)
     {
@@ -447,11 +489,43 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     }
 }
 
--(void)docVC:(PTDocumentViewController*)docVC documentLoaded:(NSString*)filePath
+-(void)documentViewController:(PTDocumentViewController*)docVC documentLoadedFromFilePath:(NSString*)filePath
 {
     if(self.documentLoadedEventSink != nil)
     {
         self.documentLoadedEventSink(filePath);
+    }
+}
+
+-(void)documentViewController:(PTDocumentViewController*)docVC documentError:(nullable NSError*)error
+{
+    if(self.documentErrorEventSink != nil)
+    {
+        self.documentErrorEventSink(nil);
+    }
+}
+
+-(void)documentViewController:(PTDocumentViewController*)docVC annotationsChangedWithActionString:(NSString*)annotationsWithActionString
+{
+    if(self.annotationChangedEventSink != nil)
+    {
+        self.annotationChangedEventSink(annotationsWithActionString);
+    }
+}
+
+-(void)documentViewController:(PTDocumentViewController*)docVC annotationsSelected:(NSString*)annotationsString
+{
+    if(self.annotationsSelectedEventSink != nil)
+    {
+        self.annotationsSelectedEventSink(annotationsString);
+    }
+}
+
+-(void)documentViewController:(PTDocumentViewController*)docVC formFieldValueChanged:(NSString*)fieldsString
+{
+    if(self.formFieldValueChangedEventSink != nil)
+    {
+        self.formFieldValueChangedEventSink(fieldsString);
     }
 }
 
@@ -1227,6 +1301,5 @@ static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
     NSData *annotListData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
     return [NSJSONSerialization JSONObjectWithData:annotListData options:kNilOptions error:nil];
 }
-
 
 @end
