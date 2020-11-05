@@ -40,6 +40,45 @@ class PdftronFlutter {
     });
   }
 
+  static Future<void> importAnnotations(String xfdf) {
+    return _channel.invokeMethod(
+        Functions.importAnnotations, <String, dynamic>{Parameters.xfdf: xfdf});
+  }
+
+  static Future<String> exportAnnotations(List<Annot> annotationList) async {
+    if (annotationList == null) {
+      return _channel.invokeMethod(Functions.exportAnnotations);
+    } else {
+      return _channel.invokeMethod(
+          Functions.exportAnnotations, <String, dynamic>{
+        Parameters.annotations: jsonEncode(annotationList)
+      });
+    }
+  }
+
+  static Future<void> flattenAnnotations(bool formsOnly) {
+    return _channel.invokeMethod(Functions.flattenAnnotations,
+        <String, dynamic>{Parameters.formsOnly: formsOnly});
+  }
+
+  static Future<void> deleteAnnotations(List<Annot> annotationList) {
+    return _channel.invokeMethod(Functions.deleteAnnotations,
+        <String, dynamic>{Parameters.annotations: jsonEncode(annotationList)});
+  }
+
+  static Future<void> selectAnnotation(Annot annotation) {
+    return _channel.invokeMethod(Functions.selectAnnotation,
+        <String, dynamic>{Parameters.annotation: jsonEncode(annotation)});
+  }
+
+  static Future<void> setFlagsForAnnotations(
+      List<AnnotWithFlag> annotationWithFlagsList) {
+    return _channel.invokeMethod(
+        Functions.setFlagsForAnnotations, <String, dynamic>{
+      Parameters.annotationsWithFlags: jsonEncode(annotationWithFlagsList)
+    });
+  }
+
   static Future<void> importAnnotationCommand(String xfdfCommand) {
     return _channel.invokeMethod(Functions.importAnnotationCommand,
         <String, dynamic>{Parameters.xfdfCommand: xfdfCommand});
@@ -50,13 +89,25 @@ class PdftronFlutter {
         <String, dynamic>{Parameters.bookmarkJson: bookmarkJson});
   }
 
-  static Future<String> saveDocument() async {
+  static Future<String> saveDocument() {
     return _channel.invokeMethod(Functions.saveDocument);
   }
 
-  static Future<PTRect> getPageCropBox(int pageNumber) {
-    return _channel.invokeMethod(Functions.getPageCropBox, <String, dynamic>{
-      Parameters.pageNumber: pageNumber
-    }).then((value) => PTRect.fromJson(jsonDecode(value)));
+  static Future<bool> commitTool() {
+    return _channel.invokeMethod(Functions.commitTool);
+  }
+
+  static Future<int> getPageCount() {
+    return _channel.invokeMethod(Functions.getPageCount);
+  }
+
+  static Future<bool> handleBackButton() {
+    return _channel.invokeMethod(Functions.handleBackButton);
+  }
+
+  static Future<Rect> getPageCropBox(int pageNumber) async {
+    String cropBoxString = await _channel.invokeMethod(Functions.getPageCropBox,
+        <String, dynamic>{Parameters.pageNumber: pageNumber});
+    return Rect.fromJson(jsonDecode(cropBoxString));
   }
 }
