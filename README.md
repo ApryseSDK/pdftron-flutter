@@ -316,7 +316,7 @@ config.fitMode = FitModes.zoom;
 config.layoutMode = LayoutModes.single;
 config.initialPageNumber = 3;
 config.isBase64 = false;
-PdftronFlutter.openDocument(_document, config: config);
+await PdftronFlutter.openDocument(_document, config: config);
 ```
 ### PdftronFlutter.importAnnotations(String)
 Imports XFDF string to current document.
