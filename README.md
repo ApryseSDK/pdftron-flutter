@@ -316,7 +316,7 @@ config.selectAnnotationAfterCreation = false;
 config.bottomToolbarEnabled = false;
 config.pageIndicatorEnabled = true;
 config.followSystemDarkMode = false;
-PdftronFlutter.openDocument(_document, config: config);
+await PdftronFlutter.openDocument(_document, config: config);
 ```
 ### PdftronFlutter.importAnnotations(String)
 Imports XFDF string to current document.
