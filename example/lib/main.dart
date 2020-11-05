@@ -59,7 +59,6 @@ class _MyAppState extends State<MyApp> {
 //      config.multiTabEnabled = true;
 //      config.customHeaders = {'headerName': 'headerValue'};
 
-    config.pageIndicatorEnabled = false;
     var documentLoadedCancel = startDocumentLoadedListener((filePath) {
       print("document loaded: $filePath");
     });
@@ -97,9 +96,6 @@ class _MyAppState extends State<MyApp> {
       print("flutter bookmark: $bookmarkJson");
     });
 
-    startAnnotationsSelectedListener((stub) {
-      print("Woohoo i am selected");
-    });
     var path = await PdftronFlutter.saveDocument();
     print("flutter save: $path");
 
