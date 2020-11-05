@@ -1,17 +1,23 @@
-package com.pdftron.pdftronflutter;
+package com.pdftron.pdftronflutter.helpers;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.ToolManager;
 
+import java.util.HashMap;
+
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
-public interface ViewActivityComponent {
+public interface ViewerComponent {
+
+    void setSelectedAnnots(HashMap<Annot, Integer> selectedAnnots);
 
     EventChannel.EventSink getExportAnnotationCommandEventEmitter();
 
@@ -19,7 +25,17 @@ public interface ViewActivityComponent {
 
     EventChannel.EventSink getDocumentLoadedEventEmitter();
 
+    EventChannel.EventSink getDocumentErrorEventEmitter();
+
+    EventChannel.EventSink getAnnotationChangedEventEmitter();
+
+    EventChannel.EventSink getAnnotationsSelectedEventEmitter();
+
+    EventChannel.EventSink getFormFieldValueChangedEventEmitter();
+
     MethodChannel.Result getFlutterLoadResult();
+
+    HashMap<Annot, Integer> getSelectedAnnots();
 
     // Convenience
     @Nullable
@@ -36,4 +52,7 @@ public interface ViewActivityComponent {
 
     @Nullable
     PDFDoc getPdfDoc();
+
+    @NonNull
+    ViewerImpl getImpl();
 }
