@@ -1,24 +1,20 @@
-package com.pdftron.pdftronflutter;
-
-import android.os.Bundle;
+package com.pdftron.pdftronflutter.helpers;
 
 import androidx.annotation.Nullable;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
-import com.pdftron.pdf.Field;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.Page;
 import com.pdftron.pdf.Rect;
-import com.pdftron.pdf.annots.Widget;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
-import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.AdvancedShapeCreate;
 import com.pdftron.pdf.tools.FreehandCreate;
+import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.BookmarkManager;
 import com.pdftron.pdf.utils.Utils;
@@ -30,7 +26,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -39,7 +34,6 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 
 public class PluginUtils {
-
 
     public static final String KEY_LICENSE_KEY = "licenseKey";
     public static final String KEY_DOCUMENT = "document";
@@ -59,23 +53,23 @@ public class PluginUtils {
     public static final String KEY_CONFIG_MULTI_TAB_ENABLED = "multiTabEnabled";
     public static final String KEY_CONFIG_CUSTOM_HEADERS = "customHeaders";
 
-    private static final String KEY_X1 = "x1";
-    private static final String KEY_Y1 = "y1";
-    private static final String KEY_X2 = "x2";
-    private static final String KEY_Y2 = "y2";
-    private static final String KEY_WIDTH = "width";
-    private static final String KEY_HEIGHT = "height";
-    private static final String KEY_RECT = "rect";
+    public static final String KEY_X1 = "x1";
+    public static final String KEY_Y1 = "y1";
+    public static final String KEY_X2 = "x2";
+    public static final String KEY_Y2 = "y2";
+    public static final String KEY_WIDTH = "width";
+    public static final String KEY_HEIGHT = "height";
+    public static final String KEY_RECT = "rect";
 
-    private static final String KEY_FIELD_NAME = "fieldName";
-    private static final String KEY_FIELD_VALUE = "fieldValue";
+    public static final String KEY_FIELD_NAME = "fieldName";
+    public static final String KEY_FIELD_VALUE = "fieldValue";
 
     public static final String KEY_ANNOTATION_ID = "id";
 
-    private static final String KEY_ACTION_ADD = "add";
-    private static final String KEY_ACTION_MODIFY = "modify";
-    private static final String KEY_ACTION_DELETE = "delete";
-    private static final String KEY_ACTION = "action";
+    public static final String KEY_ACTION_ADD = "add";
+    public static final String KEY_ACTION_MODIFY = "modify";
+    public static final String KEY_ACTION_DELETE = "delete";
+    public static final String KEY_ACTION = "action";
 
     public static final String KEY_ANNOTATION_FLAG_LISTS = "flags";
     public static final String KEY_ANNOTATION_FLAG = "flag";
@@ -107,75 +101,75 @@ public class PluginUtils {
     public static final String FUNCTION_SELECT_ANNOTATION = "selectAnnotation";
     public static final String FUNCTION_SET_FLAG_FOR_ANNOTATIONS = "setFlagForAnnotations";
 
-    private static final String BUTTON_TOOLS = "toolsButton";
-    private static final String BUTTON_SEARCH = "searchButton";
-    private static final String BUTTON_SHARE = "shareButton";
-    private static final String BUTTON_VIEW_CONTROLS = "viewControlsButton";
-    private static final String BUTTON_THUMBNAILS = "thumbnailsButton";
-    private static final String BUTTON_LISTS = "listsButton";
-    private static final String BUTTON_THUMBNAIL_SLIDER = "thumbnailSlider";
-    private static final String BUTTON_SAVE_COPY = "saveCopyButton";
-    private static final String BUTTON_EDIT_PAGES = "editPagesButton";
-    private static final String BUTTON_PRINT = "printButton";
-    private static final String BUTTON_FILL_AND_SIGN = "fillAndSignButton";
-    private static final String BUTTON_PREPARE_FORM = "prepareFormButton";
-    private static final String BUTTON_REFLOW_MODE = "reflowModeButton";
+    public static final String BUTTON_TOOLS = "toolsButton";
+    public static final String BUTTON_SEARCH = "searchButton";
+    public static final String BUTTON_SHARE = "shareButton";
+    public static final String BUTTON_VIEW_CONTROLS = "viewControlsButton";
+    public static final String BUTTON_THUMBNAILS = "thumbnailsButton";
+    public static final String BUTTON_LISTS = "listsButton";
+    public static final String BUTTON_THUMBNAIL_SLIDER = "thumbnailSlider";
+    public static final String BUTTON_SAVE_COPY = "saveCopyButton";
+    public static final String BUTTON_EDIT_PAGES = "editPagesButton";
+    public static final String BUTTON_PRINT = "printButton";
+    public static final String BUTTON_FILL_AND_SIGN = "fillAndSignButton";
+    public static final String BUTTON_PREPARE_FORM = "prepareFormButton";
+    public static final String BUTTON_REFLOW_MODE = "reflowModeButton";
 
-    private static final String TOOL_BUTTON_FREE_HAND = "freeHandToolButton";
-    private static final String TOOL_BUTTON_HIGHLIGHT = "highlightToolButton";
-    private static final String TOOL_BUTTON_UNDERLINE = "underlineToolButton";
-    private static final String TOOL_BUTTON_SQUIGGLY = "squigglyToolButton";
-    private static final String TOOL_BUTTON_STRIKEOUT = "strikeoutToolButton";
-    private static final String TOOL_BUTTON_RECTANGLE = "rectangleToolButton";
-    private static final String TOOL_BUTTON_ELLIPSE = "ellipseToolButton";
-    private static final String TOOL_BUTTON_LINE = "lineToolButton";
-    private static final String TOOL_BUTTON_ARROW = "arrowToolButton";
-    private static final String TOOL_BUTTON_POLYLINE = "polylineToolButton";
-    private static final String TOOL_BUTTON_POLYGON = "polygonToolButton";
-    private static final String TOOL_BUTTON_CLOUD = "cloudToolButton";
-    private static final String TOOL_BUTTON_SIGNATURE = "signatureToolButton";
-    private static final String TOOL_BUTTON_FREE_TEXT = "freeTextToolButton";
-    private static final String TOOL_BUTTON_STICKY = "stickyToolButton";
-    private static final String TOOL_BUTTON_CALLOUT = "calloutToolButton";
-    private static final String TOOL_BUTTON_STAMP = "stampToolButton";
+    public static final String TOOL_BUTTON_FREE_HAND = "freeHandToolButton";
+    public static final String TOOL_BUTTON_HIGHLIGHT = "highlightToolButton";
+    public static final String TOOL_BUTTON_UNDERLINE = "underlineToolButton";
+    public static final String TOOL_BUTTON_SQUIGGLY = "squigglyToolButton";
+    public static final String TOOL_BUTTON_STRIKEOUT = "strikeoutToolButton";
+    public static final String TOOL_BUTTON_RECTANGLE = "rectangleToolButton";
+    public static final String TOOL_BUTTON_ELLIPSE = "ellipseToolButton";
+    public static final String TOOL_BUTTON_LINE = "lineToolButton";
+    public static final String TOOL_BUTTON_ARROW = "arrowToolButton";
+    public static final String TOOL_BUTTON_POLYLINE = "polylineToolButton";
+    public static final String TOOL_BUTTON_POLYGON = "polygonToolButton";
+    public static final String TOOL_BUTTON_CLOUD = "cloudToolButton";
+    public static final String TOOL_BUTTON_SIGNATURE = "signatureToolButton";
+    public static final String TOOL_BUTTON_FREE_TEXT = "freeTextToolButton";
+    public static final String TOOL_BUTTON_STICKY = "stickyToolButton";
+    public static final String TOOL_BUTTON_CALLOUT = "calloutToolButton";
+    public static final String TOOL_BUTTON_STAMP = "stampToolButton";
 
-    private static final String TOOL_ANNOTATION_CREATE_FREE_HAND = "AnnotationCreateFreeHand";
-    private static final String TOOL_ANNOTATION_CREATE_TEXT_HIGHLIGHT = "AnnotationCreateTextHighlight";
-    private static final String TOOL_ANNOTATION_CREATE_TEXT_UNDERLINE = "AnnotationCreateTextUnderline";
-    private static final String TOOL_ANNOTATION_CREATE_TEXT_SQUIGGLY = "AnnotationCreateTextSquiggly";
-    private static final String TOOL_ANNOTATION_CREATE_TEXT_STRIKEOUT = "AnnotationCreateTextStrikeout";
-    private static final String TOOL_ANNOTATION_CREATE_RECTANGLE = "AnnotationCreateRectangle";
-    private static final String TOOL_ANNOTATION_CREATE_ELLIPSE = "AnnotationCreateEllipse";
-    private static final String TOOL_ANNOTATION_CREATE_LINE = "AnnotationCreateLine";
-    private static final String TOOL_ANNOTATION_CREATE_ARROW = "AnnotationCreateArrow";
-    private static final String TOOL_ANNOTATION_CREATE_POLYLINE = "AnnotationCreatePolyline";
-    private static final String TOOL_ANNOTATION_CREATE_POLYGON = "AnnotationCreatePolygon";
-    private static final String TOOL_ANNOTATION_CREATE_POLYGON_CLOUD = "AnnotationCreatePolygonCloud";
-    private static final String TOOL_ANNOTATION_CREATE_SIGNATURE = "AnnotationCreateSignature";
-    private static final String TOOL_ANNOTATION_CREATE_FREE_TEXT = "AnnotationCreateFreeText";
-    private static final String TOOL_ANNOTATION_CREATE_STICKY = "AnnotationCreateSticky";
-    private static final String TOOL_ANNOTATION_CREATE_CALLOUT = "AnnotationCreateCallout";
-    private static final String TOOL_ANNOTATION_CREATE_STAMP = "AnnotationCreateStamp";
-    private static final String TOOL_ANNOTATION_CREATE_DISTANCE_MEASUREMENT = "AnnotationCreateDistanceMeasurement";
-    private static final String TOOL_ANNOTATION_CREATE_PERIMETER_MEASUREMENT = "AnnotationCreatePerimeterMeasurement";
-    private static final String TOOL_ANNOTATION_CREATE_AREA_MEASUREMENT = "AnnotationCreateAreaMeasurement";
-    private static final String TOOL_TEXT_SELECT = "TextSelect";
-    private static final String TOOL_ANNOTATION_EDIT = "AnnotationEdit";
-    private static final String TOOL_ANNOTATION_CREATE_SOUND = "AnnotationCreateSound";
-    private static final String TOOL_ANNOTATION_CREATE_FREE_HIGHLIGHTER = "AnnotationCreateFreeHighlighter";
-    private static final String TOOL_ANNOTATION_CREATE_RUBBER_STAMP = "AnnotationCreateRubberStamp";
-    private static final String TOOL_ERASER = "Eraser";
+    public static final String TOOL_ANNOTATION_CREATE_FREE_HAND = "AnnotationCreateFreeHand";
+    public static final String TOOL_ANNOTATION_CREATE_TEXT_HIGHLIGHT = "AnnotationCreateTextHighlight";
+    public static final String TOOL_ANNOTATION_CREATE_TEXT_UNDERLINE = "AnnotationCreateTextUnderline";
+    public static final String TOOL_ANNOTATION_CREATE_TEXT_SQUIGGLY = "AnnotationCreateTextSquiggly";
+    public static final String TOOL_ANNOTATION_CREATE_TEXT_STRIKEOUT = "AnnotationCreateTextStrikeout";
+    public static final String TOOL_ANNOTATION_CREATE_RECTANGLE = "AnnotationCreateRectangle";
+    public static final String TOOL_ANNOTATION_CREATE_ELLIPSE = "AnnotationCreateEllipse";
+    public static final String TOOL_ANNOTATION_CREATE_LINE = "AnnotationCreateLine";
+    public static final String TOOL_ANNOTATION_CREATE_ARROW = "AnnotationCreateArrow";
+    public static final String TOOL_ANNOTATION_CREATE_POLYLINE = "AnnotationCreatePolyline";
+    public static final String TOOL_ANNOTATION_CREATE_POLYGON = "AnnotationCreatePolygon";
+    public static final String TOOL_ANNOTATION_CREATE_POLYGON_CLOUD = "AnnotationCreatePolygonCloud";
+    public static final String TOOL_ANNOTATION_CREATE_SIGNATURE = "AnnotationCreateSignature";
+    public static final String TOOL_ANNOTATION_CREATE_FREE_TEXT = "AnnotationCreateFreeText";
+    public static final String TOOL_ANNOTATION_CREATE_STICKY = "AnnotationCreateSticky";
+    public static final String TOOL_ANNOTATION_CREATE_CALLOUT = "AnnotationCreateCallout";
+    public static final String TOOL_ANNOTATION_CREATE_STAMP = "AnnotationCreateStamp";
+    public static final String TOOL_ANNOTATION_CREATE_DISTANCE_MEASUREMENT = "AnnotationCreateDistanceMeasurement";
+    public static final String TOOL_ANNOTATION_CREATE_PERIMETER_MEASUREMENT = "AnnotationCreatePerimeterMeasurement";
+    public static final String TOOL_ANNOTATION_CREATE_AREA_MEASUREMENT = "AnnotationCreateAreaMeasurement";
+    public static final String TOOL_TEXT_SELECT = "TextSelect";
+    public static final String TOOL_ANNOTATION_EDIT = "AnnotationEdit";
+    public static final String TOOL_ANNOTATION_CREATE_SOUND = "AnnotationCreateSound";
+    public static final String TOOL_ANNOTATION_CREATE_FREE_HIGHLIGHTER = "AnnotationCreateFreeHighlighter";
+    public static final String TOOL_ANNOTATION_CREATE_RUBBER_STAMP = "AnnotationCreateRubberStamp";
+    public static final String TOOL_ERASER = "Eraser";
 
-    private static final String ANNOTATION_FLAG_HIDDEN = "hidden";
-    private static final String ANNOTATION_FLAG_INVISIBLE = "invisible";
-    private static final String ANNOTATION_FLAG_LOCKED = "locked";
-    private static final String ANNOTATION_FLAG_LOCKED_CONTENTS = "lockedContents";
-    private static final String ANNOTATION_FLAG_NO_ROTATE = "noRotate";
-    private static final String ANNOTATION_FLAG_NO_VIEW = "noView";
-    private static final String ANNOTATION_FLAG_NO_ZOOM = "noZoom";
-    private static final String ANNOTATION_FLAG_PRINT = "print";
-    private static final String ANNOTATION_FLAG_READ_ONLY = "readOnly";
-    private static final String ANNOTATION_FLAG_TOGGLE_NO_VIEW = "toggleNoView";
+    public static final String ANNOTATION_FLAG_HIDDEN = "hidden";
+    public static final String ANNOTATION_FLAG_INVISIBLE = "invisible";
+    public static final String ANNOTATION_FLAG_LOCKED = "locked";
+    public static final String ANNOTATION_FLAG_LOCKED_CONTENTS = "lockedContents";
+    public static final String ANNOTATION_FLAG_NO_ROTATE = "noRotate";
+    public static final String ANNOTATION_FLAG_NO_VIEW = "noView";
+    public static final String ANNOTATION_FLAG_NO_ZOOM = "noZoom";
+    public static final String ANNOTATION_FLAG_PRINT = "print";
+    public static final String ANNOTATION_FLAG_READ_ONLY = "readOnly";
+    public static final String ANNOTATION_FLAG_TOGGLE_NO_VIEW = "toggleNoView";
 
     public static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
         for (int i = 0; i < args.length(); i++) {
@@ -284,7 +278,7 @@ public class PluginUtils {
         return mode;
     }
 
-    public static void onMethodCall(MethodCall call, MethodChannel.Result result, ViewActivityComponent component) {
+    public static void onMethodCall(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
         switch (call.method) {
             case FUNCTION_IMPORT_ANNOTATIONS: {
                 checkFunctionPrecondition(component);
@@ -437,8 +431,7 @@ public class PluginUtils {
 
     // Methods
 
-
-    private static void importAnnotations(String xfdf, MethodChannel.Result result, ViewActivityComponent component) throws PDFNetException {
+    private static void importAnnotations(String xfdf, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         if (null == pdfViewCtrl || null == pdfDoc || null == xfdf) {
@@ -479,7 +472,7 @@ public class PluginUtils {
         }
     }
 
-    private static void exportAnnotations(String annotationList, MethodChannel.Result result, ViewActivityComponent component) throws PDFNetException, JSONException {
+    private static void exportAnnotations(String annotationList, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
 
         if (null == pdfViewCtrl) {
@@ -499,18 +492,18 @@ public class PluginUtils {
             } else {
                 JSONArray annotationJsonArray = new JSONArray(annotationList);
                 ArrayList<Annot> validAnnotationList = new ArrayList<>(annotationJsonArray.length());
-                for (int i = 0; i < annotationJsonArray.length(); i ++) {
-                     JSONObject currAnnot = annotationJsonArray.getJSONObject(i);
-                     if (currAnnot != null) {
-                         String currAnnotId = currAnnot.getString(KEY_ANNOTATION_ID);
-                         int currAnnotPageNumber = currAnnot.getInt(KEY_PAGE_NUMBER);
-                         if (!Utils.isNullOrEmpty(currAnnotId)) {
-                             Annot validAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, currAnnotId, currAnnotPageNumber);
-                             if (validAnnotation != null && validAnnotation.isValid()) {
-                                 validAnnotationList.add(validAnnotation);
-                             }
-                         }
-                     }
+                for (int i = 0; i < annotationJsonArray.length(); i++) {
+                    JSONObject currAnnot = annotationJsonArray.getJSONObject(i);
+                    if (currAnnot != null) {
+                        String currAnnotId = currAnnot.getString(KEY_ANNOTATION_ID);
+                        int currAnnotPageNumber = currAnnot.getInt(KEY_PAGE_NUMBER);
+                        if (!Utils.isNullOrEmpty(currAnnotId)) {
+                            Annot validAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, currAnnotId, currAnnotPageNumber);
+                            if (validAnnotation != null && validAnnotation.isValid()) {
+                                validAnnotationList.add(validAnnotation);
+                            }
+                        }
+                    }
                 }
 
                 if (validAnnotationList.size() > 0) {
@@ -527,7 +520,7 @@ public class PluginUtils {
         }
     }
 
-    private static void flattenAnnotations(boolean formsOnly, MethodChannel.Result result, ViewActivityComponent component) throws PDFNetException {
+    private static void flattenAnnotations(boolean formsOnly, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         if (null == pdfViewCtrl || null == pdfDoc) {
@@ -553,7 +546,7 @@ public class PluginUtils {
         }
     }
 
-    private static void deleteAnnotations(String annotationList, MethodChannel.Result result, ViewActivityComponent component) throws PDFNetException, JSONException {
+    private static void deleteAnnotations(String annotationList, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
 
@@ -566,7 +559,7 @@ public class PluginUtils {
 
         JSONArray annotationJsonArray = new JSONArray(annotationList);
 
-        for (int i = 0; i < annotationJsonArray.length(); i ++) {
+        for (int i = 0; i < annotationJsonArray.length(); i++) {
             JSONObject currAnnot = annotationJsonArray.getJSONObject(i);
 
             if (currAnnot != null) {
@@ -603,7 +596,7 @@ public class PluginUtils {
         }
     }
 
-    private static void selectAnnotation(String annotation, MethodChannel.Result result, ViewActivityComponent component) throws PDFNetException, JSONException {
+    private static void selectAnnotation(String annotation, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
 
@@ -624,7 +617,7 @@ public class PluginUtils {
         }
     }
 
-    private static void setFlagForAnnotations(String annotationsWithFlags, MethodChannel.Result result, ViewActivityComponent component) throws PDFNetException, JSONException {
+    private static void setFlagForAnnotations(String annotationsWithFlags, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         ToolManager toolManager = component.getToolManager();
@@ -642,7 +635,7 @@ public class PluginUtils {
             shouldUnlock = true;
 
             // for each annotation
-            for (int i = 0; i < annotationWithFlagsArray.length(); i ++) {
+            for (int i = 0; i < annotationWithFlagsArray.length(); i++) {
                 JSONObject currentAnnotationWithFlags = annotationWithFlagsArray.getJSONObject(i);
 
                 JSONObject currentAnnotation = getJSONObjectFromJSONObject(currentAnnotationWithFlags, KEY_ANNOTATION);
@@ -659,7 +652,7 @@ public class PluginUtils {
                     JSONArray currentFlagArray = getJSONArrayFromJSONObject(currentAnnotationWithFlags, KEY_ANNOTATION_FLAG_LISTS);
 
                     // for each flag
-                    for (int j = 0; j < currentFlagArray.length(); j ++) {
+                    for (int j = 0; j < currentFlagArray.length(); j++) {
                         JSONObject currentFlagObject = currentFlagArray.getJSONObject(j);
                         String currentFlag = currentFlagObject.getString(KEY_ANNOTATION_FLAG);
                         boolean currentFlagValue = currentFlagObject.getBoolean(KEY_ANNOTATION_FLAG_VALUE);
@@ -669,7 +662,7 @@ public class PluginUtils {
                         }
 
                         int flagNumber = -1;
-                        switch(currentFlag) {
+                        switch (currentFlag) {
                             case ANNOTATION_FLAG_HIDDEN:
                                 flagNumber = Annot.e_hidden;
                                 break;
@@ -722,7 +715,7 @@ public class PluginUtils {
         }
     }
 
-    private static void importAnnotationCommand(String xfdfCommand, MethodChannel.Result result, ViewActivityComponent component) throws PDFNetException {
+    private static void importAnnotationCommand(String xfdfCommand, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         if (null == pdfViewCtrl || null == pdfDoc || null == xfdfCommand) {
@@ -763,7 +756,7 @@ public class PluginUtils {
         }
     }
 
-    private static void importBookmarkJson(String bookmarkJson, MethodChannel.Result result, ViewActivityComponent component) throws JSONException {
+    private static void importBookmarkJson(String bookmarkJson, MethodChannel.Result result, ViewerComponent component) throws JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         if (null == pdfViewCtrl || null == bookmarkJson) {
             result.error("InvalidState", "Activity not attached", null);
@@ -773,7 +766,7 @@ public class PluginUtils {
         result.success(null);
     }
 
-    private static void saveDocument(MethodChannel.Result result, ViewActivityComponent component) {
+    private static void saveDocument(MethodChannel.Result result, ViewerComponent component) {
         PdfViewCtrlTabFragment pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
         if (pdfViewCtrlTabFragment != null) {
             pdfViewCtrlTabFragment.setSavingEnabled(true);
@@ -785,7 +778,7 @@ public class PluginUtils {
         result.error("InvalidState", "Activity not attached", null);
     }
 
-    private static void commitTool(MethodChannel.Result result, ViewActivityComponent component) {
+    private static void commitTool(MethodChannel.Result result, ViewerComponent component) {
         ToolManager toolManager = component.getToolManager();
         if (toolManager != null) {
             ToolManager.Tool currentTool = toolManager.getTool();
@@ -804,7 +797,7 @@ public class PluginUtils {
         result.error("InvalidState", "Tool manager not found", null);
     }
 
-    private static void getPageCount(MethodChannel.Result result, ViewActivityComponent component) throws PDFNetException {
+    private static void getPageCount(MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
         PDFDoc pdfDoc = component.getPdfDoc();
         if (pdfDoc == null) {
             result.error("InvalidState", "Activity not attached", null);
@@ -813,7 +806,7 @@ public class PluginUtils {
         result.success(pdfDoc.getPageCount());
     }
 
-    private static void handleBackButton(MethodChannel.Result result, ViewActivityComponent component) {
+    private static void handleBackButton(MethodChannel.Result result, ViewerComponent component) {
         PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = component.getPdfViewCtrlTabHostFragment();
         if (pdfViewCtrlTabHostFragment == null) {
             result.error("InvalidState", "Activity not attached", null);
@@ -823,7 +816,7 @@ public class PluginUtils {
         result.success(pdfViewCtrlTabHostFragment.handleBackPressed());
     }
 
-    private static void getPageCropBox(int pageNumber, MethodChannel.Result result, ViewActivityComponent component) throws PDFNetException, JSONException {
+    private static void getPageCropBox(int pageNumber, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
         JSONObject jsonObject = new JSONObject();
         PDFDoc pdfDoc = component.getPdfDoc();
         if (pdfDoc == null) {
@@ -842,7 +835,7 @@ public class PluginUtils {
 
     // Events
 
-    public static void handleDocumentLoaded(ViewActivityComponent component) {
+    public static void handleDocumentLoaded(ViewerComponent component) {
         addListeners(component);
 
         MethodChannel.Result result = component.getFlutterLoadResult();
@@ -858,7 +851,7 @@ public class PluginUtils {
         }
     }
 
-    public static boolean handleOpenDocError(ViewActivityComponent component) {
+    public static boolean handleOpenDocError(ViewerComponent component) {
         MethodChannel.Result result = component.getFlutterLoadResult();
         if (result != null) {
             result.success(false);
@@ -874,7 +867,7 @@ public class PluginUtils {
         return false;
     }
 
-    public static void handleOnDetach(ViewActivityComponent component) {
+    public static void handleOnDetach(ViewerComponent component) {
         MethodChannel.Result result = component.getFlutterLoadResult();
         if (result != null) {
             result.success(false);
@@ -882,181 +875,18 @@ public class PluginUtils {
 
         ToolManager toolManager = component.getToolManager();
         if (toolManager != null) {
-            if (component.getAnnotationModificationListener() != null) {
-                toolManager.removeAnnotationModificationListener(component.getAnnotationModificationListener());
-                component.setAnnotationModificationListener(null);
-            }
-
-            if (component.getAnnotationsSelectionListener() != null) {
-                toolManager.removeAnnotationsSelectionListener(component.getAnnotationsSelectionListener());
-                component.setAnnotationsSelectionListener(null);
-            }
-
-            if (component.getPdfDocModificationListener() != null) {
-                toolManager.removePdfDocModificationListener(component.getPdfDocModificationListener());
-                component.setPdfDocModificationListener(null);
-            }
+            component.getImpl().removeListeners(toolManager);
         }
     }
 
-    private static void addListeners(ViewActivityComponent component) {
-        initializeListeners(component);
+    private static void addListeners(ViewerComponent component) {
         ToolManager toolManager = component.getToolManager();
         if (toolManager != null) {
-            toolManager.addAnnotationModificationListener(component.getAnnotationModificationListener());
-            toolManager.addAnnotationsSelectionListener(component.getAnnotationsSelectionListener());
-            toolManager.addPdfDocModificationListener(component.getPdfDocModificationListener());
+            component.getImpl().addListeners(toolManager);
         }
     }
 
-    private static void initializeListeners(final ViewActivityComponent component) {
-
-        if (component.getAnnotationModificationListener() == null) {
-            component.setAnnotationModificationListener(new ToolManager.AnnotationModificationListener() {
-                @Override
-                public void onAnnotationsAdded(Map<Annot, Integer> map) {
-                    emitAnnotationChangedEvent(KEY_ACTION_ADD, map, component);
-
-                    emitExportAnnotationCommandEvent(KEY_ACTION_ADD, map, component);
-                }
-
-                @Override
-                public void onAnnotationsPreModify(Map<Annot, Integer> map) {
-                }
-
-                @Override
-                public void onAnnotationsModified(Map<Annot, Integer> map, Bundle bundle) {
-                    emitAnnotationChangedEvent(KEY_ACTION_MODIFY, map, component);
-
-                    emitExportAnnotationCommandEvent(KEY_ACTION_MODIFY, map, component);
-
-                    JSONArray fieldsArray = new JSONArray();
-
-                    for (Annot annot : map.keySet()) {
-                        try {
-                            if (annot != null && annot.isValid() && annot.getType() == Annot.e_Widget) {
-
-                                String fieldName = null, fieldValue = null;
-
-                                Widget widget = new Widget(annot);
-                                Field field = widget.getField();
-                                if (field != null) {
-                                    fieldName = field.getName();
-                                    fieldValue = field.getValueAsString();
-                                }
-
-                                if (fieldName != null && fieldValue != null) {
-                                    JSONObject fieldObject = new JSONObject();
-                                    fieldObject.put(KEY_FIELD_NAME, fieldName);
-                                    fieldObject.put(KEY_FIELD_VALUE, fieldValue);
-                                    fieldsArray.put(fieldObject);
-                                }
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    EventChannel.EventSink eventSink = component.getFormFieldValueChangedEventEmitter();
-                    if (eventSink != null) {
-                        eventSink.success(fieldsArray.toString());
-                    }
-                }
-
-                @Override
-                public void onAnnotationsPreRemove(Map<Annot, Integer> map) {
-                    emitAnnotationChangedEvent(KEY_ACTION_DELETE, map, component);
-
-                    emitExportAnnotationCommandEvent(KEY_ACTION_DELETE, map, component);
-                }
-
-                @Override
-                public void onAnnotationsRemoved(Map<Annot, Integer> map) {
-
-                }
-
-                @Override
-                public void onAnnotationsRemovedOnPage(int i) {
-
-                }
-
-                @Override
-                public void annotationsCouldNotBeAdded(String s) {
-
-                }
-            });
-        }
-
-        if (component.getAnnotationsSelectionListener() == null) {
-            component.setAnnotationsSelectionListener(new ToolManager.AnnotationsSelectionListener() {
-                @Override
-                public void onAnnotationsSelectionChanged(HashMap<Annot, Integer> hashMap) {
-                    emitAnnotationsSelectedEvent(hashMap, component);
-                }
-            });
-        }
-
-        if (component.getPdfDocModificationListener() == null) {
-            component.setPdfDocModificationListener(new ToolManager.PdfDocModificationListener() {
-                @Override
-                public void onBookmarkModified() {
-                    String bookmarkJson = null;
-                    try {
-                        bookmarkJson = generateBookmarkJson(component);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    EventChannel.EventSink eventSink = component.getExportBookmarkEventEmitter();
-                    if (eventSink != null) {
-                        eventSink.success(bookmarkJson);
-                    }
-                }
-
-                @Override
-                public void onPagesCropped() {
-
-                }
-
-                @Override
-                public void onPagesAdded(List<Integer> list) {
-
-                }
-
-                @Override
-                public void onPagesDeleted(List<Integer> list) {
-
-                }
-
-                @Override
-                public void onPagesRotated(List<Integer> list) {
-
-                }
-
-                @Override
-                public void onPageMoved(int i, int i1) {
-
-                }
-
-                @Override
-                public void onPageLabelsChanged() {
-
-                }
-
-                @Override
-                public void onAllAnnotationsRemoved() {
-
-                }
-
-                @Override
-                public void onAnnotationAction() {
-
-                }
-            });
-        }
-    }
-
-    private static void emitAnnotationChangedEvent(String action, Map<Annot, Integer> map, ViewActivityComponent component) {
+    public static void emitAnnotationChangedEvent(String action, Map<Annot, Integer> map, ViewerComponent component) {
 
         EventChannel.EventSink eventSink = component.getAnnotationChangedEventEmitter();
         if (eventSink != null) {
@@ -1087,19 +917,18 @@ public class PluginUtils {
         }
     }
 
-    private static void emitExportAnnotationCommandEvent(String action, Map<Annot, Integer> map, ViewActivityComponent component) {
+    public static void emitExportAnnotationCommandEvent(String action, Map<Annot, Integer> map, ViewerComponent component) {
         // TODO: when collabManager is null
         ArrayList<Annot> annots = new ArrayList<>(map.keySet());
         String xfdfCommand = null;
         try {
             if (action.equals(KEY_ACTION_ADD)) {
-                xfdfCommand = generateXfdfCommand(annots,null, null, component);
+                xfdfCommand = generateXfdfCommand(annots, null, null, component);
             } else if (action.equals(KEY_ACTION_MODIFY)) {
                 xfdfCommand = generateXfdfCommand(null, annots, null, component);
             } else {
                 xfdfCommand = generateXfdfCommand(null, null, annots, component);
             }
-
         } catch (PDFNetException e) {
             e.printStackTrace();
         }
@@ -1110,7 +939,7 @@ public class PluginUtils {
         }
     }
 
-    private static void emitAnnotationsSelectedEvent(Map<Annot, Integer> map, ViewActivityComponent component) {
+    public static void emitAnnotationsSelectedEvent(Map<Annot, Integer> map, ViewerComponent component) {
 
         component.setSelectedAnnots(new HashMap<>(map));
 
@@ -1130,13 +959,13 @@ public class PluginUtils {
 
     // Helpers
 
-    private static void checkFunctionPrecondition(ViewActivityComponent component) {
+    private static void checkFunctionPrecondition(ViewerComponent component) {
         Objects.requireNonNull(component);
         Objects.requireNonNull(component.getPdfDoc());
     }
 
     @Nullable
-    private static String generateXfdfCommand(ArrayList<Annot> added, ArrayList<Annot> modified, ArrayList<Annot> removed, ViewActivityComponent component) throws PDFNetException {
+    private static String generateXfdfCommand(ArrayList<Annot> added, ArrayList<Annot> modified, ArrayList<Annot> removed, ViewerComponent component) throws PDFNetException {
         PDFDoc pdfDoc = component.getPdfDoc();
         if (pdfDoc != null) {
             FDFDoc fdfDoc = pdfDoc.fdfExtract(added, modified, removed);
@@ -1146,7 +975,7 @@ public class PluginUtils {
     }
 
     @Nullable
-    private static String generateBookmarkJson(ViewActivityComponent component) throws JSONException {
+    public static String generateBookmarkJson(ViewerComponent component) throws JSONException {
         PDFDoc pdfDoc = component.getPdfDoc();
         if (pdfDoc != null) {
             return BookmarkManager.exportPdfBookmarks(pdfDoc);
@@ -1154,7 +983,7 @@ public class PluginUtils {
         return null;
     }
 
-    private static JSONObject getAnnotationData(Annot annot, int pageNumber, ViewActivityComponent component) throws JSONException {
+    private static JSONObject getAnnotationData(Annot annot, int pageNumber, ViewerComponent component) throws JSONException {
 
         // try to obtain id
         String uid = null;
@@ -1187,22 +1016,23 @@ public class PluginUtils {
 
         return null;
     }
-    private static JSONArray getAnnotationsData(ViewActivityComponent component) throws JSONException {
+
+    private static JSONArray getAnnotationsData(ViewerComponent component) throws JSONException {
         JSONArray annots = new JSONArray();
 
         for (Map.Entry<Annot, Integer> entry : component.getSelectedAnnots().entrySet()) {
             Annot key = entry.getKey();
             Integer value = entry.getValue();
 
-           JSONObject annotData = getAnnotationData(key, value, component);
-           if (annotData != null) {
-               annots.put(annotData);
-           }
+            JSONObject annotData = getAnnotationData(key, value, component);
+            if (annotData != null) {
+                annots.put(annotData);
+            }
         }
         return annots;
     }
 
-    private static boolean hasAnnotationsSelected(ViewActivityComponent component) {
+    private static boolean hasAnnotationsSelected(ViewerComponent component) {
         return component.getSelectedAnnots() != null && !component.getSelectedAnnots().isEmpty();
     }
 

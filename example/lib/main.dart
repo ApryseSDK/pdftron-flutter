@@ -98,6 +98,32 @@ class _MyAppState extends State<MyApp> {
     var path = await PdftronFlutter.saveDocument();
     print("flutter save: $path");
 
+    var annotChangedCancel = startAnnotationChangedListener((action, annotations) 
+    {
+      print("flutter annotation action: ${action}");
+      for (Annot annot in annotations) {
+        print("annotation has id: ${annot.id}");
+        print("annotation is in page: ${annot.pageNumber}");
+      }
+    });
+
+    var fieldChangedCancel = startFormFieldValueChangedListener((fields)
+    {
+      for (Field field in fields) {
+        print("Field has name ${field.fieldName}");
+        print("Field has value ${field.fieldValue}");
+      }
+    });
+
+    var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects) 
+    {
+      for (AnnotWithRect annotWithRect in annotationWithRects) {
+        print("annotation has id: ${annotWithRect.id}");
+        print("annotation is in page: ${annotWithRect.pageNumber}");
+        print("annotation has width: ${annotWithRect.rect.width}");
+      }
+    });
+
     // to cancel event:
     // annotCancel();
     // bookmarkCancel();

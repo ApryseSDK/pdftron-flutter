@@ -3,6 +3,8 @@ package com.pdftron.pdftronflutter.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
@@ -12,19 +14,21 @@ import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.ToolManager;
-import com.pdftron.pdftronflutter.ViewActivityComponent;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import com.pdftron.pdftronflutter.helpers.ViewerComponent;
+import com.pdftron.pdftronflutter.helpers.ViewerImpl;
 
 import java.util.HashMap;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
-import static com.pdftron.pdftronflutter.PluginUtils.*;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleDocumentLoaded;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOnDetach;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOpenDocError;
 
-public class DocumentView extends com.pdftron.pdf.controls.DocumentView implements ViewActivityComponent {
+public class DocumentView extends com.pdftron.pdf.controls.DocumentView implements ViewerComponent {
+
+    private ViewerImpl mImpl = new ViewerImpl(this);
 
     private ToolManagerBuilder mToolManagerBuilder;
     private ViewerConfig.Builder mBuilder;
@@ -269,5 +273,11 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
             return getPdfViewCtrlTabFragment().getPdfDoc();
         }
         return null;
+    }
+
+    @NonNull
+    @Override
+    public ViewerImpl getImpl() {
+        return mImpl;
     }
 }

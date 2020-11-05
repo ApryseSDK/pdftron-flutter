@@ -9,6 +9,7 @@ import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdftronflutter.factories.DocumentViewFactory;
+import com.pdftron.pdftronflutter.helpers.PluginUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,7 +23,25 @@ import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
 
-import static com.pdftron.pdftronflutter.PluginUtils.*;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATIONS_SELECTED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATION_CHANGED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_DOCUMENT_ERROR;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_DOCUMENT_LOADED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_EXPORT_ANNOTATION_COMMAND;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_EXPORT_BOOKMARK;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_FORM_FIELD_VALUE_CHANGED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_GET_PLATFORM_VERSION;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_GET_VERSION;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_INITIALIZE;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_OPEN_DOCUMENT;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_CONFIG;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_CONFIG_CUSTOM_HEADERS;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_CONFIG_DISABLED_ELEMENTS;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_CONFIG_DISABLED_TOOLS;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_CONFIG_MULTI_TAB_ENABLED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_DOCUMENT;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LICENSE_KEY;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PASSWORD;
 
 /**
  * PdftronFlutterPlugin
@@ -113,12 +132,12 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
         annotationSelectedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                FlutterDocumentActivity.setAnnotationsSelectedEventEmitter(emitter);
+                FlutterDocumentActivity.setAnnotationsSelectionEventEmitter(emitter);
             }
 
             @Override
             public void onCancel(Object arguments) {
-                FlutterDocumentActivity.setAnnotationsSelectedEventEmitter(null);
+                FlutterDocumentActivity.setAnnotationsSelectionEventEmitter(null);
             }
         });
 

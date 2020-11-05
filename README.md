@@ -520,7 +520,7 @@ var annotChangedCancel = startAnnotationChangedListener((action, annotations)
   print("flutter annotation action: ${action}");
   for (Annot annot in annotations) {
     print("annotation has id: ${annot.id}");
-    print("annotation is in page: ${annot.pageNumber}")
+    print("annotation is in page: ${annot.pageNumber}");
   }
 });
 ```
