@@ -1,9 +1,42 @@
 part of pdftron;
 
+class Annot {
+  // note that an annotation has its id in xfdf as name
+  // page numbers are 1-indexed here, but 0-indexed in xfdf
+  String id;
+  int pageNumber;
+  Annot(this.id, this.pageNumber);
+
+  factory Annot.fromJson(dynamic json) {
+    return Annot(json['id'], json['pageNumber']);
+  }
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'pageNumber': pageNumber,
+      };
+}
+
+class AnnotWithRect {
+  String id;
+  int pageNumber;
+  Rect rect;
+
+  AnnotWithRect(this.id, this.pageNumber, this.rect);
+
+  factory AnnotWithRect.fromJson(dynamic json) {
+    return AnnotWithRect(
+        json['id'], json['pageNumber'], Rect.fromJson(json['rect']));
+  }
+}
+
 class Field {
   String fieldName;
   dynamic fieldValue;
   Field(this.fieldName, this.fieldValue);
+
+  factory Field.fromJson(dynamic json) {
+    return Field(json['fieldName'], (json['fieldValue']));
+  }
 
   Map<String, dynamic> toJson() =>
       {'fieldName': fieldName, 'fieldValue': fieldValue};
@@ -31,19 +64,6 @@ class Rect {
       return value;
     }
   }
-}
-
-class Annot {
-  // note that an annotation has its id in xfdf as name
-  // page numbers are 1-indexed here, but 0-indexed in xfdf
-  String id;
-  int pageNumber;
-  Annot(this.id, this.pageNumber);
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'pageNumber': pageNumber,
-      };
 }
 
 class AnnotFlag {
@@ -85,7 +105,7 @@ class Functions {
   static const flattenAnnotations = "flattenAnnotations";
   static const deleteAnnotations = "deleteAnnotations";
   static const selectAnnotation = "selectAnnotation";
-  static const setFlagForAnnotations = "setFlagForAnnotations";
+  static const setFlagsForAnnotations = "setFlagsForAnnotations";
   static const importAnnotationCommand = "importAnnotationCommand";
   static const importBookmarkJson = "importBookmarkJson";
   static const saveDocument = "saveDocument";
@@ -116,6 +136,12 @@ class Parameters {
   static const annotations = "annotations";
   static const annotation = "annotation";
   static const annotationsWithFlags = "annotationsWithFlags";
+}
+
+class EventParameters {
+  static const action = "action";
+  static const annotations = "annotations";
+  static const xfdfCommand = "xfdfCommand";
 }
 
 class Buttons {
@@ -187,7 +213,8 @@ class Tools {
 class FieldFlags {
   static const ReadOnly = 0;
   static const Required = 1;
-  
+}
+
 class AnnotationFlags {
   static const hidden = "hidden";
   static const invisible = "invisible";

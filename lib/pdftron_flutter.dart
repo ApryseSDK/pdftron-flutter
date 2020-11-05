@@ -71,10 +71,10 @@ class PdftronFlutter {
         <String, dynamic>{Parameters.annotation: jsonEncode(annotation)});
   }
 
-  static Future<void> setFlagForAnnotations(
+  static Future<void> setFlagsForAnnotations(
       List<AnnotWithFlag> annotationWithFlagsList) {
     return _channel.invokeMethod(
-        Functions.setFlagForAnnotations, <String, dynamic>{
+        Functions.setFlagsForAnnotations, <String, dynamic>{
       Parameters.annotationsWithFlags: jsonEncode(annotationWithFlagsList)
     });
   }
