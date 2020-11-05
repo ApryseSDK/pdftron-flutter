@@ -20,9 +20,9 @@ import io.flutter.plugin.common.EventChannel;
 
 public class ViewerImpl {
 
-    ViewerComponent mViewerComponent;
+    private ViewerComponent mViewerComponent;
 
-    public ViewerImpl(ViewerComponent component) {
+    public ViewerImpl(@NonNull ViewerComponent component) {
         mViewerComponent = component;
     }
 
@@ -38,7 +38,7 @@ public class ViewerImpl {
         toolManager.removePdfDocModificationListener(mPdfDocModificationListener);
     }
 
-    ToolManager.AnnotationModificationListener mAnnotationModificationListener = new ToolManager.AnnotationModificationListener() {
+    private ToolManager.AnnotationModificationListener mAnnotationModificationListener = new ToolManager.AnnotationModificationListener() {
         @Override
         public void onAnnotationsAdded(Map<Annot, Integer> map) {
             PluginUtils.emitAnnotationChangedEvent(PluginUtils.KEY_ACTION_ADD, map, mViewerComponent);
