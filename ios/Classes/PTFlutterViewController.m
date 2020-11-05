@@ -20,8 +20,7 @@
         [self applyLayoutMode];
         
         NSString *filePath = self.coordinatedDocument.fileURL.path;
-        [self.plugin docVC:self documentLoaded:filePath];
-        
+        [self.plugin documentViewController:self documentLoadedFromFilePath:filePath];
     }
 }
 
@@ -70,27 +69,120 @@
         NSLog(@"Error: %@", error.description);
     }
 
-    [self.plugin docVC:self bookmarkChange:json];
+    [self.plugin documentViewController:self bookmarksDidChange:json];
 }
 
 -(void)toolManager:(PTToolManager*)toolManager willRemoveAnnotation:(nonnull PTAnnot *)annotation onPageNumber:(int)pageNumber
 {
+    NSString* annotationsWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTDeleteActionKey];
+    if (annotationsWithActionString) {
+        [self.plugin documentViewController:self annotationsChangedWithActionString:annotationsWithActionString];
+    }
+    
     NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:Nil removed:@[annotation]];
-    [self.plugin docVC:self annotationChange:xfdf];
+    [self.plugin documentViewController:self annotationsAsXFDFCommand:xfdf];
+    
 }
 
 - (void)toolManager:(PTToolManager *)toolManager annotationAdded:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
 {
+    NSString* annotationsWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTAddActionKey];
+    if (annotationsWithActionString) {
+        [self.plugin documentViewController:self annotationsChangedWithActionString:annotationsWithActionString];
+    }
+    
     NSString* xfdf = [self generateXfdfCommandWithAdded:@[annotation] modified:Nil removed:Nil];
-    [self.plugin docVC:self annotationChange:xfdf];
+    [self.plugin documentViewController:self annotationsAsXFDFCommand:xfdf];
 }
 
 - (void)toolManager:(PTToolManager *)toolManager annotationModified:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
 {
+    NSString* annotationsWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTModifyActionKey];
+    if (annotationsWithActionString) {
+        [self.plugin documentViewController:self annotationsChangedWithActionString:annotationsWithActionString];
+    }
+  
     NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:@[annotation] removed:Nil];
-    [self.plugin docVC:self annotationChange:xfdf];
+    [self.plugin documentViewController:self annotationsAsXFDFCommand:xfdf];
 }
 
+- (void)toolManager:(PTToolManager *)toolManager didSelectAnnotation:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
+{
+    if (annotation.IsValid) {
+        
+        __block NSString *uniqueId;
+        __block PTPDFRect *screenRect;
+        
+        NSError *error;
+        [self.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+            PTObj *uniqueIdObj = [annotation GetUniqueID];
+            if ([uniqueIdObj IsValid] && [uniqueIdObj IsString]) {
+                uniqueId = [uniqueIdObj GetAsPDFText];
+            }
+            screenRect = [self.pdfViewCtrl GetScreenRectForAnnot:annotation
+                                                                   page_num:(int)pageNumber];
+        } error:&error];
+        
+        if (error) {
+            NSLog(@"An error occurred: %@", error);
+            return;
+        }
+        
+        NSDictionary *annotDict = @{
+            PTAnnotationIdKey: uniqueId ?: @"",
+            PTAnnotationPageNumberKey: [NSNumber numberWithLong:pageNumber],
+            PTRectKey: @{
+                    PTX1Key: @([screenRect GetX1]),
+                    PTY1Key: @([screenRect GetY1]),
+                    PTX2Key: @([screenRect GetX2]),
+                    PTY2Key: @([screenRect GetY2]),
+                    PTWidthKey: @([screenRect Width]),
+                    PTHeightKey: @([screenRect Height]),
+            },
+        };
+        
+        [self.plugin documentViewController:self annotationsSelected:[PdftronFlutterPlugin PT_idToJSONString:@[annotDict]]];
+    }
+}
+
+- (void)toolManager:(PTToolManager *)toolManager formFieldDataModified:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber {
+    if (annotation.GetType == e_ptWidget) {
+        NSError *error;
+        
+        __block NSString *fieldName;
+        __block NSString *fieldValue;
+        
+        [self.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+            PTWidget *widget = [[PTWidget alloc] initWithAnn:annotation];
+            PTField *field = [widget GetField];
+            fieldName = [field IsValid] ? [field GetName] : @"";
+            fieldValue = [field IsValid] ? [field GetValueAsString] : @"";
+        } error:&error];
+        if (error) {
+            NSLog(@"An error occurred: %@", error);
+            return;
+        }
+        
+        if (fieldName && fieldValue) {
+            NSDictionary *fieldDict = @{
+                PTFormFieldNameKey: fieldName,
+                PTFormFieldValueKey: fieldValue,
+            };
+            
+            [self.plugin documentViewController:self formFieldValueChanged:[PdftronFlutterPlugin PT_idToJSONString:@[fieldDict]]];
+        }
+        // TODO: collab manager
+        /*
+         copied from RN
+         
+         if (!self.collaborationManager) {
+             PTVectorAnnot *annots = [[PTVectorAnnot alloc] init];
+             [annots add:annot];
+             [self rnt_sendExportAnnotationCommandWithAction:PTModifyAnnotationActionKey xfdfCommand:[self generateXfdfCommand:[[PTVectorAnnot alloc] init] modified:annots deleted:[[PTVectorAnnot alloc] init]]];
+         }
+         */
+    }
+}
 
 -(NSString*)generateXfdfCommandWithAdded:(NSArray<PTAnnot*>*)added modified:(NSArray<PTAnnot*>*)modified removed:(NSArray<PTAnnot*>*)removed
 {
@@ -129,6 +221,41 @@
         NSLog(@"Error: %@", error.description);
     }
     return Nil;
+}
+
+-(NSString*)generateAnnotationWithActionString:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber action:(NSString *)action
+{
+    
+    if (annotation.IsValid) {
+        
+        __block NSString *uniqueId;
+        
+        NSError *error;
+        [self.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+            PTObj *uniqueIdObj = [annotation GetUniqueID];
+            if ([uniqueIdObj IsValid] && [uniqueIdObj IsString]) {
+                uniqueId = [uniqueIdObj GetAsPDFText];
+            }
+        } error:&error];
+        
+        if (error) {
+            NSLog(@"An error occurred: %@", error);
+            return nil;
+        }
+        
+        NSDictionary *annotDict = @{
+            PTAnnotationIdKey: uniqueId,
+            PTAnnotationPageNumberKey: [NSNumber numberWithLong:pageNumber],
+        };
+        
+        NSDictionary *resultDict = @{
+            PTAnnotationListKey: @[annotDict],
+            PTActionKey: action,
+        };
+        
+        return [PdftronFlutterPlugin PT_idToJSONString:resultDict];
+    }
+    return nil;
 }
 
 #pragma mark - <PTPDFViewCtrlDelegate>
@@ -220,3 +347,4 @@
 }
 
 @end
+

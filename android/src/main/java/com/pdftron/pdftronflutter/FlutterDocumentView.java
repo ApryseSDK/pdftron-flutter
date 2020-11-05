@@ -3,10 +3,11 @@ package com.pdftron.pdftronflutter;
 import android.content.Context;
 import android.view.View;
 
-import com.pdftron.pdftronflutter.views.DocumentView;
-
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
+
+import com.pdftron.pdftronflutter.helpers.PluginUtils;
+import com.pdftron.pdftronflutter.views.DocumentView;
 
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
@@ -14,7 +15,14 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 
-import static com.pdftron.pdftronflutter.PluginUtils.*;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATIONS_SELECTED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATION_CHANGED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_DOCUMENT_ERROR;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_DOCUMENT_LOADED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_EXPORT_ANNOTATION_COMMAND;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_EXPORT_BOOKMARK;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_FORM_FIELD_VALUE_CHANGED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_OPEN_DOCUMENT;
 
 public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCallHandler {
 
@@ -76,6 +84,58 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
             @Override
             public void onCancel(Object arguments) {
                 documentView.setDocumentLoadedEventEmitter(null);
+            }
+        });
+
+        final EventChannel documentErrorEventChannel = new EventChannel(messenger, EVENT_DOCUMENT_ERROR);
+        documentErrorEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                documentView.setDocumentErrorEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                documentView.setDocumentErrorEventEmitter(null);
+            }
+        });
+
+        final EventChannel annotationChangedEventChannel = new EventChannel(messenger, EVENT_ANNOTATION_CHANGED);
+        annotationChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                documentView.setAnnotationChangedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                documentView.setAnnotationChangedEventEmitter(null);
+            }
+        });
+
+        final EventChannel annotationSelectedEventChannel = new EventChannel(messenger, EVENT_ANNOTATIONS_SELECTED);
+        annotationSelectedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                documentView.setAnnotationsSelectedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                documentView.setAnnotationsSelectedEventEmitter(null);
+            }
+        });
+
+        final EventChannel formFieldValueChangedEventChannel = new EventChannel(messenger, EVENT_FORM_FIELD_VALUE_CHANGED);
+        formFieldValueChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                documentView.setFormFieldValueChangedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                documentView.setFormFieldValueChangedEventEmitter(null);
             }
         });
     }

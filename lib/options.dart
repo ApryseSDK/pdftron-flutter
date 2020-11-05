@@ -1,5 +1,47 @@
 part of pdftron;
 
+class Annot {
+  // note that an annotation has its id in xfdf as name
+  // page numbers are 1-indexed here, but 0-indexed in xfdf
+  String id;
+  int pageNumber;
+  Annot(this.id, this.pageNumber);
+
+  factory Annot.fromJson(dynamic json) {
+    return Annot(json['id'], json['pageNumber']);
+  }
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'pageNumber': pageNumber,
+      };
+}
+
+class AnnotWithRect {
+  String id;
+  int pageNumber;
+  Rect rect;
+
+  AnnotWithRect(this.id, this.pageNumber, this.rect);
+
+  factory AnnotWithRect.fromJson(dynamic json) {
+    return AnnotWithRect(
+        json['id'], json['pageNumber'], Rect.fromJson(json['rect']));
+  }
+}
+
+class Field {
+  String fieldName;
+  dynamic fieldValue;
+  Field(this.fieldName, this.fieldValue);
+
+  factory Field.fromJson(dynamic json) {
+    return Field(json['fieldName'], (json['fieldValue']));
+  }
+
+  Map<String, dynamic> toJson() =>
+      {'fieldName': fieldName, 'fieldValue': fieldValue};
+}
+
 class Rect {
   double x1, y1, x2, y2, width, height;
   Rect(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
@@ -22,19 +64,6 @@ class Rect {
       return value;
     }
   }
-}
-
-class Annot {
-  // note that an annotation has its id in xfdf as name
-  // page numbers are 1-indexed here, but 0-indexed in xfdf
-  String id;
-  int pageNumber;
-  Annot(this.id, this.pageNumber);
-
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'pageNumber': pageNumber,
-      };
 }
 
 class AnnotFlag {
@@ -101,6 +130,12 @@ class Parameters {
   static const annotations = "annotations";
   static const annotation = "annotation";
   static const annotationsWithFlags = "annotationsWithFlags";
+}
+
+class EventParameters {
+  static const action = "action";
+  static const annotations = "annotations";
+  static const xfdfCommand = "xfdfCommand";
 }
 
 class Buttons {
