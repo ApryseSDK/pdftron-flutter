@@ -320,7 +320,7 @@ config.readOnly = false;
 config.thumbnailViewEditingEnabled = false;
 config.annotationAuthor = "PDFTron";
 config.continuousAnnotationEditing = true;
-PdftronFlutter.openDocument(_document, config: config);
+await PdftronFlutter.openDocument(_document, config: config);
 ```
 ### PdftronFlutter.importAnnotations(String)
 Imports XFDF string to current document.
