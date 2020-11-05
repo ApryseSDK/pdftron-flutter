@@ -381,8 +381,8 @@ annotation | Annot | the annotation to be selected
 PdftronFlutter.selectAnnotation(new Annot('Hello', 1));
 ```
 
-### PdftronFlutter.setFlagForAnnotations(List<`AnnotWithFlags`>)
-To set flag for specified annotations in the current document.
+### PdftronFlutter.setFlagsForAnnotations(List<`AnnotWithFlags`>)
+To set flags for specified annotations in the current document.
 
 For more details about `Annot`, `AnnotFlag` and `AnnotWithFlags`, please check `lib/options.dart` file.
 
@@ -405,7 +405,7 @@ list.add(new AnnotWithFlags.fromAnnotAndFlags(world, [unlock]));
 
 // Or simply use the constructor like this:
 list.add(new AnnotWithFlags('Pdftron', 10, AnnotationFlags.no_zoom, true));
-PdftronFlutter.setFlagForAnnotations(annotsWithFlags);
+PdftronFlutter.setFlagsForAnnotations(annotsWithFlags);
 ```
 
 

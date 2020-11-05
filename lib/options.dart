@@ -35,9 +35,6 @@ class Field {
   Field(this.fieldName, this.fieldValue);
 
   factory Field.fromJson(dynamic json) {
-    print(json['fieldValue'] is int);
-    print(json['fieldValue'] is bool);
-    print(json['fieldValue'] is String);
     return Field(json['fieldName'], (json['fieldValue']));
   }
 
@@ -108,7 +105,7 @@ class Functions {
   static const flattenAnnotations = "flattenAnnotations";
   static const deleteAnnotations = "deleteAnnotations";
   static const selectAnnotation = "selectAnnotation";
-  static const setFlagForAnnotations = "setFlagForAnnotations";
+  static const setFlagsForAnnotations = "setFlagsForAnnotations";
   static const importAnnotationCommand = "importAnnotationCommand";
   static const importBookmarkJson = "importBookmarkJson";
   static const saveDocument = "saveDocument";

@@ -99,7 +99,7 @@ public class PluginUtils {
     public static final String FUNCTION_FLATTEN_ANNOTATIONS = "flattenAnnotations";
     public static final String FUNCTION_DELETE_ANNOTATIONS = "deleteAnnotations";
     public static final String FUNCTION_SELECT_ANNOTATION = "selectAnnotation";
-    public static final String FUNCTION_SET_FLAG_FOR_ANNOTATIONS = "setFlagForAnnotations";
+    public static final String FUNCTION_SET_FLAGS_FOR_ANNOTATIONS = "setFlagsForAnnotations";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -346,11 +346,11 @@ public class PluginUtils {
                 }
                 break;
             }
-            case FUNCTION_SET_FLAG_FOR_ANNOTATIONS: {
+            case FUNCTION_SET_FLAGS_FOR_ANNOTATIONS: {
                 checkFunctionPrecondition(component);
                 String annotationsWithFlags = call.argument(KEY_ANNOTATIONS_WITH_FLAGS);
                 try {
-                    setFlagForAnnotations(annotationsWithFlags, result, component);
+                    setFlagsForAnnotations(annotationsWithFlags, result, component);
                 } catch (JSONException ex) {
                     ex.printStackTrace();
                     result.error(Integer.toString(ex.hashCode()), "JSONException Error: " + ex, null);
@@ -617,7 +617,7 @@ public class PluginUtils {
         }
     }
 
-    private static void setFlagForAnnotations(String annotationsWithFlags, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
+    private static void setFlagsForAnnotations(String annotationsWithFlags, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         ToolManager toolManager = component.getToolManager();
