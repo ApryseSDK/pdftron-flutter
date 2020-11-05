@@ -14,7 +14,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _version = 'Unknown';
-  String _document = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
+  String _document =
+      "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
 
   @override
   void initState() {
@@ -45,7 +46,6 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-
   void showViewer() async {
     // opening without a config file will have all functionality enabled.
     // await PdftronFlutter.openDocument(_document);
@@ -53,35 +53,37 @@ class _MyAppState extends State<MyApp> {
     // shows how to disale functionality
 //      var disabledElements = [Buttons.shareButton, Buttons.searchButton];
 //      var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
-     var config = Config();
+    var config = Config();
 //      config.disabledElements = disabledElements;
 //      config.disabledTools = disabledTools;
 //      config.multiTabEnabled = true;
 //      config.customHeaders = {'headerName': 'headerValue'};
 
+    config.pageIndicatorEnabled = false;
     var documentLoadedCancel = startDocumentLoadedListener((filePath) {
       print("document loaded: $filePath");
     });
 
-     await PdftronFlutter.openDocument(_document, config: config);
+    await PdftronFlutter.openDocument(_document, config: config);
 
     try {
-      PdftronFlutter.importAnnotationCommand("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-                "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
-                "      <add>\n" +
-                "        <square style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20200619203211Z\" flags=\"print\" date=\"D:20200619203211Z\" name=\"c684da06-12d2-4ccd-9361-0a1bf2e089e3\" page=\"1\" rect=\"113.312,277.056,235.43,350.173\" title=\"\" />\n" +
-                "      </add>\n" +
-                "      <modify />\n" +
-                "      <delete />\n" +
-                "      <pdf-info import-version=\"3\" version=\"2\" xmlns=\"http://www.pdftron.com/pdfinfo\" />\n" +
-                "    </xfdf>");
-    } on PlatformException catch(e) {
+      PdftronFlutter.importAnnotationCommand(
+          "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+              "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
+              "      <add>\n" +
+              "        <square style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20200619203211Z\" flags=\"print\" date=\"D:20200619203211Z\" name=\"c684da06-12d2-4ccd-9361-0a1bf2e089e3\" page=\"1\" rect=\"113.312,277.056,235.43,350.173\" title=\"\" />\n" +
+              "      </add>\n" +
+              "      <modify />\n" +
+              "      <delete />\n" +
+              "      <pdf-info import-version=\"3\" version=\"2\" xmlns=\"http://www.pdftron.com/pdfinfo\" />\n" +
+              "    </xfdf>");
+    } on PlatformException catch (e) {
       print("Failed to importAnnotationCommand '${e.message}'.");
     }
 
     try {
       PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
-    } on PlatformException catch(e) {
+    } on PlatformException catch (e) {
       print("Failed to importBookmarkJson '${e.message}'.");
     }
 
@@ -95,6 +97,9 @@ class _MyAppState extends State<MyApp> {
       print("flutter bookmark: $bookmarkJson");
     });
 
+    startAnnotationsSelectedListener((stub) {
+      print("Woohoo i am selected");
+    });
     var path = await PdftronFlutter.saveDocument();
     print("flutter save: $path");
 

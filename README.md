@@ -507,6 +507,72 @@ var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
 });
 ```
 
+### startDocumentLoadedListener
+
+Event is raised when the document finishes loading.
+
+```dart
+var documentLoadedCancel = startDocumentLoadedListener((path)
+{
+  print("flutter document loaded: ${path}");
+});
+```
+
+### startDocumentErrorListener
+
+Event is raised when the document has errors when loading.
+
+```dart
+var documentErrorCancel = startDocumentErrorListener((){
+  print("flutter document loaded unsuccessfully");
+});
+```
+
+### startAnnotationChangedListener
+
+Event is raised when there is a change to annotations to the document.
+
+```dart
+var annotChangedCancel = startAnnotationChangedListener((action, annotations) 
+{
+  print("flutter annotation action: ${action}");
+  for (Annot annot in annotations) {
+    print("annotation has id: ${annot.id}");
+    print("annotation is in page: ${annot.pageNumber}");
+  }
+});
+```
+
+### startAnnotationsSelectedListener
+
+Event is raised when annotations are selected.
+
+```dart
+var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects) 
+{
+  for (AnnotWithRect annotWithRect in annotationWithRects) {
+    print("annotation has id: ${annotWithRect.id}");
+    print("annotation is in page: ${annotWithRect.pageNumber}");
+    print("annotation has width: ${annotWithRect.rect.width}");
+  }
+});
+
+```
+
+### startFormFieldValueChangedListener
+
+Event is raised when there are changes to form field values.
+
+```dart
+var fieldChangedCancel = startFormFieldValueChangedListener((fields)
+{
+  for (Field field in fields) {
+    print("Field has name ${field.fieldName}");
+    print("Field has value ${field.fieldValue}");
+  }
+});
+```
+
 ## Contributing
 See [Contributing](./CONTRIBUTING.md)
 
