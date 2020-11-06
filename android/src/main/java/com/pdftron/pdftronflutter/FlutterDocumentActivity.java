@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+
 import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.pdftron.pdf.Annot;
@@ -15,6 +17,9 @@ import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdftronflutter.helpers.PluginUtils;
+import com.pdftron.pdftronflutter.helpers.ViewerComponent;
+import com.pdftron.pdftronflutter.helpers.ViewerImpl;
 
 import org.json.JSONObject;
 
@@ -24,9 +29,11 @@ import java.util.concurrent.atomic.AtomicReference;
 import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.MethodChannel.Result;
 
-import static com.pdftron.pdftronflutter.PluginUtils.*;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleLeadingNavButtonPressed;
 
-public class FlutterDocumentActivity extends DocumentActivity implements ViewActivityComponent {
+public class FlutterDocumentActivity extends DocumentActivity implements ViewerComponent {
+
+    private ViewerImpl mImpl = new ViewerImpl(this);
 
     private static FlutterDocumentActivity sCurrentActivity;
     private static AtomicReference<Result> sFlutterLoadResult = new AtomicReference<>();
@@ -36,17 +43,11 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
     private static AtomicReference<EventSink> sDocumentLoadedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sDocumentErrorEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sAnnotationChangedEventEmitter = new AtomicReference<>();
-    private static AtomicReference<EventSink> sAnnotationsSelectedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sAnnotationsSelectionEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sFormFieldChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sLeadingNavButtonPressedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sPageChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sZoomChangedEventEmitter = new AtomicReference<>();
-
-    private static AtomicReference<ToolManager.AnnotationModificationListener> sAnnotationModificationListener = new AtomicReference<>();
-    private static AtomicReference<ToolManager.PdfDocModificationListener> sPdfDocModificationListener = new AtomicReference<>();
-    private static AtomicReference<ToolManager.AnnotationsSelectionListener> sAnnotationsSelectionListener = new AtomicReference<>();
-    private static AtomicReference<PDFViewCtrl.PageChangeListener> sPageChangeListener = new AtomicReference<>();
-    private static AtomicReference<PDFViewCtrl.OnCanvasSizeChangeListener> sOnCanvasSizeChangeListener = new AtomicReference<>();
 
     private static HashMap<Annot, Integer> mSelectedAnnots;
 
@@ -93,8 +94,8 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
         sAnnotationChangedEventEmitter.set(emitter);
     }
 
-    public static void setAnnotationsSelectedEventEmitter(EventSink emitter) {
-        sAnnotationsSelectedEventEmitter.set(emitter);
+    public static void setAnnotationsSelectionEventEmitter(EventSink emitter) {
+        sAnnotationsSelectionEventEmitter.set(emitter);
     }
 
     public static void setFormFieldValueChangedEventEmitter(EventSink emitter) {
@@ -115,46 +116,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
 
     public static void setFlutterLoadResult(Result result) {
         sFlutterLoadResult.set(result);
-    }
-
-    public ToolManager.AnnotationModificationListener getAnnotationModificationListener() {
-        return sAnnotationModificationListener.get();
-    }
-
-    public ToolManager.PdfDocModificationListener getPdfDocModificationListener() {
-        return sPdfDocModificationListener.get();
-    }
-
-    public ToolManager.AnnotationsSelectionListener getAnnotationsSelectionListener() {
-        return sAnnotationsSelectionListener.get();
-    }
-
-    public PDFViewCtrl.PageChangeListener getPageChangeListener() {
-        return sPageChangeListener.get();
-    }
-
-    public PDFViewCtrl.OnCanvasSizeChangeListener getOnCanvasSizeChangeListener() {
-        return sOnCanvasSizeChangeListener.get();
-    }
-
-    public void setAnnotationModificationListener(ToolManager.AnnotationModificationListener listener) {
-        sAnnotationModificationListener.set(listener);
-    }
-
-    public void setPdfDocModificationListener(ToolManager.PdfDocModificationListener listener) {
-        sPdfDocModificationListener.set(listener);
-    }
-
-    public void setAnnotationsSelectionListener(ToolManager.AnnotationsSelectionListener listener) {
-        sAnnotationsSelectionListener.set(listener);
-    }
-
-    public void setPageChangeListener(PDFViewCtrl.PageChangeListener listener) {
-        sPageChangeListener.set(listener);
-    }
-
-    public void setOnCanvasSizeChangeListener(PDFViewCtrl.OnCanvasSizeChangeListener listener) {
-        sOnCanvasSizeChangeListener.set(listener);
     }
 
     public void setSelectedAnnots(HashMap<Annot, Integer> selectedAnnots) {
@@ -187,7 +148,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
 
     @Override
     public EventSink getAnnotationsSelectedEventEmitter() {
-        return sAnnotationsSelectedEventEmitter.get();
+        return sAnnotationsSelectionEventEmitter.get();
     }
 
     @Override
@@ -229,9 +190,20 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
 
     @Override
     protected void onDestroy() {
+        PluginUtils.handleOnDetach(this);
+
         super.onDestroy();
 
-        handleOnDetach(this);
+        sExportAnnotationCommandEventEmitter.set(null);
+        sExportBookmarkEventEmitter.set(null);
+        sDocumentLoadedEventEmitter.set(null);
+        sDocumentErrorEventEmitter.set(null);
+        sAnnotationChangedEventEmitter.set(null);
+        sAnnotationsSelectionEventEmitter.set(null);
+        sFormFieldChangedEventEmitter.set(null);
+        sLeadingNavButtonPressedEventEmitter.set(null);
+        sPageChangedEventEmitter.set(null);
+        sZoomChangedEventEmitter.set(null);
 
         detachActivity();
     }
@@ -240,21 +212,21 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
     public void onTabDocumentLoaded(String tag) {
         super.onTabDocumentLoaded(tag);
 
-        handleDocumentLoaded(this);
+        PluginUtils.handleDocumentLoaded(this);
     }
 
     @Override
     public boolean onOpenDocError() {
         super.onOpenDocError();
 
-        return handleOpenDocError(this);
+        return PluginUtils.handleOpenDocError(this);
     }
 
     @Override
     public void onNavButtonPressed() {
-        super.onNavButtonPressed();
+        handleLeadingNavButtonPressed(this);
 
-        handleNavButtonPressed(this);
+        super.onNavButtonPressed();
     }
 
     private void attachActivity() {
@@ -306,5 +278,11 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewAct
             return getPdfViewCtrlTabFragment().getPdfDoc();
         }
         return null;
+    }
+
+    @NonNull
+    @Override
+    public ViewerImpl getImpl() {
+        return mImpl;
     }
 }

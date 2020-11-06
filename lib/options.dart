@@ -35,9 +35,6 @@ class Field {
   Field(this.fieldName, this.fieldValue);
 
   factory Field.fromJson(dynamic json) {
-    print(json['fieldValue'] is int);
-    print(json['fieldValue'] is bool);
-    print(json['fieldValue'] is String);
     return Field(json['fieldName'], (json['fieldValue']));
   }
 
@@ -69,11 +66,46 @@ class Rect {
   }
 }
 
+class AnnotFlag {
+  // flag comes from AnnotationFlags constants
+  // flagValue represents toggling on/off
+  String flag;
+  bool flagValue;
+  AnnotFlag(this.flag, this.flagValue);
+
+  Map<String, dynamic> toJson() => {
+        'flag': flag,
+        'flagValue': flagValue,
+      };
+}
+
+class AnnotWithFlag {
+  Annot annotation;
+  List<AnnotFlag> flags;
+
+  AnnotWithFlag.fromAnnotAndFlags(this.annotation, this.flags);
+
+  AnnotWithFlag(String annotId, int pageNumber, String flag, bool flagValue) {
+    annotation = new Annot(annotId, pageNumber);
+    flags = new List<AnnotFlag>();
+    flags.add(new AnnotFlag(flag, flagValue));
+  }
+
+  Map<String, dynamic> toJson() =>
+      {'annotation': jsonEncode(annotation), 'flags': jsonEncode(flags)};
+}
+
 class Functions {
   static const getPlatformVersion = "getPlatformVersion";
   static const getVersion = "getVersion";
   static const initialize = "initialize";
   static const openDocument = "openDocument";
+  static const importAnnotations = "importAnnotations";
+  static const exportAnnotations = "exportAnnotations";
+  static const flattenAnnotations = "flattenAnnotations";
+  static const deleteAnnotations = "deleteAnnotations";
+  static const selectAnnotation = "selectAnnotation";
+  static const setFlagsForAnnotations = "setFlagsForAnnotations";
   static const importAnnotationCommand = "importAnnotationCommand";
   static const importBookmarkJson = "importBookmarkJson";
   static const saveDocument = "saveDocument";
@@ -89,8 +121,13 @@ class Parameters {
   static const password = "password";
   static const config = "config";
   static const xfdfCommand = "xfdfCommand";
+  static const xfdf = "xfdf";
   static const bookmarkJson = "bookmarkJson";
   static const pageNumber = "pageNumber";
+  static const formsOnly = "formsOnly";
+  static const annotations = "annotations";
+  static const annotation = "annotation";
+  static const annotationsWithFlags = "annotationsWithFlags";
 }
 
 class EventParameters {
@@ -165,4 +202,17 @@ class Tools {
       'AnnotationCreateFreeHighlighter';
   static const annotationCreateRubberStamp = 'AnnotationCreateRubberStamp';
   static const eraser = 'Eraser';
+}
+
+class AnnotationFlags {
+  static const hidden = "hidden";
+  static const invisible = "invisible";
+  static const locked = "locked";
+  static const lockedContents = "lockedContents";
+  static const noRotate = "noRotate";
+  static const noView = "noView";
+  static const noZoom = "noZoom";
+  static const print = "print";
+  static const readOnly = "readOnly";
+  static const toggleNoView = "toggleNoView";
 }

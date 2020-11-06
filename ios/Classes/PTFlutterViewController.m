@@ -14,7 +14,7 @@
         self.documentLoaded = YES;
 
         NSString *filePath = self.coordinatedDocument.fileURL.path;
-        [self.plugin docVCDocumentLoaded:self filePath:filePath];
+        [self.plugin documentViewController:self documentLoadedFromFilePath:filePath];
     }
 }
 
@@ -63,41 +63,41 @@
         NSLog(@"Error: %@", error.description);
     }
 
-    [self.plugin docVCBookmarkChange:self bookmarkJson:json];
+    [self.plugin documentViewController:self bookmarksDidChange:json];
 }
 
 -(void)toolManager:(PTToolManager*)toolManager willRemoveAnnotation:(nonnull PTAnnot *)annotation onPageNumber:(int)pageNumber
 {
-    NSString* annotationWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTDeleteActionKey];
-    if (annotationWithActionString) {
-        [self.plugin docVCAnnotationChanged:self annotationsWithActionString:annotationWithActionString];
+    NSString* annotationsWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTDeleteActionKey];
+    if (annotationsWithActionString) {
+        [self.plugin documentViewController:self annotationsChangedWithActionString:annotationsWithActionString];
     }
     
     NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:Nil removed:@[annotation]];
-    [self.plugin docVCExportAnnotationCommand:self xfdfCommand:xfdf];
+    [self.plugin documentViewController:self annotationsAsXFDFCommand:xfdf];
     
 }
 
 - (void)toolManager:(PTToolManager *)toolManager annotationAdded:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
 {
-    NSString* annotationWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTAddActionKey];
-    if (annotationWithActionString) {
-        [self.plugin docVCAnnotationChanged:self annotationsWithActionString:annotationWithActionString];
+    NSString* annotationsWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTAddActionKey];
+    if (annotationsWithActionString) {
+        [self.plugin documentViewController:self annotationsChangedWithActionString:annotationsWithActionString];
     }
     
     NSString* xfdf = [self generateXfdfCommandWithAdded:@[annotation] modified:Nil removed:Nil];
-    [self.plugin docVCExportAnnotationCommand:self xfdfCommand:xfdf];
+    [self.plugin documentViewController:self annotationsAsXFDFCommand:xfdf];
 }
 
 - (void)toolManager:(PTToolManager *)toolManager annotationModified:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
 {
-    NSString* annotationWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTModifyActionKey];
-    if (annotationWithActionString) {
-        [self.plugin docVCAnnotationChanged:self annotationsWithActionString:annotationWithActionString];
+    NSString* annotationsWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTModifyActionKey];
+    if (annotationsWithActionString) {
+        [self.plugin documentViewController:self annotationsChangedWithActionString:annotationsWithActionString];
     }
   
     NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:@[annotation] removed:Nil];
-    [self.plugin docVCExportAnnotationCommand:self xfdfCommand:xfdf];
+    [self.plugin documentViewController:self annotationsAsXFDFCommand:xfdf];
 }
 
 - (void)toolManager:(PTToolManager *)toolManager didSelectAnnotation:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
@@ -135,7 +135,7 @@
             },
         };
         
-        [self.plugin docVCAnnotationsSelected:self annotationsString:[PdftronFlutterPlugin PT_idToJSONString:@[annotDict]]];
+        [self.plugin documentViewController:self annotationsSelected:[PdftronFlutterPlugin PT_idToJSONString:@[annotDict]]];
     }
 }
 
@@ -163,7 +163,7 @@
                 PTFormFieldValueKey: fieldValue,
             };
             
-            [self.plugin docVCFormFieldValueChanged:self fieldsString:[PdftronFlutterPlugin PT_idToJSONString:@[fieldDict]]];
+            [self.plugin documentViewController:self formFieldValueChanged:[PdftronFlutterPlugin PT_idToJSONString:@[fieldDict]]];
         }
         // TODO: collab manager
         /*
@@ -178,15 +178,10 @@
     }
 }
 
-- (void)navButtonClicked
-{
-    [self.plugin docVCLeadingNavButtonPressed:self];
-}
-
 - (void)pdfViewCtrl:(PTPDFViewCtrl*)pdfViewCtrl pdfScrollViewDidZoom:(UIScrollView *)scrollView
 {
     const double zoom = self.pdfViewCtrl.zoom * self.pdfViewCtrl.zoomScale;
-    [self.plugin docVCZoomChanged:self zoom:[NSNumber numberWithDouble:zoom]];
+    [self.plugin documentViewController:self zoomChanged:[NSNumber numberWithDouble:zoom]];
 }
 
 - (void)pdfViewCtrl:(PTPDFViewCtrl*)pdfViewCtrl pageNumberChangedFrom:(int)oldPageNumber To:(int)newPageNumber
@@ -195,8 +190,8 @@
         PTPreviousPageNumberKey: [NSNumber numberWithInt:oldPageNumber],
         PTPageNumberKey: [NSNumber numberWithInt:newPageNumber],
     };
-    
-    [self.plugin docVCPageChanged:self pageNumbersString:[PdftronFlutterPlugin PT_idToJSONString:resultDict]];
+
+    [self.plugin documentViewController:self pageChanged:[PdftronFlutterPlugin PT_idToJSONString:resultDict]];
 }
 
 -(NSString*)generateXfdfCommandWithAdded:(NSArray<PTAnnot*>*)added modified:(NSArray<PTAnnot*>*)modified removed:(NSArray<PTAnnot*>*)removed

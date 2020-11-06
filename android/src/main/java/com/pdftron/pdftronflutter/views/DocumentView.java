@@ -4,6 +4,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
@@ -12,19 +15,22 @@ import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.ToolManager;
-import com.pdftron.pdftronflutter.ViewActivityComponent;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import com.pdftron.pdftronflutter.helpers.ViewerComponent;
+import com.pdftron.pdftronflutter.helpers.ViewerImpl;
 
 import java.util.HashMap;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
-import static com.pdftron.pdftronflutter.PluginUtils.*;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleDocumentLoaded;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleLeadingNavButtonPressed;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOnDetach;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOpenDocError;
 
-public class DocumentView extends com.pdftron.pdf.controls.DocumentView implements ViewActivityComponent {
+public class DocumentView extends com.pdftron.pdf.controls.DocumentView implements ViewerComponent {
+
+    private ViewerImpl mImpl = new ViewerImpl(this);
 
     private ToolManagerBuilder mToolManagerBuilder;
     private ViewerConfig.Builder mBuilder;
@@ -40,16 +46,9 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     private EventChannel.EventSink sLeadingNavButtonPressedEventEmitter;
     private EventChannel.EventSink sPageChangedEventEmitter;
     private EventChannel.EventSink sZoomChangedEventEmitter;
-
     private MethodChannel.Result sFlutterLoadResult;
 
     private HashMap<Annot, Integer> mSelectedAnnots;
-
-    private ToolManager.AnnotationModificationListener sAnnotationModificationListener;
-    private ToolManager.PdfDocModificationListener sPdfDocModificationListener;
-    private ToolManager.AnnotationsSelectionListener sAnnotationsSelectionListener;
-    private PDFViewCtrl.PageChangeListener sPageChangeListener;
-    private PDFViewCtrl.OnCanvasSizeChangeListener sOnCanvasSizeChangeListener;
 
     public DocumentView(@NonNull Context context) {
         this(context, null);
@@ -126,16 +125,16 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
 
     @Override
     public void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-
         handleOnDetach(this);
+
+        super.onDetachedFromWindow();
     }
 
     @Override
     public void onNavButtonPressed() {
-        super.onNavButtonPressed();
+        handleLeadingNavButtonPressed(this);
 
-        handleNavButtonPressed(this);
+        super.onNavButtonPressed();
     }
 
     public void setExportAnnotationCommandEventEmitter(EventChannel.EventSink emitter) {
@@ -180,46 +179,6 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
 
     public void setFlutterLoadResult(MethodChannel.Result result) {
         sFlutterLoadResult = result;
-    }
-
-    public ToolManager.AnnotationModificationListener getAnnotationModificationListener() {
-        return sAnnotationModificationListener;
-    }
-
-    public ToolManager.PdfDocModificationListener getPdfDocModificationListener() {
-        return sPdfDocModificationListener;
-    }
-
-    public ToolManager.AnnotationsSelectionListener getAnnotationsSelectionListener() {
-        return sAnnotationsSelectionListener;
-    }
-
-    public PDFViewCtrl.PageChangeListener getPageChangeListener() {
-        return sPageChangeListener;
-    }
-
-    public PDFViewCtrl.OnCanvasSizeChangeListener getOnCanvasSizeChangeListener() {
-        return sOnCanvasSizeChangeListener;
-    }
-
-    public void setAnnotationModificationListener(ToolManager.AnnotationModificationListener listener) {
-        sAnnotationModificationListener = listener;
-    }
-
-    public void setPdfDocModificationListener(ToolManager.PdfDocModificationListener listener) {
-        sPdfDocModificationListener = listener;
-    }
-
-    public void setAnnotationsSelectionListener(ToolManager.AnnotationsSelectionListener listener) {
-        sAnnotationsSelectionListener = listener;
-    }
-
-    public void setPageChangeListener(PDFViewCtrl.PageChangeListener listener) {
-        sPageChangeListener = listener;
-    }
-
-    public void setOnCanvasSizeChangeListener(PDFViewCtrl.OnCanvasSizeChangeListener listener) {
-        sOnCanvasSizeChangeListener = listener;
     }
 
     public void setSelectedAnnots(HashMap<Annot, Integer> selectedAnnots) {
@@ -325,5 +284,11 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
             return getPdfViewCtrlTabFragment().getPdfDoc();
         }
         return null;
+    }
+
+    @NonNull
+    @Override
+    public ViewerImpl getImpl() {
+        return mImpl;
     }
 }

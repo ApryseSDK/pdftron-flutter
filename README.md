@@ -399,7 +399,7 @@ Event is raised when the document has errors when loading.
 ```dart
 var documentErrorCancel = startDocumentErrorListener((){
   print("flutter document loaded unsuccessfully");
-})
+});
 ```
 
 ### startAnnotationChangedListener
@@ -412,7 +412,7 @@ var annotChangedCancel = startAnnotationChangedListener((action, annotations)
   print("flutter annotation action: ${action}");
   for (Annot annot in annotations) {
     print("annotation has id: ${annot.id}");
-    print("annotation is in page: ${annot.pageNumber}")
+    print("annotation is in page: ${annot.pageNumber}");
   }
 });
 ```
@@ -429,7 +429,7 @@ var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects
     print("annotation is in page: ${annotWithRect.pageNumber}");
     print("annotation has width: ${annotWithRect.rect.width}");
   }
-})
+});
 
 ```
 
