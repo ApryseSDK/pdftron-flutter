@@ -19,7 +19,6 @@ import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.ToolManager;
-import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
@@ -35,6 +34,10 @@ import io.flutter.plugin.common.MethodChannel.Result;
 public class FlutterDocumentActivity extends DocumentActivity implements ViewerComponent {
 
     private ViewerImpl mImpl = new ViewerImpl(this);
+
+    private static boolean mAutoSaveEnabled;
+    private static boolean mUseStylusAsPen;
+    private static boolean mSignSignatureFieldWithStamps;
 
     private static FlutterDocumentActivity sCurrentActivity;
     private static AtomicReference<Result> sFlutterLoadResult = new AtomicReference<>();
@@ -57,17 +60,11 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         PDFViewCtrlConfig pdfViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(packageContext);
         PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(builder, toolManagerBuilder, pdfViewCtrlConfig, document, packageContext, configStr);
 
-        boolean showLeadingNavButton = configInfo.isShowLeadingNavButton();
-        @DrawableRes int leadingNavButtonIcon = Utils.getResourceDrawable(packageContext, configInfo.getLeadingNavButtonIcon());
-        if (showLeadingNavButton) {
-            if (leadingNavButtonIcon == 0) {
-                leadingNavButtonIcon = DEFAULT_NAV_ICON_ID;
-            }
-        } else {
-            leadingNavButtonIcon = 0;
-        }
+        mAutoSaveEnabled = configInfo.isAutoSaveEnabled();
+        mUseStylusAsPen = configInfo.isUseStylusAsPen();
+        mSignSignatureFieldWithStamps = configInfo.isSignSignatureFieldWithStamps();
 
-        openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build(), leadingNavButtonIcon);
+        openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build());
     }
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
@@ -209,6 +206,18 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         super.onOpenDocError();
 
         return PluginUtils.handleOpenDocError(this);
+    }
+
+    public boolean isAutoSaveEnabled() {
+        return mAutoSaveEnabled;
+    }
+
+    public boolean isUseStylusAsPen() {
+        return mUseStylusAsPen;
+    }
+
+    public boolean isSignSignatureFieldWithStamps() {
+        return mSignSignatureFieldWithStamps;
     }
 
     private void attachActivity() {

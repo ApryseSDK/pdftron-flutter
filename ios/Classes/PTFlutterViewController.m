@@ -16,10 +16,6 @@
         NSString *filePath = self.coordinatedDocument.fileURL.path;
         [self.plugin documentViewController:self documentLoadedFromFilePath:filePath];
     }
-
-    if (![self.toolManager isReadonly] && self.readOnly) {
-        self.toolManager.readonly = YES;
-    }
 }
 
 - (void)openDocumentWithURL:(NSURL *)url password:(NSString *)password
@@ -286,36 +282,41 @@
 
 - (void)initViewerSettings
 {
-    [self setReadOnly:NO];
-    [self setThumbnailViewEditingEnabled:YES];
 }
 
 - (void)applyViewerSettings
 {
-    [self applyReadOnly];
     
-    // Thumbnail editing enabled.
-    self.thumbnailsViewController.editingEnabled = self.thumbnailViewEditingEnabled;
 }
 
-- (void)applyReadOnly
+- (void)setAutoSaveEnabled:(BOOL)autoSaveEnabled
 {
-    // Enable readonly flag on tool manager *only* when not already readonly.
-    // If the document is being streamed or converted, we don't want to accidentally allow editing by
-    // disabling the readonly flag.
-    if (![self.toolManager isReadonly]) {
-        self.toolManager.readonly = self.readOnly;
+    self.automaticallySavesDocument = autoSaveEnabled;
+}
+
+- (void)setPageChangeOnTap:(BOOL)pageChangeOnTap
+{
+    self.changesPageOnTap = pageChangeOnTap;
+}
+
+- (void)setShowSavedSignatures:(BOOL)showSavedSignatures
+{
+    self.toolManager.showDefaultSignature = showSavedSignatures;
+}
+
+- (void)setUseStylusAsPen:(BOOL)useStylusAsPen
+{
+    // Use Apple Pencil as a pen
+    Class pencilTool = [PTFreeHandCreate class];
+    if (@available(iOS 13.1, *)) {
+        pencilTool = [PTPencilDrawingCreate class];
     }
-    
-    self.thumbnailsViewController.editingEnabled = !self.readOnly;
+    self.toolManager.pencilTool = useStylusAsPen ? pencilTool : [PTPanTool class];
 }
 
-- (void)setAnnotationAuthor:(NSString *)annotationAuthor {
-    self.toolManager.annotationAuthor = [annotationAuthor copy];
-}
-
-- (void)setContinuousAnnotationEditing:(BOOL)continuousAnnotationEditing {
-    self.toolManager.tool.backToPanToolAfterUse = !continuousAnnotationEditing;
+- (void)setSignSignatureFieldsWithStamps:(BOOL)signSignatureFieldsWithStamps
+{
+    self.toolManager.signatureAnnotationOptions.signSignatureFieldsWithStamps = signSignatureFieldsWithStamps;
 }
 
 #pragma mark - Other

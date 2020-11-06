@@ -9,12 +9,11 @@ static NSString * const PTDisabledToolsKey = @"disabledTools";
 static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
 static NSString * const PTCustomHeadersKey = @"customHeaders";
-static NSString * const PTLeadingNavButtonIconKey = @"leadingNavButtonIcon";
-static NSString * const PTShowLeadingNavButtonKey = @"showLeadingNavButton";
-static NSString * const PTReadOnlyKey = @"readOnly";
-static NSString * const PTThumbnailViewEditingEnabledKey = @"thumbnailViewEditingEnabled";
-static NSString * const PTAnnotationAuthorKey = @"annotationAuthor";
-static NSString * const PTContinuousAnnotationEditingKey = @"continuousAnnotationEditing";
+static NSString * const PTAutoSaveEnabledKey = @"autoSaveEnabled";
+static NSString * const PTPageChangeOnTapKey = @"pageChangeOnTap";
+static NSString * const PTShowSavedSignaturesKey = @"showSavedSignatures";
+static NSString * const PTUseStylusAsPenKey = @"useStylusAsPen";
+static NSString * const PTSignSignatureFieldWithStampsKey = @"signSignatureFieldWithStamps";
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";

@@ -40,6 +40,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     private ViewerConfig.Builder mBuilder;
     private String mCacheDir;
 
+    private boolean mAutoSaveEnabled;
+    private boolean mUseStylusAsPen;
+    private boolean mSignSignatureFieldWithStamps;
+
     private EventChannel.EventSink sExportAnnotationCommandEventEmitter;
     private EventChannel.EventSink sExportBookmarkEventEmitter;
     private EventChannel.EventSink sDocumentLoadedEventEmitter;
@@ -76,10 +80,12 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
         setDocumentUri(configInfo.getFileUri());
         setPassword(password);
         setCustomHeaders(configInfo.getCustomHeaderJson());
-        setShowNavIcon(configInfo.isShowLeadingNavButton());
-        setNavIconResName(configInfo.getLeadingNavButtonIcon());
         setViewerConfig(mBuilder.build());
         setFlutterLoadResult(result);
+
+        mAutoSaveEnabled = configInfo.isAutoSaveEnabled();
+        mUseStylusAsPen = configInfo.isUseStylusAsPen();
+        mSignSignatureFieldWithStamps = configInfo.isSignSignatureFieldWithStamps();
 
         ViewerBuilder viewerBuilder = ViewerBuilder.withUri(configInfo.getFileUri(), password)
                 .usingCustomHeaders(configInfo.getCustomHeaderJson())
@@ -168,6 +174,18 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
         handleOnDetach(this);
 
         super.onDetachedFromWindow();
+    }
+
+    public boolean isAutoSaveEnabled() {
+        return mAutoSaveEnabled;
+    }
+
+    public boolean isUseStylusAsPen() {
+        return mUseStylusAsPen;
+    }
+
+    public boolean isSignSignatureFieldWithStamps() {
+        return mSignSignatureFieldWithStamps;
     }
 
     public void setExportAnnotationCommandEventEmitter(EventChannel.EventSink emitter) {

@@ -15,14 +15,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL documentLoaded;
 
 // viewer options
-@property (nonatomic, assign) BOOL readOnly;
-@property (nonatomic, assign) BOOL thumbnailViewEditingEnabled;
 
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
 
-- (void)setAnnotationAuthor:(NSString *)annotationAuthor;
-- (void)setContinuousAnnotationEditing:(BOOL)continuousAnnotationEditing;
+- (void)setAutoSaveEnabled:(BOOL)autoSaveEnabled;
+- (void)setPageChangeOnTap:(BOOL)pageChangeOnTap;
+- (void)setShowSavedSignatures:(BOOL)showSavedSignatures;
+- (void)setUseStylusAsPen:(BOOL)useStylusAsPen;
+- (void)setSignSignatureFieldsWithStamps:(BOOL)signSignatureFieldsWithStamps;
 
 @end
 

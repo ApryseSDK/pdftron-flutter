@@ -65,12 +65,11 @@ public class PluginUtils {
     public static final String KEY_CONFIG_DISABLED_TOOLS = "disabledTools";
     public static final String KEY_CONFIG_MULTI_TAB_ENABLED = "multiTabEnabled";
     public static final String KEY_CONFIG_CUSTOM_HEADERS = "customHeaders";
-    public static final String KEY_CONFIG_LEADING_NAV_BUTTON_ICON = "leadingNavButtonIcon";
-    public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
-    public static final String KEY_CONFIG_READ_ONLY = "readOnly";
-    public static final String KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED = "thumbnailViewEditingEnabled";
-    public static final String KEY_CONFIG_ANNOTATION_AUTHOR = "annotationAuthor";
-    public static final String KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING = "continuousAnnotationEditing";
+    public static final String KEY_CONFIG_AUTO_SAVE_ENABLED = "autoSaveEnabled";
+    public static final String KEY_CONFIG_PAGE_CHANGE_ON_TAP = "pageChangeOnTap";
+    public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
+    public static final String KEY_CONFIG_USE_STYLUS_AS_PEN = "useStylusAsPen";
+    public static final String KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS = "signSignatureFieldWithStamps";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -193,14 +192,16 @@ public class PluginUtils {
     public static class ConfigInfo {
         private JSONObject customHeaderJson;
         private Uri fileUri;
-        private boolean showLeadingNavButton;
-        private String leadingNavButtonIcon;
+        private boolean autoSaveEnabled;
+        private boolean useStylusAsPen;
+        private boolean signSignatureFieldWithStamps;
 
         public ConfigInfo() {
             this.customHeaderJson = null;
             this.fileUri = null;
-            this.showLeadingNavButton = true;
-            this.leadingNavButtonIcon = "";
+            this.autoSaveEnabled = true;
+            this.useStylusAsPen = true;
+            this.signSignatureFieldWithStamps = false;
         }
 
         public void setCustomHeaderJson(JSONObject customHeaderJson) {
@@ -211,12 +212,16 @@ public class PluginUtils {
             this.fileUri = fileUri;
         }
 
-        public void setShowLeadingNavButton(boolean showLeadingNavButton) {
-            this.showLeadingNavButton = showLeadingNavButton;
+        public void setAutoSaveEnabled(boolean autoSaveEnabled) {
+            this.autoSaveEnabled = autoSaveEnabled;
         }
 
-        public void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
-            this.leadingNavButtonIcon = leadingNavButtonIcon;
+        public void setUseStylusAsPen(boolean useStylusAsPen) {
+            this.useStylusAsPen = useStylusAsPen;
+        }
+
+        public void setSignSignatureFieldWithStamps(boolean signSignatureFieldWithStamps) {
+            this.signSignatureFieldWithStamps = signSignatureFieldWithStamps;
         }
 
         public JSONObject getCustomHeaderJson() {
@@ -227,12 +232,16 @@ public class PluginUtils {
             return fileUri;
         }
 
-        public boolean isShowLeadingNavButton() {
-            return showLeadingNavButton;
+        public boolean isAutoSaveEnabled() {
+            return autoSaveEnabled;
         }
 
-        public String getLeadingNavButtonIcon() {
-            return leadingNavButtonIcon;
+        public boolean isUseStylusAsPen() {
+            return useStylusAsPen;
+        }
+
+        public boolean isSignSignatureFieldWithStamps() {
+            return signSignatureFieldWithStamps;
         }
     }
 
@@ -267,32 +276,25 @@ public class PluginUtils {
                     JSONObject customHeaderJson = configJson.getJSONObject(KEY_CONFIG_CUSTOM_HEADERS);
                     configInfo.setCustomHeaderJson(customHeaderJson);
                 }
-                if (!configJson.isNull(KEY_CONFIG_LEADING_NAV_BUTTON_ICON)) {
-                    String leadingNavButtonIcon = configJson.getString(KEY_CONFIG_LEADING_NAV_BUTTON_ICON);
-                    configInfo.setLeadingNavButtonIcon(leadingNavButtonIcon);
+                if (!configJson.isNull(KEY_CONFIG_AUTO_SAVE_ENABLED)) {
+                    boolean autoSaveEnabled = configJson.getBoolean(KEY_CONFIG_AUTO_SAVE_ENABLED);
+                    configInfo.setAutoSaveEnabled(autoSaveEnabled);
                 }
-                if (!configJson.isNull(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON)) {
-                    boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
-                    configInfo.setShowLeadingNavButton(showLeadingNavButton);
+                if (!configJson.isNull(KEY_CONFIG_PAGE_CHANGE_ON_TAP)) {
+                    boolean pageChangeOnTap = configJson.getBoolean(KEY_CONFIG_PAGE_CHANGE_ON_TAP);
+                    PdfViewCtrlSettingsManager.setAllowPageChangeOnTap(context, pageChangeOnTap);
                 }
-                if (!configJson.isNull(KEY_CONFIG_READ_ONLY)) {
-                    boolean readOnly = configJson.getBoolean(KEY_CONFIG_READ_ONLY);
-                    builder.documentEditingEnabled(!readOnly);
+                if (!configJson.isNull(KEY_CONFIG_SHOW_SAVED_SIGNATURES)) {
+                    boolean showSavedSignatures = configJson.getBoolean(KEY_CONFIG_SHOW_SAVED_SIGNATURES);
+                    toolManagerBuilder = toolManagerBuilder.setShowSavedSignatures(showSavedSignatures);
                 }
-                if (!configJson.isNull(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED)) {
-                    boolean thumbnailViewEditingEnabled = configJson.getBoolean(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED);
-                    builder.thumbnailViewEditingEnabled(thumbnailViewEditingEnabled);
+                if (!configJson.isNull(KEY_CONFIG_USE_STYLUS_AS_PEN)) {
+                    boolean useStylusAsPen = configJson.getBoolean(KEY_CONFIG_USE_STYLUS_AS_PEN);
+                    configInfo.setUseStylusAsPen(useStylusAsPen);
                 }
-                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_AUTHOR)) {
-                    String annotationAuthor = configJson.getString(KEY_CONFIG_ANNOTATION_AUTHOR);
-                    if (!annotationAuthor.isEmpty()) {
-                        PdfViewCtrlSettingsManager.updateAuthorName(context, annotationAuthor);
-                        PdfViewCtrlSettingsManager.setAnnotListShowAuthor(context, true);
-                    }
-                }
-                if (!configJson.isNull(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING)) {
-                    boolean continuousAnnotationEditing = configJson.getBoolean(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING);
-                    PdfViewCtrlSettingsManager.setContinuousAnnotationEdit(context, continuousAnnotationEditing);
+                if (!configJson.isNull(KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS)) {
+                    boolean signSignatureFieldWithStamps = configJson.getBoolean(KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS);
+                    configInfo.setSignSignatureFieldWithStamps(signSignatureFieldWithStamps);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -962,10 +964,10 @@ public class PluginUtils {
 
     private static void saveDocument(MethodChannel.Result result, ViewerComponent component) {
         PdfViewCtrlTabFragment pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
-        if (pdfViewCtrlTabFragment != null) {
+    if (pdfViewCtrlTabFragment != null) {
             pdfViewCtrlTabFragment.setSavingEnabled(true);
             pdfViewCtrlTabFragment.save(false, true, true);
-            // TODO if add auto save flag: getPdfViewCtrlTabFragment().setSavingEnabled(mAutoSaveEnabled);
+            pdfViewCtrlTabFragment.setSavingEnabled(component.isAutoSaveEnabled());
             result.success(pdfViewCtrlTabFragment.getFilePath());
             return;
         }
@@ -1030,6 +1032,17 @@ public class PluginUtils {
     // Events
 
     public static void handleDocumentLoaded(ViewerComponent component) {
+        if (component.getPdfViewCtrlTabFragment() != null) {
+            if (!component.isAutoSaveEnabled()) {
+                component.getPdfViewCtrlTabFragment().setSavingEnabled(component.isAutoSaveEnabled());
+            }
+        }
+
+        if (component.getToolManager() != null) {
+            component.getToolManager().setStylusAsPen(component.isUseStylusAsPen());
+            component.getToolManager().setSignSignatureFieldsWithStamps(component.isSignSignatureFieldWithStamps());
+        }
+
         addListeners(component);
 
         MethodChannel.Result result = component.getFlutterLoadResult();

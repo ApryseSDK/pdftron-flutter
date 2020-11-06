@@ -299,12 +299,12 @@ disabledElements | array of `Buttons` constants | empty | Buttons to be disabled
 disabledTools | array of `Tools` constants | empty | Tools to be disabled for the viewer
 multiTabEnabled | boolean | false | enable document multi-tab mode
 customerHeaders | map<string, string> | empty | custom headers to use with HTTP/HTTPS requests
-showLeadingNavButton | boolean | true | Whether to show the leading navigation button
-leadingNavButtonIcon | string | | the icon path to the navigation button, if `showLeadingNavButton` is true
-readOnly | boolean | false | whether the document is read-only
-thumbnailViewEditingEnabled | boolean | true | whether use could modify through thumbnail view
-annotationAuthor | string | | the author name for all annotations in the current document
-continuousAnnotationEditing | boolean | false | whether annotations could be continuously edited
+autoSaveEnabled | boolean | true | Enable auto-saving annotations for local files
+pageChangeOnTap | boolean | true | Enable tapping to change pages in horizontal viewing mode 
+showSavedSignatures | boolean | true | Enable showing and reusing of saved signatures
+useStylusAsPen | boolean | true | If true, stylus will act as a pen in pan mode, otherwise it will act as finger
+signSignatureFieldWithStamps | boolean | false | If true, signature field will be signed with image stamp. This is useful if you are saving XFDF to remote source
+
 
 ```dart
 var disabledElements = [Buttons.shareButton, Buttons.searchButton];
@@ -314,12 +314,11 @@ config.disabledElements = disabledElements;
 config.disabledTools = disabledTools;
 config.multiTabEnabled = false;
 config.customHeaders = {'headerName': 'headerValue'};
-config.showLeadingNavButton = true;
-config.leadingNavButtonIcon = Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp';
-config.readOnly = false;
-config.thumbnailViewEditingEnabled = false;
-config.annotationAuthor = "PDFTron";
-config.continuousAnnotationEditing = true;
+config.autoSaveEnabled = true;
+config.pageChangeOnTap = true;
+config.showSavedSignatures = true;
+config.useStylusAsPen = false;
+config.signSignatureFieldWithStamps = true;
 await PdftronFlutter.openDocument(_document, config: config);
 ```
 ### PdftronFlutter.importAnnotations(String)

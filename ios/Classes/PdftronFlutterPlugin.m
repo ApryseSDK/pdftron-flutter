@@ -178,52 +178,39 @@
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
                     // Handled by tabbed config.
                 }
-                else if ([key isEqualToString:PTShowLeadingNavButtonKey]) {
+                else if ([key isEqualToString:PTAutoSaveEnabledKey]) {
                     
-                    NSNumber* showLeadingNavButtonNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowLeadingNavButtonKey class:[NSNumber class] error:&error];
-                    
-                    if (!error && showLeadingNavButtonNumber) {
-                        showLeadingNavButton = [showLeadingNavButtonNumber boolValue];
+                    NSNumber* autoSaveEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAutoSaveEnabledKey class:[NSNumber class] error:&error];
+                    if (!error && autoSaveEnabledNumber) {
+                        [(PTFlutterViewController*)documentViewController setAutoSaveEnabled:[autoSaveEnabledNumber boolValue]];
                     }
                 }
-                else if ([key isEqualToString:PTLeadingNavButtonIconKey]) {
+                else if ([key isEqualToString:PTPageChangeOnTapKey]) {
                     
-                    NSString* navIcon = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLeadingNavButtonIconKey class:[NSString class] error:&error];
-                    
-                    if (!error && navIcon) {
-                        leadingNavButtonIcon = navIcon;
+                    NSNumber* pageChangeOnTapNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTPageChangeOnTapKey class:[NSNumber class] error:&error];
+                    if (!error && pageChangeOnTapNumber) {
+                        [(PTFlutterViewController*)documentViewController setPageChangeOnTap:[pageChangeOnTapNumber boolValue]];
                     }
                 }
-                else if ([key isEqualToString:PTReadOnlyKey]) {
+                else if ([key isEqualToString:PTShowSavedSignaturesKey]) {
                     
-                    NSNumber* readOnlyNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTReadOnlyKey class:[NSNumber class] error:&error];
-                    
-                    if (!error && readOnlyNumber) {
-                        [(PTFlutterViewController *)documentViewController setReadOnly:[readOnlyNumber boolValue]];
+                    NSNumber* showSavedSignatureNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowSavedSignaturesKey class:[NSNumber class] error:&error];
+                    if (!error && showSavedSignatureNumber) {
+                        [(PTFlutterViewController*)documentViewController setShowSavedSignatures:[showSavedSignatureNumber boolValue]];
                     }
                 }
-                else if ([key isEqualToString:PTThumbnailViewEditingEnabledKey]) {
+                else if ([key isEqualToString:PTUseStylusAsPenKey]) {
                     
-                    NSNumber* enabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTThumbnailViewEditingEnabledKey class:[NSNumber class] error:&error];
-                    
-                    if (!error && enabledNumber) {
-                        [(PTFlutterViewController *)documentViewController setThumbnailViewEditingEnabled:[enabledNumber boolValue]];
+                    NSNumber* useStylusAsPenNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUseStylusAsPenKey class:[NSNumber class] error:&error];
+                    if (!error && useStylusAsPenNumber) {
+                        [(PTFlutterViewController*)documentViewController setUseStylusAsPen:[useStylusAsPenNumber boolValue]];
                     }
                 }
-                else if ([key isEqualToString:PTAnnotationAuthorKey]) {
+                else if ([key isEqualToString:PTSignSignatureFieldWithStampsKey]) {
                     
-                    NSString* annotationAuthor = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationAuthorKey class:[NSString class] error:&error];
-                    
-                    if (!error && annotationAuthor) {
-                        [(PTFlutterViewController *)documentViewController setAnnotationAuthor:annotationAuthor];
-                    }
-                }
-                else if ([key isEqualToString:PTContinuousAnnotationEditingKey]) {
-                    
-                    NSNumber* contEditingNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTContinuousAnnotationEditingKey class:[NSNumber class] error:&error];
-                    
-                    if (!error && contEditingNumber) {
-                        [(PTFlutterViewController *)documentViewController setContinuousAnnotationEditing:[contEditingNumber boolValue]];
+                    NSNumber* signSignatureFieldsWithStampsNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignSignatureFieldWithStampsKey class:[NSNumber class] error:&error];
+                    if (!error && signSignatureFieldsWithStampsNumber) {
+                        [(PTFlutterViewController*)documentViewController setSignSignatureFieldsWithStamps:[signSignatureFieldsWithStampsNumber boolValue]];
                     }
                 }
                 else
