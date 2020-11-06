@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
     }
 
     try {
-      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
+      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
     } on PlatformException catch (e) {
       print("Failed to importBookmarkJson '${e.message}'.");
     }

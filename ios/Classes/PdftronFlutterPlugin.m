@@ -540,6 +540,30 @@
     }
 }
 
+-(void)documentViewController:(PTDocumentViewController*)docVC annotationsChangedWithActionString:(NSString*)annotationsWithActionString
+{
+    if(self.annotationChangedEventSink != nil)
+    {
+        self.annotationChangedEventSink(annotationsWithActionString);
+    }
+}
+
+-(void)documentViewController:(PTDocumentViewController*)docVC annotationsSelected:(NSString*)annotationsString
+{
+    if(self.annotationsSelectedEventSink != nil)
+    {
+        self.annotationsSelectedEventSink(annotationsString);
+    }
+}
+
+-(void)documentViewController:(PTDocumentViewController*)docVC formFieldValueChanged:(NSString*)fieldsString
+{
+    if(self.formFieldValueChangedEventSink != nil)
+    {
+        self.formFieldValueChangedEventSink(fieldsString);
+    }
+}
+
 -(void)documentViewController:(PTDocumentViewController *)docVC leadingNavButtonClicked:(nullable NSString *)nav
 {
     if (self.leadingNavButtonPressedEventSink != nil)
