@@ -131,7 +131,7 @@
         return;
     }
     
-    [(PTFlutterViewController*)documentViewController initViewerSettings];
+    PTFlutterViewController* flutterViewController = (PTFlutterViewController*)documentViewController;
     
     //convert from json to dict
     id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
@@ -183,7 +183,7 @@
                     NSString* fitMode = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTFitModeKey class:[NSString class] error:&error];
                     
                     if (!error && fitMode) {
-                        [(PTFlutterViewController *)documentViewController setFitMode:fitMode];
+                        flutterViewController.fitMode = fitMode;
                     }
                 }
                 else if ([key isEqualToString:PTLayoutModeKey]) {
@@ -191,7 +191,7 @@
                     NSString* layoutMode = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLayoutModeKey class:[NSString class] error:&error];
                     
                     if (!error && layoutMode) {
-                        [(PTFlutterViewController *)documentViewController setLayoutMode:layoutMode];
+                        flutterViewController.layoutMode = layoutMode;
                     }
                 }
                 else if ([key isEqualToString:PTInitialPageNumberKey]) {
@@ -199,7 +199,7 @@
                     NSNumber* initialPageNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTInitialPageNumberKey class:[NSNumber class] error:&error];
                     
                     if (!error && initialPageNumber) {
-                        [(PTFlutterViewController *)documentViewController setInitialPageNumber:[initialPageNumber intValue]];
+                        flutterViewController.initialPageNumber = [initialPageNumber intValue];
                     }
                 }
                 else if ([key isEqualToString:PTIsBase64Key]) {
@@ -207,7 +207,7 @@
                     NSNumber* isBase64 = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTIsBase64Key class:[NSNumber class] error:&error];
                     
                     if (!error && isBase64) {
-                        [(PTFlutterViewController *)documentViewController setIsBase64:[isBase64 boolValue]];
+                        flutterViewController.base64 = [isBase64 boolValue];
                     }
                 }
                 else
@@ -232,7 +232,7 @@
         [self handleNavIconDisplay:leadingNavButtonIcon documentViewController:documentViewController];
     }
     
-    [(PTFlutterViewController *)documentViewController applyViewerSettings];
+    [flutterViewController applyViewerSettings];
 }
 
 + (id)getConfigValue:(NSDictionary*)configDict configKey:(NSString*)configKey class:(Class)class error:(NSError**)error
@@ -552,7 +552,7 @@
     }
 }
 
--(void)documentViewController:(PTDocumentViewController*)docVC documentLoadedFromFilePath:(NSString*)filePath
+-(void)documentViewController:(PTDocumentViewController*)docVC documentLoadedFromFilePath:(nullable NSString*)filePath
 {
     if(self.documentLoadedEventSink != nil)
     {

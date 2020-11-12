@@ -19,8 +19,12 @@
         
         [self applyLayoutMode];
         
-        NSString *filePath = self.coordinatedDocument.fileURL.path;
-        [self.plugin documentViewController:self documentLoadedFromFilePath:filePath];
+        if (self.base64) {
+            NSString *filePath = self.coordinatedDocument.fileURL.path;
+            [self.plugin documentViewController:self documentLoadedFromFilePath:filePath];
+        } else {
+            [self.plugin documentViewController:self documentLoadedFromFilePath:nil];
+        }
     }
 }
 
@@ -286,15 +290,34 @@
 
 #pragma mark - Viewer Settings
 
-- (void)initViewerSettings
-{
-    // left for other configs
-}
 
 - (void)applyViewerSettings
 {
-    // LayoutMode
+    // Fit mode.
+    [self applyFitMode];
+    
+    // Layout mode.
     [self applyLayoutMode];
+}
+
+- (void)applyFitMode
+{
+    if ([self.fitMode isEqualToString:PTFitPageKey]) {
+        [self.pdfViewCtrl SetPageViewMode:e_trn_fit_page];
+        [self.pdfViewCtrl SetPageRefViewMode:e_trn_fit_page];
+    }
+    else if ([self.fitMode isEqualToString:PTFitWidthKey]) {
+        [self.pdfViewCtrl SetPageViewMode:e_trn_fit_width];
+        [self.pdfViewCtrl SetPageRefViewMode:e_trn_fit_width];
+    }
+    else if ([self.fitMode isEqualToString:PTFitHeightKey]) {
+        [self.pdfViewCtrl SetPageViewMode:e_trn_fit_height];
+        [self.pdfViewCtrl SetPageRefViewMode:e_trn_fit_height];
+    }
+    else if ([self.fitMode isEqualToString:PTZoomKey]) {
+        [self.pdfViewCtrl SetPageViewMode:e_trn_zoom];
+        [self.pdfViewCtrl SetPageRefViewMode:e_trn_zoom];
+    }
 }
 
 - (void)applyLayoutMode
@@ -316,26 +339,6 @@
     }
     else if ([self.layoutMode isEqualToString:PTFacingCoverContinuousKey]) {
         [self.pdfViewCtrl SetPagePresentationMode:e_trn_facing_continuous_cover];
-    }
-}
-
-- (void)setFitMode:(NSString*)fitMode
-{
-    if ([fitMode isEqualToString:PTFitPageKey]) {
-        [self.pdfViewCtrl SetPageViewMode:e_trn_fit_page];
-        [self.pdfViewCtrl SetPageRefViewMode:e_trn_fit_page];
-    }
-    else if ([fitMode isEqualToString:PTFitWidthKey]) {
-        [self.pdfViewCtrl SetPageViewMode:e_trn_fit_width];
-        [self.pdfViewCtrl SetPageRefViewMode:e_trn_fit_width];
-    }
-    else if ([fitMode isEqualToString:PTFitHeightKey]) {
-        [self.pdfViewCtrl SetPageViewMode:e_trn_fit_height];
-        [self.pdfViewCtrl SetPageRefViewMode:e_trn_fit_height];
-    }
-    else if ([fitMode isEqualToString:PTZoomKey]) {
-        [self.pdfViewCtrl SetPageViewMode:e_trn_zoom];
-        [self.pdfViewCtrl SetPageRefViewMode:e_trn_zoom];
     }
 }
 

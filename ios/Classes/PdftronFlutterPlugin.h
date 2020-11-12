@@ -182,7 +182,7 @@ typedef enum {
 
 -(void)documentViewController:(PTDocumentViewController*)docVC bookmarksDidChange:(NSString*)bookmarkJson;
 -(void)documentViewController:(PTDocumentViewController*)docVC annotationsAsXFDFCommand:(NSString*)xfdfCommand;
--(void)documentViewController:(PTDocumentViewController*)docVC documentLoadedFromFilePath:(NSString*)filePath;
+-(void)documentViewController:(PTDocumentViewController*)docVC documentLoadedFromFilePath:(nullable NSString*)filePath;
 -(void)documentViewController:(PTDocumentViewController*)docVC documentError:(nullable NSError*)error;
 -(void)documentViewController:(PTDocumentViewController*)docVC annotationsChangedWithActionString:(NSString*)actionString;
 -(void)documentViewController:(PTDocumentViewController*)docVC annotationsSelected:(NSString*)annotations;

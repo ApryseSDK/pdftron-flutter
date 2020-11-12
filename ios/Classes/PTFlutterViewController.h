@@ -15,11 +15,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL documentLoaded;
 
 // viewer options
-@property (nonatomic, copy) NSString* layoutMode;
+@property (nonatomic, copy, nullable) NSString* layoutMode;
+@property (nonatomic, copy, nullable) NSString* fitMode;
 @property (nonatomic, assign) int initialPageNumber;
-@property (nonatomic, assign) BOOL isBase64;
+@property (nonatomic, assign, getter=isBase64) BOOL base64;
 
-- (void)initViewerSettings;
 - (void)applyViewerSettings;
 
 - (void)setFitMode:(NSString*)fitMode;
