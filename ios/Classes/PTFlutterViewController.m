@@ -7,7 +7,9 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    self.thumbnailSliderEnabled = self.thumbnailSliderOn;
+    
+    // bottomToolBar / thumbnailSlider enabling
+    self.thumbnailSliderEnabled = self.bottomToolbarOn;
 }
 
 - (void)viewWillLayoutSubviews
@@ -288,15 +290,18 @@
 
 - (void)initViewerSettings
 {
+    _selectAnnotationAfterCreation = YES;
+    _bottomToolbarOn = YES;
+    _pageIndicatorOn = YES;
 }
 
 - (void)applyViewerSettings
 {
-}
-
-- (void)setSelectAnnotationAfterCreation:(BOOL)selectAnnotationAfterCreation
-{
-    self.toolManager.selectAnnotationAfterCreation = selectAnnotationAfterCreation;
+    // Select after creation.
+    self.toolManager.selectAnnotationAfterCreation = self.selectAnnotationAfterCreation;
+    
+    // Page indicator.
+    self.pageIndicatorEnabled = self.pageIndicatorOn;
 }
 
 #pragma mark - Other

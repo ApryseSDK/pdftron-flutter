@@ -131,7 +131,9 @@
         return;
     }
     
-    [(PTFlutterViewController*)documentViewController initViewerSettings];
+    PTFlutterViewController* flutterViewController = (PTFlutterViewController*)documentViewController;
+    
+    [flutterViewController initViewerSettings];
     
     //convert from json to dict
     id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
@@ -183,7 +185,7 @@
                     NSNumber* selectAnnotAfterCreationNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSelectAnnotationAfterCreationKey class:[NSNumber class] error:&error];
                     
                     if (!error && selectAnnotAfterCreationNumber) {
-                        [(PTFlutterViewController *)documentViewController setSelectAnnotationAfterCreation:[selectAnnotAfterCreationNumber boolValue]];
+                        flutterViewController.selectAnnotationAfterCreation = [selectAnnotAfterCreationNumber boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTBottomToolbarEnabledKey]) {
@@ -191,7 +193,7 @@
                     NSNumber* bottomToolbarEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTBottomToolbarEnabledKey class:[NSNumber class] error:&error];
                     
                     if (!error && bottomToolbarEnabledNumber) {
-                        [(PTFlutterViewController *)documentViewController setThumbnailSliderOn:[bottomToolbarEnabledNumber boolValue]];
+                        flutterViewController.bottomToolbarOn = [bottomToolbarEnabledNumber boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTPageIndicatorEnabledKey]) {
@@ -199,7 +201,7 @@
                     NSNumber* pageIndicatorEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTPageIndicatorEnabledKey class:[NSNumber class] error:&error];
                     
                     if (!error && pageIndicatorEnabledNumber) {
-                        [(PTFlutterViewController *)documentViewController setPageIndicatorEnabled:[pageIndicatorEnabledNumber boolValue]];
+                        flutterViewController.pageIndicatorOn = [pageIndicatorEnabledNumber boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTFollowSystemDarkModeKey]) {
@@ -227,7 +229,7 @@
         [self handleNavIconDisplay:leadingNavButtonIcon documentViewController:documentViewController];
     }
     
-    [(PTFlutterViewController *)documentViewController applyViewerSettings];
+    [flutterViewController applyViewerSettings];
 }
 
 + (id)getConfigValue:(NSDictionary*)configDict configKey:(NSString*)configKey class:(Class)class error:(NSError**)error
