@@ -131,13 +131,12 @@
         return;
     }
     
-    [(PTFlutterViewController*)documentViewController initViewerSettings];
+    PTFlutterViewController* flutterViewController = (PTFlutterViewController*)documentViewController;
+    
+    [flutterViewController initViewerSettings];
     
     //convert from json to dict
     id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
-    
-    bool showLeadingNavButton = NO;
-    NSString* leadingNavButtonIcon;
     
     if (![foundationObject isKindOfClass:[NSNull class]]) {
         
@@ -183,7 +182,7 @@
                     NSNumber* showLeadingNavButtonNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowLeadingNavButtonKey class:[NSNumber class] error:&error];
                     
                     if (!error && showLeadingNavButtonNumber) {
-                        showLeadingNavButton = [showLeadingNavButtonNumber boolValue];
+                        flutterViewController.showNavButton = [showLeadingNavButtonNumber boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTLeadingNavButtonIconKey]) {
@@ -191,7 +190,7 @@
                     NSString* navIcon = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLeadingNavButtonIconKey class:[NSString class] error:&error];
                     
                     if (!error && navIcon) {
-                        leadingNavButtonIcon = navIcon;
+                        flutterViewController.navButtonPath = navIcon;
                     }
                 }
                 else if ([key isEqualToString:PTReadOnlyKey]) {
@@ -199,7 +198,7 @@
                     NSNumber* readOnlyNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTReadOnlyKey class:[NSNumber class] error:&error];
                     
                     if (!error && readOnlyNumber) {
-                        [(PTFlutterViewController *)documentViewController setReadOnly:[readOnlyNumber boolValue]];
+                        flutterViewController.readOnly = [readOnlyNumber boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTThumbnailViewEditingEnabledKey]) {
@@ -207,7 +206,7 @@
                     NSNumber* enabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTThumbnailViewEditingEnabledKey class:[NSNumber class] error:&error];
                     
                     if (!error && enabledNumber) {
-                        [(PTFlutterViewController *)documentViewController setThumbnailViewEditingEnabled:[enabledNumber boolValue]];
+                        flutterViewController.thumbnailViewEditingEnabled = [enabledNumber boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTAnnotationAuthorKey]) {
@@ -215,7 +214,7 @@
                     NSString* annotationAuthor = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationAuthorKey class:[NSString class] error:&error];
                     
                     if (!error && annotationAuthor) {
-                        [(PTFlutterViewController *)documentViewController setAnnotationAuthor:annotationAuthor];
+                        flutterViewController.annotationAuthor = annotationAuthor;
                     }
                 }
                 else if ([key isEqualToString:PTContinuousAnnotationEditingKey]) {
@@ -223,7 +222,7 @@
                     NSNumber* contEditingNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTContinuousAnnotationEditingKey class:[NSNumber class] error:&error];
                     
                     if (!error && contEditingNumber) {
-                        [(PTFlutterViewController *)documentViewController setContinuousAnnotationEditing:[contEditingNumber boolValue]];
+                        flutterViewController.continuousAnnotationEditing = [contEditingNumber boolValue];
                     }
                 }
                 else
@@ -244,11 +243,7 @@
         
     }
     
-    if (showLeadingNavButton) {
-        [self handleNavIconDisplay:leadingNavButtonIcon documentViewController:documentViewController];
-    }
-    
-    [(PTFlutterViewController *)documentViewController applyViewerSettings];
+    [flutterViewController applyViewerSettings];
 }
 
 + (id)getConfigValue:(NSDictionary*)configDict configKey:(NSString*)configKey class:(Class)class error:(NSError**)error
@@ -258,7 +253,7 @@
     if (![configResult isKindOfClass:[NSNull class]]) {
         if (![configResult isKindOfClass:class]) {
             NSString* errorString = [NSString stringWithFormat:@"config %@ is not in expected %@ format.", configKey, class];
-            *error = [NSError errorWithDomain:@"com.flutter.pdftron" code:NSFormattingError userInfo:@{@"message": errorString}];
+            *error = [NSError errorWithDomain:@"com.flutter.pdftron" code:NSFormattingError userInfo:@{NSLocalizedDescriptionKey: errorString}];
         }
         return configResult;
     }
@@ -428,24 +423,6 @@
     
     [self disableTools:elementsToDisable documentViewController:documentViewController];
 }
-
-+ (void)handleNavIconDisplay:(NSString *)leadingNavButtonIcon documentViewController:(PTDocumentViewController *)docVC
-{
-    if (leadingNavButtonIcon) {
-        UIImage *navImage = [UIImage imageNamed:leadingNavButtonIcon];
-        if (navImage) {
-            UIBarButtonItem *navButton = [[UIBarButtonItem alloc] initWithImage:navImage
-                                                                          style:UIBarButtonItemStylePlain
-                                                                         target:(PTFlutterViewController*)docVC
-                                                                         action:@selector(topLeftButtonPressed:)];
-            docVC.navigationItem.leftBarButtonItem = navButton;
-            return;
-        }
-    }
-    
-    docVC.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:(PTFlutterViewController*)docVC action:@selector(topLeftButtonPressed:)];
-}
-
 
 #pragma mark - PTTabbedDocumentViewControllerDelegate
 

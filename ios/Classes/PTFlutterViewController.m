@@ -2,6 +2,17 @@
 #import "PTFlutterViewController.h"
 #import "DocumentViewFactory.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
+@interface PTFlutterViewController()
+
+// a check flag for thumbnailViewEditingEnabled
+@property (nonatomic, assign) BOOL thumbnailViewEditingEnabledHasBeenSet;
+
+@end
+
+NS_ASSUME_NONNULL_END
+
 @implementation PTFlutterViewController
 
 - (void)viewWillLayoutSubviews
@@ -286,8 +297,12 @@
 
 - (void)initViewerSettings
 {
-    [self setReadOnly:NO];
-    [self setThumbnailViewEditingEnabled:YES];
+    _readOnly = NO;
+    _thumbnailViewEditingEnabled = YES;
+    _thumbnailViewEditingEnabledHasBeenSet = NO;
+    
+    _showNavButton = YES;
+    _continuousAnnotationEditing = NO;
 }
 
 - (void)applyViewerSettings
@@ -295,7 +310,18 @@
     [self applyReadOnly];
     
     // Thumbnail editing enabled.
-    self.thumbnailsViewController.editingEnabled = self.thumbnailViewEditingEnabled;
+    if (self.thumbnailViewEditingEnabledHasBeenSet) {
+        self.thumbnailsViewController.editingEnabled = self.thumbnailViewEditingEnabled;
+    }
+    
+    // Continuous annotation editing.
+    self.toolManager.tool.backToPanToolAfterUse = !self.continuousAnnotationEditing;
+    
+    // Annotation author.
+    self.toolManager.annotationAuthor = self.annotationAuthor;
+    
+    // nav icon
+    [self applyNavIcon];
 }
 
 - (void)applyReadOnly
@@ -310,12 +336,27 @@
     self.thumbnailsViewController.editingEnabled = !self.readOnly;
 }
 
-- (void)setAnnotationAuthor:(NSString *)annotationAuthor {
-    self.toolManager.annotationAuthor = [annotationAuthor copy];
+- (void)applyNavIcon
+{
+    if (self.showNavButton) {
+        UIImage *navImage = [UIImage imageNamed:self.navButtonPath];
+        UIBarButtonItem *navButton;
+        if (navImage == nil) {
+            navButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
+        } else {
+            navButton = [[UIBarButtonItem alloc] initWithImage:navImage
+                                                         style:UIBarButtonItemStylePlain
+                                                        target:self
+                                                        action:@selector(topLeftButtonPressed:)];
+        }
+        self.navigationItem.leftBarButtonItem = navButton;
+    }
 }
 
-- (void)setContinuousAnnotationEditing:(BOOL)continuousAnnotationEditing {
-    self.toolManager.tool.backToPanToolAfterUse = !continuousAnnotationEditing;
+- (void)setThumbnailViewEditingEnabled:(BOOL)thumbnailViewEditingEnabled
+{
+    _thumbnailViewEditingEnabled = thumbnailViewEditingEnabled;
+    self.thumbnailViewEditingEnabledHasBeenSet = YES;
 }
 
 #pragma mark - Other
