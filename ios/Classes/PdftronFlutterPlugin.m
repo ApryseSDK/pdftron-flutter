@@ -131,7 +131,8 @@
         return;
     }
     
-    [(PTFlutterViewController*)documentViewController initViewerSettings];
+    PTFlutterViewController* flutterViewController = (PTFlutterViewController*)documentViewController;
+    [flutterViewController initViewerSettings];
     
     //convert from json to dict
     id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
@@ -182,35 +183,35 @@
                     
                     NSNumber* autoSaveEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAutoSaveEnabledKey class:[NSNumber class] error:&error];
                     if (!error && autoSaveEnabledNumber) {
-                        [(PTFlutterViewController*)documentViewController setAutoSaveEnabled:[autoSaveEnabledNumber boolValue]];
+                        flutterViewController.autoSaveEnabled = [autoSaveEnabledNumber boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTPageChangeOnTapKey]) {
                     
                     NSNumber* pageChangeOnTapNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTPageChangeOnTapKey class:[NSNumber class] error:&error];
                     if (!error && pageChangeOnTapNumber) {
-                        [(PTFlutterViewController*)documentViewController setPageChangeOnTap:[pageChangeOnTapNumber boolValue]];
+                        flutterViewController.pageChangeOnTap = [pageChangeOnTapNumber boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTShowSavedSignaturesKey]) {
                     
                     NSNumber* showSavedSignatureNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowSavedSignaturesKey class:[NSNumber class] error:&error];
                     if (!error && showSavedSignatureNumber) {
-                        [(PTFlutterViewController*)documentViewController setShowSavedSignatures:[showSavedSignatureNumber boolValue]];
+                        flutterViewController.showSavedSignatures = [showSavedSignatureNumber boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTUseStylusAsPenKey]) {
                     
                     NSNumber* useStylusAsPenNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUseStylusAsPenKey class:[NSNumber class] error:&error];
                     if (!error && useStylusAsPenNumber) {
-                        [(PTFlutterViewController*)documentViewController setUseStylusAsPen:[useStylusAsPenNumber boolValue]];
+                        flutterViewController.useStylusAsPen = [useStylusAsPenNumber boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTSignSignatureFieldWithStampsKey]) {
                     
                     NSNumber* signSignatureFieldsWithStampsNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignSignatureFieldWithStampsKey class:[NSNumber class] error:&error];
                     if (!error && signSignatureFieldsWithStampsNumber) {
-                        [(PTFlutterViewController*)documentViewController setSignSignatureFieldsWithStamps:[signSignatureFieldsWithStampsNumber boolValue]];
+                        flutterViewController.signSignatureFieldsWithStamps = [signSignatureFieldsWithStampsNumber boolValue];
                     }
                 }
                 else
@@ -235,7 +236,7 @@
         [self handleNavIconDisplay:leadingNavButtonIcon documentViewController:documentViewController];
     }
     
-    [(PTFlutterViewController *)documentViewController applyViewerSettings];
+    [flutterViewController applyViewerSettings];
 }
 
 + (id)getConfigValue:(NSDictionary*)configDict configKey:(NSString*)configKey class:(Class)class error:(NSError**)error

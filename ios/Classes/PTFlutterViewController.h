@@ -16,14 +16,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 // viewer options
 
+@property (nonatomic, assign) BOOL autoSaveEnabled;
+@property (nonatomic, assign) BOOL pageChangeOnTap;
+@property (nonatomic, assign) BOOL showSavedSignatures;
+@property (nonatomic, assign) BOOL useStylusAsPen;
+@property (nonatomic, assign) BOOL signSignatureFieldsWithStamps;
+
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
-
-- (void)setAutoSaveEnabled:(BOOL)autoSaveEnabled;
-- (void)setPageChangeOnTap:(BOOL)pageChangeOnTap;
-- (void)setShowSavedSignatures:(BOOL)showSavedSignatures;
-- (void)setUseStylusAsPen:(BOOL)useStylusAsPen;
-- (void)setSignSignatureFieldsWithStamps:(BOOL)signSignatureFieldsWithStamps;
 
 @end
 

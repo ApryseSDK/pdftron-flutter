@@ -300,7 +300,7 @@ disabledTools | array of `Tools` constants | empty | Tools to be disabled for th
 multiTabEnabled | boolean | false | enable document multi-tab mode
 customerHeaders | map<string, string> | empty | custom headers to use with HTTP/HTTPS requests
 autoSaveEnabled | boolean | true | Enable auto-saving annotations for local files
-pageChangeOnTap | boolean | true | Enable tapping to change pages in horizontal viewing mode 
+pageChangeOnTap | boolean | false | Enable tapping to change pages in horizontal viewing mode 
 showSavedSignatures | boolean | true | Enable showing and reusing of saved signatures
 useStylusAsPen | boolean | true | If true, stylus will act as a pen in pan mode, otherwise it will act as finger
 signSignatureFieldWithStamps | boolean | false | If true, signature field will be signed with image stamp. This is useful if you are saving XFDF to remote source

@@ -282,41 +282,35 @@
 
 - (void)initViewerSettings
 {
+    _autoSaveEnabled = YES;
+    
+    _pageChangeOnTap = NO;
+    
+    _showSavedSignatures = YES;
+    _signSignatureFieldsWithStamps = NO;
+    
+    _useStylusAsPen = YES;
 }
 
 - (void)applyViewerSettings
 {
+    // Auto save.
+    self.automaticallySavesDocument = self.autoSaveEnabled;
     
-}
-
-- (void)setAutoSaveEnabled:(BOOL)autoSaveEnabled
-{
-    self.automaticallySavesDocument = autoSaveEnabled;
-}
-
-- (void)setPageChangeOnTap:(BOOL)pageChangeOnTap
-{
-    self.changesPageOnTap = pageChangeOnTap;
-}
-
-- (void)setShowSavedSignatures:(BOOL)showSavedSignatures
-{
-    self.toolManager.showDefaultSignature = showSavedSignatures;
-}
-
-- (void)setUseStylusAsPen:(BOOL)useStylusAsPen
-{
+    // Page change on tap.
+    self.changesPageOnTap = self.pageChangeOnTap;
+    
+    // Shows saved signatures.
+    self.toolManager.showDefaultSignature = self.showSavedSignatures;
+    
+    self.toolManager.signatureAnnotationOptions.signSignatureFieldsWithStamps = self.signSignatureFieldsWithStamps;
+    
     // Use Apple Pencil as a pen
     Class pencilTool = [PTFreeHandCreate class];
     if (@available(iOS 13.1, *)) {
         pencilTool = [PTPencilDrawingCreate class];
     }
-    self.toolManager.pencilTool = useStylusAsPen ? pencilTool : [PTPanTool class];
-}
-
-- (void)setSignSignatureFieldsWithStamps:(BOOL)signSignatureFieldsWithStamps
-{
-    self.toolManager.signatureAnnotationOptions.signSignatureFieldsWithStamps = signSignatureFieldsWithStamps;
+    self.toolManager.pencilTool = self.useStylusAsPen ? pencilTool : [PTPanTool class];
 }
 
 #pragma mark - Other
