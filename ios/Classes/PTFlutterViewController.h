@@ -14,15 +14,18 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL needsRemoteDocumentLoaded;
 @property (nonatomic) BOOL documentLoaded;
 
-// viewer options
-@property (nonatomic, assign) BOOL readOnly;
-@property (nonatomic, assign) BOOL thumbnailViewEditingEnabled;
+// long-press menu customization
+@property (nonatomic, assign) BOOL longPressMenuEnabled;
+@property (nonatomic, copy, nullable) NSArray<NSString*>* longPressMenuItems;
+@property (nonatomic, copy, nullable) NSArray<NSString*>* overrideLongPressMenuBehavior;
+
+// annotation selection menu customization
+@property (nonatomic, copy, nullable) NSArray<NSNumber *> *hideAnnotMenuTools;
+@property (nonatomic, copy, nullable) NSArray<NSString*>* annotationMenuItems;
+@property (nonatomic, copy, nullable) NSArray<NSString*>* overrideAnnotationMenuBehavior;
 
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
-
-- (void)setAnnotationAuthor:(NSString *)annotationAuthor;
-- (void)setContinuousAnnotationEditing:(BOOL)continuousAnnotationEditing;
 
 @end
 

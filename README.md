@@ -299,27 +299,32 @@ disabledElements | array of `Buttons` constants | empty | Buttons to be disabled
 disabledTools | array of `Tools` constants | empty | Tools to be disabled for the viewer
 multiTabEnabled | boolean | false | enable document multi-tab mode
 customerHeaders | map<string, string> | empty | custom headers to use with HTTP/HTTPS requests
-showLeadingNavButton | boolean | true | Whether to show the leading navigation button
-leadingNavButtonIcon | string | | the icon path to the navigation button, if `showLeadingNavButton` is true
-readOnly | boolean | false | whether the document is read-only
-thumbnailViewEditingEnabled | boolean | true | whether use could modify through thumbnail view
-annotationAuthor | string | | the author name for all annotations in the current document
-continuousAnnotationEditing | boolean | false | whether annotations could be continuously edited
+longPressMenuEnabled | boolean | true | Enable showing the long press menu
+longPressMenuItems | array of `LongPressMenuItems` constants |  | Defines menu items that can show when long press on text or blank space
+overrideLongPressMenuBehavior | array of `LongPressMenuItems` constants | empty | Defines menu items that should skip default behavior
+hideAnnotationMenu | array of `Tools` constants | empty | Defines annotation types that will not show the default annotation menu
+annotationMenuItems | array of `AnnotationMenuItems` constants |  | Defines menu items that can show when an annotation is selected
+overrideAnnotationMenuBehavior | array of `AnnotationMenuItems` constants | empty | Defines menu items that should skip default behavior
 
 ```dart
 var disabledElements = [Buttons.shareButton, Buttons.searchButton];
 var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
+var longPressMenuItems = [LongPressMenuItems.copy, LongPressMenuItems.share];
+var overrideLongPressMenuBehavior = [LongPressMenuItems.share];
+var hideAnnotationMenu = [Tools.textSelect, Tools.annotationCreateArrow];
+var annotationMenuItems = [AnnotationMenuItems.copy, AnnotationMenuItems.calibrate];
+var overrideAnnotationMenuBehavior = [AnnotationMenuItems.copy, AnnotationMenuItems.calibrate];
 var config = Config();
 config.disabledElements = disabledElements;
 config.disabledTools = disabledTools;
 config.multiTabEnabled = false;
 config.customHeaders = {'headerName': 'headerValue'};
-config.showLeadingNavButton = true;
-config.leadingNavButtonIcon = Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp';
-config.readOnly = false;
-config.thumbnailViewEditingEnabled = false;
-config.annotationAuthor = "PDFTron";
-config.continuousAnnotationEditing = true;
+config.longPressMenuEnabled = true;
+config.longPressMenuItems = longPressMenuItems;
+config.overrideLongPressMenuBehavior = overrideLongPressMenuBehavior;
+config.hideAnnotationMenu = hideAnnotationMenu;
+config.annotationMenuItems = annotationMenuItems;
+config.overrideAnnotationMenuBehavior = overrideAnnotationMenuBehavior;
 await PdftronFlutter.openDocument(_document, config: config);
 ```
 ### PdftronFlutter.importAnnotations(String)
@@ -573,6 +578,38 @@ var fieldChangedCancel = startFormFieldValueChangedListener((fields)
   for (Field field in fields) {
     print("Field has name ${field.fieldName}");
     print("Field has value ${field.fieldValue}");
+  }
+});
+```
+
+### startLongPressMenuPressedListener
+
+Event is raised on long press menu pressed if it is passed into `overrideLongPressMenuBehavior`.
+
+`longPressMenuItem` is a constant in `LongPressMenuItems`, indicating which item has been pressed; while `longPressText` is the selected text if pressed on text, or empty otherwise
+```dart
+var longPressMenuPressedCancel = startLongPressMenuPressedListener((longPressMenuItem, longPressText)
+{
+  print("Long press menu item " + longPressMenuItem + " has been pressed");
+  if (longPressText.length > 0) {
+    print("The selected text is: " + longPressText);
+  }
+});
+```
+
+### startAnnotationMenuPressedListener
+
+Event is raised on annotation menu pressed if it is passed into `overrideAnnotationMenuBehavior`.
+
+`annotationMenuItem` is a constant in `AnnotationMenuItems`, indicating which item has been pressed; while `annotations` is the current selected annotations in type `List<Annot>`
+
+```dart
+var annotationMenuPressedCancel = startAnnotationMenuPressedListener((annotationMenuItem, annotations) 
+{
+  print("Annotation menu item " + annotationMenuItem + " has been pressed");
+  for (Annot annotation in annotations) {
+    print("Annotation has id: " + annotation.id);
+    print("Annotation is in page: " + annotation.pageNumber.toString());
   }
 });
 ```

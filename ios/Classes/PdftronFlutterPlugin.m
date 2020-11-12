@@ -12,6 +12,8 @@
 @property (nonatomic, strong) FlutterEventSink annotationChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink annotationsSelectedEventSink;
 @property (nonatomic, strong) FlutterEventSink formFieldValueChangedEventSink;
+@property (nonatomic, strong) FlutterEventSink longPressMenuPressedEventSink;
+@property (nonatomic, strong) FlutterEventSink annotationMenuPressedEventSink;
 
 @end
 
@@ -71,6 +73,10 @@
     FlutterEventChannel* annotationsSelectedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_ANNOTATIONS_SELECTED binaryMessenger:messenger];
     
     FlutterEventChannel* formFieldValueChangedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_FORM_FIELD_VALUE_CHANGED binaryMessenger:messenger];
+    
+    FlutterEventChannel* longPressMenuPressedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_LONG_PRESS_MENU_PRESSED binaryMessenger:messenger];
+    
+    FlutterEventChannel* annotationMenuPressedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_ANNOTATION_MENU_PRESSED binaryMessenger:messenger];
 
     [xfdfEventChannel setStreamHandler:self];
     
@@ -85,6 +91,10 @@
     [annotationsSelectedEventChannel setStreamHandler:self];
     
     [formFieldValueChangedEventChannel setStreamHandler:self];
+    
+    [longPressMenuPressedEventChannel setStreamHandler:self];
+    
+    [annotationMenuPressedEventChannel setStreamHandler:self];
 }
 
 #pragma mark - Configurations
@@ -131,7 +141,9 @@
         return;
     }
     
-    [(PTFlutterViewController*)documentViewController initViewerSettings];
+    PTFlutterViewController* flutterViewController = (PTFlutterViewController*)documentViewController;
+    
+    [flutterViewController initViewerSettings];
     
     //convert from json to dict
     id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
@@ -178,57 +190,53 @@
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
                     // Handled by tabbed config.
                 }
-                else if ([key isEqualToString:PTShowLeadingNavButtonKey]) {
+                else if ([key isEqualToString:PTLongPressMenuEnabled]) {
                     
-                    NSNumber* showLeadingNavButtonNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowLeadingNavButtonKey class:[NSNumber class] error:&error];
+                    NSNumber* longPressMenuEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLongPressMenuEnabled class:[NSNumber class] error:&error];
                     
-                    if (!error && showLeadingNavButtonNumber) {
-                        showLeadingNavButton = [showLeadingNavButtonNumber boolValue];
+                    if (!error && longPressMenuEnabledNumber) {
+                        flutterViewController.longPressMenuEnabled = [longPressMenuEnabledNumber boolValue];
                     }
                 }
-                else if ([key isEqualToString:PTLeadingNavButtonIconKey]) {
+                else if ([key isEqualToString:PTLongPressMenuItems]) {
                     
-                    NSString* navIcon = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLeadingNavButtonIconKey class:[NSString class] error:&error];
+                    NSArray* longPressMenuItems = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLongPressMenuItems class:[NSArray class] error:&error];
                     
-                    if (!error && navIcon) {
-                        leadingNavButtonIcon = navIcon;
+                    if (!error && longPressMenuItems) {
+                        flutterViewController.longPressMenuItems = longPressMenuItems;
                     }
                 }
-                else if ([key isEqualToString:PTReadOnlyKey]) {
+                else if ([key isEqualToString:PTOverrideLongPressMenuBehavior]) {
                     
-                    NSNumber* readOnlyNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTReadOnlyKey class:[NSNumber class] error:&error];
+                    NSArray* overrideLongPressMenuBehavior = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTOverrideLongPressMenuBehavior class:[NSArray class] error:&error];
                     
-                    if (!error && readOnlyNumber) {
-                        [(PTFlutterViewController *)documentViewController setReadOnly:[readOnlyNumber boolValue]];
+                    if (!error && overrideLongPressMenuBehavior) {
+                        flutterViewController.overrideLongPressMenuBehavior = overrideLongPressMenuBehavior;
                     }
                 }
-                else if ([key isEqualToString:PTThumbnailViewEditingEnabledKey]) {
+                else if ([key isEqualToString:PTHideAnnotationMenu]) {
                     
-                    NSNumber* enabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTThumbnailViewEditingEnabledKey class:[NSNumber class] error:&error];
+                    NSArray* hideAnnotationMenuTools = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideAnnotationMenu class:[NSArray class] error:&error];
                     
-                    if (!error && enabledNumber) {
-                        [(PTFlutterViewController *)documentViewController setThumbnailViewEditingEnabled:[enabledNumber boolValue]];
+                    if (!error && hideAnnotationMenuTools) {
+                        flutterViewController.hideAnnotMenuTools = hideAnnotationMenuTools;
                     }
                 }
-                else if ([key isEqualToString:PTAnnotationAuthorKey]) {
+                else if ([key isEqualToString:PTAnnotationMenuItems]) {
                     
-                    NSString* annotationAuthor = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationAuthorKey class:[NSString class] error:&error];
+                    NSArray* annotationMenuItems = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationMenuItems class:[NSArray class] error:&error];
                     
-                    if (!error && annotationAuthor) {
-                        [(PTFlutterViewController *)documentViewController setAnnotationAuthor:annotationAuthor];
+                    if (!error && annotationMenuItems) {
+                        flutterViewController.annotationMenuItems = annotationMenuItems;
                     }
                 }
-                else if ([key isEqualToString:PTContinuousAnnotationEditingKey]) {
+                else if ([key isEqualToString:PTOverrideAnnotationMenuBehavior]) {
                     
-                    NSNumber* contEditingNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTContinuousAnnotationEditingKey class:[NSNumber class] error:&error];
+                    NSArray* overrideAnnotationMenuBehavior = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTOverrideAnnotationMenuBehavior class:[NSArray class] error:&error];
                     
-                    if (!error && contEditingNumber) {
-                        [(PTFlutterViewController *)documentViewController setContinuousAnnotationEditing:[contEditingNumber boolValue]];
+                    if (!error && overrideAnnotationMenuBehavior) {
+                        flutterViewController.overrideAnnotationMenuBehavior = overrideAnnotationMenuBehavior;
                     }
-                }
-                else
-                {
-                    NSLog(@"Unknown JSON key in config: %@.", key);
                 }
                 
                 if (error) {
@@ -248,7 +256,7 @@
         [self handleNavIconDisplay:leadingNavButtonIcon documentViewController:documentViewController];
     }
     
-    [(PTFlutterViewController *)documentViewController applyViewerSettings];
+    [flutterViewController applyViewerSettings];
 }
 
 + (id)getConfigValue:(NSDictionary*)configDict configKey:(NSString*)configKey class:(Class)class error:(NSError**)error
@@ -506,6 +514,12 @@
         case formFieldValueChangedId:
             self.formFieldValueChangedEventSink = events;
             break;
+        case longPressMenuPressedId:
+            self.longPressMenuPressedEventSink = events;
+            break;
+        case annotationMenuPressedId:
+            self.annotationMenuPressedEventSink = events;
+            break;
     }
     
     return Nil;
@@ -537,6 +551,12 @@
             break;
         case formFieldValueChangedId:
             self.formFieldValueChangedEventSink = nil;
+            break;
+        case longPressMenuPressedId:
+            self.longPressMenuPressedEventSink = nil;
+            break;
+        case annotationMenuPressedId:
+            self.annotationMenuPressedEventSink = nil;
             break;
     }
     
@@ -605,6 +625,22 @@
     if(self.formFieldValueChangedEventSink != nil)
     {
         self.formFieldValueChangedEventSink(fieldsString);
+    }
+}
+
+-(void)documentViewController:(PTDocumentViewController*)docVC longPressMenuPressed:(NSString*)longPressMenuPressedString
+{
+    if (self.longPressMenuPressedEventSink != nil)
+    {
+        self.longPressMenuPressedEventSink(longPressMenuPressedString);
+    }
+}
+
+-(void)documentViewController:(PTDocumentViewController *)docVC annotationMenuPressed:(NSString*)annotationMenuPressedString
+{
+    if (self.annotationMenuPressedEventSink != nil)
+    {
+        self.annotationMenuPressedEventSink(annotationMenuPressedString);
     }
 }
 

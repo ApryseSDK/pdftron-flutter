@@ -134,6 +134,9 @@ class EventParameters {
   static const action = "action";
   static const annotations = "annotations";
   static const xfdfCommand = "xfdfCommand";
+  static const longPressMenuItem = "longPressMenuItem";
+  static const longPressText = "longPressText";
+  static const annotationMenuItem = "annotationMenuItem";
 }
 
 class Buttons {
@@ -213,4 +216,29 @@ class AnnotationFlags {
   static const print = "print";
   static const readOnly = "readOnly";
   static const toggleNoView = "toggleNoView";
+}
+
+class LongPressMenuItems {
+  static const copy = "copy";
+  static const search = "search";
+  static const share = "share";
+  static const read = "read";
+}
+
+class AnnotationMenuItems {
+  static const style = "style";
+  static const note = "note";
+  static const copy = "copy";
+  static const delete = "delete";
+  static const flatten = "flatten";
+  static const editText = "editText";
+  static const editInk = "editInk";
+  static const search = "search";
+  static const share = "share";
+  static const markupType = "markupType";
+  static const read = "read";
+  static const screenCapture = "screenCapture";
+  static const playSound = "playSound";
+  static const openAttachment = "openAttachment";
+  static const calibrate = "calibrate";
 }
