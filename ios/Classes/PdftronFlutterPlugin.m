@@ -1315,11 +1315,12 @@
     if (toolClass) {
         PTTool *tool = [docVC.toolManager changeTool:toolClass];
 
-        tool.backToPanToolAfterUse = !self.continuousAnnotationEditing;
+//        TODO: fix after #36 (a PR with continuousAnnotationEditing config implemented)
+//        tool.backToPanToolAfterUse = !(PTFlutterViewController*)docVC.continuousAnnotationEditing;
 
         if ([tool isKindOfClass:[PTFreeHandCreate class]]
             && ![tool isKindOfClass:[PTFreeHandHighlightCreate class]]) {
-            ((PTFreeHandCreate *)tool).multistrokeMode = self.continuousAnnotationEditing;
+            ((PTFreeHandCreate *)tool).multistrokeMode = YES;
         }
     }
 

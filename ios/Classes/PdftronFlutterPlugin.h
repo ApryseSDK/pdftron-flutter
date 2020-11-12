@@ -172,8 +172,6 @@ typedef enum {
 
 @property (nonatomic, strong) PTTabbedDocumentViewController *tabbedDocumentViewController;
 
-@property (nonatomic) BOOL continuousAnnotationEditing;
-
 + (PdftronFlutterPlugin *)registerWithFrame:(CGRect)frame viewIdentifier:(int64_t)viewId messenger:(NSObject<FlutterBinaryMessenger> *)messenger;
 
 -(void)documentViewController:(PTDocumentViewController*)docVC bookmarksDidChange:(NSString*)bookmarkJson;
