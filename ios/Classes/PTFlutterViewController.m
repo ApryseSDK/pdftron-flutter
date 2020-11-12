@@ -309,12 +309,7 @@ NS_ASSUME_NONNULL_END
         PTShareMenuItemTitleKey: PTShareMenuItemIdentifierKey,
         PTReadMenuItemTitleKey: PTReadMenuItemIdentifierKey,
     };
-    NSArray<NSString *> *whitelist = @[
-        PTLocalizedString(PTHighlightWhiteListKey, nil),
-        PTLocalizedString(PTStrikeoutWhiteListKey, nil),
-        PTLocalizedString(PTUnderlineWhiteListKey, nil),
-        PTLocalizedString(PTSquigglyWhiteListKey, nil),
-    ];
+
     // Get the localized title for each menu item.
     NSMutableDictionary<NSString *, NSString *> *localizedMap = [NSMutableDictionary dictionary];
     for (NSString *key in map) {
@@ -333,10 +328,10 @@ NS_ASSUME_NONNULL_END
             [permittedItems addObject:menuItem];
         }
         else {
-            if ([whitelist containsObject:menuItem.title]) {
+            if (!menuItemId) {
+                // If it is not one of copy, search, share and read, then it should be added
                 [permittedItems addObject:menuItem];
-            }
-            else if (menuItemId && [self.longPressMenuItems containsObject:menuItemId]) {
+            } else if ([self.longPressMenuItems containsObject:menuItemId]) {
                 [permittedItems addObject:menuItem];
             }
         }

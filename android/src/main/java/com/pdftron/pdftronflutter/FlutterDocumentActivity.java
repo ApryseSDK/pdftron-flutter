@@ -241,6 +241,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sAnnotationsSelectionEventEmitter.set(null);
         sFormFieldChangedEventEmitter.set(null);
         sLongPressMenuPressedEventEmitter.set(null);
+        sAnnotationMenuPressedEventEmitter.set(null);
 
         detachActivity();
     }
