@@ -1,7 +1,6 @@
 package com.pdftron.pdftronflutter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -12,11 +11,14 @@ import androidx.annotation.Nullable;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.config.PDFViewCtrlConfig;
+import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
@@ -46,27 +48,50 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
     private static HashMap<Annot, Integer> mSelectedAnnots;
 
+    public static void openDocument(Context packageContext, String document, String password, String configStr) {
+
+        ViewerConfig.Builder builder = new ViewerConfig.Builder().multiTabEnabled(false);
+
+        ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
+        PDFViewCtrlConfig pdfViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(packageContext);
+        PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(builder, toolManagerBuilder, pdfViewCtrlConfig, document, packageContext, configStr);
+
+        boolean showLeadingNavButton = configInfo.isShowLeadingNavButton();
+        @DrawableRes int leadingNavButtonIcon = Utils.getResourceDrawable(packageContext, configInfo.getLeadingNavButtonIcon());
+        if (showLeadingNavButton) {
+            if (leadingNavButtonIcon == 0) {
+                leadingNavButtonIcon = DEFAULT_NAV_ICON_ID;
+            }
+        } else {
+            leadingNavButtonIcon = 0;
+        }
+
+        openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build(), leadingNavButtonIcon);
+    }
+
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
         openDocument(packageContext, fileUri, password, customHeaders, config, DEFAULT_NAV_ICON_ID);
     }
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config, @DrawableRes int navIconId) {
-        Intent intent = new Intent(packageContext, FlutterDocumentActivity.class);
+        DocumentActivity.IntentBuilder intentBuilder = DocumentActivity.IntentBuilder.fromActivityClass(packageContext, FlutterDocumentActivity.class);
+
         if (null != fileUri) {
-            intent.putExtra("extra_file_uri", fileUri);
+            intentBuilder.withUri(fileUri);
         }
 
         if (null != password) {
-            intent.putExtra("extra_file_password", password);
+            intentBuilder.usingPassword(password);
         }
 
         if (null != customHeaders) {
-            intent.putExtra("extra_custom_headers", customHeaders.toString());
+            intentBuilder.usingCustomHeaders(customHeaders);
         }
 
-        intent.putExtra("extra_nav_icon", navIconId);
-        intent.putExtra("extra_config", config);
-        packageContext.startActivity(intent);
+        intentBuilder.usingNavIcon(navIconId);
+        intentBuilder.usingConfig(config);
+        intentBuilder.usingNewUi(true);
+        packageContext.startActivity(intentBuilder.build());
     }
 
     public static void setExportAnnotationCommandEventEmitter(EventSink emitter) {

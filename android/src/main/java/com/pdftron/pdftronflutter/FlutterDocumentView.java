@@ -1,23 +1,13 @@
 package com.pdftron.pdftronflutter;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.View;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
-import com.pdftron.pdf.config.ToolManagerBuilder;
-import com.pdftron.pdf.config.ViewerBuilder2;
-import com.pdftron.pdf.config.ViewerConfig;
-import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.views.DocumentView;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
@@ -33,19 +23,16 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_EXPORT_ANNOTA
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_EXPORT_BOOKMARK;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_FORM_FIELD_VALUE_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_OPEN_DOCUMENT;
-import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_CONFIG_CUSTOM_HEADERS;
-import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_CONFIG_DISABLED_ELEMENTS;
-import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_CONFIG_DISABLED_TOOLS;
-import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_CONFIG_MULTI_TAB_ENABLED;
 
 public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCallHandler {
 
     private final DocumentView documentView;
-    private ArrayList<ToolManager.ToolMode> mDisabledTools = new ArrayList<>();
 
     private final MethodChannel methodChannel;
 
     public FlutterDocumentView(Context context, Context activityContext, BinaryMessenger messenger, int id) {
+
+        registerWith(messenger);
         documentView = new DocumentView(context);
 
         FragmentManager manager = null;
@@ -57,8 +44,6 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
 
         methodChannel = new MethodChannel(messenger, "pdftron_flutter/documentview_" + id);
         methodChannel.setMethodCallHandler(this);
-
-        registerWith(messenger);
     }
 
     public void registerWith(BinaryMessenger messenger) {
@@ -162,84 +147,12 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
                 String document = call.argument("document");
                 String password = call.argument("password");
                 String config = call.argument("config");
-                openDocument(document, password, config, result);
+                documentView.openDocument(document, password, config, result);
                 break;
             default:
                 PluginUtils.onMethodCall(call, result, documentView);
                 break;
         }
-    }
-
-    private void openDocument(String document, String password, String configStr, MethodChannel.Result result) {
-        if (null == documentView) {
-            return;
-        }
-
-        ViewerConfig.Builder builder = new ViewerConfig.Builder()
-                .multiTabEnabled(false)
-                .useSupportActionBar(false)
-                .openUrlCachePath(documentView.getContext().getCacheDir().getAbsolutePath())
-                .saveCopyExportPath(documentView.getContext().getCacheDir().getAbsolutePath());
-
-        ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
-
-        JSONObject customHeaderJson = null;
-        if (configStr != null && !configStr.equals("null")) {
-            try {
-                JSONObject configJson = new JSONObject(configStr);
-                if (!configJson.isNull(KEY_CONFIG_DISABLED_ELEMENTS)) {
-                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_DISABLED_ELEMENTS);
-                    mDisabledTools.addAll(PluginUtils.disableElements(builder, array));
-                }
-                if (!configJson.isNull(KEY_CONFIG_DISABLED_TOOLS)) {
-                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_DISABLED_TOOLS);
-                    mDisabledTools.addAll(PluginUtils.disableTools(array));
-                }
-                if (!configJson.isNull(KEY_CONFIG_MULTI_TAB_ENABLED)) {
-                    boolean val = configJson.getBoolean(KEY_CONFIG_MULTI_TAB_ENABLED);
-                    builder = builder.multiTabEnabled(val);
-                }
-                if (!configJson.isNull(KEY_CONFIG_CUSTOM_HEADERS)) {
-                    customHeaderJson = configJson.getJSONObject(KEY_CONFIG_CUSTOM_HEADERS);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-
-        if (mDisabledTools.size() > 0) {
-            ToolManager.ToolMode[] modes = mDisabledTools.toArray(new ToolManager.ToolMode[0]);
-            if (modes.length > 0) {
-                toolManagerBuilder = toolManagerBuilder.disableToolModes(modes);
-            }
-        }
-
-        builder = builder.toolManagerBuilder(toolManagerBuilder);
-
-        final Uri fileLink = Uri.parse(document);
-
-        documentView.setDocumentUri(fileLink);
-        documentView.setPassword(password);
-        documentView.setCustomHeaders(customHeaderJson);
-        documentView.setViewerConfig(builder.build());
-        documentView.setFlutterLoadResult(result);
-
-        ViewerBuilder2 viewerBuilder = ViewerBuilder2.withUri(fileLink, password)
-                .usingCustomHeaders(customHeaderJson)
-                .usingConfig(builder.build());
-        if (documentView.mPdfViewCtrlTabHostFragment != null) {
-            documentView.mPdfViewCtrlTabHostFragment.onOpenAddNewTab(viewerBuilder.createBundle(documentView.getContext()));
-        } else {
-            documentView.mPdfViewCtrlTabHostFragment = viewerBuilder.build(documentView.getContext());
-            if (documentView.mFragmentManager != null) {
-                documentView.mFragmentManager.beginTransaction().add(documentView.mPdfViewCtrlTabHostFragment, "document_view").commitNow();
-                View fragmentView = documentView.mPdfViewCtrlTabHostFragment.getView();
-                if (fragmentView != null) {
-                    documentView.addView(fragmentView, -1, -1);
-                }
-            }
-        }
-        documentView.attachListeners();
     }
 
     @Override
