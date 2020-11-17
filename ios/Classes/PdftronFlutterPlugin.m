@@ -182,7 +182,7 @@
                     NSNumber* showLeadingNavButtonNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowLeadingNavButtonKey class:[NSNumber class] error:&error];
                     
                     if (!error && showLeadingNavButtonNumber) {
-                        flutterViewController.showNavButton = [showLeadingNavButtonNumber boolValue];
+                        [flutterViewController setShowNavButton:[showLeadingNavButtonNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTLeadingNavButtonIconKey]) {
@@ -190,7 +190,7 @@
                     NSString* navIcon = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLeadingNavButtonIconKey class:[NSString class] error:&error];
                     
                     if (!error && navIcon) {
-                        flutterViewController.navButtonPath = navIcon;
+                        [flutterViewController setNavButtonPath:navIcon];
                     }
                 }
                 else if ([key isEqualToString:PTReadOnlyKey]) {
@@ -198,15 +198,15 @@
                     NSNumber* readOnlyNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTReadOnlyKey class:[NSNumber class] error:&error];
                     
                     if (!error && readOnlyNumber) {
-                        flutterViewController.readOnly = [readOnlyNumber boolValue];
+                        [flutterViewController setReadOnly:[readOnlyNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTThumbnailViewEditingEnabledKey]) {
                     
-                    NSNumber* enabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTThumbnailViewEditingEnabledKey class:[NSNumber class] error:&error];
+                    NSNumber* thumbnailViewEditingEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTThumbnailViewEditingEnabledKey class:[NSNumber class] error:&error];
                     
-                    if (!error && enabledNumber) {
-                        flutterViewController.thumbnailViewEditingEnabled = [enabledNumber boolValue];
+                    if (!error && thumbnailViewEditingEnabledNumber) {
+                        [flutterViewController setThumbnailEditingEnabled:[thumbnailViewEditingEnabledNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTAnnotationAuthorKey]) {
@@ -214,7 +214,7 @@
                     NSString* annotationAuthor = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationAuthorKey class:[NSString class] error:&error];
                     
                     if (!error && annotationAuthor) {
-                        flutterViewController.annotationAuthor = annotationAuthor;
+                        [flutterViewController setAnnotationAuthor:annotationAuthor];
                     }
                 }
                 else if ([key isEqualToString:PTContinuousAnnotationEditingKey]) {
@@ -222,7 +222,7 @@
                     NSNumber* contEditingNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTContinuousAnnotationEditingKey class:[NSNumber class] error:&error];
                     
                     if (!error && contEditingNumber) {
-                        flutterViewController.continuousAnnotationEditing = [contEditingNumber boolValue];
+                        [flutterViewController setContinuousAnnotationEditing:[contEditingNumber boolValue]];
                     }
                 }
                 else

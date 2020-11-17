@@ -19,14 +19,18 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString *navButtonPath;
 
 @property (nonatomic, assign) BOOL readOnly;
-@property (nonatomic, assign) BOOL thumbnailViewEditingEnabled;
-
-@property (nonatomic, copy, nullable) NSString *annotationAuthor;
-
-@property (nonatomic, assign) BOOL continuousAnnotationEditing;
 
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
+
+- (void)setThumbnailEditingEnabled:(BOOL)thumbnailEditingEnabled;
+- (BOOL)isThumbnailEditingEnabled;
+
+- (void)setAnnotationAuthor:(NSString *)annotationAuthor;
+- (NSString *)getAnnotationAuthor;
+
+- (void)setContinuousAnnotationEditing:(BOOL)continuousAnnotationEditing;
+- (BOOL)isContinuousAnnotationEditing;
 
 @end
 

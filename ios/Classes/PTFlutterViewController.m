@@ -2,17 +2,6 @@
 #import "PTFlutterViewController.h"
 #import "DocumentViewFactory.h"
 
-NS_ASSUME_NONNULL_BEGIN
-
-@interface PTFlutterViewController()
-
-// a check flag for thumbnailViewEditingEnabled
-@property (nonatomic, assign) BOOL thumbnailViewEditingEnabledHasBeenSet;
-
-@end
-
-NS_ASSUME_NONNULL_END
-
 @implementation PTFlutterViewController
 
 - (void)viewWillLayoutSubviews
@@ -298,42 +287,14 @@ NS_ASSUME_NONNULL_END
 - (void)initViewerSettings
 {
     _readOnly = NO;
-    _thumbnailViewEditingEnabled = YES;
-    _thumbnailViewEditingEnabledHasBeenSet = NO;
     
     _showNavButton = YES;
-    _continuousAnnotationEditing = NO;
 }
 
 - (void)applyViewerSettings
 {
-    [self applyReadOnly];
-    
-    // Thumbnail editing enabled.
-    if (self.thumbnailViewEditingEnabledHasBeenSet) {
-        self.thumbnailsViewController.editingEnabled = self.thumbnailViewEditingEnabled;
-    }
-    
-    // Continuous annotation editing.
-    self.toolManager.tool.backToPanToolAfterUse = !self.continuousAnnotationEditing;
-    
-    // Annotation author.
-    self.toolManager.annotationAuthor = self.annotationAuthor;
-    
     // nav icon
     [self applyNavIcon];
-}
-
-- (void)applyReadOnly
-{
-    // Enable readonly flag on tool manager *only* when not already readonly.
-    // If the document is being streamed or converted, we don't want to accidentally allow editing by
-    // disabling the readonly flag.
-    if (![self.toolManager isReadonly]) {
-        self.toolManager.readonly = self.readOnly;
-    }
-    
-    self.thumbnailsViewController.editingEnabled = !self.readOnly;
 }
 
 - (void)applyNavIcon
@@ -353,10 +314,34 @@ NS_ASSUME_NONNULL_END
     }
 }
 
-- (void)setThumbnailViewEditingEnabled:(BOOL)thumbnailViewEditingEnabled
+- (void)setThumbnailEditingEnabled:(BOOL)thumbnailEditingEnabled
 {
-    _thumbnailViewEditingEnabled = thumbnailViewEditingEnabled;
-    self.thumbnailViewEditingEnabledHasBeenSet = YES;
+    self.thumbnailsViewController.editingEnabled = thumbnailEditingEnabled;
+}
+
+- (BOOL)isThumbnailEditingEnabled
+{
+    return self.thumbnailsViewController.editingEnabled;
+}
+
+- (void)setAnnotationAuthor:(NSString *)annotationAuthor
+{
+    self.toolManager.annotationAuthor = [annotationAuthor copy];
+}
+
+- (NSString *)getAnnotationAuthor
+{
+    return [self.toolManager.annotationAuthor copy];
+}
+
+- (void)setContinuousAnnotationEditing:(BOOL)continuousAnnotationEditing
+{
+    self.toolManager.tool.backToPanToolAfterUse = !continuousAnnotationEditing;
+}
+
+- (BOOL)isContinuousAnnotationEditing
+{
+    return !self.toolManager.tool.backToPanToolAfterUse;
 }
 
 #pragma mark - Other
