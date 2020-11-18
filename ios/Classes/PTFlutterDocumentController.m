@@ -18,6 +18,14 @@
     }
 }
 
+- (void)setThumbnailSliderHidden:(BOOL)hidden animated:(BOOL)animated
+{
+    if (!hidden) {
+        return;
+    }
+    [super setThumbnailSliderHidden:hidden animated:animated];
+}
+
 - (void)openDocumentWithURL:(NSURL *)url password:(NSString *)password
 {
     if ([url isFileURL]) {
