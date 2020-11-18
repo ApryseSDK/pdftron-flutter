@@ -185,7 +185,7 @@
                     NSNumber* selectAnnotAfterCreationNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSelectAnnotationAfterCreationKey class:[NSNumber class] error:&error];
                     
                     if (!error && selectAnnotAfterCreationNumber) {
-                        flutterViewController.selectAnnotationAfterCreation = [selectAnnotAfterCreationNumber boolValue];
+                        [flutterViewController setSelectAnnotationAfterCreation:[selectAnnotAfterCreationNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTBottomToolbarEnabledKey]) {
@@ -193,7 +193,7 @@
                     NSNumber* bottomToolbarEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTBottomToolbarEnabledKey class:[NSNumber class] error:&error];
                     
                     if (!error && bottomToolbarEnabledNumber) {
-                        flutterViewController.bottomToolbarOn = [bottomToolbarEnabledNumber boolValue];
+                        [flutterViewController setBottomToolbarOn:[bottomToolbarEnabledNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTPageIndicatorEnabledKey]) {
@@ -201,7 +201,7 @@
                     NSNumber* pageIndicatorEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTPageIndicatorEnabledKey class:[NSNumber class] error:&error];
                     
                     if (!error && pageIndicatorEnabledNumber) {
-                        flutterViewController.pageIndicatorOn = [pageIndicatorEnabledNumber boolValue];
+                        [flutterViewController setPageIndicatorEnabled:[pageIndicatorEnabledNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTFollowSystemDarkModeKey]) {

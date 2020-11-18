@@ -290,18 +290,21 @@
 
 - (void)initViewerSettings
 {
-    _selectAnnotationAfterCreation = YES;
     _bottomToolbarOn = YES;
-    _pageIndicatorOn = YES;
 }
 
 - (void)applyViewerSettings
 {
-    // Select after creation.
-    self.toolManager.selectAnnotationAfterCreation = self.selectAnnotationAfterCreation;
-    
-    // Page indicator.
-    self.pageIndicatorEnabled = self.pageIndicatorOn;
+}
+
+- (void)setSelectAnnotationAfterCreation:(BOOL)selectAnnotationAfterCreation
+{
+    self.toolManager.selectAnnotationAfterCreation = selectAnnotationAfterCreation;
+}
+
+- (BOOL)isSelectAnnotationAfterCreation
+{
+    return self.toolManager.selectAnnotationAfterCreation;
 }
 
 #pragma mark - Other
