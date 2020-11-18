@@ -183,35 +183,35 @@
                     
                     NSNumber* autoSaveEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAutoSaveEnabledKey class:[NSNumber class] error:&error];
                     if (!error && autoSaveEnabledNumber) {
-                        flutterViewController.autoSaveEnabled = [autoSaveEnabledNumber boolValue];
+                        [flutterViewController setAutomaticallySavesDocument:[autoSaveEnabledNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTPageChangeOnTapKey]) {
                     
                     NSNumber* pageChangeOnTapNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTPageChangeOnTapKey class:[NSNumber class] error:&error];
                     if (!error && pageChangeOnTapNumber) {
-                        flutterViewController.pageChangeOnTap = [pageChangeOnTapNumber boolValue];
+                        [flutterViewController setChangesPageOnTap:[pageChangeOnTapNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTShowSavedSignaturesKey]) {
                     
                     NSNumber* showSavedSignatureNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowSavedSignaturesKey class:[NSNumber class] error:&error];
                     if (!error && showSavedSignatureNumber) {
-                        flutterViewController.showSavedSignatures = [showSavedSignatureNumber boolValue];
+                        [flutterViewController setShowSavedSignatures:[showSavedSignatureNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTUseStylusAsPenKey]) {
                     
                     NSNumber* useStylusAsPenNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUseStylusAsPenKey class:[NSNumber class] error:&error];
                     if (!error && useStylusAsPenNumber) {
-                        flutterViewController.useStylusAsPen = [useStylusAsPenNumber boolValue];
+                        [flutterViewController setUseStylusAsPen:[useStylusAsPenNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTSignSignatureFieldWithStampsKey]) {
                     
                     NSNumber* signSignatureFieldsWithStampsNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignSignatureFieldWithStampsKey class:[NSNumber class] error:&error];
                     if (!error && signSignatureFieldsWithStampsNumber) {
-                        flutterViewController.signSignatureFieldsWithStamps = [signSignatureFieldsWithStampsNumber boolValue];
+                        [flutterViewController setSignSignatureFieldsWithStamps:[signSignatureFieldsWithStampsNumber boolValue]];
                     }
                 }
                 else
