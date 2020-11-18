@@ -195,7 +195,7 @@
                     NSNumber* longPressMenuEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLongPressMenuEnabled class:[NSNumber class] error:&error];
                     
                     if (!error && longPressMenuEnabledNumber) {
-                        flutterViewController.longPressMenuEnabled = [longPressMenuEnabledNumber boolValue];
+                        [flutterViewController setLongPressMenuEnabled:[longPressMenuEnabledNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTLongPressMenuItems]) {
@@ -203,7 +203,7 @@
                     NSArray* longPressMenuItems = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLongPressMenuItems class:[NSArray class] error:&error];
                     
                     if (!error && longPressMenuItems) {
-                        flutterViewController.longPressMenuItems = longPressMenuItems;
+                        [flutterViewController setLongPressMenuItems:longPressMenuItems];
                     }
                 }
                 else if ([key isEqualToString:PTOverrideLongPressMenuBehavior]) {
@@ -211,7 +211,7 @@
                     NSArray* overrideLongPressMenuBehavior = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTOverrideLongPressMenuBehavior class:[NSArray class] error:&error];
                     
                     if (!error && overrideLongPressMenuBehavior) {
-                        flutterViewController.overrideLongPressMenuBehavior = overrideLongPressMenuBehavior;
+                        [flutterViewController setOverrideLongPressMenuBehavior:overrideLongPressMenuBehavior];
                     }
                 }
                 else if ([key isEqualToString:PTHideAnnotationMenu]) {
@@ -219,7 +219,7 @@
                     NSArray* hideAnnotationMenuTools = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideAnnotationMenu class:[NSArray class] error:&error];
                     
                     if (!error && hideAnnotationMenuTools) {
-                        flutterViewController.hideAnnotMenuTools = hideAnnotationMenuTools;
+                        [flutterViewController setHideAnnotMenuTools:hideAnnotationMenuTools];
                     }
                 }
                 else if ([key isEqualToString:PTAnnotationMenuItems]) {
@@ -227,7 +227,7 @@
                     NSArray* annotationMenuItems = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationMenuItems class:[NSArray class] error:&error];
                     
                     if (!error && annotationMenuItems) {
-                        flutterViewController.annotationMenuItems = annotationMenuItems;
+                        [flutterViewController setAnnotationMenuItems:annotationMenuItems];
                     }
                 }
                 else if ([key isEqualToString:PTOverrideAnnotationMenuBehavior]) {
@@ -235,7 +235,7 @@
                     NSArray* overrideAnnotationMenuBehavior = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTOverrideAnnotationMenuBehavior class:[NSArray class] error:&error];
                     
                     if (!error && overrideAnnotationMenuBehavior) {
-                        flutterViewController.overrideAnnotationMenuBehavior = overrideAnnotationMenuBehavior;
+                        [flutterViewController setOverrideAnnotationMenuBehavior:overrideAnnotationMenuBehavior];
                     }
                 }
                 
