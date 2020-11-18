@@ -183,7 +183,7 @@
                     NSString* fitMode = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTFitModeKey class:[NSString class] error:&error];
                     
                     if (!error && fitMode) {
-                        flutterViewController.fitMode = fitMode;
+                        [flutterViewController setFitMode:fitMode];
                     }
                 }
                 else if ([key isEqualToString:PTLayoutModeKey]) {
@@ -191,7 +191,7 @@
                     NSString* layoutMode = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLayoutModeKey class:[NSString class] error:&error];
                     
                     if (!error && layoutMode) {
-                        flutterViewController.layoutMode = layoutMode;
+                        [flutterViewController setLayoutMode:layoutMode];
                     }
                 }
                 else if ([key isEqualToString:PTInitialPageNumberKey]) {
@@ -199,7 +199,7 @@
                     NSNumber* initialPageNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTInitialPageNumberKey class:[NSNumber class] error:&error];
                     
                     if (!error && initialPageNumber) {
-                        flutterViewController.initialPageNumber = [initialPageNumber intValue];
+                        [flutterViewController setInitialPageNumber:[initialPageNumber intValue]];
                     }
                 }
                 else if ([key isEqualToString:PTIsBase64Key]) {
@@ -207,7 +207,7 @@
                     NSNumber* isBase64 = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTIsBase64Key class:[NSNumber class] error:&error];
                     
                     if (!error && isBase64) {
-                        flutterViewController.base64 = [isBase64 boolValue];
+                        [flutterViewController setBase64:[isBase64 boolValue]];
                     }
                 }
                 else

@@ -22,8 +22,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)applyViewerSettings;
 
-- (void)setFitMode:(NSString*)fitMode;
-
 @end
 
 NS_ASSUME_NONNULL_END

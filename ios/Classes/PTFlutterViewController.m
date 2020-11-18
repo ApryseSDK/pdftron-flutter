@@ -295,13 +295,14 @@
 {
     // Fit mode.
     [self applyFitMode];
-    
-    // Layout mode.
-    [self applyLayoutMode];
 }
 
 - (void)applyFitMode
 {
+    if (!self.fitMode) {
+        return;
+    }
+    
     if ([self.fitMode isEqualToString:PTFitPageKey]) {
         [self.pdfViewCtrl SetPageViewMode:e_trn_fit_page];
         [self.pdfViewCtrl SetPageRefViewMode:e_trn_fit_page];
