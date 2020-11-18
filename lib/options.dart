@@ -96,16 +96,18 @@ class AnnotWithFlag {
 }
 
 class CustomToolbar {
+  /*
+    Note: id should be unique;
+          items should be array of Buttons / Tools constants;
+          icon (optional) should be a ToolbarIcons constant
+  */
+
   String id;
   String name;
   List<String> items;
   String icon;
 
   CustomToolbar(this.id, this.name, this.items, [this.icon]);
-
-  addItem(String item) {
-    items.add(item);
-  }
 
   Map<String, dynamic> toJson() =>
       {'id': id, 'name': name, 'items': jsonEncode(items), 'icon': icon};
@@ -255,11 +257,4 @@ class ToolbarIcons {
   static const measure = "PDFTron_Measure";
   static const pens = "PDFTron_Pens";
   static const favorite = "PDFTron_Favorite";
-}
-
-class CustomToolbarKeys {
-  static const id = "id";
-  static const name = "name";
-  static const icon = "icon";
-  static const items = "items";
 }

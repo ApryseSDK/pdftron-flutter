@@ -20,9 +20,9 @@
 
 - (void)setThumbnailSliderHidden:(BOOL)hidden animated:(BOOL)animated
 {
-    if (!hidden) {
-        return;
-    }
+//    if (!hidden) {
+//        return;
+//    }
     [super setThumbnailSliderHidden:hidden animated:animated];
 }
 
@@ -371,9 +371,12 @@
 {
     const BOOL hideNav = (self.hideTopAppNavBar || self.hideTopToolbars);
     self.navigationController.navigationBarHidden = hideNav;
-    self.navigationController.navigationBar.translucent = hideNav;
     self.controlsHidden = hideNav;
-    self.thumbnailSliderController.toolbar.translucent = hideNav;
+    
+    const BOOL translucent = hideNav;
+    
+    self.navigationController.navigationBar.translucent = translucent;
+    self.thumbnailSliderController.toolbar.translucent = translucent;
     
     [self applyDocumentControllerSettings];
 }

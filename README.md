@@ -38,8 +38,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
 3. Now add the following items in your `myapp/android/app/build.gradle` file:
 	```diff
 	android {
-	-   compileSdkVersion 27
-	+   compileSdkVersion 29
+	    compileSdkVersion 29
 
 	    lintOptions {
 		disable 'InvalidPackage'
@@ -49,9 +48,9 @@ The complete installation and API guides can be found at https://www.pdftron.com
 		applicationId "com.example.myapp"
 	-       minSdkVersion 16
 	+       minSdkVersion 21
-	-       targetSdkVersion 27
-	+       targetSdkVersion 29
+		targetSdkVersion 29
 	+       multiDexEnabled true
+	+       manifestPlaceholders = [pdftronLicenseKey:PDFTRON_LICENSE_KEY]
 		versionCode flutterVersionCode.toInteger()
 		versionName flutterVersionName
 		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -59,7 +58,16 @@ The complete installation and API guides can be found at https://www.pdftron.com
 		...
 	}
 	```
-4. In your `myapp\android\app\src\main\AndroidManifest.xml` file, add the following lines to the `<application>` tag:
+
+4. In your `myapp/android/gradle.properties` file. Add the following line to it:
+    ``` diff
+    # Add the PDFTRON_LICENSE_KEY variable here. 
+    # For trial purposes leave it blank.
+    # For production add a valid commercial license key.
+    PDFTRON_LICENSE_KEY=
+    ```
+    
+5. In your `myapp\android\app\src\main\AndroidManifest.xml` file, add the following lines to the `<application>` tag:
 	```diff
 	...
 	<application
@@ -68,12 +76,18 @@ The complete installation and API guides can be found at https://www.pdftron.com
 		android:icon="@mipmap/ic_launcher"
 	+	android:largeHeap="true"
 	+	android:usesCleartextTraffic="true">
-	  ...
+	
+	    	<!-- Add license key in meta-data tag here. This should be inside the application tag. -->
+	+	<meta-data
+	+		android:name="pdftron_license_key"
+	+		android:value="${pdftronLicenseKey}"/>
+	...
 	```
+	
 	Additionally, add the required permissions for your app in the `<manifest>` tag:
 	```diff
 		...
-		<uses-permission android:name="android.permission.INTERNET" />
+	+	<uses-permission android:name="android.permission.INTERNET" />
 		<!-- Required to read and write documents from device storage -->
 	+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 		<!-- Required if you want to record audio annotations -->
@@ -81,26 +95,23 @@ The complete installation and API guides can be found at https://www.pdftron.com
 		...
 	```
 
-4a. (Optional, required if using `DocumentView` widget) In your `MainActivity` file (either kotlin or java), change the parent class to `FlutterFragmentActivity`:
+5a. (Optional, required if using `DocumentView` widget) In your `MainActivity` file (either kotlin or java), change the parent class to `FlutterFragmentActivity`:
+```
+import androidx.annotation.NonNull
+import io.flutter.embedding.android.FlutterFragmentActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugins.GeneratedPluginRegistrant
 
-  ```
-  import androidx.annotation.NonNull
+class MainActivity : FlutterFragmentActivity() {
+    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+        GeneratedPluginRegistrant.registerWith(flutterEngine);
+    }
+}
+```
 
-  import io.flutter.plugins.GeneratedPluginRegistrant
-  import io.flutter.embedding.android.FlutterFragmentActivity
-  import io.flutter.embedding.engine.FlutterEngine
-
-  class MainActivity: FlutterFragmentActivity() {
-
-      override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
-          GeneratedPluginRegistrant.registerWith(flutterEngine);
-      }
-  }
-  ```
-
-5. Replace `lib/main.dart` with what is shown [here](#usage)
-6. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
-7. Run the app with the command `flutter run`.
+6. Replace `lib/main.dart` with what is shown [here](#usage)
+7. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
+8. Run the app with the command `flutter run`.
 
 ### iOS
 
@@ -280,15 +291,147 @@ Optional parameters:
 - `password`: String, password to an encrypted document
 - `config`: Config, viewer configuration options
 
+configs (more info could be found in `lib/config.dart`):
+
+Name | Type | Default | Explanation
+-- | -- | -- | -- | 
+disabledElements | array of `Buttons` constants | empty | Buttons to be disabled for the viewer
+disabledTools | array of `Tools` constants | empty | Tools to be disabled for the viewer
+multiTabEnabled | boolean | false | enable document multi-tab mode
+customerHeaders | map<string, string> | empty | custom headers to use with HTTP/HTTPS requests
+annotationToolbars | array of `CustomToolbar` objects or `DefaultToolbars` constants| | Defines custom toolbars. If passed in, default toolbars will no longer appear.
+hideDefaultAnnotationToolbars | array of `DefaultToolbars` objects| empty | Defines which default toolbars should be hidden
+hideAnnotationToolbarSwitcher | boolean | false | Defines whether to show the toolbar switcher in the top toolbar
+hideTopToolbars | boolean | false | Defines whether to show both the top nav app bar and the annotation toolbar
+hideTopAppNavBar | boolean | false | Defines whether to show the top nav app bar
+
 ```dart
 var disabledElements = [Buttons.shareButton, Buttons.searchButton];
 var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
+var customToolbar = new CustomToolbar('myToolbar', 'myToolbar', [Tools.annotationCreateArrow, Tools.annotationCreateCallout], ToolbarIcons.favorite);
+var annotationToolbars = [DefaultToolbars.annotate, customToolbar];
+// var hideDefaultAnnotationToolbars = [DefaultToolbars.annotate, DefaultToolbars.draw];
+
 var config = Config();
 config.disabledElements = disabledElements;
 config.disabledTools = disabledTools;
+config.multiTabEnabled = false;
 config.customHeaders = {'headerName': 'headerValue'};
-PdftronFlutter.openDocument(_document, config: config);
+config.annotationToolbars = annotationToolbars;
+// config.hideDefaultAnnotationToolbars = hideDefaultAnnotationToolbars;
+config.hideAnnotationToolbarSwitcher = false;
+config.hideTopToolbars = false;
+config.hideTopAppNavBar = false;
+await PdftronFlutter.openDocument(_document, config: config);
 ```
+### PdftronFlutter.importAnnotations(String)
+Imports XFDF string to current document.
+
+```dart
+
+var xfdf = '<?xml version="1.0" encoding="UTF-8"?>\n<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">\n\t<annots>\n\t\t<circle style="solid" width="5" color="#E44234" opacity="1" creationdate="D:20190729202215Z" flags="print" date="D:20190729202215Z" page="0" rect="138.824,653.226,236.28,725.159" title="" /></annots>\n\t<pages>\n\t\t<defmtx matrix="1.333333,0.000000,0.000000,-1.333333,0.000000,1056.000000" />\n\t</pages>\n\t<pdf-info version="2" xmlns="http://www.pdftron.com/pdfinfo" />\n</xfdf>';
+PdftronFlutter.importAnnotations(xfdf);
+```
+
+### PdftronFlutter.exportAnnotations(List<`Annot`>)
+To extract XFDF from the current document. If `annotationList` is null, export all annotations from the document; Else export the valid ones specified.
+
+For more details about `Annot`, please check `lib/options.dart` file.
+
+Params:
+Name | Type | Description
+--- | --- | ---
+annotationList | List<`Annot`> | A list of `Annot`, nullable
+
+Export all annotations:
+```dart
+var xfdf = await PdftronFlutter.exportAnnotations(null);
+```
+
+Export specified annotations:
+```dart
+List<Annot> annotList = new List<Annot>();
+list.add(new Annot('Hello', 1));
+list.add(new Annot('World', 2));
+var xfdf = await PdftronFlutter.exportAnnotations(annotList);
+```
+
+### PdftronFlutter.flattenAnnotations(bool)
+To flatten the forms and (optionally) annotations in the current document.
+
+Params:
+Name | Type | Description
+--- | --- | ---
+formsOnly | bool | whether only forms are flattened
+
+Flatten only forms:
+```dart
+PdftronFlutter.flattenAnnotations(true);
+```
+
+Flatten forms and annotations:
+```dart
+PdftronFlutter.flattenAnnotations(false);
+```
+
+### PdftronFlutter.deleteAnnotations(List<`Annot`>)
+To delete the specified annotations in the current document.
+
+For more details about `Annot`, please check `lib/options.dart` file.
+
+Params:
+Name | Type | Description
+--- | --- | ---
+annotationList | List<`Annot`> | A list of `Annot`
+
+```dart
+List<Annot> annotList = new List<Annot>();
+list.add(new Annot('Hello', 1));
+list.add(new Annot('World', 2));
+PdftronFlutter.deleteAnnotations(annotList);
+```
+
+### PdftronFlutter.selectAnnotation(Annot)
+Select the specified annotation in the current document.
+
+For more details about `Annot`, please check `lib/options.dart` file.
+
+Params:
+Name | Type | Description
+--- | --- | ---
+annotation | Annot | the annotation to be selected
+
+```dart
+PdftronFlutter.selectAnnotation(new Annot('Hello', 1));
+```
+
+### PdftronFlutter.setFlagsForAnnotations(List<`AnnotWithFlags`>)
+To set flags for specified annotations in the current document.
+
+For more details about `Annot`, `AnnotFlag` and `AnnotWithFlags`, please check `lib/options.dart` file.
+
+Params:
+Name | Type | Description
+--- | --- | ---
+annotationWithFlagsList | List<`AnnotWithFlags`> | a list of annotations with respective flags to be set
+
+```dart
+List<AnnotWithFlags> annotsWithFlags = new List<AnnotWithFlags>();
+
+Annot hello = new Annot('Hello', 1);
+Annot world = new Annot('World', 3);
+AnnotFlag printOn = new AnnotFlag(AnnotationFlags.print, true);
+AnnotFlag unlock = new AnnotFlag(AnnotationFlags.locked, false);
+
+// you can add an AnnotWithFlags object flexibly like this:
+list.add(new AnnotWithFlags.fromAnnotAndFlags(hello, [printOn, unlock]));
+list.add(new AnnotWithFlags.fromAnnotAndFlags(world, [unlock]));
+
+// Or simply use the constructor like this:
+list.add(new AnnotWithFlags('Pdftron', 10, AnnotationFlags.no_zoom, true));
+PdftronFlutter.setFlagsForAnnotations(annotsWithFlags);
+```
+
 
 ### PdftronFlutter.importAnnotationCommand(String)
 
@@ -298,7 +441,7 @@ The XFDF needs to be a valid command format with `<add>` `<modify>` `<delete>` t
 ### PdftronFlutter.importBookmarkJson(String)
 
 Imports user bookmarks to the document.
-The input needs to be a valid bookmark JSON format, for example `{"0":"Page 1"}`.
+The input needs to be a valid bookmark JSON format, for example `{"0":"Page 1"}`.
 
 ### PdftronFlutter.saveDocument()
 
@@ -306,6 +449,35 @@ Saves the currently opened document in the viewer and returns the absolute path 
 
 ```dart
 var path = await PdftronFlutter.saveDocument();
+```
+
+### PdftronFlutter.commitTool()
+
+Commits the annotation being created by the tool to the PDF.
+
+Only available for multi-stroke ink and poly-shape, and will return false for all other tools.
+
+```dart
+var committed = await PdftronFlutter.commitTool();
+print("Tool committed: $committed");
+```
+
+### PdftronFlutter.getPageCount()
+
+Returns the total number of pages in the currently displayed document.
+
+```dart
+var pageCount = await PdftronFlutter.getPageCount();
+print("The current doc has $pageCount pages");
+```
+
+### PdftronFlutter.handleBackButton()
+
+Handles back button (Android only).
+
+```dart
+var handled = await PdftronFlutter.handleBackButton();
+print("Back button handled: $handled");
 ```
 
 ### PdftronFlutter.getPageCropBox()
@@ -338,6 +510,72 @@ Event is raised when user bookmark changes committed to the document.
 ```dart
 var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
   print("flutter bookmark: ${bookmarkJson}");
+});
+```
+
+### startDocumentLoadedListener
+
+Event is raised when the document finishes loading.
+
+```dart
+var documentLoadedCancel = startDocumentLoadedListener((path)
+{
+  print("flutter document loaded: ${path}");
+});
+```
+
+### startDocumentErrorListener
+
+Event is raised when the document has errors when loading.
+
+```dart
+var documentErrorCancel = startDocumentErrorListener((){
+  print("flutter document loaded unsuccessfully");
+});
+```
+
+### startAnnotationChangedListener
+
+Event is raised when there is a change to annotations to the document.
+
+```dart
+var annotChangedCancel = startAnnotationChangedListener((action, annotations) 
+{
+  print("flutter annotation action: ${action}");
+  for (Annot annot in annotations) {
+    print("annotation has id: ${annot.id}");
+    print("annotation is in page: ${annot.pageNumber}");
+  }
+});
+```
+
+### startAnnotationsSelectedListener
+
+Event is raised when annotations are selected.
+
+```dart
+var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects) 
+{
+  for (AnnotWithRect annotWithRect in annotationWithRects) {
+    print("annotation has id: ${annotWithRect.id}");
+    print("annotation is in page: ${annotWithRect.pageNumber}");
+    print("annotation has width: ${annotWithRect.rect.width}");
+  }
+});
+
+```
+
+### startFormFieldValueChangedListener
+
+Event is raised when there are changes to form field values.
+
+```dart
+var fieldChangedCancel = startFormFieldValueChangedListener((fields)
+{
+  for (Field field in fields) {
+    print("Field has name ${field.fieldName}");
+    print("Field has value ${field.fieldValue}");
+  }
 });
 ```
 
