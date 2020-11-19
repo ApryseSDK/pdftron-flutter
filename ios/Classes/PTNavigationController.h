@@ -2,12 +2,13 @@
 #import <PDFNet/PDFNet.h>
 #import <Tools/Tools.h>
 
+#import "PTFlutterDocumentController.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface PTNavigationController : UINavigationController
 
-@property (nonatomic, assign) PTFlutterDocumentController* flutterDocumentController;
-@property (nonatomic, weak, nullable) id <UINavigationControllerDelegate> delegate;
+@property (nonatomic, weak, nullable) PTFlutterDocumentController* flutterDocumentController;
 
 @end
 

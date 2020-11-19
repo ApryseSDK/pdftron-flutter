@@ -4,6 +4,15 @@
 
 @implementation PTFlutterDocumentController
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    
+    // Workaround to ensure thumbnail slider is hidden at launch.
+    self.thumbnailSliderHidden = YES;
+    self.thumbnailSliderController.view.hidden = YES;
+}
+
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
@@ -20,9 +29,12 @@
 
 - (void)setThumbnailSliderHidden:(BOOL)hidden animated:(BOOL)animated
 {
-//    if (!hidden) {
-//        return;
-//    }
+    // Prevent the thumbnail slider from being shown.
+    // NOTE: This method will be called with hidden=NO when the bottomToolbarEnabled property is
+    // enabled (which is just a convenience property for the thumbnailSliderEnabled property).
+    if (!hidden) {
+        return;
+    }
     [super setThumbnailSliderHidden:hidden animated:animated];
 }
 
@@ -55,6 +67,16 @@
     return (!self.hideTopAppNavBar && !self.hideTopToolbars);
 }
 
+- (BOOL)areTopToolbarsEnabled
+{
+    return !self.hideTopToolbars;
+}
+
+- (BOOL)isNavigationBarEnabled
+{
+    return !self.hideTopAppNavBar;
+}
+
 - (BOOL)controlsHidden
 {
     if (self.navigationController) {
@@ -62,10 +84,25 @@
             return [self.navigationController isNavigationBarHidden];
         }
         if ([self isBottomToolbarEnabled]) {
-            return [self isThumbnailSliderHidden];
+            return [self.navigationController isToolbarHidden];
         }
     }
     return [super controlsHidden];
+}
+
+- (void)setControlsHidden:(BOOL)controlsHidden animated:(BOOL)animated
+{
+    [super setControlsHidden:controlsHidden animated:animated];
+    
+    // When the top toolbars are enabled...
+    if ([self areTopToolbarsEnabled] &&
+        // ... but the navigation bar (app nav. bar) is disabled...
+        ![self isNavigationBarEnabled] &&
+        // ... and we are in a tabbed viewer...
+        self.tabbedDocumentViewController.tabsEnabled) {
+        // ... then manually toggle the tabbed viewer's tab bar visibility.
+        [self.tabbedDocumentViewController setTabBarHidden:controlsHidden animated:animated];
+    }
 }
 
 #pragma mark - <PTBookmarkViewControllerDelegate>
@@ -121,14 +158,6 @@
     
     if (tool.backToPanToolAfterUse != backToPan) {
         tool.backToPanToolAfterUse = backToPan;
-    }
-    
-    // If the top toolbar is disabled...
-    if (![self isTopToolbarEnabled] &&
-        // ...and the annotation toolbar is visible now...
-        ![self isToolGroupToolbarHidden]) {
-        // ...hide the toolbar.
-        self.toolGroupToolbar.hidden = YES;
     }
 }
 
@@ -370,13 +399,20 @@
 - (void)applyViewerSettings
 {
     const BOOL hideNav = (self.hideTopAppNavBar || self.hideTopToolbars);
-    self.navigationController.navigationBarHidden = hideNav;
     self.controlsHidden = hideNav;
     
     const BOOL translucent = hideNav;
-    
     self.navigationController.navigationBar.translucent = translucent;
     self.thumbnailSliderController.toolbar.translucent = translucent;
+    
+    // Always enable the bottom toolbar. This is required for the custom checks in -controlsHidden
+    // when the top toolbar(s) are disabled, to be able to still toggle the bottom toolbar.
+    self.bottomToolbarEnabled = YES;
+    
+    // Always allow toggling toolbars on tap.
+    BOOL hidesToolbarsOnTap = YES;
+    self.hidesControlsOnTap = hidesToolbarsOnTap;
+    self.pageFitsBetweenBars = !hidesToolbarsOnTap; // Tools default is enabled.
     
     [self applyDocumentControllerSettings];
 }

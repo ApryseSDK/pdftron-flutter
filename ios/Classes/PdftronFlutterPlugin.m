@@ -429,7 +429,11 @@
                                        withConfig:self.config];
 }
 
-
+- (BOOL)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController shouldHideTabBarForTraitCollection:(UITraitCollection *)traitCollection
+{
+    // Always show tab bar when enabled, regardless of the trait collection.
+    return NO;
+}
 
 #pragma mark - PTDocumentControllerDelegate
 
@@ -765,22 +769,14 @@
     if ([passwordValue isKindOfClass:[NSString class]]) {
         password = (NSString *)passwordValue;
     }
-    
-    // Set color of toolbars
-    [UINavigationBar appearance].backgroundColor = UIColor.whiteColor;
-    [UIToolbar appearance].barTintColor = UIColor.whiteColor;
-    
+        
     // Create and wrap a tabbed controller in a navigation controller.
     self.tabbedDocumentViewController = [[PTTabbedDocumentViewController alloc] init];
     self.tabbedDocumentViewController.delegate = self;
     self.tabbedDocumentViewController.tabsEnabled = NO;
     self.tabbedDocumentViewController.viewControllerClass = [PTFlutterDocumentController class];
     
-    self.tabbedDocumentViewController.restorationIdentifier = [NSUUID UUID].UUIDString;
-    
     PTNavigationController *navigationController = [[PTNavigationController alloc] initWithRootViewController:self.tabbedDocumentViewController];
-    
-    navigationController.delegate = (id)navigationController;
     
     self.tabbedDocumentViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
     
