@@ -32,7 +32,6 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOnDetach;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOpenDocError;
 
 public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 implements ViewerComponent {
-
     private ViewerImpl mImpl = new ViewerImpl(this);
 
     private ToolManagerBuilder mToolManagerBuilder;
@@ -76,8 +75,6 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         setDocumentUri(configInfo.getFileUri());
         setPassword(password);
         setCustomHeaders(configInfo.getCustomHeaderJson());
-        setShowNavIcon(configInfo.isShowLeadingNavButton());
-        setNavIconResName(configInfo.getLeadingNavButtonIcon());
         setViewerConfig(mBuilder.build());
         setFlutterLoadResult(result);
 

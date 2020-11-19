@@ -769,7 +769,7 @@
     if ([passwordValue isKindOfClass:[NSString class]]) {
         password = (NSString *)passwordValue;
     }
-        
+    
     // Create and wrap a tabbed controller in a navigation controller.
     self.tabbedDocumentViewController = [[PTTabbedDocumentViewController alloc] init];
     self.tabbedDocumentViewController.delegate = self;

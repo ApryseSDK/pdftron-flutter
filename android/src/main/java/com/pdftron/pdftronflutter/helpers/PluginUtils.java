@@ -25,7 +25,6 @@ import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.BookmarkManager;
-import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.utils.ViewerUtils;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
@@ -69,12 +68,6 @@ public class PluginUtils {
     public static final String KEY_CONFIG_DISABLED_TOOLS = "disabledTools";
     public static final String KEY_CONFIG_MULTI_TAB_ENABLED = "multiTabEnabled";
     public static final String KEY_CONFIG_CUSTOM_HEADERS = "customHeaders";
-    public static final String KEY_CONFIG_LEADING_NAV_BUTTON_ICON = "leadingNavButtonIcon";
-    public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
-    public static final String KEY_CONFIG_READ_ONLY = "readOnly";
-    public static final String KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED = "thumbnailViewEditingEnabled";
-    public static final String KEY_CONFIG_ANNOTATION_AUTHOR = "annotationAuthor";
-    public static final String KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING = "continuousAnnotationEditing";
     public static final String KEY_CONFIG_ANNOTATION_TOOLBARS = "annotationToolbars";
     public static final String KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS = "hideDefaultAnnotationToolbars";
     public static final String KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER = "hideAnnotationToolbarSwitcher";
@@ -232,14 +225,10 @@ public class PluginUtils {
     public static class ConfigInfo {
         private JSONObject customHeaderJson;
         private Uri fileUri;
-        private boolean showLeadingNavButton;
-        private String leadingNavButtonIcon;
 
         public ConfigInfo() {
             this.customHeaderJson = null;
             this.fileUri = null;
-            this.showLeadingNavButton = true;
-            this.leadingNavButtonIcon = "";
         }
 
         public void setCustomHeaderJson(JSONObject customHeaderJson) {
@@ -250,14 +239,6 @@ public class PluginUtils {
             this.fileUri = fileUri;
         }
 
-        public void setShowLeadingNavButton(boolean showLeadingNavButton) {
-            this.showLeadingNavButton = showLeadingNavButton;
-        }
-
-        public void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
-            this.leadingNavButtonIcon = leadingNavButtonIcon;
-        }
-
         public JSONObject getCustomHeaderJson() {
             return customHeaderJson;
         }
@@ -266,13 +247,6 @@ public class PluginUtils {
             return fileUri;
         }
 
-        public boolean isShowLeadingNavButton() {
-            return showLeadingNavButton;
-        }
-
-        public String getLeadingNavButtonIcon() {
-            return leadingNavButtonIcon;
-        }
     }
 
     public static ConfigInfo handleOpenDocument(@NonNull ViewerConfig.Builder builder, @NonNull ToolManagerBuilder toolManagerBuilder,
@@ -306,29 +280,6 @@ public class PluginUtils {
                     JSONObject customHeaderJson = configJson.getJSONObject(KEY_CONFIG_CUSTOM_HEADERS);
                     configInfo.setCustomHeaderJson(customHeaderJson);
                 }
-                if (!configJson.isNull(KEY_CONFIG_LEADING_NAV_BUTTON_ICON)) {
-                    String leadingNavButtonIcon = configJson.getString(KEY_CONFIG_LEADING_NAV_BUTTON_ICON);
-                    configInfo.setLeadingNavButtonIcon(leadingNavButtonIcon);
-                }
-                if (!configJson.isNull(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON)) {
-                    boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
-                    configInfo.setShowLeadingNavButton(showLeadingNavButton);
-                }
-                if (!configJson.isNull(KEY_CONFIG_READ_ONLY)) {
-                    boolean readOnly = configJson.getBoolean(KEY_CONFIG_READ_ONLY);
-                    builder.documentEditingEnabled(!readOnly);
-                }
-                if (!configJson.isNull(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED)) {
-                    boolean thumbnailViewEditingEnabled = configJson.getBoolean(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED);
-                    builder.thumbnailViewEditingEnabled(thumbnailViewEditingEnabled);
-                }
-                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_AUTHOR)) {
-                    String annotationAuthor = configJson.getString(KEY_CONFIG_ANNOTATION_AUTHOR);
-                    if (!annotationAuthor.isEmpty()) {
-                        PdfViewCtrlSettingsManager.updateAuthorName(context, annotationAuthor);
-                        PdfViewCtrlSettingsManager.setAnnotListShowAuthor(context, true);
-                    }
-                }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_TOOLBARS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_ANNOTATION_TOOLBARS);
                     setAnnotationBars(array, builder);
@@ -343,10 +294,6 @@ public class PluginUtils {
                         }
                     }
                     builder = builder.hideToolbars(tagList.toArray(new String[tagList.size()]));
-                }
-                if (!configJson.isNull(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING)) {
-                    boolean continuousAnnotationEditing = configJson.getBoolean(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING);
-                    PdfViewCtrlSettingsManager.setContinuousAnnotationEdit(context, continuousAnnotationEditing);
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER)) {
                     boolean hideAnnotationToolbarSwitcher = configJson.getBoolean(KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER);
