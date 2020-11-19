@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 // viewer options
 
+@property (nonatomic, getter=isAutoSaveEnabled) BOOL autoSaveEnabled;
+@property (nonatomic) BOOL pageChangesOnTap;
 @property (nonatomic, assign) BOOL useStylusAsPen;
 @property (nonatomic) BOOL showSavedSignatures;
 @property (nonatomic) BOOL signSignatureFieldsWithStamps;

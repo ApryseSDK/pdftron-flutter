@@ -183,14 +183,14 @@
                     
                     NSNumber* autoSaveEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAutoSaveEnabledKey class:[NSNumber class] error:&error];
                     if (!error && autoSaveEnabledNumber) {
-                        [flutterViewController setAutomaticallySavesDocument:[autoSaveEnabledNumber boolValue]];
+                        [flutterViewController setAutoSaveEnabled:[autoSaveEnabledNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTPageChangeOnTapKey]) {
                     
                     NSNumber* pageChangeOnTapNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTPageChangeOnTapKey class:[NSNumber class] error:&error];
                     if (!error && pageChangeOnTapNumber) {
-                        [flutterViewController setChangesPageOnTap:[pageChangeOnTapNumber boolValue]];
+                        [flutterViewController setPageChangesOnTap:[pageChangeOnTapNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTShowSavedSignaturesKey]) {

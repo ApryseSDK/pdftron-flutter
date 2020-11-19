@@ -295,6 +295,26 @@
     self.toolManager.pencilTool = self.useStylusAsPen ? pencilTool : [PTPanTool class];
 }
 
+- (void)setAutoSaveEnabled:(BOOL)autoSaveEnabled
+{
+    self.automaticallySavesDocument = autoSaveEnabled;
+}
+
+- (BOOL)isAutoSaveEnabled
+{
+    return self.automaticallySavesDocument;
+}
+
+- (void)setPageChangesOnTap:(BOOL)pageChangesOnTap
+{
+    self.changesPageOnTap = pageChangesOnTap;
+}
+
+- (BOOL)pageChangesOnTap
+{
+    return self.changesPageOnTap;
+}
+
 - (void)setShowSavedSignatures:(BOOL)showSavedSignatures
 {
     self.toolManager.showDefaultSignature = showSavedSignatures;
