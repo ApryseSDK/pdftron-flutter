@@ -17,15 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
 // viewer options
 
 @property (nonatomic, assign) BOOL useStylusAsPen;
+@property (nonatomic) BOOL showSavedSignatures;
+@property (nonatomic) BOOL signSignatureFieldsWithStamps;
 
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
-
-- (void)setShowSavedSignatures:(BOOL)showSavedSignatures;
-- (BOOL)isShowSavedSignatures;
-
-- (void)setSignSignatureFieldsWithStamps:(BOOL)signSignatureFieldsWithStamps;
-- (BOOL)isSignSignatureFieldsWithStamps;
 
 @end
 

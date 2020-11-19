@@ -300,7 +300,7 @@
     self.toolManager.showDefaultSignature = showSavedSignatures;
 }
 
-- (BOOL)isShowSavedSignatures
+- (BOOL)showSavedSignatures
 {
     return self.toolManager.showDefaultSignature;
 }
@@ -310,7 +310,7 @@
     self.toolManager.signatureAnnotationOptions.signSignatureFieldsWithStamps = signSignatureFieldsWithStamps;
 }
 
-- (BOOL)isSignSignatureFieldsWithStamps
+- (BOOL)signSignatureFieldsWithStamps
 {
     return self.toolManager.signatureAnnotationOptions.signSignatureFieldsWithStamps;
 }
