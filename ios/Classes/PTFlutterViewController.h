@@ -15,13 +15,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL documentLoaded;
 
 // viewer options
-@property (nonatomic, assign) BOOL bottomToolbarOn;
+@property (nonatomic) BOOL selectAnnotationAfterCreation;
+@property (nonatomic, assign, getter=isBottomToolbarOn) BOOL bottomToolbarOn;
 
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
 
-- (void)setSelectAnnotationAfterCreation:(BOOL)selectAnnotationAfterCreation;
-- (BOOL)isSelectAnnotationAfterCreation;
 
 @end
 

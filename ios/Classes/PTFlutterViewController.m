@@ -302,7 +302,7 @@
     self.toolManager.selectAnnotationAfterCreation = selectAnnotationAfterCreation;
 }
 
-- (BOOL)isSelectAnnotationAfterCreation
+- (BOOL)selectAnnotationAfterCreation
 {
     return self.toolManager.selectAnnotationAfterCreation;
 }
