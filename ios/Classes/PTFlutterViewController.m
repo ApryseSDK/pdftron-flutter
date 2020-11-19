@@ -324,16 +324,6 @@
     return self.thumbnailsViewController.editingEnabled;
 }
 
-- (void)setAnnotationAuthor:(NSString *)annotationAuthor
-{
-    self.toolManager.annotationAuthor = [annotationAuthor copy];
-}
-
-- (NSString *)getAnnotationAuthor
-{
-    return [self.toolManager.annotationAuthor copy];
-}
-
 - (void)setContinuousAnnotationEditing:(BOOL)continuousAnnotationEditing
 {
     self.toolManager.tool.backToPanToolAfterUse = !continuousAnnotationEditing;
@@ -342,6 +332,16 @@
 - (BOOL)isContinuousAnnotationEditing
 {
     return !self.toolManager.tool.backToPanToolAfterUse;
+}
+
+- (NSString *)getAnnotationAuthor
+{
+    return self.toolManager.annotationAuthor;
+}
+
+- (void)setAnnotationAuthor:(NSString *)annotationAuthor
+{
+    self.toolManager.annotationAuthor = annotationAuthor;
 }
 
 #pragma mark - Other
