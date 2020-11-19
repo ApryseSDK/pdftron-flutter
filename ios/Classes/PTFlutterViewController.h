@@ -14,8 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL needsRemoteDocumentLoaded;
 @property (nonatomic) BOOL documentLoaded;
 
+//viewer options
+
 // long-press menu customization
-@property (nonatomic, assign) BOOL longPressMenuEnabled;
+@property (nonatomic, assign, getter=isLongPressMenuEnabled) BOOL longPressMenuEnabled;
 @property (nonatomic, copy, nullable) NSArray<NSString*>* longPressMenuItems;
 @property (nonatomic, copy, nullable) NSArray<NSString*>* overrideLongPressMenuBehavior;
 
