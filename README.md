@@ -300,6 +300,114 @@ config.disabledTools = disabledTools;
 config.customHeaders = {'headerName': 'headerValue'};
 PdftronFlutter.openDocument(_document, config: config);
 ```
+### PdftronFlutter.importAnnotations(String)
+Imports XFDF string to current document.
+
+```dart
+
+var xfdf = '<?xml version="1.0" encoding="UTF-8"?>\n<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">\n\t<annots>\n\t\t<circle style="solid" width="5" color="#E44234" opacity="1" creationdate="D:20190729202215Z" flags="print" date="D:20190729202215Z" page="0" rect="138.824,653.226,236.28,725.159" title="" /></annots>\n\t<pages>\n\t\t<defmtx matrix="1.333333,0.000000,0.000000,-1.333333,0.000000,1056.000000" />\n\t</pages>\n\t<pdf-info version="2" xmlns="http://www.pdftron.com/pdfinfo" />\n</xfdf>';
+PdftronFlutter.importAnnotations(xfdf);
+```
+
+### PdftronFlutter.exportAnnotations(List<`Annot`>)
+To extract XFDF from the current document. If `annotationList` is null, export all annotations from the document; Else export the valid ones specified.
+
+For more details about `Annot`, please check `lib/options.dart` file.
+
+Params:
+Name | Type | Description
+--- | --- | ---
+annotationList | List<`Annot`> | A list of `Annot`, nullable
+
+Export all annotations:
+```dart
+var xfdf = await PdftronFlutter.exportAnnotations(null);
+```
+
+Export specified annotations:
+```dart
+List<Annot> annotList = new List<Annot>();
+list.add(new Annot('Hello', 1));
+list.add(new Annot('World', 2));
+var xfdf = await PdftronFlutter.exportAnnotations(annotList);
+```
+
+### PdftronFlutter.flattenAnnotations(bool)
+To flatten the forms and (optionally) annotations in the current document.
+
+Params:
+Name | Type | Description
+--- | --- | ---
+formsOnly | bool | whether only forms are flattened
+
+Flatten only forms:
+```dart
+PdftronFlutter.flattenAnnotations(true);
+```
+
+Flatten forms and annotations:
+```dart
+PdftronFlutter.flattenAnnotations(false);
+```
+
+### PdftronFlutter.deleteAnnotations(List<`Annot`>)
+To delete the specified annotations in the current document.
+
+For more details about `Annot`, please check `lib/options.dart` file.
+
+Params:
+Name | Type | Description
+--- | --- | ---
+annotationList | List<`Annot`> | A list of `Annot`
+
+```dart
+List<Annot> annotList = new List<Annot>();
+list.add(new Annot('Hello', 1));
+list.add(new Annot('World', 2));
+PdftronFlutter.deleteAnnotations(annotList);
+```
+
+### PdftronFlutter.selectAnnotation(Annot)
+Select the specified annotation in the current document.
+
+For more details about `Annot`, please check `lib/options.dart` file.
+
+Params:
+Name | Type | Description
+--- | --- | ---
+annotation | Annot | the annotation to be selected
+
+```dart
+PdftronFlutter.selectAnnotation(new Annot('Hello', 1));
+```
+
+### PdftronFlutter.setFlagsForAnnotations(List<`AnnotWithFlags`>)
+To set flags for specified annotations in the current document.
+
+For more details about `Annot`, `AnnotFlag` and `AnnotWithFlags`, please check `lib/options.dart` file.
+
+Params:
+Name | Type | Description
+--- | --- | ---
+annotationWithFlagsList | List<`AnnotWithFlags`> | a list of annotations with respective flags to be set
+
+```dart
+List<AnnotWithFlags> annotsWithFlags = new List<AnnotWithFlags>();
+
+Annot hello = new Annot('Hello', 1);
+Annot world = new Annot('World', 3);
+AnnotFlag printOn = new AnnotFlag(AnnotationFlags.print, true);
+AnnotFlag unlock = new AnnotFlag(AnnotationFlags.locked, false);
+
+// you can add an AnnotWithFlags object flexibly like this:
+list.add(new AnnotWithFlags.fromAnnotAndFlags(hello, [printOn, unlock]));
+list.add(new AnnotWithFlags.fromAnnotAndFlags(world, [unlock]));
+
+// Or simply use the constructor like this:
+list.add(new AnnotWithFlags('Pdftron', 10, AnnotationFlags.no_zoom, true));
+PdftronFlutter.setFlagsForAnnotations(annotsWithFlags);
+```
+
 
 ### PdftronFlutter.importAnnotationCommand(String)
 
@@ -317,6 +425,35 @@ Saves the currently opened document in the viewer and returns the absolute path 
 
 ```dart
 var path = await PdftronFlutter.saveDocument();
+```
+
+### PdftronFlutter.commitTool()
+
+Commits the annotation being created by the tool to the PDF.
+
+Only available for multi-stroke ink and poly-shape, and will return false for all other tools.
+
+```dart
+var committed = await PdftronFlutter.commitTool();
+print("Tool committed: $committed");
+```
+
+### PdftronFlutter.getPageCount()
+
+Returns the total number of pages in the currently displayed document.
+
+```dart
+var pageCount = await PdftronFlutter.getPageCount();
+print("The current doc has $pageCount pages");
+```
+
+### PdftronFlutter.handleBackButton()
+
+Handles back button (Android only).
+
+```dart
+var handled = await PdftronFlutter.handleBackButton();
+print("Back button handled: $handled");
 ```
 
 ### PdftronFlutter.getPageCropBox()
@@ -349,6 +486,72 @@ Event is raised when user bookmark changes committed to the document.
 ```dart
 var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
   print("flutter bookmark: ${bookmarkJson}");
+});
+```
+
+### startDocumentLoadedListener
+
+Event is raised when the document finishes loading.
+
+```dart
+var documentLoadedCancel = startDocumentLoadedListener((path)
+{
+  print("flutter document loaded: ${path}");
+});
+```
+
+### startDocumentErrorListener
+
+Event is raised when the document has errors when loading.
+
+```dart
+var documentErrorCancel = startDocumentErrorListener((){
+  print("flutter document loaded unsuccessfully");
+});
+```
+
+### startAnnotationChangedListener
+
+Event is raised when there is a change to annotations to the document.
+
+```dart
+var annotChangedCancel = startAnnotationChangedListener((action, annotations) 
+{
+  print("flutter annotation action: ${action}");
+  for (Annot annot in annotations) {
+    print("annotation has id: ${annot.id}");
+    print("annotation is in page: ${annot.pageNumber}");
+  }
+});
+```
+
+### startAnnotationsSelectedListener
+
+Event is raised when annotations are selected.
+
+```dart
+var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects) 
+{
+  for (AnnotWithRect annotWithRect in annotationWithRects) {
+    print("annotation has id: ${annotWithRect.id}");
+    print("annotation is in page: ${annotWithRect.pageNumber}");
+    print("annotation has width: ${annotWithRect.rect.width}");
+  }
+});
+
+```
+
+### startFormFieldValueChangedListener
+
+Event is raised when there are changes to form field values.
+
+```dart
+var fieldChangedCancel = startFormFieldValueChangedListener((fields)
+{
+  for (Field field in fields) {
+    print("Field has name ${field.fieldName}");
+    print("Field has value ${field.fieldValue}");
+  }
 });
 ```
 
