@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, getter=isThumbnailEditingEnabled) BOOL thumbnailEditingEnabled;
 @property (nonatomic, getter=isContinuousAnnotationEditing) BOOL continuousAnnotationEditing;
 
-@property (nonatomic, nullable, getter=getAnnotationAuthor) NSString* annotationAuthor;
+@property (nonatomic, copy, nullable, getter=getAnnotationAuthor) NSString* annotationAuthor;
 
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
