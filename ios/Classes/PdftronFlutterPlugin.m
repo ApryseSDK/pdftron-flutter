@@ -33,6 +33,7 @@
     [registrar addMethodCallDelegate:instance channel:channel];
     
     [instance registerEventChannels:[registrar messenger]];
+    [instance overrideControllerClasses];
     
     DocumentViewFactory* documentViewFactory =
     [[DocumentViewFactory alloc] initWithMessenger:registrar.messenger];
@@ -55,7 +56,15 @@
     }];
     
     [instance registerEventChannels:messenger];
+    [instance overrideControllerClasses];
     return instance;
+}
+
+- (void)overrideControllerClasses
+{
+    [PTOverrides overrideClass:[PTDocumentViewController class] withClass:[PTFlutterViewController class]];
+    
+    [PTOverrides overrideClass:[PTThumbnailsViewController class] withClass:[FLThumbnailsViewController class]];
 }
 
 - (void)registerEventChannels:(NSObject<FlutterBinaryMessenger> *)messenger
@@ -808,10 +817,6 @@
 
 - (void)handleOpenDocumentMethod:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)result
 {
-
-    [PTOverrides overrideClass:[PTDocumentViewController class] withClass:[PTFlutterViewController class]];
-    
-    [PTOverrides overrideClass:[PTThumbnailsViewController class] withClass:[FLThumbnailsViewController class]];
     
     // Get document argument.
     NSString *document = nil;

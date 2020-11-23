@@ -298,7 +298,7 @@ NS_ASSUME_NONNULL_END
 }
 
 - (BOOL)filterMenuItemsForLongPressMenu:(UIMenuController *)menuController {
-    if (![self longPressMenuEnabled]) {
+    if (!self.longPressMenuEnabled) {
         menuController.menuItems = nil;
         return NO;
     }
