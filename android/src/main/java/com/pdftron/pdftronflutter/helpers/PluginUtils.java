@@ -15,6 +15,7 @@ import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.Page;
 import com.pdftron.pdf.Rect;
+import com.pdftron.pdf.annots.Markup;
 import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
@@ -25,7 +26,6 @@ import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.BookmarkManager;
-import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.utils.ViewerUtils;
 
@@ -60,17 +60,14 @@ public class PluginUtils {
     public static final String KEY_ANNOTATION = "annotation";
     public static final String KEY_FORMS_ONLY = "formsOnly";
     public static final String KEY_ANNOTATIONS_WITH_FLAGS = "annotationsWithFlags";
+    public static final String KEY_ANNOTATION_PROPERTIES = "annotationProperties";
 
     public static final String KEY_CONFIG_DISABLED_ELEMENTS = "disabledElements";
     public static final String KEY_CONFIG_DISABLED_TOOLS = "disabledTools";
     public static final String KEY_CONFIG_MULTI_TAB_ENABLED = "multiTabEnabled";
     public static final String KEY_CONFIG_CUSTOM_HEADERS = "customHeaders";
-    public static final String KEY_CONFIG_LEADING_NAV_BUTTON_ICON = "leadingNavButtonIcon";
-    public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
-    public static final String KEY_CONFIG_READ_ONLY = "readOnly";
-    public static final String KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED = "thumbnailViewEditingEnabled";
-    public static final String KEY_CONFIG_ANNOTATION_AUTHOR = "annotationAuthor";
-    public static final String KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING = "continuousAnnotationEditing";
+    public static final String KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED = "annotationPermissionCheckEnabled";
+    public static final String KEY_CONFIG_OVERRIDE_BEHAVIOR = "overrideBehavior";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -79,6 +76,10 @@ public class PluginUtils {
     public static final String KEY_WIDTH = "width";
     public static final String KEY_HEIGHT = "height";
     public static final String KEY_RECT = "rect";
+    public static final String KEY_SUBJECT = "subject";
+    public static final String KEY_TITLE = "title";
+    public static final String KEY_CONTENTS = "contents";
+    public static final String KEY_CONTENT_RECT = "contentRect";
 
     public static final String KEY_FIELD_NAME = "fieldName";
     public static final String KEY_FIELD_VALUE = "fieldValue";
@@ -90,9 +91,14 @@ public class PluginUtils {
     public static final String KEY_ACTION_DELETE = "delete";
     public static final String KEY_ACTION = "action";
 
+    public static final String KEY_DATA = "data";
+
     public static final String KEY_ANNOTATION_FLAG_LISTS = "flags";
     public static final String KEY_ANNOTATION_FLAG = "flag";
     public static final String KEY_ANNOTATION_FLAG_VALUE = "flagValue";
+
+    public static final String BEHAVIOR_LINK_PRESS = "linkPress";
+    public static final String KEY_LINK_BEHAVIOR_DATA = "url";
 
     public static final String EVENT_EXPORT_ANNOTATION_COMMAND = "export_annotation_command_event";
     public static final String EVENT_EXPORT_BOOKMARK = "export_bookmark_event";
@@ -101,6 +107,7 @@ public class PluginUtils {
     public static final String EVENT_ANNOTATION_CHANGED = "annotation_changed_event";
     public static final String EVENT_ANNOTATIONS_SELECTED = "annotations_selected_event";
     public static final String EVENT_FORM_FIELD_VALUE_CHANGED = "form_field_value_changed_event";
+    public static final String EVENT_BEHAVIOR_ACTIVATED = "behavior_activated_event";
 
     public static final String FUNCTION_GET_PLATFORM_VERSION = "getPlatformVersion";
     public static final String FUNCTION_GET_VERSION = "getVersion";
@@ -119,6 +126,7 @@ public class PluginUtils {
     public static final String FUNCTION_DELETE_ANNOTATIONS = "deleteAnnotations";
     public static final String FUNCTION_SELECT_ANNOTATION = "selectAnnotation";
     public static final String FUNCTION_SET_FLAGS_FOR_ANNOTATIONS = "setFlagsForAnnotations";
+    public static final String FUNCTION_SET_PROPERTIES_FOR_ANNOTATION = "setPropertiesForAnnotation";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -193,14 +201,12 @@ public class PluginUtils {
     public static class ConfigInfo {
         private JSONObject customHeaderJson;
         private Uri fileUri;
-        private boolean showLeadingNavButton;
-        private String leadingNavButtonIcon;
+        private ArrayList<String> actionOverrideItems;
 
         public ConfigInfo() {
             this.customHeaderJson = null;
             this.fileUri = null;
-            this.showLeadingNavButton = true;
-            this.leadingNavButtonIcon = "";
+            this.actionOverrideItems = null;
         }
 
         public void setCustomHeaderJson(JSONObject customHeaderJson) {
@@ -211,12 +217,8 @@ public class PluginUtils {
             this.fileUri = fileUri;
         }
 
-        public void setShowLeadingNavButton(boolean showLeadingNavButton) {
-            this.showLeadingNavButton = showLeadingNavButton;
-        }
-
-        public void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
-            this.leadingNavButtonIcon = leadingNavButtonIcon;
+        public void setActionOverrideItems(ArrayList<String> behaviorOverrideItems) {
+            this.actionOverrideItems = behaviorOverrideItems;
         }
 
         public JSONObject getCustomHeaderJson() {
@@ -227,12 +229,8 @@ public class PluginUtils {
             return fileUri;
         }
 
-        public boolean isShowLeadingNavButton() {
-            return showLeadingNavButton;
-        }
-
-        public String getLeadingNavButtonIcon() {
-            return leadingNavButtonIcon;
+        public ArrayList<String> getActionOverrideItems() {
+            return actionOverrideItems;
         }
     }
 
@@ -267,32 +265,14 @@ public class PluginUtils {
                     JSONObject customHeaderJson = configJson.getJSONObject(KEY_CONFIG_CUSTOM_HEADERS);
                     configInfo.setCustomHeaderJson(customHeaderJson);
                 }
-                if (!configJson.isNull(KEY_CONFIG_LEADING_NAV_BUTTON_ICON)) {
-                    String leadingNavButtonIcon = configJson.getString(KEY_CONFIG_LEADING_NAV_BUTTON_ICON);
-                    configInfo.setLeadingNavButtonIcon(leadingNavButtonIcon);
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED)) {
+                    boolean annotationPermissionCheckEnabled = configJson.getBoolean(KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED);
+                    toolManagerBuilder = toolManagerBuilder.setAnnotPermission(annotationPermissionCheckEnabled);
                 }
-                if (!configJson.isNull(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON)) {
-                    boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
-                    configInfo.setShowLeadingNavButton(showLeadingNavButton);
-                }
-                if (!configJson.isNull(KEY_CONFIG_READ_ONLY)) {
-                    boolean readOnly = configJson.getBoolean(KEY_CONFIG_READ_ONLY);
-                    builder.documentEditingEnabled(!readOnly);
-                }
-                if (!configJson.isNull(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED)) {
-                    boolean thumbnailViewEditingEnabled = configJson.getBoolean(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED);
-                    builder.thumbnailViewEditingEnabled(thumbnailViewEditingEnabled);
-                }
-                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_AUTHOR)) {
-                    String annotationAuthor = configJson.getString(KEY_CONFIG_ANNOTATION_AUTHOR);
-                    if (!annotationAuthor.isEmpty()) {
-                        PdfViewCtrlSettingsManager.updateAuthorName(context, annotationAuthor);
-                        PdfViewCtrlSettingsManager.setAnnotListShowAuthor(context, true);
-                    }
-                }
-                if (!configJson.isNull(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING)) {
-                    boolean continuousAnnotationEditing = configJson.getBoolean(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING);
-                    PdfViewCtrlSettingsManager.setContinuousAnnotationEdit(context, continuousAnnotationEditing);
+                if (!configJson.isNull(KEY_CONFIG_OVERRIDE_BEHAVIOR)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_OVERRIDE_BEHAVIOR);
+                    ArrayList<String> actionOverrideItems = convertJSONArrayToArrayList(array);
+                    configInfo.setActionOverrideItems(actionOverrideItems);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -553,6 +533,22 @@ public class PluginUtils {
                     result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
                 }
                 break;
+            }
+            case FUNCTION_SET_PROPERTIES_FOR_ANNOTATION: {
+                checkFunctionPrecondition(component);
+                String annotation = call.argument(KEY_ANNOTATION);
+                String properties = call.argument(KEY_ANNOTATION_PROPERTIES);
+                try {
+                    setPropertiesForAnnotation(annotation, properties, result, component);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                    result.error(Integer.toString(ex.hashCode()), "JSONException Error: " + ex, null);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+                break;
+
             }
             case FUNCTION_IMPORT_ANNOTATION_COMMAND: {
                 checkFunctionPrecondition(component);
@@ -909,6 +905,88 @@ public class PluginUtils {
         }
     }
 
+    private static void setPropertiesForAnnotation(String annotation, String properties, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        ToolManager toolManager = component.getToolManager();
+
+        if (null == pdfViewCtrl || null == toolManager) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        JSONObject annotationJson = new JSONObject(annotation);
+
+        String annotationId = annotationJson.getString(KEY_ANNOTATION_ID);
+        int annotationPageNumber = annotationJson.getInt(KEY_PAGE_NUMBER);
+
+        JSONObject propertiesJson = new JSONObject(properties);
+
+        boolean shouldUnlock = false;
+        try {
+            pdfViewCtrl.docLock(true);
+            shouldUnlock = true;
+
+            Annot annot = ViewerUtils.getAnnotById(pdfViewCtrl, annotationId, annotationPageNumber);
+            if (annot != null && annot.isValid()) {
+
+                HashMap<Annot, Integer> map = new HashMap<>(1);
+                map.put(annot, annotationPageNumber);
+                toolManager.raiseAnnotationsPreModifyEvent(map);
+
+
+                if (!propertiesJson.isNull(KEY_CONTENTS)) {
+                    Object contents = propertiesJson.get(KEY_CONTENTS);
+                    if (contents instanceof String) {
+                        annot.setContents((String) contents);
+                    }
+                }
+
+                if (!propertiesJson.isNull(KEY_RECT)) {
+                    Object object = propertiesJson.get(KEY_RECT);
+                    com.pdftron.pdf.Rect pdfRect = getRectFromObject(object);
+                    if (pdfRect != null) {
+                        annot.setRect(pdfRect);
+                    }
+                }
+
+                if (annot.isMarkup()) {
+                    Markup markupAnnot = new Markup(annot);
+
+                    if (!propertiesJson.isNull(KEY_SUBJECT)) {
+                        Object subject = propertiesJson.get(KEY_SUBJECT);
+                        if (subject instanceof String) {
+                            markupAnnot.setSubject((String) subject);
+                        }
+                    }
+
+                    if (!propertiesJson.isNull(KEY_TITLE)) {
+                        Object title = propertiesJson.get(KEY_TITLE);
+                        if (title instanceof String) {
+                            markupAnnot.setTitle((String) title);
+                        }
+                    }
+
+                    if (!propertiesJson.isNull(KEY_CONTENT_RECT)) {
+                        Object object = propertiesJson.get(KEY_CONTENT_RECT);
+                        com.pdftron.pdf.Rect pdfRect = getRectFromObject(object);
+                        if (pdfRect != null) {
+                            markupAnnot.setContentRect(pdfRect);
+                        }
+                    }
+                }
+
+                pdfViewCtrl.update(annot, annotationPageNumber);
+
+                toolManager.raiseAnnotationsModifiedEvent(map, Tool.getAnnotationModificationBundle(null));
+            }
+        } finally {
+            if (shouldUnlock) {
+                pdfViewCtrl.docUnlock();
+            }
+        }
+
+    }
+
     private static void importAnnotationCommand(String xfdfCommand, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
@@ -1078,6 +1156,8 @@ public class PluginUtils {
         if (toolManager != null) {
             component.getImpl().addListeners(toolManager);
         }
+
+        component.getImpl().setActionInterceptCallback();
     }
 
     public static void emitAnnotationChangedEvent(String action, Map<Annot, Integer> map, ViewerComponent component) {
@@ -1238,5 +1318,29 @@ public class PluginUtils {
     private static JSONObject getJSONObjectFromJSONObject(JSONObject jsonObject, String key) throws JSONException {
         String jsonObjectString = jsonObject.getString(key);
         return new JSONObject(jsonObjectString);
+    }
+
+    private static ArrayList<String> convertJSONArrayToArrayList(JSONArray jsonArray) throws JSONException {
+        ArrayList<String> arrayList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            arrayList.add(jsonArray.getString(i));
+        }
+        return arrayList;
+    }
+
+    private static com.pdftron.pdf.Rect getRectFromObject(Object object) throws JSONException, PDFNetException {
+        if (object instanceof String) {
+            JSONObject rectJson = new JSONObject((String) object);
+            if (!rectJson.isNull(KEY_X1) && !rectJson.isNull(KEY_Y1) && !rectJson.isNull(KEY_X2) && !rectJson.isNull(KEY_Y2)) {
+
+                double rectX1 = rectJson.getDouble(KEY_X1);
+                double rectY1 = rectJson.getDouble(KEY_Y1);
+                double rectX2 = rectJson.getDouble(KEY_X2);
+                double rectY2 = rectJson.getDouble(KEY_Y2);
+
+                return new com.pdftron.pdf.Rect(rectX1, rectY1, rectX2, rectY2);
+            }
+        }
+        return null;
     }
 }

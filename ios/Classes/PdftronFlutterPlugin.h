@@ -9,12 +9,8 @@ static NSString * const PTDisabledToolsKey = @"disabledTools";
 static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
 static NSString * const PTCustomHeadersKey = @"customHeaders";
-static NSString * const PTLeadingNavButtonIconKey = @"leadingNavButtonIcon";
-static NSString * const PTShowLeadingNavButtonKey = @"showLeadingNavButton";
-static NSString * const PTReadOnlyKey = @"readOnly";
-static NSString * const PTThumbnailViewEditingEnabledKey = @"thumbnailViewEditingEnabled";
-static NSString * const PTAnnotationAuthorKey = @"annotationAuthor";
-static NSString * const PTContinuousAnnotationEditingKey = @"continuousAnnotationEditing";
+static NSString * const PTAnnotationPermissionCheckEnabledKey = @"annotationPermissionCheckEnabled";
+static NSString * const PTOverrideBehaviorKey = @"overrideBehavior";
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";
@@ -80,6 +76,7 @@ static NSString * const PTFlattenAnnotationsKey = @"flattenAnnotations";
 static NSString * const PTDeleteAnnotationsKey = @"deleteAnnotations";
 static NSString * const PTSelectAnnotationKey = @"selectAnnotation";
 static NSString * const PTSetFlagsForAnnotationsKey = @"setFlagsForAnnotations";
+static NSString * const PTSetPropertiesForAnnotationKey = @"setPropertiesForAnnotation";
 static NSString * const PTImportAnnotationCommandKey = @"importAnnotationCommand";
 static NSString * const PTImportBookmarksKey = @"importBookmarkJson";
 static NSString * const PTSaveDocumentKey = @"saveDocument";
@@ -100,6 +97,7 @@ static NSString * const PTAnnotationListArgumentKey = @"annotations";
 static NSString * const PTFormsOnlyArgumentKey = @"formsOnly";
 static NSString * const PTAnnotationArgumentKey = @"annotation";
 static NSString * const PTAnnotationsWithFlagsArgumentKey = @"annotationsWithFlags";
+static NSString * const PTAnnotationPropertiesArgumentKey = @"annotationProperties";
 
 // event strings
 static NSString * const EVENT_EXPORT_ANNOTATION_COMMAND = @"export_annotation_command_event";
@@ -109,6 +107,7 @@ static NSString * const EVENT_DOCUMENT_ERROR = @"document_error_event";
 static NSString * const EVENT_ANNOTATION_CHANGED = @"annotation_changed_event";
 static NSString * const EVENT_ANNOTATIONS_SELECTED = @"annotations_selected_event";
 static NSString * const EVENT_FORM_FIELD_VALUE_CHANGED = @"form_field_value_changed_event";
+static NSString * const EVENT_BEHAVIOR_ACTIVIATED = @"behavior_activated_event";
 
 // other keys
 static NSString * const PTX1Key = @"x1";
@@ -134,6 +133,18 @@ static NSString * const PTFormFieldValueKey = @"fieldValue";
 static NSString * const PTAnnotPageNumberKey = @"pageNumber";
 static NSString * const PTAnnotIdKey = @"id";
 
+static NSString * const PTContentRectAnnotationPropertyKey = @"contentRect";
+static NSString * const PTContentsAnnotationPropertyKey = @"contents";
+static NSString * const PTSubjectAnnotationPropertyKey = @"subject";
+static NSString * const PTTitleAnnotationPropertyKey = @"title";
+static NSString * const PTRectAnnotationPropertyKey = @"rect";
+
+static NSString * const PTLinkPressLinkAnnotationKey = @"linkPress";
+static NSString * const PTURILinkAnnotationKey = @"URI";
+static NSString * const PTURLLinkAnnotationKey = @"url";
+static NSString * const PTDataLinkAnnotationKey = @"data";
+static NSString * const PTActionLinkAnnotationKey = @"action";
+
 static NSString * const PTFlagListKey = @"flags";
 static NSString * const PTFlagKey = @"flag";
 static NSString * const PTFlagValueKey = @"flagValue";
@@ -156,7 +167,8 @@ typedef enum {
     documentErrorId,
     annotationChangedId,
     annotationsSelectedId,
-    formFieldValueChangedId
+    formFieldValueChangedId,
+    behaviorActivatedId,
 } EventSinkId;
 
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
@@ -172,6 +184,7 @@ typedef enum {
 -(void)documentViewController:(PTDocumentViewController*)docVC annotationsChangedWithActionString:(NSString*)actionString;
 -(void)documentViewController:(PTDocumentViewController*)docVC annotationsSelected:(NSString*)annotations;
 -(void)documentViewController:(PTDocumentViewController*)docVC formFieldValueChanged:(NSString*)fieldString;
+-(void)documentViewController:(PTDocumentViewController*)docVC behaviorActivated:(NSString*)behaviorString;
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 

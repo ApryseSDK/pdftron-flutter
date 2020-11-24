@@ -11,6 +11,8 @@ const _annotationsSelectedChannel =
     const EventChannel('annotations_selected_event');
 const _formFieldValueChangedChannel =
     const EventChannel('form_field_value_changed_event');
+const _behaviorActivatedChannel =
+    const EventChannel('behavior_activated_event');
 
 typedef void ExportAnnotationCommandListener(dynamic xfdfCommand);
 typedef void ExportBookmarkListener(dynamic bookmarkJson);
@@ -19,6 +21,7 @@ typedef void DocumentErrorListener();
 typedef void AnnotationChangedListener(dynamic action, dynamic annotations);
 typedef void AnnotationsSelectedListener(dynamic annotationWithRects);
 typedef void FormFieldValueChangedListener(dynamic fields);
+typedef void BehaviorActivatedListener(dynamic action, dynamic data);
 typedef void CancelListener();
 
 enum eventSinkId {
@@ -28,7 +31,8 @@ enum eventSinkId {
   documentErrorId,
   annotationChangedId,
   annotationsSelectedId,
-  formFieldValueChangedId
+  formFieldValueChangedId,
+  behaviorActivatedId,
 }
 
 CancelListener startExportAnnotationCommandListener(
@@ -124,6 +128,22 @@ CancelListener startFormFieldValueChangedListener(
       fieldList.add(new Field.fromJson(field));
     }
     listener(fieldList);
+  }, cancelOnError: true);
+
+  return () {
+    subscription.cancel();
+  };
+}
+
+CancelListener startBehaviorActivatedListener(
+    BehaviorActivatedListener listener) {
+  var subscription = _behaviorActivatedChannel
+      .receiveBroadcastStream(eventSinkId.behaviorActivatedId.index)
+      .listen((behaviorString) {
+    dynamic behaviorObject = jsonDecode(behaviorString);
+    dynamic action = behaviorObject[EventParameters.action];
+    dynamic data = behaviorObject[EventParameters.data];
+    listener(action, data);
   }, cancelOnError: true);
 
   return () {

@@ -10,12 +10,15 @@ import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.ToolManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
 public interface ViewerComponent {
+
+    ArrayList<String> getActionOverrideItems();
 
     void setSelectedAnnots(HashMap<Annot, Integer> selectedAnnots);
 
@@ -32,6 +35,8 @@ public interface ViewerComponent {
     EventChannel.EventSink getAnnotationsSelectedEventEmitter();
 
     EventChannel.EventSink getFormFieldValueChangedEventEmitter();
+
+    EventChannel.EventSink getBehaviorActivatedEventEmitter();
 
     MethodChannel.Result getFlutterLoadResult();
 

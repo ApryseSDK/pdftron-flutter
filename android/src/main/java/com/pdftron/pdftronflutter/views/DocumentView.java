@@ -22,6 +22,7 @@ import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import io.flutter.plugin.common.EventChannel;
@@ -40,6 +41,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     private ViewerConfig.Builder mBuilder;
     private String mCacheDir;
 
+    private ArrayList<String> mActionOverrideItems;
+
     private EventChannel.EventSink sExportAnnotationCommandEventEmitter;
     private EventChannel.EventSink sExportBookmarkEventEmitter;
     private EventChannel.EventSink sDocumentLoadedEventEmitter;
@@ -47,6 +50,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     private EventChannel.EventSink sAnnotationChangedEventEmitter;
     private EventChannel.EventSink sAnnotationsSelectedEventEmitter;
     private EventChannel.EventSink sFormFieldValueChangedEventEmitter;
+    private EventChannel.EventSink sBehaviorActivatedEventEmitter;
     private MethodChannel.Result sFlutterLoadResult;
 
     private HashMap<Annot, Integer> mSelectedAnnots;
@@ -76,10 +80,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
         setDocumentUri(configInfo.getFileUri());
         setPassword(password);
         setCustomHeaders(configInfo.getCustomHeaderJson());
-        setShowNavIcon(configInfo.isShowLeadingNavButton());
-        setNavIconResName(configInfo.getLeadingNavButtonIcon());
         setViewerConfig(mBuilder.build());
         setFlutterLoadResult(result);
+
+        mActionOverrideItems = configInfo.getActionOverrideItems();
 
         ViewerBuilder viewerBuilder = ViewerBuilder.withUri(configInfo.getFileUri(), password)
                 .usingCustomHeaders(configInfo.getCustomHeaderJson())
@@ -198,6 +202,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
         sFormFieldValueChangedEventEmitter = emitter;
     }
 
+    public void setBehaviorActivatedEventEmitter(EventChannel.EventSink emitter) {
+        sBehaviorActivatedEventEmitter = emitter;
+    }
+
     public void setFlutterLoadResult(MethodChannel.Result result) {
         sFlutterLoadResult = result;
     }
@@ -266,6 +274,11 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     }
 
     @Override
+    public EventChannel.EventSink getBehaviorActivatedEventEmitter() {
+        return sBehaviorActivatedEventEmitter;
+    }
+
+    @Override
     public MethodChannel.Result getFlutterLoadResult() {
         MethodChannel.Result result = sFlutterLoadResult;
         sFlutterLoadResult = null;
@@ -275,6 +288,11 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     @Override
     public HashMap<Annot, Integer> getSelectedAnnots() {
         return mSelectedAnnots;
+    }
+
+    @Override
+    public ArrayList<String> getActionOverrideItems() {
+        return mActionOverrideItems;
     }
 
     // Convenience

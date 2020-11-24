@@ -299,12 +299,8 @@ disabledElements | array of `Buttons` constants | empty | Buttons to be disabled
 disabledTools | array of `Tools` constants | empty | Tools to be disabled for the viewer
 multiTabEnabled | boolean | false | enable document multi-tab mode
 customerHeaders | map<string, string> | empty | custom headers to use with HTTP/HTTPS requests
-showLeadingNavButton | boolean | true | Whether to show the leading navigation button
-leadingNavButtonIcon | string | | the icon path to the navigation button, if `showLeadingNavButton` is true
-readOnly | boolean | false | whether the document is read-only
-thumbnailViewEditingEnabled | boolean | true | whether use could modify through thumbnail view
-annotationAuthor | string | | the author name for all annotations in the current document
-continuousAnnotationEditing | boolean | false | whether annotations could be continuously edited
+annotationPermissionCheckEnabled | boolean | false | Defines whether annotation's flags will be taken into account when it is selected, for example, a locked annotation can not be resized or moved
+overrideBehavior | array of `Behaviors` constants | empty | Defines actions that should skip default behavior, such as external link click
 
 ```dart
 var disabledElements = [Buttons.shareButton, Buttons.searchButton];
@@ -314,12 +310,8 @@ config.disabledElements = disabledElements;
 config.disabledTools = disabledTools;
 config.multiTabEnabled = false;
 config.customHeaders = {'headerName': 'headerValue'};
-config.showLeadingNavButton = true;
-config.leadingNavButtonIcon = Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp';
-config.readOnly = false;
-config.thumbnailViewEditingEnabled = false;
-config.annotationAuthor = "PDFTron";
-config.continuousAnnotationEditing = true;
+config.annotationPermissionCheckEnabled = true;
+config.overrideBehavior = [Behaviors.linkPress];
 await PdftronFlutter.openDocument(_document, config: config);
 ```
 ### PdftronFlutter.importAnnotations(String)
@@ -429,7 +421,38 @@ list.add(new AnnotWithFlags.fromAnnotAndFlags(world, [unlock]));
 list.add(new AnnotWithFlags('Pdftron', 10, AnnotationFlags.no_zoom, true));
 PdftronFlutter.setFlagsForAnnotations(annotsWithFlags);
 ```
+### PdftronFlutter.setPropertiesForAnnotation(Annot, AnnotProperty)
+To set properties for specified annotation in the current document.
 
+for more details about `Annot` and `AnnotProperty`, please check `lib/options.dart` file.
+
+Params:
+Name | Type | Description
+--- | --- | ---
+annotation | Annot | the annotation to be modified
+property | AnnotProperty | the properties to be set for the target annotation
+
+For settable properties:
+
+Name | Type | Markup exclusive
+--- | --- | --- | ---
+rect | Rect | no
+contents | String | no
+subject | String | yes
+title | String | yes
+contentRect | Rect | yes
+
+```dart
+Annot pdf = new Annot('pdf', 1);
+
+AnnotProperty property = new AnnotProperty();
+property.rect = new Rect.fromCoordinates(1, 1.5, 100.2, 100);
+property.contents = 'Hello World';
+property.subject = 'sample';
+property.title = 'set-props-for-annot';
+
+PdftronFlutter.setPropertiesForAnnotation(pdf, property);
+```
 
 ### PdftronFlutter.importAnnotationCommand(String)
 
@@ -575,6 +598,19 @@ var fieldChangedCancel = startFormFieldValueChangedListener((fields)
     print("Field has value ${field.fieldValue}");
   }
 });
+```
+
+### startBehaviorActivatedListener
+
+Event is raised on certain behaviors, if any is passed into `overrideBehavior`.
+
+`action` is a constant in `Behaviors`, indicating which behavior has been activated; while `data` is a map containing information regarding the action.
+
+```dart
+var behaviorActivatedCancel = startBehaviorActivatedListener((action, data) {
+      print('action is ' + action);
+      print('url is ' + data['url']);
+    });
 ```
 
 ## Contributing

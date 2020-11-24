@@ -15,17 +15,13 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL documentLoaded;
 
 // viewer options
-@property (nonatomic, assign) BOOL showNavButton;
-@property (nonatomic, copy, nullable) NSString *navButtonPath;
 
-@property (nonatomic, assign, getter=isReadOnly) BOOL readOnly;
-@property (nonatomic, getter=isThumbnailEditingEnabled) BOOL thumbnailEditingEnabled;
-@property (nonatomic, getter=isContinuousAnnotationEditing) BOOL continuousAnnotationEditing;
-
-@property (nonatomic, nullable, getter=getAnnotationAuthor) NSString* annotationAuthor;
+@property (nonatomic, assign, getter=isAnnotationPermissionCheckEnabled) BOOL annotationPermissionCheckEnabled;
 
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
+
+@property (nonatomic, copy, nullable) NSArray<NSString *> *overrideBehavior;
 
 @end
 

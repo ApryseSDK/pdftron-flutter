@@ -19,13 +19,13 @@ import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.ToolManager;
-import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -35,6 +35,8 @@ import io.flutter.plugin.common.MethodChannel.Result;
 public class FlutterDocumentActivity extends DocumentActivity implements ViewerComponent {
 
     private ViewerImpl mImpl = new ViewerImpl(this);
+
+    private static ArrayList<String> mActionOverrideItems;
 
     private static FlutterDocumentActivity sCurrentActivity;
     private static AtomicReference<Result> sFlutterLoadResult = new AtomicReference<>();
@@ -46,6 +48,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     private static AtomicReference<EventSink> sAnnotationChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sAnnotationsSelectionEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sFormFieldChangedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sBehaviorActivatedEventEmitter = new AtomicReference<>();
 
     private static HashMap<Annot, Integer> mSelectedAnnots;
 
@@ -57,17 +60,9 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         PDFViewCtrlConfig pdfViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(packageContext);
         PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(builder, toolManagerBuilder, pdfViewCtrlConfig, document, packageContext, configStr);
 
-        boolean showLeadingNavButton = configInfo.isShowLeadingNavButton();
-        @DrawableRes int leadingNavButtonIcon = Utils.getResourceDrawable(packageContext, configInfo.getLeadingNavButtonIcon());
-        if (showLeadingNavButton) {
-            if (leadingNavButtonIcon == 0) {
-                leadingNavButtonIcon = DEFAULT_NAV_ICON_ID;
-            }
-        } else {
-            leadingNavButtonIcon = 0;
-        }
+        mActionOverrideItems = configInfo.getActionOverrideItems();
 
-        openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build(), leadingNavButtonIcon);
+        openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build());
     }
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
@@ -121,6 +116,10 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sFormFieldChangedEventEmitter.set(emitter);
     }
 
+    public static void setBehaviorActivatedEventEmitter(EventSink emitter) {
+        sBehaviorActivatedEventEmitter.set(emitter);
+    }
+
     public static void setFlutterLoadResult(Result result) {
         sFlutterLoadResult.set(result);
     }
@@ -164,6 +163,11 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     }
 
     @Override
+    public EventSink getBehaviorActivatedEventEmitter() {
+        return sBehaviorActivatedEventEmitter.get();
+    }
+
+    @Override
     public Result getFlutterLoadResult() {
         return sFlutterLoadResult.getAndSet(null);
     }
@@ -171,6 +175,11 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     @Override
     public HashMap<Annot, Integer> getSelectedAnnots() {
         return mSelectedAnnots;
+    }
+
+    @Override
+    public ArrayList<String> getActionOverrideItems() {
+        return mActionOverrideItems;
     }
 
     @Override

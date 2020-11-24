@@ -89,6 +89,15 @@ class DocumentViewController {
     });
   }
 
+  Future<void> setPropertiesForAnnotation(
+      Annot annotation, AnnotProperty property) {
+    return _channel
+        .invokeMethod(Functions.setPropertiesForAnnotation, <String, dynamic>{
+      Parameters.annotation: jsonEncode(annotation),
+      Parameters.annotationProperties: jsonEncode(property),
+    });
+  }
+
   Future<void> importAnnotationCommand(String xfdfCommand) {
     return _channel.invokeMethod(Functions.importAnnotationCommand,
         <String, dynamic>{Parameters.xfdfCommand: xfdfCommand});

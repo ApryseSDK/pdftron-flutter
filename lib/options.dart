@@ -46,6 +46,15 @@ class Rect {
   double x1, y1, x2, y2, width, height;
   Rect(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
 
+  Rect.fromCoordinates(x1, y1, x2, y2) {
+    this.x1 = getDouble(x1);
+    this.x2 = getDouble(x2);
+    this.y1 = getDouble(y1);
+    this.y2 = getDouble(y2);
+    this.width = this.x2 - this.x1;
+    this.height = this.y2 - this.y1;
+  }
+
   factory Rect.fromJson(dynamic json) {
     return Rect(
         getDouble(json['x1']),
@@ -64,6 +73,15 @@ class Rect {
       return value;
     }
   }
+
+  Map<String, dynamic> toJson() => {
+        'x1': x1,
+        'y1': y1,
+        'x2': x2,
+        'y2': y2,
+        'width': width,
+        'height': height,
+      };
 }
 
 class AnnotFlag {
@@ -95,6 +113,26 @@ class AnnotWithFlag {
       {'annotation': jsonEncode(annotation), 'flags': jsonEncode(flags)};
 }
 
+class AnnotProperty {
+  // not markup exclusive
+  Rect rect;
+  String contents;
+  // markup exclusive
+  String subject;
+  String title;
+  Rect contentRect;
+
+  AnnotProperty();
+
+  Map<String, dynamic> toJson() => {
+        AnnotationProperties.rect: jsonEncode(rect),
+        AnnotationProperties.contents: contents,
+        AnnotationProperties.subject: subject,
+        AnnotationProperties.title: title,
+        AnnotationProperties.contentRect: jsonEncode(rect),
+      };
+}
+
 class Functions {
   static const getPlatformVersion = "getPlatformVersion";
   static const getVersion = "getVersion";
@@ -106,6 +144,7 @@ class Functions {
   static const deleteAnnotations = "deleteAnnotations";
   static const selectAnnotation = "selectAnnotation";
   static const setFlagsForAnnotations = "setFlagsForAnnotations";
+  static const setPropertiesForAnnotation = "setPropertiesForAnnotation";
   static const importAnnotationCommand = "importAnnotationCommand";
   static const importBookmarkJson = "importBookmarkJson";
   static const saveDocument = "saveDocument";
@@ -128,12 +167,14 @@ class Parameters {
   static const annotations = "annotations";
   static const annotation = "annotation";
   static const annotationsWithFlags = "annotationsWithFlags";
+  static const annotationProperties = "annotationProperties";
 }
 
 class EventParameters {
   static const action = "action";
   static const annotations = "annotations";
   static const xfdfCommand = "xfdfCommand";
+  static const data = "data";
 }
 
 class Buttons {
@@ -213,4 +254,18 @@ class AnnotationFlags {
   static const print = "print";
   static const readOnly = "readOnly";
   static const toggleNoView = "toggleNoView";
+}
+
+class AnnotationProperties {
+  // not markup exclusive
+  static const rect = "rect";
+  static const contents = "contents";
+  // markup exclusive
+  static const subject = "subject";
+  static const title = "title";
+  static const contentRect = "contentRect";
+}
+
+class Behaviors {
+  static const linkPress = "linkPress";
 }

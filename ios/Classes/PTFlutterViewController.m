@@ -16,10 +16,6 @@
         NSString *filePath = self.coordinatedDocument.fileURL.path;
         [self.plugin documentViewController:self documentLoadedFromFilePath:filePath];
     }
-
-    if (![self.toolManager isReadonly] && self.readOnly) {
-        self.toolManager.readonly = YES;
-    }
 }
 
 - (void)openDocumentWithURL:(NSURL *)url password:(NSString *)password
@@ -256,6 +252,64 @@
     return nil;
 }
 
+- (BOOL)toolManager:(PTToolManager *)toolManager shouldHandleLinkAnnotation:(PTAnnot *)annotation orLinkInfo:(PTLinkInfo *)linkInfo onPageNumber:(unsigned long)pageNumber
+{
+    if (![self.overrideBehavior containsObject:PTLinkPressLinkAnnotationKey]) {
+        return YES;
+    }
+    
+    PTPDFViewCtrl *pdfViewCtrl = self.pdfViewCtrl;
+    
+    __block NSString *url = nil;
+    
+    NSError *error = nil;
+    [pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+        // Check for a valid link annotation.
+        if (![annotation IsValid] ||
+            annotation.extendedAnnotType != PTExtendedAnnotTypeLink) {
+            return;
+        }
+        
+        PTLink *linkAnnot = [[PTLink alloc] initWithAnn:annotation];
+        
+        // Check for a valid URI action.
+        PTAction *action = [linkAnnot GetAction];
+        if (![action IsValid] ||
+            [action GetType] != e_ptURI) {
+            return;
+        }
+        
+        PTObj *actionObj = [action GetSDFObj];
+        if (![actionObj IsValid]) {
+            return;
+        }
+        
+        // Get the action's URI.
+        PTObj *uriObj = [actionObj FindObj:PTURILinkAnnotationKey];
+        if ([uriObj IsValid] && [uriObj IsString]) {
+            url = [uriObj GetAsPDFText];
+        }
+    } error:&error];
+    if (error) {
+        NSLog(@"%@", error);
+    }
+    if (url) {
+        
+        NSDictionary* behaviorDict = @{
+            PTActionLinkAnnotationKey: PTLinkPressLinkAnnotationKey,
+            PTDataLinkAnnotationKey: @{
+                PTURLLinkAnnotationKey: url,
+            },
+        };
+        
+        [self.plugin documentViewController:self behaviorActivated:[PdftronFlutterPlugin PT_idToJSONString: behaviorDict]];
+        // Link handled.
+        return NO;
+    }
+    
+    return YES;
+}
+
 #pragma mark - <PTPDFViewCtrlDelegate>
 
 - (void)pdfViewCtrl:(PTPDFViewCtrl *)pdfViewCtrl onSetDoc:(PTPDFDoc *)doc
@@ -286,62 +340,20 @@
 
 - (void)initViewerSettings
 {
-    _readOnly = NO;
-    
-    _showNavButton = YES;
 }
 
 - (void)applyViewerSettings
 {
-    // nav icon
-    [self applyNavIcon];
 }
 
-- (void)applyNavIcon
+- (void)setAnnotationPermissionCheckEnabled:(BOOL)annotationPermissionCheckEnabled
 {
-    if (self.showNavButton) {
-        UIImage *navImage = [UIImage imageNamed:self.navButtonPath];
-        UIBarButtonItem *navButton;
-        if (navImage == nil) {
-            navButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
-        } else {
-            navButton = [[UIBarButtonItem alloc] initWithImage:navImage
-                                                         style:UIBarButtonItemStylePlain
-                                                        target:self
-                                                        action:@selector(topLeftButtonPressed:)];
-        }
-        self.navigationItem.leftBarButtonItem = navButton;
-    }
+    self.toolManager.annotationPermissionCheckEnabled = annotationPermissionCheckEnabled;
 }
 
-- (void)setThumbnailEditingEnabled:(BOOL)thumbnailEditingEnabled
+- (BOOL)isAnnotationPermissionCheckEnabled
 {
-    self.thumbnailsViewController.editingEnabled = thumbnailEditingEnabled;
-}
-
-- (BOOL)isThumbnailEditingEnabled
-{
-    return self.thumbnailsViewController.editingEnabled;
-}
-
-- (void)setContinuousAnnotationEditing:(BOOL)continuousAnnotationEditing
-{
-    self.toolManager.tool.backToPanToolAfterUse = !continuousAnnotationEditing;
-}
-
-- (BOOL)isContinuousAnnotationEditing
-{
-    return !self.toolManager.tool.backToPanToolAfterUse;
-}
-
-- (NSString *)getAnnotationAuthor
-{
-    return self.toolManager.annotationAuthor;
-}
-
-- (void)setAnnotationAuthor:(NSString *)annotationAuthor
-{
-    self.toolManager.annotationAuthor = annotationAuthor;
+    return self.toolManager.isAnnotationPermissionCheckEnabled;
 }
 
 #pragma mark - Other
