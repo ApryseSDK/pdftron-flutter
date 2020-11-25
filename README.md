@@ -488,8 +488,48 @@ print("Back button handled: $handled");
 Return a map object with values for position (bottom-left: `x1`, `y1`; top-right: `x2`, `y2`) and size (`width`, `height`) of the crop box for specified page. Values all have type `double`.
 
 ```dart
-var cropBox = await controller.getPageCropBox(1);
+var cropBox = await PdftronFlutter.getPageCropBox(1);
 print('The width of crop box for page 1 is: ' + cropBox.width.toString());
+```
+
+### PdftronFlutter.setToolMode(String)
+
+To set the current tool mode (`Tools` constants in `lib/option.dart`).
+
+```dart
+ PdftronFlutter.setToolMode(Tools.annotationCreateEllipse);
+```
+
+### PdftronFlutter.setFlagForFields(List<`String`>, flag: int, flagValue: bool)
+
+Set a field flag value on one or more form fields.
+
+Params
+Name | Type | Description
+--- | ---| ---
+fieldNames | List<`String`> | A list of field names to be set
+flag | int | The flag to be set, one of the constants from `FieldFlags` in `lib/options.dart`
+flagValue | bool | To turn on/off the flag for the fields
+
+```dart
+ PdftronFlutter.setFlagForFields(['First Name', 'Last Name'], FieldFlags.Required, true);
+```
+
+### PdftronFlutter.setValuesForFields(List<`Field`>)
+
+Set field values on one or more form fields of different types. Field values to be set could be in type number, bool or string.
+
+For more details about `Field`, please check `lib/options.dart` file.
+
+```dart
+PdftronFlutter.setValuesForFields([
+      new Field('textField1', "Pdftron"),
+      new Field('textField2', 12.34),
+      new Field('checkboxField1', true),
+      new Field('checkboxField2', false),
+      new Field('radioField', 'Yes'),
+      new Field('choiceField', 'No')
+    ]);
 ```
 
 ## Events
