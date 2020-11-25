@@ -290,11 +290,19 @@
 
 #pragma mark - Viewer Settings
 
+- (void)initViewerSettings
+{
+    _base64 = NO;
+}
 
 - (void)applyViewerSettings
 {
     // Fit mode.
     [self applyFitMode];
+    
+    BOOL hidesToolbarsOnTap = YES;
+    self.hidesControlsOnTap = hidesToolbarsOnTap;
+    self.pageFitsBetweenBars = !hidesToolbarsOnTap;
 }
 
 - (void)applyFitMode

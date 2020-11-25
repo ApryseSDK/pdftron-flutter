@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) int initialPageNumber;
 @property (nonatomic, assign, getter=isBase64) BOOL base64;
 
+- (void)initViewerSettings;
 - (void)applyViewerSettings;
 
 @end
