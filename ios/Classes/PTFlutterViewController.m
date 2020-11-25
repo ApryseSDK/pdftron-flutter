@@ -344,6 +344,9 @@
 
 - (void)applyViewerSettings
 {
+    BOOL hidesToolbarsOnTap = YES;
+    self.hidesControlsOnTap = hidesToolbarsOnTap;
+    self.pageFitsBetweenBars = !hidesToolbarsOnTap;
 }
 
 - (void)setAnnotationPermissionCheckEnabled:(BOOL)annotationPermissionCheckEnabled
