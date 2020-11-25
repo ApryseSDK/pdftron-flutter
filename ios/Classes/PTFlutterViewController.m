@@ -582,6 +582,9 @@ NS_ASSUME_NONNULL_END
 
 - (void)applyViewerSettings
 {
+    BOOL hidesToolbarsOnTap = YES;
+    self.hidesControlsOnTap = hidesToolbarsOnTap;
+    self.pageFitsBetweenBars = !hidesToolbarsOnTap;
 }
 
 - (void)setHideAnnotMenuTools:(NSArray<NSNumber *> *)hideAnnotMenuTools
