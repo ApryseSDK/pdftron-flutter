@@ -71,6 +71,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
         intent.putExtra("extra_nav_icon", navIconId);
         intent.putExtra("extra_config", config);
+
         packageContext.startActivity(intent);
     }
 
