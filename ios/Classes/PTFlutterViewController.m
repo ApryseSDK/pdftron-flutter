@@ -295,6 +295,10 @@
 {
     // nav icon
     [self applyNavIcon];
+    
+    BOOL hidesToolbarsOnTap = YES;
+    self.hidesControlsOnTap = hidesToolbarsOnTap;
+    self.pageFitsBetweenBars = !hidesToolbarsOnTap;
 }
 
 - (void)applyNavIcon
