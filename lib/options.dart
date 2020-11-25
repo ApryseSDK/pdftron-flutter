@@ -115,6 +115,9 @@ class Functions {
   static const getPageCropBox = "getPageCropBox";
   static const setCurrentPage = "setCurrentPage";
   static const getDocumentPath = "getDocumentPath";
+  static const setToolMode = "setToolMode";
+  static const setValuesForFields = "setValuesForFields";
+  static const setFlagForFields = "setFlagForFields";
 }
 
 class Parameters {
@@ -126,6 +129,11 @@ class Parameters {
   static const xfdf = "xfdf";
   static const bookmarkJson = "bookmarkJson";
   static const pageNumber = "pageNumber";
+  static const toolMode = "toolMode";
+  static const fieldNames = "fieldNames";
+  static const fields = "fields";
+  static const flag = "flag";
+  static const flagValue = "flagValue";
   static const formsOnly = "formsOnly";
   static const annotations = "annotations";
   static const annotation = "annotation";
@@ -218,6 +226,11 @@ class LayoutModes {
   static const facingContinuous = 'FacingContinuous';
   static const facingCover = 'FacingCover';
   static const facingCoverContinuous = 'FacingCoverContinuous';
+}
+
+class FieldFlags {
+  static const ReadOnly = 0;
+  static const Required = 1;
 }
 
 class AnnotationFlags {

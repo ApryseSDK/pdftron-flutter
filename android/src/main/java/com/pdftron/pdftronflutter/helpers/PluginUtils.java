@@ -11,10 +11,12 @@ import androidx.annotation.Nullable;
 import com.pdftron.common.PDFNetException;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.Field;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.Page;
 import com.pdftron.pdf.Rect;
+import com.pdftron.pdf.ViewChangeCollection;
 import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
@@ -57,6 +59,11 @@ public class PluginUtils {
     public static final String KEY_XFDF = "xfdf";
     public static final String KEY_BOOKMARK_JSON = "bookmarkJson";
     public static final String KEY_PAGE_NUMBER = "pageNumber";
+    public static final String KEY_TOOL_MODE = "toolMode";
+    public static final String KEY_FIELD_NAMES = "fieldNames";
+    public static final String KEY_FLAG = "flag";
+    public static final String KEY_FLAG_VALUE = "flagValue";
+    public static final String KEY_FIELDS = "fields";
     public static final String KEY_ANNOTATION_LIST = "annotations";
     public static final String KEY_ANNOTATION = "annotation";
     public static final String KEY_FORMS_ONLY = "formsOnly";
@@ -114,6 +121,9 @@ public class PluginUtils {
     public static final String FUNCTION_GET_PAGE_CROP_BOX = "getPageCropBox";
     public static final String FUNCTION_SET_CURRENT_PAGE = "setCurrentPage";
     public static final String FUNCTION_GET_DOCUMENT_PATH = "getDocumentPath";
+    public static final String FUNCTION_SET_TOOL_MODE = "setToolMode";
+    public static final String FUNCTION_SET_FLAG_FOR_FIELDS = "setFlagForFields";
+    public static final String FUNCTION_SET_VALUES_FOR_FIELDS = "setValuesForFields";
     public static final String FUNCTION_IMPORT_ANNOTATIONS = "importAnnotations";
     public static final String FUNCTION_EXPORT_ANNOTATIONS = "exportAnnotations";
     public static final String FUNCTION_FLATTEN_ANNOTATIONS = "flattenAnnotations";
@@ -693,6 +703,43 @@ public class PluginUtils {
                 getDocumentPath(result, component);
                 break;
             }
+            case FUNCTION_SET_TOOL_MODE: {
+                checkFunctionPrecondition(component);
+                String toolModeString = call.argument(KEY_TOOL_MODE);
+                setToolMode(toolModeString, result, component);
+                break;
+            }
+            case FUNCTION_SET_FLAG_FOR_FIELDS: {
+                checkFunctionPrecondition(component);
+                ArrayList<String> fieldNames = call.argument(KEY_FIELD_NAMES);
+                Integer flag = call.argument(KEY_FLAG);
+                Boolean flagValue = call.argument(KEY_FLAG_VALUE);
+                if (fieldNames != null && flag != null && flagValue != null) {
+                    try {
+                        setFlagForFields(fieldNames, flag, flagValue, result, component);
+                    } catch (PDFNetException ex) {
+                        ex.printStackTrace();
+                        result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                    }
+                }
+                break;
+            }
+            case FUNCTION_SET_VALUES_FOR_FIELDS: {
+                checkFunctionPrecondition(component);
+                String fieldsString = call.argument(KEY_FIELDS);
+                if (fieldsString != null) {
+                    try {
+                        setValuesForFields(fieldsString, result, component);
+                    } catch (JSONException ex) {
+                        ex.printStackTrace();
+                        result.error(Integer.toString(ex.hashCode()), "JSONException Error: " + ex, null);
+                    } catch (PDFNetException ex) {
+                        ex.printStackTrace();
+                        result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                    }
+                }
+                break;
+            }
             default:
                 result.notImplemented();
                 break;
@@ -1128,6 +1175,106 @@ public class PluginUtils {
         }
 
         result.success(path);
+    }
+
+    private static void setFlagForFields(ArrayList<String> fieldNames, int flag, boolean flagValue, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        PDFDoc pdfdoc = component.getPdfDoc();
+        if (null == pdfViewCtrl || null == pdfdoc) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        boolean shouldUnlock = false;
+        try {
+            pdfViewCtrl.docLock(true);
+            shouldUnlock = true;
+
+            for (String fieldName : fieldNames) {
+                Field field = pdfdoc.getField(fieldName);
+                if (field != null && field.isValid()) {
+                    field.setFlag(flag, flagValue);
+                    pdfViewCtrl.update(field);
+                }
+            }
+        } finally {
+            if (shouldUnlock) {
+                pdfViewCtrl.docUnlock();
+            }
+        }
+        result.success(null);
+    }
+
+    private static void setValuesForFields(String fieldsString, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        PDFDoc pdfDoc = component.getPdfDoc();
+        if (null == pdfViewCtrl || null == pdfDoc) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        JSONArray fieldsArray = new JSONArray(fieldsString);
+
+        boolean shouldUnlock = false;
+        try {
+            pdfViewCtrl.docLock(true);
+            shouldUnlock = true;
+
+            for (int i = 0; i < fieldsArray.length(); i++) {
+                JSONObject fieldObject = fieldsArray.getJSONObject(i);
+
+                String fieldName = fieldObject.getString(KEY_FIELD_NAME);
+
+                Field field = pdfDoc.getField(fieldName);
+                if (field != null && field.isValid()) {
+                    setFieldValue(pdfViewCtrl, field, fieldObject.get(KEY_FIELD_VALUE));
+                }
+            }
+
+        } finally {
+            if (shouldUnlock) {
+                pdfViewCtrl.docUnlock();
+            }
+        }
+        result.success(null);
+    }
+
+    // write lock required around this method
+    private static void setFieldValue(PDFViewCtrl pdfViewCtrl, Field field, Object value) throws PDFNetException, JSONException {
+        int fieldType = field.getType();
+
+        if (value instanceof Boolean) {
+            if (Field.e_check == fieldType) {
+                ViewChangeCollection view_change = field.setValue((boolean) value);
+                pdfViewCtrl.refreshAndUpdate(view_change);
+            }
+        } else if (value instanceof String) {
+            if (Field.e_text == fieldType || Field.e_radio == fieldType || Field.e_choice == fieldType) {
+                ViewChangeCollection view_change = field.setValue((String) value);
+                pdfViewCtrl.refreshAndUpdate(view_change);
+            }
+        } else if (value instanceof Integer || value instanceof Double || value instanceof Long || value instanceof Float) {
+            if (Field.e_text == fieldType) {
+                ViewChangeCollection view_change = field.setValue(String.valueOf(value));
+                pdfViewCtrl.refreshAndUpdate(view_change);
+            }
+        }
+    }
+
+    private static void setToolMode(String toolModeString, MethodChannel.Result result, ViewerComponent component) {
+        ToolManager toolManager = component.getToolManager();
+        Context context = component.getPdfViewCtrl() != null ? component.getPdfViewCtrl().getContext() : null;
+        if (toolManager == null || context == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+
+        ToolManager.ToolMode mode = convStringToToolMode(toolModeString);
+        Tool tool = (Tool) toolManager.createTool(mode, null);
+        boolean continuousAnnot = PdfViewCtrlSettingsManager.getContinuousAnnotationEdit(context);
+        tool.setForceSameNextToolMode(continuousAnnot);
+        toolManager.setTool(tool);
+        result.success(null);
     }
 
     // Events

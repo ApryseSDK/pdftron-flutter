@@ -119,4 +119,23 @@ class PdftronFlutter {
   static Future<String> getDocumentPath() {
     return _channel.invokeMethod(Functions.getDocumentPath);
   }
+
+  static Future<void> setToolMode(String toolMode) {
+    return _channel.invokeMethod(Functions.setToolMode,
+        <String, dynamic>{Parameters.toolMode: toolMode});
+  }
+
+  static Future<void> setFlagForFields(
+      List<String> fieldNames, int flag, bool flagValue) {
+    return _channel.invokeMethod(Functions.setFlagForFields, <String, dynamic>{
+      Parameters.fieldNames: fieldNames,
+      Parameters.flag: flag,
+      Parameters.flagValue: flagValue
+    });
+  }
+
+  static Future<void> setValuesForFields(List<Field> fields) {
+    return _channel.invokeMethod(Functions.setValuesForFields,
+        <String, dynamic>{Parameters.fields: jsonEncode(fields)});
+  }
 }
