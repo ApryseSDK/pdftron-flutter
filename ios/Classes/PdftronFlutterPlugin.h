@@ -36,6 +36,11 @@ static NSString * const PTAnnotationCreatePolygonToolKey = @"AnnotationCreatePol
 static NSString * const PTAnnotationCreatePolygonCloudToolKey = @"AnnotationCreatePolygonCloud";
 static NSString * const PTAnnotationCreateFreeHighlighterToolKey = @"AnnotationCreateFreeHighlighter";
 static NSString * const PTEraserToolKey = @"Eraser";
+static NSString * const PTAnnotationCreateRubberStampToolKey = @"annotationCreateRubberStamp";
+static NSString * const PTAnnotationCreateSoundToolKey = @"annotationCreateSound";
+static NSString * const PTAnnotationCreateDistanceMeasurementToolKey = @"annotationCreateDistanceMeasurement";
+static NSString * const PTAnnotationCreatePerimeterMeasurementToolKey = @"annotationCreatePerimeterMeasurement";
+static NSString * const PTAnnotationCreateAreaMeasurementToolKey = @"annotationCreateAreaMeasurement";
 
 // button
 static NSString * const PTStickyToolButtonKey = @"stickyToolButton";
@@ -84,6 +89,9 @@ static NSString * const PTSaveDocumentKey = @"saveDocument";
 static NSString * const PTCommitToolKey = @"commitTool";
 static NSString * const PTGetPageCountKey = @"getPageCount";
 static NSString * const PTGetPageCropBoxKey = @"getPageCropBox";
+static NSString * const PTSetToolModeKey = @"setToolMode";
+static NSString * const PTSetFlagForFieldsKey = @"setFlagForFields";
+static NSString * const PTSetValuesForFieldsKey = @"setValuesForFields";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
@@ -94,6 +102,11 @@ static NSString * const PTXfdfArgumentKey = @"xfdf";
 static NSString * const PTBookmarkJsonArgumentKey = @"bookmarkJson";
 static NSString * const PTPageNumberArgumentKey = @"pageNumber";
 static NSString * const PTLicenseArgumentKey = @"licenseKey";
+static NSString * const PTToolModeArgumentKey = @"toolMode";
+static NSString * const PTFieldNamesArgumentKey = @"fieldNames";
+static NSString * const PTFlagArgumentKey = @"flag";
+static NSString * const PTFlagValueArgumentKey = @"flagValue";
+static NSString * const PTFieldsArgumentKey = @"fields";
 static NSString * const PTAnnotationListArgumentKey = @"annotations";
 static NSString * const PTFormsOnlyArgumentKey = @"formsOnly";
 static NSString * const PTAnnotationArgumentKey = @"annotation";
@@ -129,9 +142,11 @@ static NSString * const PTAnnotationListKey = @"annotations";
 static NSString * const PTFormFieldNameKey = @"fieldName";
 static NSString * const PTFormFieldValueKey = @"fieldValue";
 
+static NSString * const PTFieldNameKey = @"fieldName";
+static NSString * const PTFieldValueKey = @"fieldValue";
+
 static NSString * const PTAnnotPageNumberKey = @"pageNumber";
 static NSString * const PTAnnotIdKey = @"id";
-
 static NSString * const PTFlagListKey = @"flags";
 static NSString * const PTFlagKey = @"flag";
 static NSString * const PTFlagValueKey = @"flagValue";
