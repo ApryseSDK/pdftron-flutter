@@ -293,6 +293,10 @@
         pencilTool = [PTPencilDrawingCreate class];
     }
     self.toolManager.pencilTool = self.useStylusAsPen ? pencilTool : [PTPanTool class];
+    
+    BOOL hidesToolbarsOnTap = YES;
+    self.hidesControlsOnTap = hidesToolbarsOnTap;
+    self.pageFitsBetweenBars = !hidesToolbarsOnTap;
 }
 
 - (void)setAutoSaveEnabled:(BOOL)autoSaveEnabled
