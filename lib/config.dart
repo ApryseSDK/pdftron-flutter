@@ -5,7 +5,6 @@ class Config {
   var _disabledTools;
   var _multiTabEnabled;
   var _customHeaders;
-  var _leadingNavButtonIcon;
   var _showLeadingNavButton;
   var _readOnly;
   var _thumbnailViewEditingEnabled;
@@ -18,7 +17,6 @@ class Config {
   set disabledTools(List value) => _disabledTools = value;
   set multiTabEnabled(bool value) => _multiTabEnabled = value;
   set customHeaders(Map<String, String> value) => _customHeaders = value;
-  set leadingNavButtonIcon(String value) => _leadingNavButtonIcon = value;
   set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
   set readOnly(bool value) => _readOnly = value;
   set thumbnailViewEditingEnabled(bool value) =>
@@ -32,7 +30,6 @@ class Config {
         _disabledTools = json['disabledTools'],
         _multiTabEnabled = json['multiTabEnabled'],
         _customHeaders = json['customHeaders'],
-        _leadingNavButtonIcon = json['leadingNavButtonIcon'],
         _showLeadingNavButton = json['showLeadingNavButton'],
         _readOnly = json['readOnly'],
         _thumbnailViewEditingEnabled = json['thumbnailViewEditingEnabled'],
@@ -44,7 +41,6 @@ class Config {
         'disabledTools': _disabledTools,
         'multiTabEnabled': _multiTabEnabled,
         'customHeaders': _customHeaders,
-        'leadingNavButtonIcon': _leadingNavButtonIcon,
         'showLeadingNavButton': _showLeadingNavButton,
         'readOnly': _readOnly,
         'thumbnailViewEditingEnabled': _thumbnailViewEditingEnabled,

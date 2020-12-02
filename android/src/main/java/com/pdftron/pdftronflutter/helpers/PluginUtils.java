@@ -67,12 +67,12 @@ public class PluginUtils {
     public static final String KEY_ANNOTATION = "annotation";
     public static final String KEY_FORMS_ONLY = "formsOnly";
     public static final String KEY_ANNOTATIONS_WITH_FLAGS = "annotationsWithFlags";
+    public static final String KEY_LEADING_NAV_BUTTON_ICON = "leadingNavButtonIcon";
 
     public static final String KEY_CONFIG_DISABLED_ELEMENTS = "disabledElements";
     public static final String KEY_CONFIG_DISABLED_TOOLS = "disabledTools";
     public static final String KEY_CONFIG_MULTI_TAB_ENABLED = "multiTabEnabled";
     public static final String KEY_CONFIG_CUSTOM_HEADERS = "customHeaders";
-    public static final String KEY_CONFIG_LEADING_NAV_BUTTON_ICON = "leadingNavButtonIcon";
     public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
     public static final String KEY_CONFIG_READ_ONLY = "readOnly";
     public static final String KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED = "thumbnailViewEditingEnabled";
@@ -129,6 +129,7 @@ public class PluginUtils {
     public static final String FUNCTION_DELETE_ANNOTATIONS = "deleteAnnotations";
     public static final String FUNCTION_SELECT_ANNOTATION = "selectAnnotation";
     public static final String FUNCTION_SET_FLAGS_FOR_ANNOTATIONS = "setFlagsForAnnotations";
+    public static final String FUNCTION_SET_LEADING_NAV_BUTTON_ICON = "setLeadingNavButtonIcon";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -204,13 +205,11 @@ public class PluginUtils {
         private JSONObject customHeaderJson;
         private Uri fileUri;
         private boolean showLeadingNavButton;
-        private String leadingNavButtonIcon;
 
         public ConfigInfo() {
             this.customHeaderJson = null;
             this.fileUri = null;
             this.showLeadingNavButton = true;
-            this.leadingNavButtonIcon = "";
         }
 
         public void setCustomHeaderJson(JSONObject customHeaderJson) {
@@ -225,10 +224,6 @@ public class PluginUtils {
             this.showLeadingNavButton = showLeadingNavButton;
         }
 
-        public void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
-            this.leadingNavButtonIcon = leadingNavButtonIcon;
-        }
-
         public JSONObject getCustomHeaderJson() {
             return customHeaderJson;
         }
@@ -239,10 +234,6 @@ public class PluginUtils {
 
         public boolean isShowLeadingNavButton() {
             return showLeadingNavButton;
-        }
-
-        public String getLeadingNavButtonIcon() {
-            return leadingNavButtonIcon;
         }
     }
 
@@ -276,10 +267,6 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_CUSTOM_HEADERS)) {
                     JSONObject customHeaderJson = configJson.getJSONObject(KEY_CONFIG_CUSTOM_HEADERS);
                     configInfo.setCustomHeaderJson(customHeaderJson);
-                }
-                if (!configJson.isNull(KEY_CONFIG_LEADING_NAV_BUTTON_ICON)) {
-                    String leadingNavButtonIcon = configJson.getString(KEY_CONFIG_LEADING_NAV_BUTTON_ICON);
-                    configInfo.setLeadingNavButtonIcon(leadingNavButtonIcon);
                 }
                 if (!configJson.isNull(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON)) {
                     boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
@@ -1172,6 +1159,14 @@ public class PluginUtils {
         tool.setForceSameNextToolMode(continuousAnnot);
         toolManager.setTool(tool);
         result.success(null);
+    }
+
+    private static void setLeadingNavButtonIcon(String leadingNavButtonIcon, MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
     }
 
     // Events

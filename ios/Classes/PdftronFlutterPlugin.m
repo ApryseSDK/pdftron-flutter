@@ -136,13 +136,15 @@
 
 + (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
 {
-    if (config.length == 0 || [config isEqualToString:@"null"]) {
-        return;
-    }
     
     PTFlutterViewController* flutterViewController = (PTFlutterViewController*)documentViewController;
     
     [flutterViewController initViewerSettings];
+    
+    if (config.length == 0 || [config isEqualToString:@"null"]) {
+        [flutterViewController applyViewerSettings];
+        return;
+    }
     
     //convert from json to dict
     id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
@@ -192,14 +194,6 @@
                     
                     if (!error && showLeadingNavButtonNumber) {
                         [flutterViewController setShowNavButton:[showLeadingNavButtonNumber boolValue]];
-                    }
-                }
-                else if ([key isEqualToString:PTLeadingNavButtonIconKey]) {
-                    
-                    NSString* navIcon = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLeadingNavButtonIconKey class:[NSString class] error:&error];
-                    
-                    if (!error && navIcon) {
-                        [flutterViewController setNavButtonPath:navIcon];
                     }
                 }
                 else if ([key isEqualToString:PTReadOnlyKey]) {
@@ -650,6 +644,10 @@
     } else if ([call.method isEqualToString:PTSetValuesForFieldsKey]) {
         NSString *fieldWithValuesString = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTFieldsArgumentKey]];
         [self setValuesForFields:fieldWithValuesString resultToken:result];
+    } else if ([call.method isEqualToString:PTSetLeadingNavButtonIconKey]) {
+        NSString* leadingNavButtonIcon = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTLeadingNavButtonIconArgumentKey]];
+        [self setLeadingNavButtonIcon:leadingNavButtonIcon resultToken:result];
+
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -1488,6 +1486,22 @@
             [pdfViewCtrl RefreshAndUpdate:changeCollection];
         }
     }
+}
+
+- (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon resultToken:(FlutterResult)result
+{
+    PTDocumentViewController *docVC = [self getDocumentViewController];
+    if(docVC == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller is not initialized.");
+        result([FlutterError errorWithCode:@"set_leading_nav_button_icon" message:@"Failed to set leading nav button icon" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+
+    [(PTFlutterViewController *)docVC setLeadingNavButtonIcon:leadingNavButtonIcon];
+    
+    result(nil);
 }
 
 #pragma mark - Helper

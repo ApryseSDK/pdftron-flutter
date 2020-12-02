@@ -304,16 +304,7 @@
 - (void)applyNavIcon
 {
     if (self.showNavButton) {
-        UIImage *navImage = [UIImage imageNamed:self.navButtonPath];
-        UIBarButtonItem *navButton;
-        if (navImage == nil) {
-            navButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
-        } else {
-            navButton = [[UIBarButtonItem alloc] initWithImage:navImage
-                                                         style:UIBarButtonItemStylePlain
-                                                        target:self
-                                                        action:@selector(topLeftButtonPressed:)];
-        }
+        UIBarButtonItem *navButton =[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
         self.navigationItem.leftBarButtonItem = navButton;
     }
 }
@@ -353,6 +344,28 @@
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem
 {
     [self.plugin topLeftButtonPressed:barButtonItem];
+}
+
+- (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon
+{
+    if (self.showNavButton) {
+        UIImage *navImage = [UIImage imageNamed:leadingNavButtonIcon];
+        if (navImage) {
+            UIBarButtonItem *navButton = self.navigationItem.leftBarButtonItem;
+            UIImage* prevImage = [navButton image];
+            if (prevImage) {
+                // if previously has an image, just set image
+                [navButton setImage:navImage];
+            } else {
+                // or create a new UI button if previously it was the default "CLOSE" button
+                navButton = [[UIBarButtonItem alloc] initWithImage:navImage
+                                                             style:UIBarButtonItemStylePlain
+                                                            target:self
+                                                            action:@selector(topLeftButtonPressed:)];
+                self.navigationItem.leftBarButtonItem = navButton;
+            }
+        }
+    }
 }
 
 @end

@@ -28,8 +28,10 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_GET_PLATFO
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_GET_VERSION;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_INITIALIZE;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_OPEN_DOCUMENT;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SET_LEADING_NAV_BUTTON_ICON;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_CONFIG;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_DOCUMENT;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LEADING_NAV_BUTTON_ICON;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LICENSE_KEY;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PASSWORD;
 
@@ -179,6 +181,11 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 FlutterDocumentActivity.setFlutterLoadResult(result);
                 FlutterDocumentActivity.openDocument(mContext, document, password, config);
                 break;
+            case FUNCTION_SET_LEADING_NAV_BUTTON_ICON: {
+                String leadingNavButtonIcon = call.argument(KEY_LEADING_NAV_BUTTON_ICON);
+                FlutterDocumentActivity.setLeadingNavButtonIcon(leadingNavButtonIcon);
+                break;
+            }
             default:
                 PluginUtils.onMethodCall(call, result, FlutterDocumentActivity.getCurrentActivity());
                 break;

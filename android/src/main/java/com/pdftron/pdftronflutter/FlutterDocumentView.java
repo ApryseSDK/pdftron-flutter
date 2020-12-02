@@ -23,6 +23,8 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_EXPORT_ANNOTA
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_EXPORT_BOOKMARK;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_FORM_FIELD_VALUE_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_OPEN_DOCUMENT;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SET_LEADING_NAV_BUTTON_ICON;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LEADING_NAV_BUTTON_ICON;
 
 public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCallHandler {
 
@@ -149,6 +151,11 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
                 String config = call.argument("config");
                 documentView.openDocument(document, password, config, result);
                 break;
+            case FUNCTION_SET_LEADING_NAV_BUTTON_ICON: {
+                String leadingNavButtonIcon = call.argument(KEY_LEADING_NAV_BUTTON_ICON);
+                documentView.setLeadingNavButtonIcon(leadingNavButtonIcon);
+                break;
+            }
             default:
                 PluginUtils.onMethodCall(call, result, documentView);
                 break;

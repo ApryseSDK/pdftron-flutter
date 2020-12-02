@@ -16,7 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 // viewer options
 @property (nonatomic, assign) BOOL showNavButton;
-@property (nonatomic, copy, nullable) NSString *navButtonPath;
 
 @property (nonatomic, assign, getter=isReadOnly) BOOL readOnly;
 @property (nonatomic, getter=isThumbnailEditingEnabled) BOOL thumbnailEditingEnabled;
@@ -26,6 +25,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
+
+- (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon;
 
 @end
 

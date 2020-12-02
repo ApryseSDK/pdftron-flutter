@@ -300,7 +300,6 @@ disabledTools | array of `Tools` constants | empty | Tools to be disabled for th
 multiTabEnabled | boolean | false | enable document multi-tab mode
 customerHeaders | map<string, string> | empty | custom headers to use with HTTP/HTTPS requests
 showLeadingNavButton | boolean | true | Whether to show the leading navigation button
-leadingNavButtonIcon | string | | the icon path to the navigation button, if `showLeadingNavButton` is true
 readOnly | boolean | false | whether the document is read-only
 thumbnailViewEditingEnabled | boolean | true | whether use could modify through thumbnail view
 annotationAuthor | string | | the author name for all annotations in the current document
@@ -315,7 +314,6 @@ config.disabledTools = disabledTools;
 config.multiTabEnabled = false;
 config.customHeaders = {'headerName': 'headerValue'};
 config.showLeadingNavButton = true;
-config.leadingNavButtonIcon = Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp';
 config.readOnly = false;
 config.thumbnailViewEditingEnabled = false;
 config.annotationAuthor = "PDFTron";
@@ -526,6 +524,15 @@ PdftronFlutter.setValuesForFields([
       new Field('choiceField', 'No')
     ]);
 ```
+
+### PdftronFlutter.setLeadingNavButtonIcon(String)
+
+Set the icon path to the navigation button. The button would use the specified icon if `showLeadingNavButton` (which by default is true) is true in the config.
+
+```dart
+PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp');
+```
+
 
 ## Events
 

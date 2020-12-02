@@ -36,6 +36,8 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
     private ViewerImpl mImpl = new ViewerImpl(this);
 
+    private static boolean mShowLeadingNavButton;
+
     private static FlutterDocumentActivity sCurrentActivity;
     private static AtomicReference<Result> sFlutterLoadResult = new AtomicReference<>();
 
@@ -57,17 +59,13 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         PDFViewCtrlConfig pdfViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(packageContext);
         PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(builder, toolManagerBuilder, pdfViewCtrlConfig, document, packageContext, configStr);
 
-        boolean showLeadingNavButton = configInfo.isShowLeadingNavButton();
-        @DrawableRes int leadingNavButtonIcon = Utils.getResourceDrawable(packageContext, configInfo.getLeadingNavButtonIcon());
-        if (showLeadingNavButton) {
-            if (leadingNavButtonIcon == 0) {
-                leadingNavButtonIcon = DEFAULT_NAV_ICON_ID;
-            }
-        } else {
-            leadingNavButtonIcon = 0;
-        }
+        mShowLeadingNavButton = configInfo.isShowLeadingNavButton();
 
-        openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build(), leadingNavButtonIcon);
+        if (mShowLeadingNavButton) {
+            openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build());
+        } else {
+            openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build(), 0);
+        }
     }
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
@@ -92,6 +90,20 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         intent.putExtra("extra_config", config);
 
         packageContext.startActivity(intent);
+    }
+
+    public static void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
+        FlutterDocumentActivity documentActivity = getCurrentActivity();
+        if (documentActivity != null) {
+            PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = documentActivity.getPdfViewCtrlTabHostFragment();
+            if (mShowLeadingNavButton && pdfViewCtrlTabHostFragment != null
+                    && pdfViewCtrlTabHostFragment.getToolbar() != null) {
+                int res = Utils.getResourceDrawable(documentActivity.getApplicationContext(), leadingNavButtonIcon);
+                if (res != 0) {
+                    pdfViewCtrlTabHostFragment.getToolbar().setNavigationIcon(res);
+                }
+            }
+        }
     }
 
     public static void setExportAnnotationCommandEventEmitter(EventSink emitter) {

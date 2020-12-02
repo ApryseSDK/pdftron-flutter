@@ -9,7 +9,6 @@ static NSString * const PTDisabledToolsKey = @"disabledTools";
 static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
 static NSString * const PTCustomHeadersKey = @"customHeaders";
-static NSString * const PTLeadingNavButtonIconKey = @"leadingNavButtonIcon";
 static NSString * const PTShowLeadingNavButtonKey = @"showLeadingNavButton";
 static NSString * const PTReadOnlyKey = @"readOnly";
 static NSString * const PTThumbnailViewEditingEnabledKey = @"thumbnailViewEditingEnabled";
@@ -94,6 +93,7 @@ static NSString * const PTGetPageCropBoxKey = @"getPageCropBox";
 static NSString * const PTSetToolModeKey = @"setToolMode";
 static NSString * const PTSetFlagForFieldsKey = @"setFlagForFields";
 static NSString * const PTSetValuesForFieldsKey = @"setValuesForFields";
+static NSString * const PTSetLeadingNavButtonIconKey = @"setLeadingNavButtonIcon";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
@@ -113,6 +113,7 @@ static NSString * const PTAnnotationListArgumentKey = @"annotations";
 static NSString * const PTFormsOnlyArgumentKey = @"formsOnly";
 static NSString * const PTAnnotationArgumentKey = @"annotation";
 static NSString * const PTAnnotationsWithFlagsArgumentKey = @"annotationsWithFlags";
+static NSString * const PTLeadingNavButtonIconArgumentKey = @"leadingNavButtonIcon";
 
 // event strings
 static NSString * const EVENT_EXPORT_ANNOTATION_COMMAND = @"export_annotation_command_event";
