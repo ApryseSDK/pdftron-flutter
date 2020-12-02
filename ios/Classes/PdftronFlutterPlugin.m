@@ -137,6 +137,11 @@
 
 + (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
 {
+    
+    BOOL hidesToolbarsOnTap = YES;
+    documentViewController.hidesControlsOnTap = hidesToolbarsOnTap;
+    documentViewController.pageFitsBetweenBars = !hidesToolbarsOnTap;
+    
     if (config.length == 0 || [config isEqualToString:@"null"]) {
         return;
     }
@@ -216,10 +221,6 @@
             NSLog(@"config JSON object not in expected dictionary format.");
         }
     }
-    
-    BOOL hidesToolbarsOnTap = YES;
-    documentViewController.hidesControlsOnTap = hidesToolbarsOnTap;
-    documentViewController.pageFitsBetweenBars = !hidesToolbarsOnTap;
 }
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem
