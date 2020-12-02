@@ -137,7 +137,7 @@
 
 + (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
 {
-    
+
     BOOL hidesToolbarsOnTap = YES;
     documentViewController.hidesControlsOnTap = hidesToolbarsOnTap;
     documentViewController.pageFitsBetweenBars = !hidesToolbarsOnTap;
