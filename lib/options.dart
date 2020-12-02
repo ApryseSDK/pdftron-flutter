@@ -116,7 +116,6 @@ class Functions {
   static const setToolMode = "setToolMode";
   static const setValuesForFields = "setValuesForFields";
   static const setFlagForFields = "setFlagForFields";
-  static const setLeadingNavButtonIcon = "setLeadingNavButtonIcon";
 }
 
 class Parameters {
@@ -137,7 +136,6 @@ class Parameters {
   static const annotations = "annotations";
   static const annotation = "annotation";
   static const annotationsWithFlags = "annotationsWithFlags";
-  static const leadingNavButtonIcon = "leadingNavButtonIcon";
 }
 
 class EventParameters {
@@ -228,4 +226,9 @@ class AnnotationFlags {
   static const print = "print";
   static const readOnly = "readOnly";
   static const toggleNoView = "toggleNoView";
+}
+
+class ThumbnailFilterModes {
+  static const annotated = "annotated";
+  static const bookmarked = "bookmarked";
 }

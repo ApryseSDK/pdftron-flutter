@@ -19,7 +19,6 @@ import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.ToolManager;
-import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
@@ -35,8 +34,6 @@ import io.flutter.plugin.common.MethodChannel.Result;
 public class FlutterDocumentActivity extends DocumentActivity implements ViewerComponent {
 
     private ViewerImpl mImpl = new ViewerImpl(this);
-
-    private static boolean mShowLeadingNavButton;
 
     private static FlutterDocumentActivity sCurrentActivity;
     private static AtomicReference<Result> sFlutterLoadResult = new AtomicReference<>();
@@ -59,13 +56,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         PDFViewCtrlConfig pdfViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(packageContext);
         PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(builder, toolManagerBuilder, pdfViewCtrlConfig, document, packageContext, configStr);
 
-        mShowLeadingNavButton = configInfo.isShowLeadingNavButton();
-
-        if (mShowLeadingNavButton) {
-            openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build());
-        } else {
-            openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build(), 0);
-        }
+        openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build());
     }
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
@@ -90,20 +81,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         intent.putExtra("extra_config", config);
 
         packageContext.startActivity(intent);
-    }
-
-    public static void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
-        FlutterDocumentActivity documentActivity = getCurrentActivity();
-        if (documentActivity != null) {
-            PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = documentActivity.getPdfViewCtrlTabHostFragment();
-            if (mShowLeadingNavButton && pdfViewCtrlTabHostFragment != null
-                    && pdfViewCtrlTabHostFragment.getToolbar() != null) {
-                int res = Utils.getResourceDrawable(documentActivity.getApplicationContext(), leadingNavButtonIcon);
-                if (res != 0) {
-                    pdfViewCtrlTabHostFragment.getToolbar().setNavigationIcon(res);
-                }
-            }
-        }
     }
 
     public static void setExportAnnotationCommandEventEmitter(EventSink emitter) {

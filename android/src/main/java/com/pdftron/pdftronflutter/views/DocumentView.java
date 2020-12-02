@@ -18,7 +18,6 @@ import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.ToolManager;
-import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
@@ -77,7 +76,6 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
         setDocumentUri(configInfo.getFileUri());
         setPassword(password);
         setCustomHeaders(configInfo.getCustomHeaderJson());
-        setShowNavIcon(configInfo.isShowLeadingNavButton());
         setViewerConfig(mBuilder.build());
         setFlutterLoadResult(result);
 
@@ -98,17 +96,6 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
             }
         }
         attachListeners();
-    }
-
-    public void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
-        PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = getPdfViewCtrlTabHostFragment();
-        if (mShowNavIcon && pdfViewCtrlTabHostFragment != null
-                && pdfViewCtrlTabHostFragment.getToolbar() != null) {
-            int res = Utils.getResourceDrawable(getContext(), leadingNavButtonIcon);
-            if (res != 0) {
-                pdfViewCtrlTabHostFragment.getToolbar().setNavigationIcon(res);
-            }
-        }
     }
 
     private void init(Context context) {
