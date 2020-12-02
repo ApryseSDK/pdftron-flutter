@@ -134,13 +134,15 @@
 
 + (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
 {
-    if (config.length == 0 || [config isEqualToString:@"null"]) {
-        return;
-    }
     
     PTFlutterViewController* flutterViewController = (PTFlutterViewController*)documentViewController;
     
     [flutterViewController initViewerSettings];
+    
+    if (config.length == 0 || [config isEqualToString:@"null"]) {
+        [flutterViewController applyViewerSettings];
+        return;
+    }
     
     //convert from json to dict
     id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
