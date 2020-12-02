@@ -128,113 +128,115 @@
 
 + (void)configureDocumentController:(PTFlutterDocumentController*)documentController withConfig:(NSString*)config
 {
+    
+    [documentController initViewerSettings];
+    
     if (config.length == 0 || [config isEqualToString:@"null"]) {
-            return;
-        }
+        [documentController applyViewerSettings];
+        return;
+    }
+    
+    //convert from json to dict
+    id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
+    
+    if (![foundationObject isKindOfClass:[NSNull class]]) {
         
-        [documentController initViewerSettings];
+        NSDictionary* configPairs = [PdftronFlutterPlugin PT_idAsNSDict:foundationObject];
         
-        //convert from json to dict
-        id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
-        
-        if (![foundationObject isKindOfClass:[NSNull class]]) {
+        if(configPairs)
+        {
             
-            NSDictionary* configPairs = [PdftronFlutterPlugin PT_idAsNSDict:foundationObject];
+            NSError* error;
             
-            if(configPairs)
-            {
-                
-                NSError* error;
-                
-                for (NSString* key in configPairs.allKeys) {
-                    if([key isEqualToString:PTDisabledToolsKey])
-                    {
-                        
-                        NSArray* toolsToDisable = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDisabledToolsKey class:[NSArray class] error:&error];
-                        
-                        if (!error && toolsToDisable) {
-                            [self disableTools:toolsToDisable documentController:documentController];
-                        }
-                    }
-                    else if([key isEqualToString:PTDisabledElementsKey])
-                    {
-                        
-                        NSArray* elementsToDisable = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDisabledElementsKey class:[NSArray class] error:&error];
-                        
-                        if (!error && elementsToDisable) {
-                            [self disableElements:(NSArray*)elementsToDisable documentController:documentController];
-                        }
-                    }
-                    else if ([key isEqualToString:PTCustomHeadersKey]) {
-                        
-                        NSDictionary* customHeaders = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTCustomHeadersKey class:[NSDictionary class] error:&error];
-                        
-                        if (!error && customHeaders) {
-                            documentController.additionalHTTPHeaders = customHeaders;
-                        }
-                    }
-                    else if ([key isEqualToString:PTMultiTabEnabledKey]) {
-                        // Handled by tabbed config.
-                    }
-                    else if ([key isEqualToString:PTAnnotationToolbarsKey]) {
-                        
-                        NSArray* annotationToolbars = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationToolbarsKey class:[NSArray class] error:&error];
-                        
-                        if (!error && annotationToolbars) {
-                            documentController.annotationToolbars = annotationToolbars;
-                        }
-                    }
-                    else if ([key isEqualToString:PTHideDefaultAnnotationToolbarsKey]) {
-                        
-                        NSArray* hideDefaultAnnotationToolbars = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideDefaultAnnotationToolbarsKey class:[NSArray class] error:&error];
-                        
-                        if (!error && hideDefaultAnnotationToolbars) {
-                            documentController.hideDefaultAnnotationToolbars = hideDefaultAnnotationToolbars;
-                        }
-                    }
-                    else if ([key isEqualToString:PTHideAnnotationToolbarSwitcherKey]) {
-                        
-                        NSNumber* hideAnnotationToolbarSwitcherNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideAnnotationToolbarSwitcherKey class:[NSNumber class] error:&error];
-                        
-                        if (!error && hideAnnotationToolbarSwitcherNumber) {
-                            documentController.hideAnnotationToolbarSwitcher = [hideAnnotationToolbarSwitcherNumber boolValue];
-                        }
-                    }
-                    else if ([key isEqualToString:PTHideTopToolbarsKey]) {
-                        
-                        NSNumber* hideTopToolbarsNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideTopToolbarsKey class:[NSNumber class] error:&error];
-                        
-                        if (!error && hideTopToolbarsNumber) {
-                            documentController.hideTopToolbars = [hideTopToolbarsNumber boolValue];
-                        }
-                    }
-                    else if ([key isEqualToString:PTHideTopAppNavBarKey]) {
-                        
-                        NSNumber* hideTopAppNavBarNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideTopAppNavBarKey class:[NSNumber class] error:&error];
-                        
-                        if (!error && hideTopAppNavBarNumber) {
-                            documentController.hideTopAppNavBar = [hideTopAppNavBarNumber boolValue];
-                        }
-                    }
-                    else
-                    {
-                        NSLog(@"Unknown JSON key in config: %@.", key);
-                    }
+            for (NSString* key in configPairs.allKeys) {
+                if([key isEqualToString:PTDisabledToolsKey])
+                {
                     
-                    if (error) {
-                        NSLog(@"An error occurs with config %@: %@", key, error.localizedDescription);
+                    NSArray* toolsToDisable = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDisabledToolsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && toolsToDisable) {
+                        [self disableTools:toolsToDisable documentController:documentController];
                     }
                 }
+                else if([key isEqualToString:PTDisabledElementsKey])
+                {
+                    
+                    NSArray* elementsToDisable = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDisabledElementsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && elementsToDisable) {
+                        [self disableElements:(NSArray*)elementsToDisable documentController:documentController];
+                    }
+                }
+                else if ([key isEqualToString:PTCustomHeadersKey]) {
+                    
+                    NSDictionary* customHeaders = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTCustomHeadersKey class:[NSDictionary class] error:&error];
+                    
+                    if (!error && customHeaders) {
+                        documentController.additionalHTTPHeaders = customHeaders;
+                    }
+                }
+                else if ([key isEqualToString:PTMultiTabEnabledKey]) {
+                    // Handled by tabbed config.
+                }
+                else if ([key isEqualToString:PTAnnotationToolbarsKey]) {
+                    
+                    NSArray* annotationToolbars = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationToolbarsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && annotationToolbars) {
+                        documentController.annotationToolbars = annotationToolbars;
+                    }
+                }
+                else if ([key isEqualToString:PTHideDefaultAnnotationToolbarsKey]) {
+                    
+                    NSArray* hideDefaultAnnotationToolbars = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideDefaultAnnotationToolbarsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && hideDefaultAnnotationToolbars) {
+                        documentController.hideDefaultAnnotationToolbars = hideDefaultAnnotationToolbars;
+                    }
+                }
+                else if ([key isEqualToString:PTHideAnnotationToolbarSwitcherKey]) {
+                    
+                    NSNumber* hideAnnotationToolbarSwitcherNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideAnnotationToolbarSwitcherKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && hideAnnotationToolbarSwitcherNumber) {
+                        documentController.hideAnnotationToolbarSwitcher = [hideAnnotationToolbarSwitcherNumber boolValue];
+                    }
+                }
+                else if ([key isEqualToString:PTHideTopToolbarsKey]) {
+                    
+                    NSNumber* hideTopToolbarsNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideTopToolbarsKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && hideTopToolbarsNumber) {
+                        documentController.hideTopToolbars = [hideTopToolbarsNumber boolValue];
+                    }
+                }
+                else if ([key isEqualToString:PTHideTopAppNavBarKey]) {
+                    
+                    NSNumber* hideTopAppNavBarNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideTopAppNavBarKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && hideTopAppNavBarNumber) {
+                        documentController.hideTopAppNavBar = [hideTopAppNavBarNumber boolValue];
+                    }
+                }
+                else
+                {
+                    NSLog(@"Unknown JSON key in config: %@.", key);
+                }
+                
+                if (error) {
+                    NSLog(@"An error occurs with config %@: %@", key, error.localizedDescription);
+                }
             }
-            else
-            {
-                NSLog(@"config JSON object not in expected dictionary format.");
-            }
-            
-            
+        }
+        else
+        {
+            NSLog(@"config JSON object not in expected dictionary format.");
         }
         
-        [documentController applyViewerSettings];
+        
+    }
+    
+    [documentController applyViewerSettings];
 }
 
 + (id)getConfigValue:(NSDictionary*)configDict configKey:(NSString*)configKey class:(Class)class error:(NSError**)error
