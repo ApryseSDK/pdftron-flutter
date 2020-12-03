@@ -299,15 +299,18 @@ disabledElements | array of `Buttons` constants | empty | Buttons to be disabled
 disabledTools | array of `Tools` constants | empty | Tools to be disabled for the viewer
 multiTabEnabled | boolean | false | enable document multi-tab mode
 customerHeaders | map<string, string> | empty | custom headers to use with HTTP/HTTPS requests
+hideThumbnailFilterModes | array of `ThumbnailFilterModes` constants | empty | Filter Modes that should be hidden in the thumbnails browser
 
 ```dart
 var disabledElements = [Buttons.shareButton, Buttons.searchButton];
 var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
+var hideThumbnailFilterModes = [ThumbnailFilterModes.annotated];
 var config = Config();
 config.disabledElements = disabledElements;
 config.disabledTools = disabledTools;
 config.multiTabEnabled = false;
 config.customHeaders = {'headerName': 'headerValue'};
+config.hideThumbnailFilterModes = hideThumbnailFilterModes;
 await PdftronFlutter.openDocument(_document, config: config);
 ```
 ### PdftronFlutter.importAnnotations(String)

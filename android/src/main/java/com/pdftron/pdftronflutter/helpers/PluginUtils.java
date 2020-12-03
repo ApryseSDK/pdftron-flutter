@@ -23,6 +23,7 @@ import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.controls.ThumbnailsViewFragment;
+import com.pdftron.pdf.dialog.ViewModePickerDialogFragment;
 import com.pdftron.pdf.tools.AdvancedShapeCreate;
 import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.Tool;
@@ -139,6 +140,13 @@ public class PluginUtils {
     public static final String BUTTON_FILL_AND_SIGN = "fillAndSignButton";
     public static final String BUTTON_PREPARE_FORM = "prepareFormButton";
     public static final String BUTTON_REFLOW_MODE = "reflowModeButton";
+    public static final String BUTTON_CLOSE = "closeButton";
+    public static final String BUTTON_OUTLINE_LIST = "outlineListButton";
+    public static final String BUTTON_ANNOTATION_LIST = "annotationListButton";
+    public static final String BUTTON_USER_BOOKMARK_LIST = "userBookmarkListButton";
+    public static final String BUTTON_EDIT_MENU = "editMenuButton";
+    public static final String BUTTON_CROP_PAGE = "cropPageButton";
+    public static final String BUTTON_MORE_ITEMS = "moreItemsButton";
 
     public static final String TOOL_BUTTON_FREE_HAND = "freeHandToolButton";
     public static final String TOOL_BUTTON_HIGHLIGHT = "highlightToolButton";
@@ -184,6 +192,17 @@ public class PluginUtils {
     public static final String TOOL_ANNOTATION_CREATE_FREE_HIGHLIGHTER = "AnnotationCreateFreeHighlighter";
     public static final String TOOL_ANNOTATION_CREATE_RUBBER_STAMP = "AnnotationCreateRubberStamp";
     public static final String TOOL_ERASER = "Eraser";
+    public static final String TOOL_ANNOTATION_CREATE_FILE_ATTACHMENT = "AnnotationCreateFileAttachment";
+    public static final String TOOL_ANNOTATION_CREATE_REDACTION = "AnnotationCreateRedaction";
+    public static final String TOOL_ANNOTATION_CREATE_REDACTION_TEXT = "AnnotationCreateRedactionText";
+    public static final String TOOL_ANNOTATION_CREATE_LINK = "AnnotationCreateLink";
+    public static final String TOOL_ANNOTATION_CREATE_LINK_TEXT = "AnnotationCreateLinkText";
+    public static final String TOOL_FORM_CREATE_TEXT_FIELD = "FormCreateTextField";
+    public static final String TOOL_FORM_CREATE_CHECKBOX_FIELD = "FormCreateCheckboxField";
+    public static final String TOOL_FORM_CREATE_SIGNATURE_FIELD = "FormCreateSignatureField";
+    public static final String TOOL_FORM_CREATE_RADIO_FIELD = "FormCreateRadioField";
+    public static final String TOOL_FORM_CREATE_COMBO_BOX_FIELD = "FormCreateComboBoxField";
+    public static final String TOOL_FORM_CREATE_LIST_BOX_FIELD = "FormCreateListBoxField";
 
     public static final String ANNOTATION_FLAG_HIDDEN = "hidden";
     public static final String ANNOTATION_FLAG_INVISIBLE = "invisible";
@@ -258,13 +277,18 @@ public class PluginUtils {
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_THUMBNAIL_FILTER_MODES)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_HIDE_THUMBNAIL_FILTER_MODES);
+                    ArrayList<ThumbnailsViewFragment.FilterModes> hideList = new ArrayList<>();
 
-                    for (int i = 0; i < array.length(); i ++) {
+                    for (int i = 0; i < array.length(); i++) {
                         String filterModeString = array.getString(i);
                         if (filterModeString.equals(THUMBNAIL_FILTER_MODE_ANNOTATED)) {
-
+                            hideList.add(ThumbnailsViewFragment.FilterModes.ANNOTATED);
+                        } else if (filterModeString.equals(THUMBNAIL_FILTER_MODE_BOOKMARKED)) {
+                            hideList.add(ThumbnailsViewFragment.FilterModes.BOOKMARKED);
                         }
                     }
+
+                    builder.hideThumbnailFilterModes(hideList.toArray(new ThumbnailsViewFragment.FilterModes[0]));
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -338,6 +362,9 @@ public class PluginUtils {
     }
 
     private static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
+
+        ArrayList<ViewModePickerDialogFragment.ViewModePickerItems> viewModePickerItems = new ArrayList<>();
+
         for (int i = 0; i < args.length(); i++) {
             String item = args.getString(i);
             if (BUTTON_TOOLS.equals(item)) {
@@ -369,8 +396,33 @@ public class PluginUtils {
                 builder = builder.showFormToolbarOption(false);
             } else if (BUTTON_REFLOW_MODE.equals(item)) {
                 builder = builder.showReflowOption(false);
+                viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_REFLOW);
+            } else if (BUTTON_CLOSE.equals(item)) {
+                builder = builder.showCloseTabOption(false);
+            } else if (BUTTON_OUTLINE_LIST.equals(item)) {
+                builder = builder.showOutlineList(false);
+            } else if (BUTTON_ANNOTATION_LIST.equals(item)) {
+                builder = builder.showAnnotationsList(false);
+            } else if (BUTTON_USER_BOOKMARK_LIST.equals(item)) {
+                builder = builder.showUserBookmarksList(false);
+            } else if (BUTTON_EDIT_MENU.equals(item)) {
+                builder = builder.showEditMenuOption(false);
+            } else if (BUTTON_CROP_PAGE.equals(item)) {
+                viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_USERCROP);
+            } else if (BUTTON_MORE_ITEMS.equals(item)) {
+                builder = builder
+                        .showEditPagesOption(false)
+                        .showPrintOption(false)
+                        .showCloseTabOption(false)
+                        .showSaveCopyOption(false)
+                        .showFormToolbarOption(false)
+                        .showFillAndSignToolbarOption(false)
+                        .showEditMenuOption(false)
+                        .showReflowOption(false);
             }
         }
+
+        builder.hideViewModeItems(viewModePickerItems.toArray(new ViewModePickerDialogFragment.ViewModePickerItems[0]));
         return disableTools(args);
     }
 
@@ -440,6 +492,28 @@ public class PluginUtils {
             mode = ToolManager.ToolMode.RUBBER_STAMPER;
         } else if (TOOL_ERASER.equals(item)) {
             mode = ToolManager.ToolMode.INK_ERASER;
+        } else if (TOOL_ANNOTATION_CREATE_FILE_ATTACHMENT.equals(item)) {
+            mode = ToolManager.ToolMode.FILE_ATTACHMENT_CREATE;
+        } else if (TOOL_ANNOTATION_CREATE_REDACTION.equals(item)) {
+            mode = ToolManager.ToolMode.RECT_REDACTION;
+        } else if (TOOL_ANNOTATION_CREATE_LINK.equals(item)) {
+            mode = ToolManager.ToolMode.RECT_LINK;
+        } else if (TOOL_ANNOTATION_CREATE_REDACTION_TEXT.equals(item)) {
+            mode = ToolManager.ToolMode.TEXT_REDACTION;
+        } else if (TOOL_ANNOTATION_CREATE_LINK_TEXT.equals(item)) {
+            mode = ToolManager.ToolMode.TEXT_LINK_CREATE;
+        } else if (TOOL_FORM_CREATE_TEXT_FIELD.equals(item)) {
+            mode = ToolManager.ToolMode.FORM_TEXT_FIELD_CREATE;
+        } else if (TOOL_FORM_CREATE_CHECKBOX_FIELD.equals(item)) {
+            mode = ToolManager.ToolMode.FORM_CHECKBOX_CREATE;
+        } else if (TOOL_FORM_CREATE_SIGNATURE_FIELD.equals(item)) {
+            mode = ToolManager.ToolMode.FORM_SIGNATURE_CREATE;
+        } else if (TOOL_FORM_CREATE_RADIO_FIELD.equals(item)) {
+            mode = ToolManager.ToolMode.FORM_RADIO_GROUP_CREATE;
+        } else if (TOOL_FORM_CREATE_COMBO_BOX_FIELD.equals(item)) {
+            mode = ToolManager.ToolMode.FORM_COMBO_BOX_CREATE;
+        } else if (TOOL_FORM_CREATE_LIST_BOX_FIELD.equals(item)) {
+            mode = ToolManager.ToolMode.FORM_LIST_BOX_CREATE;
         }
         return mode;
     }

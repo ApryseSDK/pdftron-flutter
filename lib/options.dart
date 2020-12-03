@@ -172,9 +172,17 @@ class Buttons {
   static const saveCopyButton = 'saveCopyButton';
   static const editPagesButton = 'editPagesButton';
   static const printButton = 'printButton';
+  static const closeButton = 'closeButton';
   static const fillAndSignButton = 'fillAndSignButton';
   static const prepareFormButton = 'prepareFormButton';
+  static const outlineListButton = 'outlineListButton';
+  static const annotationListButton = 'annotationListButton';
+  static const userBookmarkListButton = 'userBookmarkListButton';
   static const reflowModeButton = 'reflowModeButton';
+  static const editMenuButton = 'editMenuButton';
+  static const cropPageButton = 'cropPageButton';
+  static const moreItemsButton = 'moreItemsButton';
+  static const eraserButton = 'eraserButton';
 }
 
 class Tools {
@@ -208,6 +216,21 @@ class Tools {
       'AnnotationCreateFreeHighlighter';
   static const annotationCreateRubberStamp = 'AnnotationCreateRubberStamp';
   static const eraser = 'Eraser';
+  static const annotationCreateFileAttachment =
+      'AnnotationCreateFileAttachment';
+  static const annotationCreateRedaction = 'AnnotationCreateRedaction';
+  static const annotationCreateLink = 'AnnotationCreateLink';
+  static const annotationCreateRedactionText = 'AnnotationCreateRedactionText';
+  static const annotationCreateLinkText = 'AnnotationCreateLinkText';
+  static const formCreateTextField = 'FormCreateTextField';
+  static const formCreateCheckboxField = 'FormCreateCheckboxField';
+  static const formCreateSignatureField = 'FormCreateSignatureField';
+  static const formCreateRadioField = 'FormCreateRadioField';
+  static const formCreateComboBoxField = 'FormCreateComboBoxField';
+  static const formCreateListBoxField = 'FormCreateListBoxField';
+
+  // iOS only.
+  static const pencilKitDrawing = 'PencilKitDrawing';
 }
 
 class FieldFlags {

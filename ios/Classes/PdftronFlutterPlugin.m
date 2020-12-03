@@ -188,44 +188,12 @@
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
                     // Handled by tabbed config.
                 }
-                else if ([key isEqualToString:PTShowLeadingNavButtonKey]) {
+                else if ([key isEqualToString:PTHideThumbnailFilterModesKey]) {
                     
-                    NSNumber* showLeadingNavButtonNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowLeadingNavButtonKey class:[NSNumber class] error:&error];
+                    NSArray* hideThumbnailFilterModes = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideThumbnailFilterModesKey class:[NSArray class] error:&error];
                     
-                    if (!error && showLeadingNavButtonNumber) {
-                        [flutterViewController setShowNavButton:[showLeadingNavButtonNumber boolValue]];
-                    }
-                }
-                else if ([key isEqualToString:PTReadOnlyKey]) {
-                    
-                    NSNumber* readOnlyNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTReadOnlyKey class:[NSNumber class] error:&error];
-                    
-                    if (!error && readOnlyNumber) {
-                        [flutterViewController setReadOnly:[readOnlyNumber boolValue]];
-                    }
-                }
-                else if ([key isEqualToString:PTThumbnailViewEditingEnabledKey]) {
-                    
-                    NSNumber* thumbnailViewEditingEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTThumbnailViewEditingEnabledKey class:[NSNumber class] error:&error];
-                    
-                    if (!error && thumbnailViewEditingEnabledNumber) {
-                        [flutterViewController setThumbnailEditingEnabled:[thumbnailViewEditingEnabledNumber boolValue]];
-                    }
-                }
-                else if ([key isEqualToString:PTAnnotationAuthorKey]) {
-                    
-                    NSString* annotationAuthor = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationAuthorKey class:[NSString class] error:&error];
-                    
-                    if (!error && annotationAuthor) {
-                        [flutterViewController setAnnotationAuthor:annotationAuthor];
-                    }
-                }
-                else if ([key isEqualToString:PTContinuousAnnotationEditingKey]) {
-                    
-                    NSNumber* contEditingNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTContinuousAnnotationEditingKey class:[NSNumber class] error:&error];
-                    
-                    if (!error && contEditingNumber) {
-                        [flutterViewController setContinuousAnnotationEditing:[contEditingNumber boolValue]];
+                    if (!error && hideThumbnailFilterModes) {
+                        [flutterViewController setHideThumbnailFilterModes: hideThumbnailFilterModes];
                     }
                 }
                 else
@@ -365,6 +333,42 @@
                      [string isEqualToString:PTEraserToolButtonKey]) {
                 toolManager.eraserEnabled = value;
             }
+            else if ([string isEqualToString:PTAnnotationCreateFileAttachmentToolKey]) {
+                toolManager.fileAttachmentAnnotationOptions.canCreate = value;
+            }
+            else if ([string isEqualToString:PTAnnotationCreateRedactionToolKey]) {
+                toolManager.redactAnnotationOptions.canCreate = value;
+            }
+            else if ([string isEqualToString:PTAnnotationCreateLinkToolKey]) {
+                toolManager.linkAnnotationOptions.canCreate = value;
+            }
+            else if ([string isEqualToString:PTAnnotationCreateRedactionTextToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTAnnotationCreateLinkTextToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateTextFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateCheckboxFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateSignatureFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateRadioFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateComboBoxFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateListBoxFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTPencilKitDrawingToolKey]) {
+                toolManager.pencilDrawingAnnotationOptions.canCreate = value;
+            }
         }
     }
 }
@@ -400,7 +404,7 @@
             },
         PTReflowModeButtonKey:
             ^{
-            documentViewController.readerModeButtonHidden = YES;
+                documentViewController.readerModeButtonHidden = YES;
             },
         PTThumbnailSliderKey:
             ^{
@@ -409,6 +413,50 @@
         PTSaveCopyButtonKey:
             ^{
                 documentViewController.exportButtonHidden = YES;
+            },
+//        PTEditPagesButtonKey:
+//            ^{
+//
+//            },
+//        PTPrintButtonKey:
+//            ^{
+//
+//            },
+//        PTCloseButtonKey:
+//            ^{
+//
+//            },
+//        PTFillAndSignButtonKey:
+//            ^{
+//
+//            },
+//        PTPrepareFormButtonKey:
+//            ^{
+//
+//            },
+        PTOutlineListButtonKey:
+            ^{
+                documentViewController.outlineListHidden = YES;
+            },
+        PTAnnotationListButtonKey:
+            ^{
+                documentViewController.annotationListHidden = YES;
+            },
+        PTUserBookmarkListButtonKey:
+            ^{
+                documentViewController.bookmarkListHidden = YES;
+            },
+//        PTEditMenuButtonKey:
+//            ^{
+//
+//            },
+//        PTCropPageButtonKey:
+//            ^{
+//
+//            },
+        PTMoreItemsButtonKey:
+            ^{
+                documentViewController.moreItemsButtonHidden = YES;
             },
     };
     
@@ -644,10 +692,6 @@
     } else if ([call.method isEqualToString:PTSetValuesForFieldsKey]) {
         NSString *fieldWithValuesString = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTFieldsArgumentKey]];
         [self setValuesForFields:fieldWithValuesString resultToken:result];
-    } else if ([call.method isEqualToString:PTSetLeadingNavButtonIconKey]) {
-        NSString* leadingNavButtonIcon = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTLeadingNavButtonIconArgumentKey]];
-        [self setLeadingNavButtonIcon:leadingNavButtonIcon resultToken:result];
-
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -1367,7 +1411,30 @@
         toolClass = [PTFreeHandHighlightCreate class];
     } else if ([toolMode isEqualToString:PTAnnotationCreateRubberStampToolKey]) {
         toolClass = [PTRubberStampCreate class];
-
+    } else if ([toolMode isEqualToString:PTAnnotationCreateFileAttachmentToolKey]) {
+        toolClass = [PTFileAttachmentCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateRedactionToolKey]) {
+        toolClass = [PTRectangleRedactionCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateLinkToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTAnnotationCreateRedactionTextToolKey]) {
+        toolClass = [PTTextRedactionCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateLinkTextToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateTextFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateCheckboxFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateSignatureFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateRadioFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateComboBoxFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateListBoxFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTPencilKitDrawingToolKey]) {
+        toolClass = [PTPencilDrawingCreate class];
     }
 
     if (toolClass) {
@@ -1486,22 +1553,6 @@
             [pdfViewCtrl RefreshAndUpdate:changeCollection];
         }
     }
-}
-
-- (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon resultToken:(FlutterResult)result
-{
-    PTDocumentViewController *docVC = [self getDocumentViewController];
-    if(docVC == Nil)
-    {
-        // something is wrong, no document.
-        NSLog(@"Error: The document view controller is not initialized.");
-        result([FlutterError errorWithCode:@"set_leading_nav_button_icon" message:@"Failed to set leading nav button icon" details:@"Error: The document view controller is not initialized."]);
-        return;
-    }
-
-    [(PTFlutterViewController *)docVC setLeadingNavButtonIcon:leadingNavButtonIcon];
-    
-    result(nil);
 }
 
 #pragma mark - Helper
