@@ -303,6 +303,7 @@
 
 - (void)applyNavIcon
 {
+    // TODO: After new UI, leading nav should be added like RN
     if (self.showNavButton) {
         UIBarButtonItem *navButton =[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
         self.navigationItem.leftBarButtonItem = navButton;
