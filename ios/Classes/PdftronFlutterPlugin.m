@@ -115,6 +115,9 @@
 
 + (void)configureTabbedDocumentViewController:(PTTabbedDocumentViewController*)tabbedDocumentViewController withConfig:(NSString*)config
 {
+    
+    tabbedDocumentViewController.viewControllerClass = [PTFlutterViewController class];
+    
     if(config && ![config isEqualToString:@"null"])
     {
         //convert from json to dict
@@ -1438,8 +1441,7 @@
     if (toolClass) {
         PTTool *tool = [docVC.toolManager changeTool:toolClass];
 
-//        TODO: fix after #36 (a PR with continuousAnnotationEditing config implemented)
-//        tool.backToPanToolAfterUse = !(PTFlutterViewController*)docVC.continuousAnnotationEditing;
+        tool.backToPanToolAfterUse = !((PTFlutterViewController*)docVC).isContinuousAnnotationEditing;
 
         if ([tool isKindOfClass:[PTFreeHandCreate class]]
             && ![tool isKindOfClass:[PTFreeHandHighlightCreate class]]) {
