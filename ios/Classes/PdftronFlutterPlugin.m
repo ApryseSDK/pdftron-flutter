@@ -1497,20 +1497,20 @@
     }
 }
 
-- (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon resultToken:(FlutterResult)result
+- (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon resultToken:(FlutterResult)flutterResult
 {
     PTDocumentViewController *docVC = [self getDocumentViewController];
     if(docVC == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller is not initialized.");
-        result([FlutterError errorWithCode:@"set_leading_nav_button_icon" message:@"Failed to set leading nav button icon" details:@"Error: The document view controller is not initialized."]);
+        flutterResult([FlutterError errorWithCode:@"set_leading_nav_button_icon" message:@"Failed to set leading nav button icon" details:@"Error: The document view controller is not initialized."]);
         return;
     }
 
     [(PTFlutterViewController *)docVC setLeadingNavButtonIcon:leadingNavButtonIcon];
     
-    result(nil);
+    flutterResult(nil);
 }
 
 #pragma mark - Helper
