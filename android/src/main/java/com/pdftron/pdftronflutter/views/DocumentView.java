@@ -2,6 +2,7 @@ package com.pdftron.pdftronflutter.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -10,11 +11,15 @@ import androidx.annotation.Nullable;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
+import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.Utils;
+import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
 
@@ -33,6 +38,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     private ViewerImpl mImpl = new ViewerImpl(this);
 
     private ToolManagerBuilder mToolManagerBuilder;
+    private PDFViewCtrlConfig mPDFViewCtrlConfig;
     private ViewerConfig.Builder mBuilder;
     private String mCacheDir;
 
@@ -64,6 +70,47 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
         init(context);
     }
 
+    public void openDocument(String document, String password, String configStr, MethodChannel.Result result) {
+
+        PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(mBuilder, mToolManagerBuilder, mPDFViewCtrlConfig, document, getContext(), configStr);
+
+        setDocumentUri(configInfo.getFileUri());
+        setPassword(password);
+        setCustomHeaders(configInfo.getCustomHeaderJson());
+        setShowNavIcon(configInfo.isShowLeadingNavButton());
+        setViewerConfig(mBuilder.build());
+        setFlutterLoadResult(result);
+
+        ViewerBuilder viewerBuilder = ViewerBuilder.withUri(configInfo.getFileUri(), password)
+                .usingCustomHeaders(configInfo.getCustomHeaderJson())
+                .usingConfig(mBuilder.build())
+                .usingNavIcon(mShowNavIcon ? mNavIconRes : 0);
+        if (mPdfViewCtrlTabHostFragment != null) {
+            mPdfViewCtrlTabHostFragment.onOpenAddNewTab(viewerBuilder.createBundle(getContext()));
+        } else {
+            mPdfViewCtrlTabHostFragment = viewerBuilder.build(getContext());
+            if (mFragmentManager != null) {
+                mFragmentManager.beginTransaction().add(mPdfViewCtrlTabHostFragment, "document_view").commitNow();
+                View fragmentView = mPdfViewCtrlTabHostFragment.getView();
+                if (fragmentView != null) {
+                    addView(fragmentView, -1, -1);
+                }
+            }
+        }
+        attachListeners();
+    }
+
+    public void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
+        PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = getPdfViewCtrlTabHostFragment();
+        if (mShowNavIcon && pdfViewCtrlTabHostFragment != null
+                && pdfViewCtrlTabHostFragment.getToolbar() != null) {
+            int res = Utils.getResourceDrawable(getContext(), leadingNavButtonIcon);
+            if (res != 0) {
+                pdfViewCtrlTabHostFragment.getToolbar().setNavigationIcon(res);
+            }
+        }
+    }
+
     private void init(Context context) {
         int width = ViewGroup.LayoutParams.MATCH_PARENT;
         int height = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -78,6 +125,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
                 .multiTabEnabled(false)
                 .showCloseTabOption(false)
                 .useSupportActionBar(false);
+
+        mPDFViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(context);
     }
 
     public void attachListeners() {
@@ -91,9 +140,11 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
 
     private ViewerConfig getConfig() {
         if (mCacheDir != null) {
-            mBuilder.openUrlCachePath(mCacheDir);
+            mBuilder.openUrlCachePath(mCacheDir)
+                    .saveCopyExportPath(mCacheDir);
         }
         return mBuilder
+                .pdfViewCtrlConfig(mPDFViewCtrlConfig)
                 .toolManagerBuilder(mToolManagerBuilder)
                 .build();
     }

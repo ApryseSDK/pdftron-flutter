@@ -291,14 +291,34 @@ Optional parameters:
 - `password`: String, password to an encrypted document
 - `config`: Config, viewer configuration options
 
+configs (more info could be found in `lib/config.dart`):
+
+Name | Type | Default | Explanation
+-- | -- | -- | -- | 
+disabledElements | array of `Buttons` constants | empty | Buttons to be disabled for the viewer
+disabledTools | array of `Tools` constants | empty | Tools to be disabled for the viewer
+multiTabEnabled | boolean | false | enable document multi-tab mode
+customerHeaders | map<string, string> | empty | custom headers to use with HTTP/HTTPS requests
+showLeadingNavButton | boolean | true | Whether to show the leading navigation button
+readOnly | boolean | false | whether the document is read-only
+thumbnailViewEditingEnabled | boolean | true | whether use could modify through thumbnail view
+annotationAuthor | string | | the author name for all annotations in the current document
+continuousAnnotationEditing | boolean | false | whether annotations could be continuously edited
+
 ```dart
 var disabledElements = [Buttons.shareButton, Buttons.searchButton];
 var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
 var config = Config();
 config.disabledElements = disabledElements;
 config.disabledTools = disabledTools;
+config.multiTabEnabled = false;
 config.customHeaders = {'headerName': 'headerValue'};
-PdftronFlutter.openDocument(_document, config: config);
+config.showLeadingNavButton = true;
+config.readOnly = false;
+config.thumbnailViewEditingEnabled = false;
+config.annotationAuthor = "PDFTron";
+config.continuousAnnotationEditing = true;
+await PdftronFlutter.openDocument(_document, config: config);
 ```
 ### PdftronFlutter.importAnnotations(String)
 Imports XFDF string to current document.
@@ -504,6 +524,15 @@ PdftronFlutter.setValuesForFields([
       new Field('choiceField', 'No')
     ]);
 ```
+
+### PdftronFlutter.setLeadingNavButtonIcon(String)
+
+Set the icon path to the navigation button. The button would use the specified icon if `showLeadingNavButton` (which by default is true) is true in the config.
+
+```dart
+PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp');
+```
+
 
 ## Events
 

@@ -34,6 +34,7 @@
     [registrar addMethodCallDelegate:instance channel:channel];
     
     [instance registerEventChannels:[registrar messenger]];
+    [instance overrideControllerClasses];
     
     DocumentViewFactory* documentViewFactory =
     [[DocumentViewFactory alloc] initWithMessenger:registrar.messenger];
@@ -56,7 +57,15 @@
     }];
     
     [instance registerEventChannels:messenger];
+    [instance overrideControllerClasses];
     return instance;
+}
+
+- (void)overrideControllerClasses
+{
+    [PTOverrides overrideClass:[PTDocumentViewController class] withClass:[PTFlutterViewController class]];
+    
+    [PTOverrides overrideClass:[PTThumbnailsViewController class] withClass:[FLThumbnailsViewController class]];
 }
 
 - (void)registerEventChannels:(NSObject<FlutterBinaryMessenger> *)messenger
@@ -106,24 +115,32 @@
 
 + (void)configureTabbedDocumentViewController:(PTTabbedDocumentViewController*)tabbedDocumentViewController withConfig:(NSString*)config
 {
+    
+    tabbedDocumentViewController.viewControllerClass = [PTFlutterViewController class];
+    
     if(config && ![config isEqualToString:@"null"])
     {
         //convert from json to dict
-        NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
-        id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
+        id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
         
-        NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
+        if([foundationObject isKindOfClass:[NSNull class]]) {
+            return;
+        }
         
-        if([foundationObject isKindOfClass:[NSDictionary class]])
+        NSDictionary* configPairs = [PdftronFlutterPlugin PT_idAsNSDict:foundationObject];
+        
+        if(configPairs)
         {
-            NSDictionary* configPairs = (NSDictionary*)foundationObject;
-            
             for (NSString* key in configPairs.allKeys) {
                 if ([key isEqualToString:PTMultiTabEnabledKey]) {
-                    id multiTabEnabledValue = configPairs[PTMultiTabEnabledKey];
-                    if ([multiTabEnabledValue isKindOfClass:[NSNumber class]]) {
-                        BOOL multiTabEnabled = ((NSNumber *)multiTabEnabledValue).boolValue;
-                        tabbedDocumentViewController.tabsEnabled = multiTabEnabled;
+                    NSError* error;
+                    NSNumber* multiTabValue = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTMultiTabEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (error) {
+                        NSLog(@"An error occurs with config %@: %@", PTMultiTabEnabledKey, error.localizedDescription);
+                        continue;
+                    } else if (multiTabValue) {
+                        tabbedDocumentViewController.tabsEnabled = [multiTabValue boolValue];
                     }
                 }
             }
@@ -137,82 +154,104 @@
 
 + (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
 {
-
-    BOOL hidesToolbarsOnTap = YES;
-    documentViewController.hidesControlsOnTap = hidesToolbarsOnTap;
-    documentViewController.pageFitsBetweenBars = !hidesToolbarsOnTap;
+    PTFlutterViewController* flutterViewController = (PTFlutterViewController*)documentViewController;
+    
+    [flutterViewController initViewerSettings];
     
     if (config.length == 0 || [config isEqualToString:@"null"]) {
+        [flutterViewController applyViewerSettings];
         return;
     }
     
     //convert from json to dict
-    NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
-    id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
+    id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
     
-    NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
-    
-    if([foundationObject isKindOfClass:[NSDictionary class]])
-    {
-        //convert from json to dict
-        NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
-        id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
-
-        NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
+    if (![foundationObject isKindOfClass:[NSNull class]]) {
         
-        if([foundationObject isKindOfClass:[NSDictionary class]])
+        NSDictionary* configPairs = [PdftronFlutterPlugin PT_idAsNSDict:foundationObject];
+        
+        if(configPairs)
         {
-            NSDictionary* configPairs = (NSDictionary*)foundationObject;
+            
+            NSError* error;
             
             for (NSString* key in configPairs.allKeys) {
                 if([key isEqualToString:PTDisabledToolsKey])
                 {
-                    id toolsToDisable = configPairs[PTDisabledToolsKey];
-                    if(![toolsToDisable isEqual:[NSNull null]])
-                    {
-                        NSAssert([toolsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format.");
-                        if([toolsToDisable isKindOfClass:[NSArray class]])
-                        {
-                            [self disableTools:(NSArray*)toolsToDisable documentViewController:documentViewController];
-                        }
-                        else
-                        {
-                            NSLog(@"disabledTools JSON object not in expected array format.");
-                        }
+                    
+                    NSArray* toolsToDisable = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDisabledToolsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && toolsToDisable) {
+                        [self disableTools:toolsToDisable documentViewController:documentViewController];
                     }
                 }
                 else if([key isEqualToString:PTDisabledElementsKey])
                 {
-                    id elementsToDisable = configPairs[PTDisabledElementsKey];
                     
-                    if(![elementsToDisable isEqual:[NSNull null]])
-                    {
-                        NSAssert([elementsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format.");
-                        if([elementsToDisable isKindOfClass:[NSArray class]])
-                        {
-                            [self disableElements:(NSArray*)elementsToDisable documentViewController:documentViewController];
-                        }
-                        else
-                        {
-                            NSLog(@"disabledTools JSON object not in expected array format.");
-                        }
+                    NSArray* elementsToDisable = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDisabledElementsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && elementsToDisable) {
+                        [self disableElements:(NSArray*)elementsToDisable documentViewController:documentViewController];
                     }
                 }
                 else if ([key isEqualToString:PTCustomHeadersKey]) {
-                    id customHeadersValue = configPairs[PTCustomHeadersKey];
-                    if ([customHeadersValue isKindOfClass:[NSDictionary class]]) {
-                        NSDictionary *customHeaders = (NSDictionary *)customHeadersValue;
-                        
+                    
+                    NSDictionary* customHeaders = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTCustomHeadersKey class:[NSDictionary class] error:&error];
+                    
+                    if (!error && customHeaders) {
                         documentViewController.additionalHTTPHeaders = customHeaders;
                     }
                 }
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
                     // Handled by tabbed config.
                 }
+                else if ([key isEqualToString:PTShowLeadingNavButtonKey]) {
+                    
+                    NSNumber* showLeadingNavButtonNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowLeadingNavButtonKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && showLeadingNavButtonNumber) {
+                        [flutterViewController setShowNavButton:[showLeadingNavButtonNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTReadOnlyKey]) {
+                    
+                    NSNumber* readOnlyNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTReadOnlyKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && readOnlyNumber) {
+                        [flutterViewController setReadOnly:[readOnlyNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTThumbnailViewEditingEnabledKey]) {
+                    
+                    NSNumber* thumbnailViewEditingEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTThumbnailViewEditingEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && thumbnailViewEditingEnabledNumber) {
+                        [flutterViewController setThumbnailEditingEnabled:[thumbnailViewEditingEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTAnnotationAuthorKey]) {
+                    
+                    NSString* annotationAuthor = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationAuthorKey class:[NSString class] error:&error];
+                    
+                    if (!error && annotationAuthor) {
+                        [flutterViewController setAnnotationAuthor:annotationAuthor];
+                    }
+                }
+                else if ([key isEqualToString:PTContinuousAnnotationEditingKey]) {
+                    
+                    NSNumber* contEditingNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTContinuousAnnotationEditingKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && contEditingNumber) {
+                        [flutterViewController setContinuousAnnotationEditing:[contEditingNumber boolValue]];
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
-                    NSAssert(false, @"Unknown JSON key in config.");
+                }
+                
+                if (error) {
+                    NSLog(@"An error occurs with config %@: %@", key, error.localizedDescription);
                 }
             }
         }
@@ -220,7 +259,25 @@
         {
             NSLog(@"config JSON object not in expected dictionary format.");
         }
+        
+        
     }
+    
+    [flutterViewController applyViewerSettings];
+}
+
++ (id)getConfigValue:(NSDictionary*)configDict configKey:(NSString*)configKey class:(Class)class error:(NSError**)error
+{
+    id configResult = configDict[configKey];
+
+    if (![configResult isKindOfClass:[NSNull class]]) {
+        if (![configResult isKindOfClass:class]) {
+            NSString* errorString = [NSString stringWithFormat:@"config %@ is not in expected %@ format.", configKey, class];
+            *error = [NSError errorWithDomain:@"com.flutter.pdftron" code:NSFormattingError userInfo:@{NSLocalizedDescriptionKey: errorString}];
+        }
+        return configResult;
+    }
+    return nil;
 }
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem
@@ -388,7 +445,6 @@
     
     [self disableTools:elementsToDisable documentViewController:documentViewController];
 }
-
 
 #pragma mark - PTTabbedDocumentViewControllerDelegate
 
@@ -649,6 +705,10 @@
     } else if ([call.method isEqualToString:PTSetValuesForFieldsKey]) {
         NSString *fieldWithValuesString = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTFieldsArgumentKey]];
         [self setValuesForFields:fieldWithValuesString resultToken:result];
+    } else if ([call.method isEqualToString:PTSetLeadingNavButtonIconKey]) {
+        NSString* leadingNavButtonIcon = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTLeadingNavButtonIconArgumentKey]];
+        [self setLeadingNavButtonIcon:leadingNavButtonIcon resultToken:result];
+
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -768,9 +828,6 @@
 
 - (void)handleOpenDocumentMethod:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)flutterResult
 {
-
-    [PTOverrides overrideClass:[PTDocumentViewController class] withClass:[PTFlutterViewController class]];
-    
     // Get document argument.
     NSString *document = nil;
     id documentValue = arguments[PTDocumentArgumentKey];
@@ -798,8 +855,6 @@
     self.tabbedDocumentViewController.restorationIdentifier = [NSUUID UUID].UUIDString;
     
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.tabbedDocumentViewController];
-    
-    self.tabbedDocumentViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
     
     NSString* config = arguments[PTConfigArgumentKey];
     self.config = config;
@@ -1386,8 +1441,7 @@
     if (toolClass) {
         PTTool *tool = [docVC.toolManager changeTool:toolClass];
 
-//        TODO: fix after #36 (a PR with continuousAnnotationEditing config implemented)
-//        tool.backToPanToolAfterUse = !(PTFlutterViewController*)docVC.continuousAnnotationEditing;
+        tool.backToPanToolAfterUse = !((PTFlutterViewController*)docVC).isContinuousAnnotationEditing;
 
         if ([tool isKindOfClass:[PTFreeHandCreate class]]
             && ![tool isKindOfClass:[PTFreeHandHighlightCreate class]]) {
@@ -1500,6 +1554,22 @@
             [pdfViewCtrl RefreshAndUpdate:changeCollection];
         }
     }
+}
+
+- (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon resultToken:(FlutterResult)flutterResult
+{
+    PTDocumentViewController *docVC = [self getDocumentViewController];
+    if(docVC == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"set_leading_nav_button_icon" message:@"Failed to set leading nav button icon" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+
+    [(PTFlutterViewController *)docVC setLeadingNavButtonIcon:leadingNavButtonIcon];
+    
+    flutterResult(nil);
 }
 
 #pragma mark - Helper
