@@ -74,6 +74,8 @@ public class PluginUtils {
     public static final String KEY_FIELD_NAME = "fieldName";
     public static final String KEY_FIELD_VALUE = "fieldValue";
 
+    public static final String KEY_PREVIOUS_PAGE_NUMBER = "previousPageNumber";
+
     public static final String KEY_ANNOTATION_ID = "id";
 
     public static final String KEY_ACTION_ADD = "add";
@@ -92,6 +94,9 @@ public class PluginUtils {
     public static final String EVENT_ANNOTATION_CHANGED = "annotation_changed_event";
     public static final String EVENT_ANNOTATIONS_SELECTED = "annotations_selected_event";
     public static final String EVENT_FORM_FIELD_VALUE_CHANGED = "form_field_value_changed_event";
+    public static final String EVENT_LEADING_NAV_BUTTON_PRESSED = "leading_nav_button_pressed_event";
+    public static final String EVENT_PAGE_CHANGED = "page_changed_event";
+    public static final String EVENT_ZOOM_CHANGED = "zoom_changed_event";
 
     public static final String FUNCTION_GET_PLATFORM_VERSION = "getPlatformVersion";
     public static final String FUNCTION_GET_VERSION = "getVersion";
@@ -1027,12 +1032,30 @@ public class PluginUtils {
         if (toolManager != null) {
             component.getImpl().removeListeners(toolManager);
         }
+
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl != null) {
+            component.getImpl().removeListeners(pdfViewCtrl);
+        }
+    }
+
+    public static void handleLeadingNavButtonPressed(ViewerComponent component) {
+        EventChannel.EventSink leadingNavButtonPressedEventSink = component.getLeadingNavButtonPressedEventEmitter();
+        if (leadingNavButtonPressedEventSink != null) {
+            leadingNavButtonPressedEventSink.success(null);
+        }
     }
 
     private static void addListeners(ViewerComponent component) {
         ToolManager toolManager = component.getToolManager();
+
         if (toolManager != null) {
             component.getImpl().addListeners(toolManager);
+        }
+
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl != null) {
+            component.getImpl().addListeners(pdfViewCtrl);
         }
     }
 

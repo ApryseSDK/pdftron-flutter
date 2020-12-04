@@ -12,6 +12,9 @@
 @property (nonatomic, strong) FlutterEventSink annotationChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink annotationsSelectedEventSink;
 @property (nonatomic, strong) FlutterEventSink formFieldValueChangedEventSink;
+@property (nonatomic, strong) FlutterEventSink leadingNavButtonPressedEventSink;
+@property (nonatomic, strong) FlutterEventSink pageChangedEventSink;
+@property (nonatomic, strong) FlutterEventSink zoomChangedEventSink;
 
 @end
 
@@ -58,19 +61,25 @@
 
 - (void)registerEventChannels:(NSObject<FlutterBinaryMessenger> *)messenger
 {
-    FlutterEventChannel* xfdfEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_ANNOTATION_COMMAND binaryMessenger:messenger];
+    FlutterEventChannel* xfdfEventChannel = [FlutterEventChannel eventChannelWithName:PTExportAnnotationCommandEventKey binaryMessenger:messenger];
 
-    FlutterEventChannel* bookmarkEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_BOOKMARK binaryMessenger:messenger];
+    FlutterEventChannel* bookmarkEventChannel = [FlutterEventChannel eventChannelWithName:PTExportBookmarkEventKey binaryMessenger:messenger];
 
-    FlutterEventChannel* documentLoadedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_DOCUMENT_LOADED binaryMessenger:messenger];
+    FlutterEventChannel* documentLoadedEventChannel = [FlutterEventChannel eventChannelWithName:PTDocumentLoadedEventKey binaryMessenger:messenger];
     
-    FlutterEventChannel* documentErrorEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_DOCUMENT_ERROR binaryMessenger:messenger];
+    FlutterEventChannel* documentErrorEventChannel = [FlutterEventChannel eventChannelWithName:PTDocumentErrorEventKey binaryMessenger:messenger];
     
-    FlutterEventChannel* annotationChangedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_ANNOTATION_CHANGED binaryMessenger:messenger];
+    FlutterEventChannel* annotationChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTAnnotationChangedEventKey binaryMessenger:messenger];
     
-    FlutterEventChannel* annotationsSelectedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_ANNOTATIONS_SELECTED binaryMessenger:messenger];
+    FlutterEventChannel* annotationsSelectedEventChannel = [FlutterEventChannel eventChannelWithName:PTAnnotationsSelectedEventKey binaryMessenger:messenger];
     
-    FlutterEventChannel* formFieldValueChangedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_FORM_FIELD_VALUE_CHANGED binaryMessenger:messenger];
+    FlutterEventChannel* formFieldValueChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTFormFieldValueChangedEventKey binaryMessenger:messenger];
+    
+    FlutterEventChannel* leadingNavButtonPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTLeadingNavButtonPressedEventKey binaryMessenger:messenger];
+
+    FlutterEventChannel* pageChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTPageChangedEventKey binaryMessenger:messenger];
+
+    FlutterEventChannel* zoomChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTZoomChangedEventKey binaryMessenger:messenger];
 
     [xfdfEventChannel setStreamHandler:self];
     
@@ -85,6 +94,12 @@
     [annotationsSelectedEventChannel setStreamHandler:self];
     
     [formFieldValueChangedEventChannel setStreamHandler:self];
+    
+    [leadingNavButtonPressedEventChannel setStreamHandler:self];
+    
+    [pageChangedEventChannel setStreamHandler:self];
+    
+    [zoomChangedEventChannel setStreamHandler:self];
 }
 
 #pragma mark - Configurations
@@ -122,6 +137,7 @@
 
 + (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
 {
+
     BOOL hidesToolbarsOnTap = YES;
     documentViewController.hidesControlsOnTap = hidesToolbarsOnTap;
     documentViewController.pageFitsBetweenBars = !hidesToolbarsOnTap;
@@ -214,6 +230,8 @@
     } else {
         [UIApplication.sharedApplication.keyWindow.rootViewController.presentedViewController dismissViewControllerAnimated:YES completion:Nil];
     }
+    
+    [self documentViewController:[self getDocumentViewController] leadingNavButtonClicked:nil];
 }
 
 + (void)disableTools:(NSArray<id> *)toolsToDisable documentViewController:(PTDocumentViewController *)documentViewController
@@ -431,6 +449,15 @@
         case formFieldValueChangedId:
             self.formFieldValueChangedEventSink = events;
             break;
+        case leadingNavButtonPressedId:
+            self.leadingNavButtonPressedEventSink = events;
+            break;
+        case pageChangedId:
+            self.pageChangedEventSink = events;
+            break;
+        case zoomChangedId:
+            self.zoomChangedEventSink = events;
+            break;
     }
     
     return Nil;
@@ -462,6 +489,15 @@
             break;
         case formFieldValueChangedId:
             self.formFieldValueChangedEventSink = nil;
+            break;
+        case leadingNavButtonPressedId:
+            self.leadingNavButtonPressedEventSink = nil;
+            break;
+        case pageChangedId:
+            self.pageChangedEventSink = nil;
+            break;
+        case zoomChangedId:
+            self.zoomChangedEventSink = nil;
             break;
     }
     
@@ -530,6 +566,30 @@
     if(self.formFieldValueChangedEventSink != nil)
     {
         self.formFieldValueChangedEventSink(fieldsString);
+    }
+}
+
+-(void)documentViewController:(PTDocumentViewController *)docVC leadingNavButtonClicked:(nullable NSString *)nav
+{
+    if (self.leadingNavButtonPressedEventSink != nil)
+    {
+        self.leadingNavButtonPressedEventSink(nil);
+    }
+}
+
+-(void)documentViewController:(PTDocumentViewController *)docVC pageChanged:(NSString*)pageNumbersString
+{
+    if (self.pageChangedEventSink != nil)
+    {
+        self.pageChangedEventSink(pageNumbersString);
+    }
+}
+
+-(void)documentViewController:(PTDocumentViewController *)docVC zoomChanged:(NSNumber*)zoom
+{
+    if (self.zoomChangedEventSink != nil)
+    {
+        self.zoomChangedEventSink(zoom);
     }
 }
 
