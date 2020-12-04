@@ -1501,7 +1501,7 @@
     PTDocumentViewController *docVC = [self getDocumentViewController];
     if(docVC == Nil)
     {
-        // something is wrong, no document.
+        // something is wrong, document view controller is not present
         NSLog(@"Error: The document view controller is not initialized.");
         flutterResult([FlutterError errorWithCode:@"set_leading_nav_button_icon" message:@"Failed to set leading nav button icon" details:@"Error: The document view controller is not initialized."]);
         return;

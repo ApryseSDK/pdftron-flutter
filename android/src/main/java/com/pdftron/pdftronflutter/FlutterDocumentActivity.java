@@ -99,7 +99,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
             PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = documentActivity.getPdfViewCtrlTabHostFragment();
             if (mShowLeadingNavButton && pdfViewCtrlTabHostFragment != null
                     && pdfViewCtrlTabHostFragment.getToolbar() != null) {
-                int res = Utils.getResourceDrawable(documentActivity.getApplicationContext(), leadingNavButtonIcon);
+                int res = Utils.getResourceDrawable(pdfViewCtrlTabHostFragment.getToolbar().getContext(), leadingNavButtonIcon);
                 if (res != 0) {
                     pdfViewCtrlTabHostFragment.getToolbar().setNavigationIcon(res);
                 }
