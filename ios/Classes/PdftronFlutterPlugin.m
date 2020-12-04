@@ -1304,7 +1304,6 @@
 - (void)saveDocument:(FlutterResult)flutterResult
 {
     PTDocumentViewController *docVC = [self getDocumentViewController];
-    __block NSString* resultString;
 
     if(docVC.document == Nil)
     {
@@ -1341,7 +1340,7 @@
         NSLog(@"Error: There was an error while trying to save document. %@", error.localizedDescription);
         flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: There was an error while trying to save document."]);
     } else {
-        flutterResult(nil);
+        flutterResult(docVC.coordinatedDocument.fileURL.path);
     }
 }
 
