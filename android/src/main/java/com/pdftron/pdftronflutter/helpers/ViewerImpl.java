@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.Field;
+import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.annots.Widget;
 import com.pdftron.pdf.tools.ToolManager;
 
@@ -18,6 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 import io.flutter.plugin.common.EventChannel;
+
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PAGE_NUMBER;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PREVIOUS_PAGE_NUMBER;
 
 public class ViewerImpl {
 
@@ -37,6 +41,16 @@ public class ViewerImpl {
         toolManager.removeAnnotationModificationListener(mAnnotationModificationListener);
         toolManager.removeAnnotationsSelectionListener(mAnnotationsSelectionListener);
         toolManager.removePdfDocModificationListener(mPdfDocModificationListener);
+    }
+
+    public void addListeners(@NonNull PDFViewCtrl pdfViewCtrl) {
+        pdfViewCtrl.addOnCanvasSizeChangeListener(mOnCanvasSizeChangedListener);
+        pdfViewCtrl.addPageChangeListener(mPageChangedListener);
+    }
+
+    public void removeListeners(@NonNull PDFViewCtrl pdfViewCtrl) {
+        pdfViewCtrl.removeOnCanvasSizeChangeListener(mOnCanvasSizeChangedListener);
+        pdfViewCtrl.removePageChangeListener(mPageChangedListener);
     }
 
     private ToolManager.AnnotationModificationListener mAnnotationModificationListener = new ToolManager.AnnotationModificationListener() {
@@ -174,6 +188,34 @@ public class ViewerImpl {
         @Override
         public void onAnnotationAction() {
 
+        }
+    };
+
+    private PDFViewCtrl.OnCanvasSizeChangeListener mOnCanvasSizeChangedListener = new PDFViewCtrl.OnCanvasSizeChangeListener() {
+        @Override
+        public void onCanvasSizeChanged() {
+            EventChannel.EventSink eventSink = mViewerComponent.getZoomChangedEventEmitter();
+            if (eventSink != null && mViewerComponent.getPdfViewCtrl() != null) {
+                eventSink.success(mViewerComponent.getPdfViewCtrl().getZoom());
+            }
+        }
+    };
+
+    private PDFViewCtrl.PageChangeListener mPageChangedListener = new PDFViewCtrl.PageChangeListener() {
+        @Override
+        public void onPageChange(int old_page, int cur_page, PDFViewCtrl.PageChangeState pageChangeState) {
+            EventChannel.EventSink eventSink = mViewerComponent.getPageChangedEventEmitter();
+            if (eventSink != null && (old_page != cur_page || pageChangeState == PDFViewCtrl.PageChangeState.END)) {
+                JSONObject resultObject = new JSONObject();
+                try {
+                    resultObject.put(KEY_PREVIOUS_PAGE_NUMBER, old_page);
+                    resultObject.put(KEY_PAGE_NUMBER, cur_page);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                eventSink.success(resultObject.toString());
+            }
         }
     };
 }

@@ -116,13 +116,16 @@ static NSString * const PTAnnotationsWithFlagsArgumentKey = @"annotationsWithFla
 static NSString * const PTLeadingNavButtonIconArgumentKey = @"leadingNavButtonIcon";
 
 // event strings
-static NSString * const EVENT_EXPORT_ANNOTATION_COMMAND = @"export_annotation_command_event";
-static NSString * const EVENT_EXPORT_BOOKMARK = @"export_bookmark_event";
-static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
-static NSString * const EVENT_DOCUMENT_ERROR = @"document_error_event";
-static NSString * const EVENT_ANNOTATION_CHANGED = @"annotation_changed_event";
-static NSString * const EVENT_ANNOTATIONS_SELECTED = @"annotations_selected_event";
-static NSString * const EVENT_FORM_FIELD_VALUE_CHANGED = @"form_field_value_changed_event";
+static NSString * const PTExportAnnotationCommandEventKey = @"export_annotation_command_event";
+static NSString * const PTExportBookmarkEventKey = @"export_bookmark_event";
+static NSString * const PTDocumentLoadedEventKey = @"document_loaded_event";
+static NSString * const PTDocumentErrorEventKey = @"document_error_event";
+static NSString * const PTAnnotationChangedEventKey = @"annotation_changed_event";
+static NSString * const PTAnnotationsSelectedEventKey = @"annotations_selected_event";
+static NSString * const PTFormFieldValueChangedEventKey = @"form_field_value_changed_event";
+static NSString * const PTLeadingNavButtonPressedEventKey = @"leading_nav_button_pressed_event";
+static NSString * const PTPageChangedEventKey = @"page_changed_event";
+static NSString * const PTZoomChangedEventKey = @"zoom_changed_event";
 
 // other keys
 static NSString * const PTX1Key = @"x1";
@@ -144,6 +147,9 @@ static NSString * const PTAnnotationListKey = @"annotations";
 
 static NSString * const PTFormFieldNameKey = @"fieldName";
 static NSString * const PTFormFieldValueKey = @"fieldValue";
+
+static NSString * const PTPreviousPageNumberKey = @"previousPageNumber";
+static NSString * const PTPageNumberKey = @"pageNumber";
 
 static NSString * const PTFieldNameKey = @"fieldName";
 static NSString * const PTFieldValueKey = @"fieldValue";
@@ -172,7 +178,10 @@ typedef enum {
     documentErrorId,
     annotationChangedId,
     annotationsSelectedId,
-    formFieldValueChangedId
+    formFieldValueChangedId,
+    leadingNavButtonPressedId,
+    pageChangedId,
+    zoomChangedId,
 } EventSinkId;
 
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
@@ -188,6 +197,9 @@ typedef enum {
 -(void)documentViewController:(PTDocumentViewController*)docVC annotationsChangedWithActionString:(NSString*)actionString;
 -(void)documentViewController:(PTDocumentViewController*)docVC annotationsSelected:(NSString*)annotations;
 -(void)documentViewController:(PTDocumentViewController*)docVC formFieldValueChanged:(NSString*)fieldString;
+-(void)documentViewController:(PTDocumentViewController *)docVC leadingNavButtonClicked:(nullable NSString *)nav;
+-(void)documentViewController:(PTDocumentViewController *)docVC pageChanged:(NSString*)pageNumbersString;
+-(void)documentViewController:(PTDocumentViewController *)docVC zoomChanged:(NSNumber*)zoom;
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 

@@ -144,6 +144,8 @@ class EventParameters {
   static const action = "action";
   static const annotations = "annotations";
   static const xfdfCommand = "xfdfCommand";
+  static const previousPageNumber = "previousPageNumber";
+  static const pageNumber = "pageNumber";
 }
 
 class Buttons {
