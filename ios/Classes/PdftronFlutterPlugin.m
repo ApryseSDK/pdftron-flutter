@@ -767,8 +767,6 @@
     
     // Show navigation (and tabbed) controller.
     [presentingViewController presentViewController:navigationController animated:YES completion:nil];
-    
-    flutterResult(nil);
 }
 
 - (void)importAnnotations:(NSString *)xfdf resultToken:(FlutterResult)flutterResult
