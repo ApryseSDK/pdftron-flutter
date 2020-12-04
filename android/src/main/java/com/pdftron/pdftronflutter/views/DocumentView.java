@@ -4,16 +4,15 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
 
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
-import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
@@ -54,6 +53,9 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private ToolManager.PdfDocModificationListener sPdfDocModificationListener;
     private ToolManager.AnnotationsSelectionListener sAnnotationsSelectionListener;
 
+    private int mId = 0;
+    private FragmentManager mFragmentManager;
+
     public DocumentView(@NonNull Context context) {
         this(context, null);
     }
@@ -69,32 +71,30 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     }
 
     public void openDocument(String document, String password, String configStr, MethodChannel.Result result) {
-
         PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(mBuilder, mToolManagerBuilder, mPDFViewCtrlConfig, document, getContext(), configStr);
 
         setDocumentUri(configInfo.getFileUri());
         setPassword(password);
         setCustomHeaders(configInfo.getCustomHeaderJson());
-        setViewerConfig(mBuilder.build());
+        setViewerConfig(getConfig());
         setFlutterLoadResult(result);
 
-        ViewerBuilder2 viewerBuilder = ViewerBuilder2.withUri(configInfo.getFileUri(), password)
-                .usingCustomHeaders(configInfo.getCustomHeaderJson())
-                .usingConfig(mBuilder.build())
-                .usingNavIcon(mShowNavIcon ? mNavIconRes : 0);
-        if (mPdfViewCtrlTabHostFragment != null) {
-            mPdfViewCtrlTabHostFragment.onOpenAddNewTab(viewerBuilder.createBundle(getContext()));
-        } else {
-            mPdfViewCtrlTabHostFragment = viewerBuilder.build(getContext());
-            if (mFragmentManager != null) {
-                mFragmentManager.beginTransaction().add(mPdfViewCtrlTabHostFragment, "document_view").commitNow();
-                View fragmentView = mPdfViewCtrlTabHostFragment.getView();
-                if (fragmentView != null) {
-                    addView(fragmentView, -1, -1);
-                }
-            }
-        }
+        this.prepView();
         attachListeners();
+    }
+
+    @Override
+    public void setSupportFragmentManager(FragmentManager fragmentManager) {
+        super.setSupportFragmentManager(fragmentManager);
+        mFragmentManager = fragmentManager;
+    }
+
+    @Override
+    public int getId() {
+        if (mId == 0) {
+            mId = View.generateViewId();
+        }
+        return mId;
     }
 
     private void init(Context context) {
@@ -137,7 +137,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
     @Override
     protected void onAttachedToWindow() {
-        setViewerConfig(getConfig());
+        setSupportFragmentManager(mFragmentManager);
         super.onAttachedToWindow();
     }
 
