@@ -618,10 +618,10 @@
         [self setFlagsForAnnotations:annotationsWithFlags resultToken:result];
     } else if ([call.method isEqualToString:PTImportAnnotationCommandKey]) {
         NSString *xfdfCommand = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTXfdfCommandArgumentKey]];
-        [self importAnnotationCommand:xfdfCommand];
+        [self importAnnotationCommand:xfdfCommand resultToken:result];
     } else if ([call.method isEqualToString:PTImportBookmarksKey]) {
         NSString *bookmarkJson = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTBookmarkJsonArgumentKey]];
-        [self importBookmarks:bookmarkJson];
+        [self importBookmarks:bookmarkJson resultToken:result];
     } else if ([call.method isEqualToString:PTSaveDocumentKey]) {
         [self saveDocument:result];
     } else if ([call.method isEqualToString:PTCommitToolKey]) {
@@ -759,7 +759,7 @@
     return [resultAnnots copy];
 }
 
-- (void)handleOpenDocumentMethod:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)result
+- (void)handleOpenDocumentMethod:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)flutterResult
 {
 
     [PTOverrides overrideClass:[PTDocumentController class] withClass:[PTFlutterDocumentController class]];
@@ -810,7 +810,7 @@
     [self.tabbedDocumentViewController openDocumentWithURL:fileURL
                                                   password:password];
     
-    ((PTFlutterDocumentController*)self.tabbedDocumentViewController.childViewControllers.lastObject).openResult = result;
+    ((PTFlutterDocumentController*)self.tabbedDocumentViewController.childViewControllers.lastObject).openResult = flutterResult;
     ((PTFlutterDocumentController*)self.tabbedDocumentViewController.childViewControllers.lastObject).plugin = self;
     
     UIViewController *presentingViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
@@ -1125,13 +1125,14 @@
     flutterResult(nil);
 }
 
-- (void)importAnnotationCommand:(NSString *)xfdfCommand
+- (void)importAnnotationCommand:(NSString *)xfdfCommand resultToken:(FlutterResult)flutterResult
 {
     PTDocumentController *documentController = [self getDocumentController];
     if(documentController.document == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"import_annotation_command" message:@"Failed to import annotation command" details:@"Error: The document view controller has no document."]);
         return;
     }
     
@@ -1142,6 +1143,7 @@
         {
             // too soon
             NSLog(@"Error: The document is still being downloaded.");
+            flutterResult([FlutterError errorWithCode:@"import_annotation_command" message:@"Failed to import annotation command" details:@"Error: The document is still being downloaded."]);
             return;
         }
 
@@ -1155,17 +1157,21 @@
     
     if(error)
     {
-        NSLog(@"Error: There was an error while trying to import annotation commands. %@", error.localizedDescription);
+        NSLog(@"Error: There was an error while trying to import annotation command. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"import_annotation_command" message:@"Failed to import annotation command" details:@"Error: There was an error while trying to import annotation command."]);
+    } else {
+        flutterResult(nil);
     }
 }
 
-- (void)importBookmarks:(NSString *)bookmarkJson
+- (void)importBookmarks:(NSString *)bookmarkJson resultToken:(FlutterResult)flutterResult
 {
     PTDocumentController *documentController = [self getDocumentController];
     if(documentController.document == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"import_bookmark_json" message:@"Failed to import bookmark json" details:@"Error: The document view controller has no document."]);
         return;
     }
     
@@ -1176,6 +1182,7 @@
         {
             // too soon
             NSLog(@"Error: The document is still being downloaded.");
+            flutterResult([FlutterError errorWithCode:@"import_bookmark_json" message:@"Failed to import bookmark json" details:@"Error: The document is still being downloaded."]);
             return;
         }
 
@@ -1185,23 +1192,22 @@
     
     if(error)
     {
-        NSLog(@"Error: There was an error while trying to import bookmarks. %@", error.localizedDescription);
+        NSLog(@"Error: There was an error while trying to import annotation command. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"import_bookmark_json" message:@"Failed to import bookmark json" details:@"Error: There was an error while trying to import annotation command."]);
+    } else {
+        flutterResult(nil);
     }
 }
 
 - (void)saveDocument:(FlutterResult)flutterResult
 {
     PTDocumentController *documentController = [self getDocumentController];
-    __block NSString* resultString;
 
     if(documentController.document == Nil)
     {
-        resultString = @"Error: The document view controller has no document.";
-        
         // something is wrong, no document.
-        NSLog(@"%@", resultString);
-        flutterResult(resultString);
-        
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: The document view controller has no document."]);
         return;
     }
     
@@ -1211,23 +1217,17 @@
         if([doc HasDownloader])
         {
             // too soon
-            resultString = @"Error: The document is still being downloaded and cannot be saved.";
-            NSLog(@"%@", resultString);
-            flutterResult(resultString);
+            NSLog(@"Error: The document is still being downloaded.");
+            flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: The document is still being downloaded."]);
             return;
         }
 
         [documentController saveDocument:0 completionHandler:^(BOOL success) {
             if(!success)
             {
-                resultString = @"Error: The file could not be saved.";
-                NSLog(@"%@", resultString);
-                flutterResult(resultString);
-            }
-            else
-            {
-                resultString = @"The file was successfully saved.";
-                flutterResult(resultString);
+                NSLog(@"Error: The document could not be saved.");
+                flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: The document could not be saved."]);
+                return;
             }
         }];
 
@@ -1235,7 +1235,10 @@
     
     if(error)
     {
-        NSLog(@"Error: There was an error while trying to save the document. %@", error.localizedDescription);
+        NSLog(@"Error: There was an error while trying to save document. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: There was an error while trying to save document."]);
+    } else {
+        flutterResult(documentController.coordinatedDocument.fileURL.path);
     }
 }
 
@@ -1259,29 +1262,29 @@
     PTDocumentController *documentController = [self getDocumentController];
     if(documentController.document == Nil)
     {
-        NSString *resultString = @"Error: The document view controller has no document.";
-
         // something is wrong, no document.
-        NSLog(@"%@", resultString);
-        flutterResult(resultString);
-
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"get_page_count" message:@"Failed to get page count" details:@"Error: The document view controller has no document."]);
         return;
     }
 
     flutterResult([NSNumber numberWithInt:documentController.pdfViewCtrl.pageCount]);
 }
 
-- (void)getPageCropBox:(NSNumber *)pageNumber resultToken:(FlutterResult)result
+- (void)getPageCropBox:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult
 {
     PTDocumentController *documentController = [self getDocumentController];
+    
+    if(documentController.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"get_page_crop_box" message:@"Failed to get page crop box" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+    
     NSError *error;
     [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if([doc HasDownloader])
-        {
-            // too soon
-            NSLog(@"Error: The document is still being downloaded.");
-            return;
-        }
         
         PTPage *page = [doc GetPage:(int)pageNumber];
         if (page) {
@@ -1296,19 +1299,21 @@
             };
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:map options:0 error:nil];
             NSString *res = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-            
-            result(res);
+            flutterResult(res);
+        } else {
+            flutterResult(nil);
         }
 
     } error:&error];
     
     if(error)
     {
-        NSLog(@"Error: There was an error while trying to get the page crop box. %@", error.localizedDescription);
+        NSLog(@"Error: There was an error while trying to get page crop box. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to get page crop box" details:@"Error: There was an error while trying to get page crop box"]);
     }
 }
 
-- (void)setToolMode:(NSString *)toolMode resultToken:(FlutterResult)result;
+- (void)setToolMode:(NSString *)toolMode resultToken:(FlutterResult)flutterResult;
 {
     PTDocumentController *documentController = [self getDocumentController];
     Class toolClass = Nil;
@@ -1380,17 +1385,17 @@
         }
     }
 
-    result(nil);
+    flutterResult(nil);
 }
 
-- (void)setFlagForFields:(NSArray <NSString *> *)fieldNames flag:(NSNumber *)flag flagValue:(bool)flagValue resultToken:(FlutterResult)result
+- (void)setFlagForFields:(NSArray <NSString *> *)fieldNames flag:(NSNumber *)flag flagValue:(bool)flagValue resultToken:(FlutterResult)flutterResult
 {
     PTDocumentController *documentController = [self getDocumentController];
     if(documentController.document == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
-        result([FlutterError errorWithCode:@"set_flag_for_fields" message:@"Failed to set flag for fields" details:@"Error: The document view controller has no document."]);
+        flutterResult([FlutterError errorWithCode:@"set_flag_for_fields" message:@"Failed to set flag for fields" details:@"Error: The document view controller has no document."]);
         return;
     }
 
@@ -1409,14 +1414,14 @@
     } error:&error];
 
     if (error) {
-        NSLog(@"Error: Failed to set field flags to doc. %@", error.localizedDescription);
-        result([FlutterError errorWithCode:@"set_flag_for_fields" message:@"Failed to set flag for fields" details:@"Error: Failed to set field flags to doc."]);
+        NSLog(@"Error: Failed to set flag for fields. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"set_flag_for_fields" message:@"Failed to set flag for fields" details:@"Error: Failed to set flag for fields."]);
+    } else {
+        flutterResult(nil);
     }
-
-    result(nil);
 }
 
-- (void)setValuesForFields:(NSString *)fieldWithValuesString resultToken:(FlutterResult)result
+- (void)setValuesForFields:(NSString *)fieldWithValuesString resultToken:(FlutterResult)flutterResult
 {
     PTDocumentController *documentController = [self getDocumentController];
     NSArray *fieldWithValues = [PdftronFlutterPlugin PT_idAsArray:[PdftronFlutterPlugin PT_JSONStringToId:fieldWithValuesString]];
@@ -1424,7 +1429,7 @@
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
-        result([FlutterError errorWithCode:@"set_value_for_fields" message:@"Failed to set value for fields" details:@"Error: The document view controller has no document."]);
+        flutterResult([FlutterError errorWithCode:@"set_values_for_fields" message:@"Failed to set values for fields" details:@"Error: The document view controller has no document."]);
         return;
     }
 
@@ -1446,10 +1451,10 @@
     } error:&error];
 
     if (error) {
-        NSLog(@"Error: Failed to set field values to doc. %@", error.localizedDescription);
-        result([FlutterError errorWithCode:@"set_value_for_fields" message:@"Failed to set value for fields" details:@"Error: Failed to set field values to doc."]);
+        NSLog(@"Error: Failed to set values for fields. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"set_values_for_fields" message:@"Failed to set values for fields" details:@"Error: Failed to set values for fields."]);
     } else {
-        result(nil);
+        flutterResult(nil);
     }
 }
 
