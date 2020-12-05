@@ -16,6 +16,10 @@
         NSString *filePath = self.coordinatedDocument.fileURL.path;
         [self.plugin documentViewController:self documentLoadedFromFilePath:filePath];
     }
+
+    if (![self.toolManager isReadonly] && self.readOnly) {
+        self.toolManager.readonly = YES;
+    }
 }
 
 - (void)openDocumentWithURL:(NSURL *)url password:(NSString *)password
@@ -178,6 +182,22 @@
     }
 }
 
+- (void)pdfViewCtrl:(PTPDFViewCtrl*)pdfViewCtrl pdfScrollViewDidZoom:(UIScrollView *)scrollView
+{
+    const double zoom = self.pdfViewCtrl.zoom * self.pdfViewCtrl.zoomScale;
+    [self.plugin documentViewController:self zoomChanged:[NSNumber numberWithDouble:zoom]];
+}
+
+- (void)pdfViewCtrl:(PTPDFViewCtrl*)pdfViewCtrl pageNumberChangedFrom:(int)oldPageNumber To:(int)newPageNumber
+{
+    NSDictionary *resultDict = @{
+        PTPreviousPageNumberKey: [NSNumber numberWithInt:oldPageNumber],
+        PTPageNumberKey: [NSNumber numberWithInt:newPageNumber],
+    };
+
+    [self.plugin documentViewController:self pageChanged:[PdftronFlutterPlugin PT_idToJSONString:resultDict]];
+}
+
 -(NSString*)generateXfdfCommandWithAdded:(NSArray<PTAnnot*>*)added modified:(NSArray<PTAnnot*>*)modified removed:(NSArray<PTAnnot*>*)removed
 {
     
@@ -283,6 +303,9 @@
 - (void)initViewerSettings
 {
     _useStylusAsPen = YES;
+    _readOnly = NO;
+    
+    _showNavButton = YES;
 }
 
 - (void)applyViewerSettings
@@ -293,6 +316,9 @@
         pencilTool = [PTPencilDrawingCreate class];
     }
     self.toolManager.pencilTool = self.useStylusAsPen ? pencilTool : [PTPanTool class];
+
+    // nav icon
+    [self applyNavIcon];
     
     BOOL hidesToolbarsOnTap = YES;
     self.hidesControlsOnTap = hidesToolbarsOnTap;
@@ -339,11 +365,72 @@
     return self.toolManager.signatureAnnotationOptions.signSignatureFieldsWithStamps;
 }
 
+- (void)applyNavIcon
+{
+    // TODO: After new UI, leading nav should be added like RN
+    if (self.showNavButton) {
+        UIBarButtonItem *navButton =[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
+        self.navigationItem.leftBarButtonItem = navButton;
+    }
+}
+
+- (void)setThumbnailEditingEnabled:(BOOL)thumbnailEditingEnabled
+{
+    self.thumbnailsViewController.editingEnabled = thumbnailEditingEnabled;
+}
+
+- (BOOL)isThumbnailEditingEnabled
+{
+    return self.thumbnailsViewController.editingEnabled;
+}
+
+- (void)setContinuousAnnotationEditing:(BOOL)continuousAnnotationEditing
+{
+    self.toolManager.tool.backToPanToolAfterUse = !continuousAnnotationEditing;
+}
+
+- (BOOL)isContinuousAnnotationEditing
+{
+    return !self.toolManager.tool.backToPanToolAfterUse;
+}
+
+- (NSString *)getAnnotationAuthor
+{
+    return self.toolManager.annotationAuthor;
+}
+
+- (void)setAnnotationAuthor:(NSString *)annotationAuthor
+{
+    self.toolManager.annotationAuthor = annotationAuthor;
+}
+
 #pragma mark - Other
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem
 {
     [self.plugin topLeftButtonPressed:barButtonItem];
+}
+
+- (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon
+{
+    if (self.showNavButton) {
+        UIImage *navImage = [UIImage imageNamed:leadingNavButtonIcon];
+        if (navImage) {
+            UIBarButtonItem *navButton = self.navigationItem.leftBarButtonItem;
+            UIImage* prevImage = [navButton image];
+            if (prevImage) {
+                // if previously has an image, just set image
+                [navButton setImage:navImage];
+            } else {
+                // or create a new UI button if previously it was the default "CLOSE" button
+                navButton = [[UIBarButtonItem alloc] initWithImage:navImage
+                                                             style:UIBarButtonItemStylePlain
+                                                            target:self
+                                                            action:@selector(topLeftButtonPressed:)];
+                self.navigationItem.leftBarButtonItem = navButton;
+            }
+        }
+    }
 }
 
 @end

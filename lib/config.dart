@@ -10,6 +10,11 @@ class Config {
   var _showSavedSignatures;
   var _useStylusAsPen;
   var _signSignatureFieldWithStamps;
+  var _showLeadingNavButton;
+  var _readOnly;
+  var _thumbnailViewEditingEnabled;
+  var _annotationAuthor;
+  var _continuousAnnotationEditing;
 
   Config();
 
@@ -23,6 +28,13 @@ class Config {
   set useStylusAsPen(bool value) => _useStylusAsPen;
   set signSignatureFieldWithStamps(bool value) =>
       _signSignatureFieldWithStamps = value;
+  set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
+  set readOnly(bool value) => _readOnly = value;
+  set thumbnailViewEditingEnabled(bool value) =>
+      _thumbnailViewEditingEnabled = value;
+  set annotationAuthor(String value) => _annotationAuthor = value;
+  set continuousAnnotationEditing(bool value) =>
+      _continuousAnnotationEditing = value;
 
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
@@ -33,7 +45,12 @@ class Config {
         _pageChangeOnTap = json['pageChangeOnTap'],
         _showSavedSignatures = json['showSavedSignatures'],
         _useStylusAsPen = json['useStylusAsPen'],
-        _signSignatureFieldWithStamps = json['signSignatureFieldWithStamps'];
+        _signSignatureFieldWithStamps = json['signSignatureFieldWithStamps'],
+        _showLeadingNavButton = json['showLeadingNavButton'],
+        _readOnly = json['readOnly'],
+        _thumbnailViewEditingEnabled = json['thumbnailViewEditingEnabled'],
+        _annotationAuthor = json['annotationAuthor'],
+        _continuousAnnotationEditing = json['continuousAnnotationEditing'];
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -45,5 +62,10 @@ class Config {
         'showSavedSignatures': _showSavedSignatures,
         'useStylusAsPen': _useStylusAsPen,
         'signSignatureFieldWithStamps': _signSignatureFieldWithStamps,
+        'showLeadingNavButton': _showLeadingNavButton,
+        'readOnly': _readOnly,
+        'thumbnailViewEditingEnabled': _thumbnailViewEditingEnabled,
+        'annotationAuthor': _annotationAuthor,
+        'continuousAnnotationEditing': _continuousAnnotationEditing,
       };
 }
