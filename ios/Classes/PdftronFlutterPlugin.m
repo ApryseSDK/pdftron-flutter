@@ -12,6 +12,9 @@
 @property (nonatomic, strong) FlutterEventSink annotationChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink annotationsSelectedEventSink;
 @property (nonatomic, strong) FlutterEventSink formFieldValueChangedEventSink;
+@property (nonatomic, strong) FlutterEventSink leadingNavButtonPressedEventSink;
+@property (nonatomic, strong) FlutterEventSink pageChangedEventSink;
+@property (nonatomic, strong) FlutterEventSink zoomChangedEventSink;
 
 @end
 
@@ -67,19 +70,25 @@
 
 - (void)registerEventChannels:(NSObject<FlutterBinaryMessenger> *)messenger
 {
-    FlutterEventChannel* xfdfEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_ANNOTATION_COMMAND binaryMessenger:messenger];
+    FlutterEventChannel* xfdfEventChannel = [FlutterEventChannel eventChannelWithName:PTExportAnnotationCommandEventKey binaryMessenger:messenger];
 
-    FlutterEventChannel* bookmarkEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_BOOKMARK binaryMessenger:messenger];
+    FlutterEventChannel* bookmarkEventChannel = [FlutterEventChannel eventChannelWithName:PTExportBookmarkEventKey binaryMessenger:messenger];
 
-    FlutterEventChannel* documentLoadedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_DOCUMENT_LOADED binaryMessenger:messenger];
+    FlutterEventChannel* documentLoadedEventChannel = [FlutterEventChannel eventChannelWithName:PTDocumentLoadedEventKey binaryMessenger:messenger];
     
-    FlutterEventChannel* documentErrorEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_DOCUMENT_ERROR binaryMessenger:messenger];
+    FlutterEventChannel* documentErrorEventChannel = [FlutterEventChannel eventChannelWithName:PTDocumentErrorEventKey binaryMessenger:messenger];
     
-    FlutterEventChannel* annotationChangedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_ANNOTATION_CHANGED binaryMessenger:messenger];
+    FlutterEventChannel* annotationChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTAnnotationChangedEventKey binaryMessenger:messenger];
     
-    FlutterEventChannel* annotationsSelectedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_ANNOTATIONS_SELECTED binaryMessenger:messenger];
+    FlutterEventChannel* annotationsSelectedEventChannel = [FlutterEventChannel eventChannelWithName:PTAnnotationsSelectedEventKey binaryMessenger:messenger];
     
-    FlutterEventChannel* formFieldValueChangedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_FORM_FIELD_VALUE_CHANGED binaryMessenger:messenger];
+    FlutterEventChannel* formFieldValueChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTFormFieldValueChangedEventKey binaryMessenger:messenger];
+    
+    FlutterEventChannel* leadingNavButtonPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTLeadingNavButtonPressedEventKey binaryMessenger:messenger];
+
+    FlutterEventChannel* pageChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTPageChangedEventKey binaryMessenger:messenger];
+
+    FlutterEventChannel* zoomChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTZoomChangedEventKey binaryMessenger:messenger];
 
     [xfdfEventChannel setStreamHandler:self];
     
@@ -94,12 +103,21 @@
     [annotationsSelectedEventChannel setStreamHandler:self];
     
     [formFieldValueChangedEventChannel setStreamHandler:self];
+    
+    [leadingNavButtonPressedEventChannel setStreamHandler:self];
+    
+    [pageChangedEventChannel setStreamHandler:self];
+    
+    [zoomChangedEventChannel setStreamHandler:self];
 }
 
 #pragma mark - Configurations
 
 + (void)configureTabbedDocumentViewController:(PTTabbedDocumentViewController*)tabbedDocumentViewController withConfig:(NSString*)config
 {
+    
+    tabbedDocumentViewController.viewControllerClass = [PTFlutterViewController class];
+    
     if(config && ![config isEqualToString:@"null"])
     {
         //convert from json to dict
@@ -136,7 +154,7 @@
 
 + (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
 {
-    
+
     PTFlutterViewController* flutterViewController = (PTFlutterViewController*)documentViewController;
     
     [flutterViewController initViewerSettings];
@@ -148,9 +166,6 @@
    
     //convert from json to dict
     id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
-    
-    bool showLeadingNavButton = NO;
-    NSString* leadingNavButtonIcon;
     
     if (![foundationObject isKindOfClass:[NSNull class]]) {
         
@@ -218,6 +233,46 @@
                 else if ([key isEqualToString:PTFollowSystemDarkModeKey]) {
                     // Android only.
                 }
+                else if ([key isEqualToString:PTShowLeadingNavButtonKey]) {
+                    
+                    NSNumber* showLeadingNavButtonNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowLeadingNavButtonKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && showLeadingNavButtonNumber) {
+                        [flutterViewController setShowNavButton:[showLeadingNavButtonNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTReadOnlyKey]) {
+                    
+                    NSNumber* readOnlyNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTReadOnlyKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && readOnlyNumber) {
+                        [flutterViewController setReadOnly:[readOnlyNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTThumbnailViewEditingEnabledKey]) {
+                    
+                    NSNumber* thumbnailViewEditingEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTThumbnailViewEditingEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && thumbnailViewEditingEnabledNumber) {
+                        [flutterViewController setThumbnailEditingEnabled:[thumbnailViewEditingEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTAnnotationAuthorKey]) {
+                    
+                    NSString* annotationAuthor = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationAuthorKey class:[NSString class] error:&error];
+                    
+                    if (!error && annotationAuthor) {
+                        [flutterViewController setAnnotationAuthor:annotationAuthor];
+                    }
+                }
+                else if ([key isEqualToString:PTContinuousAnnotationEditingKey]) {
+                    
+                    NSNumber* contEditingNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTContinuousAnnotationEditingKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && contEditingNumber) {
+                        [flutterViewController setContinuousAnnotationEditing:[contEditingNumber boolValue]];
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
@@ -236,10 +291,6 @@
         
     }
     
-    if (showLeadingNavButton) {
-        [self handleNavIconDisplay:leadingNavButtonIcon documentViewController:documentViewController];
-    }
-    
     [flutterViewController applyViewerSettings];
 }
 
@@ -250,7 +301,7 @@
     if (![configResult isKindOfClass:[NSNull class]]) {
         if (![configResult isKindOfClass:class]) {
             NSString* errorString = [NSString stringWithFormat:@"config %@ is not in expected %@ format.", configKey, class];
-            *error = [NSError errorWithDomain:@"com.flutter.pdftron" code:NSFormattingError userInfo:@{@"message": errorString}];
+            *error = [NSError errorWithDomain:@"com.flutter.pdftron" code:NSFormattingError userInfo:@{NSLocalizedDescriptionKey: errorString}];
         }
         return configResult;
     }
@@ -264,6 +315,8 @@
     } else {
         [UIApplication.sharedApplication.keyWindow.rootViewController.presentedViewController dismissViewControllerAnimated:YES completion:Nil];
     }
+    
+    [self documentViewController:[self getDocumentViewController] leadingNavButtonClicked:nil];
 }
 
 + (void)disableTools:(NSArray<id> *)toolsToDisable documentViewController:(PTDocumentViewController *)documentViewController
@@ -421,24 +474,6 @@
     [self disableTools:elementsToDisable documentViewController:documentViewController];
 }
 
-+ (void)handleNavIconDisplay:(NSString *)leadingNavButtonIcon documentViewController:(PTDocumentViewController *)docVC
-{
-    if (leadingNavButtonIcon) {
-        UIImage *navImage = [UIImage imageNamed:leadingNavButtonIcon];
-        if (navImage) {
-            UIBarButtonItem *navButton = [[UIBarButtonItem alloc] initWithImage:navImage
-                                                                          style:UIBarButtonItemStylePlain
-                                                                         target:(PTFlutterViewController*)docVC
-                                                                         action:@selector(topLeftButtonPressed:)];
-            docVC.navigationItem.leftBarButtonItem = navButton;
-            return;
-        }
-    }
-    
-    docVC.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:(PTFlutterViewController*)docVC action:@selector(topLeftButtonPressed:)];
-}
-
-
 #pragma mark - PTTabbedDocumentViewControllerDelegate
 
 - (void)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController willAddDocumentViewController:(PTDocumentViewController *)documentViewController
@@ -498,6 +533,15 @@
         case formFieldValueChangedId:
             self.formFieldValueChangedEventSink = events;
             break;
+        case leadingNavButtonPressedId:
+            self.leadingNavButtonPressedEventSink = events;
+            break;
+        case pageChangedId:
+            self.pageChangedEventSink = events;
+            break;
+        case zoomChangedId:
+            self.zoomChangedEventSink = events;
+            break;
     }
     
     return Nil;
@@ -529,6 +573,15 @@
             break;
         case formFieldValueChangedId:
             self.formFieldValueChangedEventSink = nil;
+            break;
+        case leadingNavButtonPressedId:
+            self.leadingNavButtonPressedEventSink = nil;
+            break;
+        case pageChangedId:
+            self.pageChangedEventSink = nil;
+            break;
+        case zoomChangedId:
+            self.zoomChangedEventSink = nil;
             break;
     }
     
@@ -600,6 +653,30 @@
     }
 }
 
+-(void)documentViewController:(PTDocumentViewController *)docVC leadingNavButtonClicked:(nullable NSString *)nav
+{
+    if (self.leadingNavButtonPressedEventSink != nil)
+    {
+        self.leadingNavButtonPressedEventSink(nil);
+    }
+}
+
+-(void)documentViewController:(PTDocumentViewController *)docVC pageChanged:(NSString*)pageNumbersString
+{
+    if (self.pageChangedEventSink != nil)
+    {
+        self.pageChangedEventSink(pageNumbersString);
+    }
+}
+
+-(void)documentViewController:(PTDocumentViewController *)docVC zoomChanged:(NSNumber*)zoom
+{
+    if (self.zoomChangedEventSink != nil)
+    {
+        self.zoomChangedEventSink(zoom);
+    }
+}
+
 #pragma mark - Functions
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -656,6 +733,10 @@
     } else if ([call.method isEqualToString:PTSetValuesForFieldsKey]) {
         NSString *fieldWithValuesString = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTFieldsArgumentKey]];
         [self setValuesForFields:fieldWithValuesString resultToken:result];
+    } else if ([call.method isEqualToString:PTSetLeadingNavButtonIconKey]) {
+        NSString* leadingNavButtonIcon = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTLeadingNavButtonIconArgumentKey]];
+        [self setLeadingNavButtonIcon:leadingNavButtonIcon resultToken:result];
+
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -775,7 +856,7 @@
 
 - (void)handleOpenDocumentMethod:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)flutterResult
 {
-    
+
     // Get document argument.
     NSString *document = nil;
     id documentValue = arguments[PTDocumentArgumentKey];
@@ -1389,8 +1470,7 @@
     if (toolClass) {
         PTTool *tool = [docVC.toolManager changeTool:toolClass];
 
-//        TODO: fix after #36 (a PR with continuousAnnotationEditing config implemented)
-//        tool.backToPanToolAfterUse = !(PTFlutterViewController*)docVC.continuousAnnotationEditing;
+        tool.backToPanToolAfterUse = !((PTFlutterViewController*)docVC).isContinuousAnnotationEditing;
 
         if ([tool isKindOfClass:[PTFreeHandCreate class]]
             && ![tool isKindOfClass:[PTFreeHandHighlightCreate class]]) {
@@ -1503,6 +1583,22 @@
             [pdfViewCtrl RefreshAndUpdate:changeCollection];
         }
     }
+}
+
+- (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon resultToken:(FlutterResult)flutterResult
+{
+    PTDocumentViewController *docVC = [self getDocumentViewController];
+    if(docVC == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"set_leading_nav_button_icon" message:@"Failed to set leading nav button icon" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+
+    [(PTFlutterViewController *)docVC setLeadingNavButtonIcon:leadingNavButtonIcon];
+    
+    flutterResult(nil);
 }
 
 #pragma mark - Helper

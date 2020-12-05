@@ -22,7 +22,12 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_DOCUMENT_LOAD
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_EXPORT_ANNOTATION_COMMAND;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_EXPORT_BOOKMARK;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_FORM_FIELD_VALUE_CHANGED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_LEADING_NAV_BUTTON_PRESSED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_PAGE_CHANGED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ZOOM_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_OPEN_DOCUMENT;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SET_LEADING_NAV_BUTTON_ICON;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LEADING_NAV_BUTTON_ICON;
 
 public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCallHandler {
 
@@ -138,6 +143,45 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
                 documentView.setFormFieldValueChangedEventEmitter(null);
             }
         });
+
+        final EventChannel leadingNavButtonPressedEventChannel = new EventChannel(messenger, EVENT_LEADING_NAV_BUTTON_PRESSED);
+        leadingNavButtonPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                documentView.setLeadingNavButtonPressedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                documentView.setLeadingNavButtonPressedEventEmitter(null);
+            }
+        });
+
+        final EventChannel pageChangedEventChannel = new EventChannel(messenger, EVENT_PAGE_CHANGED);
+        pageChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                documentView.setPageChangedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                documentView.setPageChangedEventEmitter(null);
+            }
+        });
+
+        final EventChannel zoomChangedEventChannel = new EventChannel(messenger, EVENT_ZOOM_CHANGED);
+        zoomChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                documentView.setZoomChangedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                documentView.setZoomChangedEventEmitter(null);
+            }
+        });
     }
 
     @Override
@@ -149,6 +193,11 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
                 String config = call.argument("config");
                 documentView.openDocument(document, password, config, result);
                 break;
+            case FUNCTION_SET_LEADING_NAV_BUTTON_ICON: {
+                String leadingNavButtonIcon = call.argument(KEY_LEADING_NAV_BUTTON_ICON);
+                documentView.setLeadingNavButtonIcon(leadingNavButtonIcon);
+                break;
+            }
             default:
                 PluginUtils.onMethodCall(call, result, documentView);
                 break;

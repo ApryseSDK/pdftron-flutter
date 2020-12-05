@@ -17,10 +17,18 @@ NS_ASSUME_NONNULL_BEGIN
 // viewer options
 @property (nonatomic) BOOL selectAnnotationAfterCreation;
 @property (nonatomic, assign, getter=isBottomToolbarOn) BOOL bottomToolbarOn;
+@property (nonatomic, assign) BOOL showNavButton;
+
+@property (nonatomic, assign, getter=isReadOnly) BOOL readOnly;
+@property (nonatomic, assign, getter=isThumbnailEditingEnabled) BOOL thumbnailEditingEnabled;
+@property (nonatomic, assign, getter=isContinuousAnnotationEditing) BOOL continuousAnnotationEditing;
+
+@property (nonatomic, copy, nullable) NSString* annotationAuthor;
 
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
 
+- (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon;
 
 @end
 

@@ -19,6 +19,7 @@ import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
@@ -31,9 +32,13 @@ import java.util.concurrent.atomic.AtomicReference;
 import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.MethodChannel.Result;
 
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleLeadingNavButtonPressed;
+
 public class FlutterDocumentActivity extends DocumentActivity implements ViewerComponent {
 
     private ViewerImpl mImpl = new ViewerImpl(this);
+
+    private static boolean mShowLeadingNavButton;
 
     private static FlutterDocumentActivity sCurrentActivity;
     private static AtomicReference<Result> sFlutterLoadResult = new AtomicReference<>();
@@ -45,6 +50,9 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     private static AtomicReference<EventSink> sAnnotationChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sAnnotationsSelectionEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sFormFieldChangedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sLeadingNavButtonPressedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sPageChangedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sZoomChangedEventEmitter = new AtomicReference<>();
 
     private static HashMap<Annot, Integer> mSelectedAnnots;
 
@@ -56,7 +64,13 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         PDFViewCtrlConfig pdfViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(packageContext);
         PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(builder, toolManagerBuilder, pdfViewCtrlConfig, document, packageContext, configStr);
 
-        openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build());
+        mShowLeadingNavButton = configInfo.isShowLeadingNavButton();
+
+        if (mShowLeadingNavButton) {
+            openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build());
+        } else {
+            openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build(), 0);
+        }
     }
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
@@ -82,6 +96,20 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         intent.putExtra(EXTRA_NEW_UI, false);
 
         packageContext.startActivity(intent);
+    }
+
+    public static void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
+        FlutterDocumentActivity documentActivity = getCurrentActivity();
+        if (documentActivity != null) {
+            PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = documentActivity.getPdfViewCtrlTabHostFragment();
+            if (mShowLeadingNavButton && pdfViewCtrlTabHostFragment != null
+                    && pdfViewCtrlTabHostFragment.getToolbar() != null) {
+                int res = Utils.getResourceDrawable(pdfViewCtrlTabHostFragment.getToolbar().getContext(), leadingNavButtonIcon);
+                if (res != 0) {
+                    pdfViewCtrlTabHostFragment.getToolbar().setNavigationIcon(res);
+                }
+            }
+        }
     }
 
     public static void setExportAnnotationCommandEventEmitter(EventSink emitter) {
@@ -110,6 +138,18 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
     public static void setFormFieldValueChangedEventEmitter(EventSink emitter) {
         sFormFieldChangedEventEmitter.set(emitter);
+    }
+
+    public static void setLeadingNavButtonPressedEventEmitter(EventSink emitter) {
+        sLeadingNavButtonPressedEventEmitter.set(emitter);
+    }
+
+    public static void setPageChangedEventEmitter(EventSink emitter) {
+        sPageChangedEventEmitter.set(emitter);
+    }
+
+    public static void setZoomChangedEventEmitter(EventSink emitter) {
+        sZoomChangedEventEmitter.set(emitter);
     }
 
     public static void setFlutterLoadResult(Result result) {
@@ -155,6 +195,21 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     }
 
     @Override
+    public EventSink getLeadingNavButtonPressedEventEmitter() {
+        return sLeadingNavButtonPressedEventEmitter.get();
+    }
+
+    @Override
+    public EventSink getPageChangedEventEmitter() {
+        return sPageChangedEventEmitter.get();
+    }
+
+    @Override
+    public EventSink getZoomChangedEventEmitter() {
+        return sZoomChangedEventEmitter.get();
+    }
+
+    @Override
     public Result getFlutterLoadResult() {
         return sFlutterLoadResult.getAndSet(null);
     }
@@ -184,6 +239,9 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sAnnotationChangedEventEmitter.set(null);
         sAnnotationsSelectionEventEmitter.set(null);
         sFormFieldChangedEventEmitter.set(null);
+        sLeadingNavButtonPressedEventEmitter.set(null);
+        sPageChangedEventEmitter.set(null);
+        sZoomChangedEventEmitter.set(null);
 
         detachActivity();
     }
@@ -200,6 +258,11 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         super.onOpenDocError();
 
         return PluginUtils.handleOpenDocError(this);
+    }
+
+    @Override
+    public void onNavButtonPressed() {
+        handleLeadingNavButtonPressed(this);
     }
 
     private void attachActivity() {
