@@ -305,6 +305,11 @@ overrideLongPressMenuBehavior | array of `LongPressMenuItems` constants | empty 
 hideAnnotationMenu | array of `Tools` constants | empty | Defines annotation types that will not show the default annotation menu
 annotationMenuItems | array of `AnnotationMenuItems` constants |  | Defines menu items that can show when an annotation is selected
 overrideAnnotationMenuBehavior | array of `AnnotationMenuItems` constants | empty | Defines menu items that should skip default behavior
+showLeadingNavButton | boolean | true | Whether to show the leading navigation button
+readOnly | boolean | false | whether the document is read-only
+thumbnailViewEditingEnabled | boolean | true | whether use could modify through thumbnail view
+annotationAuthor | string | | the author name for all annotations in the current document
+continuousAnnotationEditing | boolean | false | whether annotations could be continuously edited
 
 ```dart
 var disabledElements = [Buttons.shareButton, Buttons.searchButton];
@@ -325,6 +330,11 @@ config.overrideLongPressMenuBehavior = overrideLongPressMenuBehavior;
 config.hideAnnotationMenu = hideAnnotationMenu;
 config.annotationMenuItems = annotationMenuItems;
 config.overrideAnnotationMenuBehavior = overrideAnnotationMenuBehavior;
+config.showLeadingNavButton = true;
+config.readOnly = false;
+config.thumbnailViewEditingEnabled = false;
+config.annotationAuthor = "PDFTron";
+config.continuousAnnotationEditing = true;
 await PdftronFlutter.openDocument(_document, config: config);
 ```
 ### PdftronFlutter.importAnnotations(String)
@@ -532,6 +542,15 @@ PdftronFlutter.setValuesForFields([
     ]);
 ```
 
+### PdftronFlutter.setLeadingNavButtonIcon(String)
+
+Set the icon path to the navigation button. The button would use the specified icon if `showLeadingNavButton` (which by default is true) is true in the config.
+
+```dart
+PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp');
+```
+
+
 ## Events
 
 ### startExportAnnotationCommandListener
@@ -619,6 +638,38 @@ var fieldChangedCancel = startFormFieldValueChangedListener((fields)
     print("Field has name ${field.fieldName}");
     print("Field has value ${field.fieldValue}");
   }
+});
+```
+### startLeadingNavButtonPressedListener
+
+Event is raised when the leading navigation button is pressed.
+
+```dart
+var navPressedCancel = startLeadingNavButtonPressedListener(()
+{
+  print("flutter nav button pressed");
+});
+```
+
+### startPageChangedListener
+
+Event is raised when page changes.
+
+```dart
+var pageChangedCancel = startPageChangedListener((previousPageNumber, pageNumber)
+{
+  print("flutter page changed. from $previousPageNumber to $pageNumber");
+});
+```
+
+### startZoomChangedListener
+
+Event is raised when zoom ratio is changed in the current document.
+
+```dart
+var zoomChangedCancel = startZoomChangedListener((zoom) 
+{
+  print("flutter zoom changed. Current zoom is: $zoom");
 });
 ```
 

@@ -18,6 +18,7 @@ import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
@@ -29,6 +30,7 @@ import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleDocumentLoaded;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleLeadingNavButtonPressed;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOnDetach;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOpenDocError;
 
@@ -56,13 +58,13 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     private EventChannel.EventSink sFormFieldValueChangedEventEmitter;
     private EventChannel.EventSink sLongPressMenuPressedEventEmitter;
     private EventChannel.EventSink sAnnotationMenuPressedEventEmitter;
+    private EventChannel.EventSink sLeadingNavButtonPressedEventEmitter;
+    private EventChannel.EventSink sPageChangedEventEmitter;
+    private EventChannel.EventSink sZoomChangedEventEmitter;
+
     private MethodChannel.Result sFlutterLoadResult;
 
     private HashMap<Annot, Integer> mSelectedAnnots;
-
-    private ToolManager.AnnotationModificationListener sAnnotationModificationListener;
-    private ToolManager.PdfDocModificationListener sPdfDocModificationListener;
-    private ToolManager.AnnotationsSelectionListener sAnnotationsSelectionListener;
 
     public DocumentView(@NonNull Context context) {
         this(context, null);
@@ -94,6 +96,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
         mAnnotationMenuItems = configInfo.getAnnotationMenuItems();
         mAnnotationMenuOverrideItems = configInfo.getAnnotationMenuOverrideItems();
 
+        setShowNavIcon(configInfo.isShowLeadingNavButton());
+        setViewerConfig(mBuilder.build());
+        setFlutterLoadResult(result);
+
         ViewerBuilder viewerBuilder = ViewerBuilder.withUri(configInfo.getFileUri(), password)
                 .usingCustomHeaders(configInfo.getCustomHeaderJson())
                 .usingConfig(mBuilder.build())
@@ -111,6 +117,17 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
             }
         }
         attachListeners();
+    }
+
+    public void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
+        PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = getPdfViewCtrlTabHostFragment();
+        if (mShowNavIcon && pdfViewCtrlTabHostFragment != null
+                && pdfViewCtrlTabHostFragment.getToolbar() != null) {
+            int res = Utils.getResourceDrawable(getContext(), leadingNavButtonIcon);
+            if (res != 0) {
+                pdfViewCtrlTabHostFragment.getToolbar().setNavigationIcon(res);
+            }
+        }
     }
 
     private void init(Context context) {
@@ -183,6 +200,11 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
         super.onDetachedFromWindow();
     }
 
+    @Override
+    public void onNavButtonPressed() {
+        handleLeadingNavButtonPressed(this);
+    }
+
     public void setExportAnnotationCommandEventEmitter(EventChannel.EventSink emitter) {
         sExportAnnotationCommandEventEmitter = emitter;
     }
@@ -219,32 +241,20 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
         sAnnotationMenuPressedEventEmitter = emitter;
     }
 
+    public void setLeadingNavButtonPressedEventEmitter(EventChannel.EventSink emitter) {
+        sLeadingNavButtonPressedEventEmitter = emitter;
+    }
+
+    public void setPageChangedEventEmitter(EventChannel.EventSink emitter) {
+        sPageChangedEventEmitter = emitter;
+    }
+
+    public void setZoomChangedEventEmitter(EventChannel.EventSink emitter) {
+        sZoomChangedEventEmitter = emitter;
+    }
+
     public void setFlutterLoadResult(MethodChannel.Result result) {
         sFlutterLoadResult = result;
-    }
-
-    public ToolManager.AnnotationModificationListener getAnnotationModificationListener() {
-        return sAnnotationModificationListener;
-    }
-
-    public ToolManager.PdfDocModificationListener getPdfDocModificationListener() {
-        return sPdfDocModificationListener;
-    }
-
-    public ToolManager.AnnotationsSelectionListener getAnnotationsSelectionListener() {
-        return sAnnotationsSelectionListener;
-    }
-
-    public void setAnnotationModificationListener(ToolManager.AnnotationModificationListener listener) {
-        sAnnotationModificationListener = listener;
-    }
-
-    public void setPdfDocModificationListener(ToolManager.PdfDocModificationListener listener) {
-        sPdfDocModificationListener = listener;
-    }
-
-    public void setAnnotationsSelectionListener(ToolManager.AnnotationsSelectionListener listener) {
-        sAnnotationsSelectionListener = listener;
     }
 
     public void setSelectedAnnots(HashMap<Annot, Integer> selectedAnnots) {
@@ -294,6 +304,20 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     @Override
     public EventChannel.EventSink getAnnotationMenuPressedEventEmitter() {
         return sAnnotationMenuPressedEventEmitter;
+    }
+
+    public EventChannel.EventSink getLeadingNavButtonPressedEventEmitter() {
+        return sLeadingNavButtonPressedEventEmitter;
+    }
+
+    @Override
+    public EventChannel.EventSink getPageChangedEventEmitter() {
+        return sPageChangedEventEmitter;
+    }
+
+    @Override
+    public EventChannel.EventSink getZoomChangedEventEmitter() {
+        return sZoomChangedEventEmitter;
     }
 
     @Override

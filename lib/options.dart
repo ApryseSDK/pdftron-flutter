@@ -116,6 +116,7 @@ class Functions {
   static const setToolMode = "setToolMode";
   static const setValuesForFields = "setValuesForFields";
   static const setFlagForFields = "setFlagForFields";
+  static const setLeadingNavButtonIcon = "setLeadingNavButtonIcon";
 }
 
 class Parameters {
@@ -136,6 +137,7 @@ class Parameters {
   static const annotations = "annotations";
   static const annotation = "annotation";
   static const annotationsWithFlags = "annotationsWithFlags";
+  static const leadingNavButtonIcon = "leadingNavButtonIcon";
 }
 
 class EventParameters {
@@ -145,6 +147,8 @@ class EventParameters {
   static const longPressMenuItem = "longPressMenuItem";
   static const longPressText = "longPressText";
   static const annotationMenuItem = "annotationMenuItem";
+  static const previousPageNumber = "previousPageNumber";
+  static const pageNumber = "pageNumber";
 }
 
 class Buttons {

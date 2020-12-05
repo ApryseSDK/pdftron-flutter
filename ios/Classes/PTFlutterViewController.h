@@ -26,8 +26,18 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSArray<NSString*>* annotationMenuItems;
 @property (nonatomic, copy, nullable) NSArray<NSString*>* overrideAnnotationMenuBehavior;
 
+@property (nonatomic, assign) BOOL showNavButton;
+
+@property (nonatomic, assign, getter=isReadOnly) BOOL readOnly;
+@property (nonatomic, assign, getter=isThumbnailEditingEnabled) BOOL thumbnailEditingEnabled;
+@property (nonatomic, assign, getter=isContinuousAnnotationEditing) BOOL continuousAnnotationEditing;
+
+@property (nonatomic, copy, nullable) NSString* annotationAuthor;
+
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
+
+- (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon;
 
 @end
 

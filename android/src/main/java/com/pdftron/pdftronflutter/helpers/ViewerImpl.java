@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.Field;
+import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.annots.Widget;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
 import com.pdftron.pdf.tools.QuickMenu;
@@ -31,6 +32,8 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_ANNOTATION_LIST
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_ANNOTATION_MENU_ITEM;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LONG_PRESS_MENU_ITEM;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LONG_PRESS_TEXT;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PAGE_NUMBER;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PREVIOUS_PAGE_NUMBER;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.checkQuickMenu;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.convStringToAnnotType;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.getAnnotationsData;
@@ -53,6 +56,11 @@ public class ViewerImpl {
         pdfViewCtrlTabFragment.addQuickMenuListener(mQuickMenuListener);
     }
 
+    public void addListeners(@NonNull PDFViewCtrl pdfViewCtrl) {
+        pdfViewCtrl.addOnCanvasSizeChangeListener(mOnCanvasSizeChangedListener);
+        pdfViewCtrl.addPageChangeListener(mPageChangedListener);
+    }
+
     public void removeListeners(@NonNull ToolManager toolManager) {
         toolManager.removeAnnotationModificationListener(mAnnotationModificationListener);
         toolManager.removeAnnotationsSelectionListener(mAnnotationsSelectionListener);
@@ -61,6 +69,11 @@ public class ViewerImpl {
 
     public void removeListeners(@NonNull PdfViewCtrlTabFragment pdfViewCtrlTabFragment) {
         pdfViewCtrlTabFragment.removeQuickMenuListener(mQuickMenuListener);
+    }
+
+    public void removeListeners(@NonNull PDFViewCtrl pdfViewCtrl) {
+        pdfViewCtrl.removeOnCanvasSizeChangeListener(mOnCanvasSizeChangedListener);
+        pdfViewCtrl.removePageChangeListener(mPageChangedListener);
     }
 
     private ToolManager.AnnotationModificationListener mAnnotationModificationListener = new ToolManager.AnnotationModificationListener() {
@@ -311,6 +324,34 @@ public class ViewerImpl {
         @Override
         public void onQuickMenuDismissed() {
 
+        }
+    };
+
+    private PDFViewCtrl.OnCanvasSizeChangeListener mOnCanvasSizeChangedListener = new PDFViewCtrl.OnCanvasSizeChangeListener() {
+        @Override
+        public void onCanvasSizeChanged() {
+            EventChannel.EventSink eventSink = mViewerComponent.getZoomChangedEventEmitter();
+            if (eventSink != null && mViewerComponent.getPdfViewCtrl() != null) {
+                eventSink.success(mViewerComponent.getPdfViewCtrl().getZoom());
+            }
+        }
+    };
+
+    private PDFViewCtrl.PageChangeListener mPageChangedListener = new PDFViewCtrl.PageChangeListener() {
+        @Override
+        public void onPageChange(int old_page, int cur_page, PDFViewCtrl.PageChangeState pageChangeState) {
+            EventChannel.EventSink eventSink = mViewerComponent.getPageChangedEventEmitter();
+            if (eventSink != null && (old_page != cur_page || pageChangeState == PDFViewCtrl.PageChangeState.END)) {
+                JSONObject resultObject = new JSONObject();
+                try {
+                    resultObject.put(KEY_PREVIOUS_PAGE_NUMBER, old_page);
+                    resultObject.put(KEY_PAGE_NUMBER, cur_page);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                eventSink.success(resultObject.toString());
+            }
         }
     };
 }

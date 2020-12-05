@@ -139,4 +139,9 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.setValuesForFields,
         <String, dynamic>{Parameters.fields: jsonEncode(fields)});
   }
+
+  Future<void> setLeadingNavButtonIcon(String path) {
+    return _channel.invokeMethod(Functions.setLeadingNavButtonIcon,
+        <String, dynamic>{Parameters.leadingNavButtonIcon: path});
+  }
 }

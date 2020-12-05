@@ -11,6 +11,11 @@ class Config {
   var _hideAnnotationMenu;
   var _annotationMenuItems;
   var _overrideAnnotationMenuBehavior;
+  var _showLeadingNavButton;
+  var _readOnly;
+  var _thumbnailViewEditingEnabled;
+  var _annotationAuthor;
+  var _continuousAnnotationEditing;
 
   Config();
 
@@ -26,6 +31,13 @@ class Config {
   set annotationMenuItems(List value) => _annotationMenuItems = value;
   set overrideAnnotationMenuBehavior(List value) =>
       _overrideAnnotationMenuBehavior = value;
+  set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
+  set readOnly(bool value) => _readOnly = value;
+  set thumbnailViewEditingEnabled(bool value) =>
+      _thumbnailViewEditingEnabled = value;
+  set annotationAuthor(String value) => _annotationAuthor = value;
+  set continuousAnnotationEditing(bool value) =>
+      _continuousAnnotationEditing = value;
 
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
@@ -38,7 +50,12 @@ class Config {
         _hideAnnotationMenu = json['hideAnnotationMenu'],
         _annotationMenuItems = json['annotationMenuItems'],
         _overrideAnnotationMenuBehavior =
-            json['overrideAnnotationMenuBehavior'];
+            json['overrideAnnotationMenuBehavior'],
+        _showLeadingNavButton = json['showLeadingNavButton'],
+        _readOnly = json['readOnly'],
+        _thumbnailViewEditingEnabled = json['thumbnailViewEditingEnabled'],
+        _annotationAuthor = json['annotationAuthor'],
+        _continuousAnnotationEditing = json['continuousAnnotationEditing'];
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -51,5 +68,10 @@ class Config {
         'hideAnnotationMenu': _hideAnnotationMenu,
         'annotationMenuItems': _annotationMenuItems,
         'overrideAnnotationMenuBehavior': _overrideAnnotationMenuBehavior,
+        'showLeadingNavButton': _showLeadingNavButton,
+        'readOnly': _readOnly,
+        'thumbnailViewEditingEnabled': _thumbnailViewEditingEnabled,
+        'annotationAuthor': _annotationAuthor,
+        'continuousAnnotationEditing': _continuousAnnotationEditing,
       };
 }
