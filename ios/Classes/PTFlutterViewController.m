@@ -16,6 +16,10 @@
         NSString *filePath = self.coordinatedDocument.fileURL.path;
         [self.plugin documentViewController:self documentLoadedFromFilePath:filePath];
     }
+
+    if (![self.toolManager isReadonly] && self.readOnly) {
+        self.toolManager.readonly = YES;
+    }
 }
 
 - (void)openDocumentWithURL:(NSURL *)url password:(NSString *)password

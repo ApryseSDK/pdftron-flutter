@@ -116,7 +116,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         }
     }
 
-
     public static void setExportAnnotationCommandEventEmitter(EventSink emitter) {
         sExportAnnotationCommandEventEmitter.set(emitter);
     }

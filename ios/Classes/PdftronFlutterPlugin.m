@@ -747,8 +747,8 @@
         NSString *fieldWithValuesString = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTFieldsArgumentKey]];
         [self setValuesForFields:fieldWithValuesString resultToken:result];
     } else if ([call.method isEqualToString:PTSetLeadingNavButtonIconKey]) {
-            NSString* leadingNavButtonIcon = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTLeadingNavButtonIconArgumentKey]];
-            [self setLeadingNavButtonIcon:leadingNavButtonIcon resultToken:result];
+        NSString* leadingNavButtonIcon = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTLeadingNavButtonIconArgumentKey]];
+        [self setLeadingNavButtonIcon:leadingNavButtonIcon resultToken:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -1588,8 +1588,7 @@
     if (toolClass) {
         PTTool *tool = [docVC.toolManager changeTool:toolClass];
 
-//        TODO: fix after #36 (a PR with continuousAnnotationEditing config implemented)
-//        tool.backToPanToolAfterUse = !(PTFlutterViewController*)docVC.continuousAnnotationEditing;
+        tool.backToPanToolAfterUse = !((PTFlutterViewController*)docVC).isContinuousAnnotationEditing;
 
         if ([tool isKindOfClass:[PTFreeHandCreate class]]
             && ![tool isKindOfClass:[PTFreeHandHighlightCreate class]]) {

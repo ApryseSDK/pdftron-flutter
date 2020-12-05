@@ -1298,6 +1298,14 @@ public class PluginUtils {
         result.success(null);
     }
 
+    private static void setLeadingNavButtonIcon(String leadingNavButtonIcon, MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+    }
+
     // Events
 
     public static void handleDocumentLoaded(ViewerComponent component) {
