@@ -299,6 +299,11 @@ disabledElements | array of `Buttons` constants | empty | Buttons to be disabled
 disabledTools | array of `Tools` constants | empty | Tools to be disabled for the viewer
 multiTabEnabled | boolean | false | enable document multi-tab mode
 customerHeaders | map<string, string> | empty | custom headers to use with HTTP/HTTPS requests
+showLeadingNavButton | boolean | true | Whether to show the leading navigation button
+readOnly | boolean | false | whether the document is read-only
+thumbnailViewEditingEnabled | boolean | true | whether use could modify through thumbnail view
+annotationAuthor | string | | the author name for all annotations in the current document
+continuousAnnotationEditing | boolean | false | whether annotations could be continuously edited
 annotationPermissionCheckEnabled | boolean | false | Defines whether annotation's flags will be taken into account when it is selected, for example, a locked annotation can not be resized or moved
 overrideBehavior | array of `Behaviors` constants | empty | Defines actions that should skip default behavior, such as external link click
 
@@ -310,6 +315,11 @@ config.disabledElements = disabledElements;
 config.disabledTools = disabledTools;
 config.multiTabEnabled = false;
 config.customHeaders = {'headerName': 'headerValue'};
+config.showLeadingNavButton = true;
+config.readOnly = false;
+config.thumbnailViewEditingEnabled = false;
+config.annotationAuthor = "PDFTron";
+config.continuousAnnotationEditing = true;
 config.annotationPermissionCheckEnabled = true;
 config.overrideBehavior = [Behaviors.linkPress];
 await PdftronFlutter.openDocument(_document, config: config);
@@ -549,6 +559,15 @@ PdftronFlutter.setValuesForFields([
       new Field('choiceField', 'No')
     ]);
 ```
+
+### PdftronFlutter.setLeadingNavButtonIcon(String)
+
+Set the icon path to the navigation button. The button would use the specified icon if `showLeadingNavButton` (which by default is true) is true in the config.
+
+```dart
+PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp');
+```
+
 
 ## Events
 
