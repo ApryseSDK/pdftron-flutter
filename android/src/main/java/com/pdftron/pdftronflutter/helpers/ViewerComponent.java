@@ -38,6 +38,12 @@ public interface ViewerComponent {
 
     EventChannel.EventSink getBehaviorActivatedEventEmitter();
 
+    EventChannel.EventSink getLeadingNavButtonPressedEventEmitter();
+
+    EventChannel.EventSink getPageChangedEventEmitter();
+
+    EventChannel.EventSink getZoomChangedEventEmitter();
+
     MethodChannel.Result getFlutterLoadResult();
 
     HashMap<Annot, Integer> getSelectedAnnots();

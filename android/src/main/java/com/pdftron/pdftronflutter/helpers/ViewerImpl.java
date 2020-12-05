@@ -29,6 +29,8 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.BEHAVIOR_LINK_PRESS
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_ACTION;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_DATA;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LINK_BEHAVIOR_DATA;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PAGE_NUMBER;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PREVIOUS_PAGE_NUMBER;
 
 public class ViewerImpl {
 
@@ -52,6 +54,16 @@ public class ViewerImpl {
 
     public void setActionInterceptCallback() {
         ActionUtils.getInstance().setActionInterceptCallback(mActionInterceptCallback);
+    }
+
+    public void addListeners(@NonNull PDFViewCtrl pdfViewCtrl) {
+        pdfViewCtrl.addOnCanvasSizeChangeListener(mOnCanvasSizeChangedListener);
+        pdfViewCtrl.addPageChangeListener(mPageChangedListener);
+    }
+
+    public void removeListeners(@NonNull PDFViewCtrl pdfViewCtrl) {
+        pdfViewCtrl.removeOnCanvasSizeChangeListener(mOnCanvasSizeChangedListener);
+        pdfViewCtrl.removePageChangeListener(mPageChangedListener);
     }
 
     private ToolManager.AnnotationModificationListener mAnnotationModificationListener = new ToolManager.AnnotationModificationListener() {
@@ -243,6 +255,34 @@ public class ViewerImpl {
                 return true;
             }
             return false;
+        }
+    };
+
+    private PDFViewCtrl.OnCanvasSizeChangeListener mOnCanvasSizeChangedListener = new PDFViewCtrl.OnCanvasSizeChangeListener() {
+        @Override
+        public void onCanvasSizeChanged() {
+            EventChannel.EventSink eventSink = mViewerComponent.getZoomChangedEventEmitter();
+            if (eventSink != null && mViewerComponent.getPdfViewCtrl() != null) {
+                eventSink.success(mViewerComponent.getPdfViewCtrl().getZoom());
+            }
+        }
+    };
+
+    private PDFViewCtrl.PageChangeListener mPageChangedListener = new PDFViewCtrl.PageChangeListener() {
+        @Override
+        public void onPageChange(int old_page, int cur_page, PDFViewCtrl.PageChangeState pageChangeState) {
+            EventChannel.EventSink eventSink = mViewerComponent.getPageChangedEventEmitter();
+            if (eventSink != null && (old_page != cur_page || pageChangeState == PDFViewCtrl.PageChangeState.END)) {
+                JSONObject resultObject = new JSONObject();
+                try {
+                    resultObject.put(KEY_PREVIOUS_PAGE_NUMBER, old_page);
+                    resultObject.put(KEY_PAGE_NUMBER, cur_page);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                eventSink.success(resultObject.toString());
+            }
         }
     };
 }
