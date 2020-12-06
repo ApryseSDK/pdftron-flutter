@@ -25,6 +25,10 @@
         NSString *filePath = self.coordinatedDocument.fileURL.path;
         [self.plugin documentController:self documentLoadedFromFilePath:filePath];
     }
+    
+    if (![self.toolManager isReadonly] && self.readOnly) {
+        self.toolManager.readonly = YES;
+    }
 }
 
 - (void)setThumbnailSliderHidden:(BOOL)hidden animated:(BOOL)animated
@@ -273,6 +277,22 @@
     }
 }
 
+- (void)pdfViewCtrl:(PTPDFViewCtrl*)pdfViewCtrl pdfScrollViewDidZoom:(UIScrollView *)scrollView
+{
+    const double zoom = self.pdfViewCtrl.zoom * self.pdfViewCtrl.zoomScale;
+    [self.plugin documentController:self zoomChanged:[NSNumber numberWithDouble:zoom]];
+}
+
+- (void)pdfViewCtrl:(PTPDFViewCtrl*)pdfViewCtrl pageNumberChangedFrom:(int)oldPageNumber To:(int)newPageNumber
+{
+    NSDictionary *resultDict = @{
+        PTPreviousPageNumberKey: [NSNumber numberWithInt:oldPageNumber],
+        PTPageNumberKey: [NSNumber numberWithInt:newPageNumber],
+    };
+
+    [self.plugin documentController:self pageChanged:[PdftronFlutterPlugin PT_idToJSONString:resultDict]];
+}
+
 -(NSString*)generateXfdfCommandWithAdded:(NSArray<PTAnnot*>*)added modified:(NSArray<PTAnnot*>*)modified removed:(NSArray<PTAnnot*>*)removed
 {
     
@@ -394,10 +414,16 @@
     _hideAnnotationToolbarSwitcher = NO;
     _hideTopToolbars = NO;
     _hideTopAppNavBar = NO;
+    _readOnly = NO;
+    
+    _showNavButton = YES;
 }
 
 - (void)applyViewerSettings
 {
+    // nav icon
+    [self applyNavIcon];
+    
     const BOOL hideNav = (self.hideTopAppNavBar || self.hideTopToolbars);
     self.controlsHidden = hideNav;
     
@@ -415,6 +441,15 @@
     self.pageFitsBetweenBars = !hidesToolbarsOnTap; // Tools default is enabled.
     
     [self applyDocumentControllerSettings];
+}
+
+- (void)applyNavIcon
+{
+    // TODO: After new UI, leading nav should be added like RN
+    if (self.showNavButton) {
+        UIBarButtonItem *navButton =[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
+        self.navigationItem.leftBarButtonItem = navButton;
+    }
 }
 
 - (void)applyDocumentControllerSettings
@@ -545,11 +580,63 @@
     return toolGroup;
 }
 
+- (void)setThumbnailEditingEnabled:(BOOL)thumbnailEditingEnabled
+{
+    self.thumbnailsViewController.editingEnabled = thumbnailEditingEnabled;
+}
+
+- (BOOL)isThumbnailEditingEnabled
+{
+    return self.thumbnailsViewController.editingEnabled;
+}
+
+- (void)setContinuousAnnotationEditing:(BOOL)continuousAnnotationEditing
+{
+    self.toolManager.tool.backToPanToolAfterUse = !continuousAnnotationEditing;
+}
+
+- (BOOL)isContinuousAnnotationEditing
+{
+    return !self.toolManager.tool.backToPanToolAfterUse;
+}
+
+- (NSString *)getAnnotationAuthor
+{
+    return self.toolManager.annotationAuthor;
+}
+
+- (void)setAnnotationAuthor:(NSString *)annotationAuthor
+{
+    self.toolManager.annotationAuthor = annotationAuthor;
+}
+
 #pragma mark - Other
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem
 {
     [self.plugin topLeftButtonPressed:barButtonItem];
+}
+
+- (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon
+{
+    if (self.showNavButton) {
+        UIImage *navImage = [UIImage imageNamed:leadingNavButtonIcon];
+        if (navImage) {
+            UIBarButtonItem *navButton = self.navigationItem.leftBarButtonItem;
+            UIImage* prevImage = [navButton image];
+            if (prevImage) {
+                // if previously has an image, just set image
+                [navButton setImage:navImage];
+            } else {
+                // or create a new UI button if previously it was the default "CLOSE" button
+                navButton = [[UIBarButtonItem alloc] initWithImage:navImage
+                                                             style:UIBarButtonItemStylePlain
+                                                            target:self
+                                                            action:@selector(topLeftButtonPressed:)];
+                self.navigationItem.leftBarButtonItem = navButton;
+            }
+        }
+    }
 }
 
 - (BOOL)shouldSetNavigationBarHidden:(BOOL)navigationBarHidden animated:(BOOL)animated
@@ -567,6 +654,17 @@
 //        return self.bottomToolbarEnabled;
 //    }
     return YES;
+}
+
+@end
+
+#pragma mark - FLThumbnailsViewController
+@implementation FLThumbnailsViewController
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    self.navigationController.toolbarHidden = !self.editingEnabled;
 }
 
 @end

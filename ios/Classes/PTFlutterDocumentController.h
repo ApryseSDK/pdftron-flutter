@@ -21,12 +21,25 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL hideAnnotationToolbarSwitcher;
 @property (nonatomic, assign) BOOL hideTopToolbars;
 @property (nonatomic, assign) BOOL hideTopAppNavBar;
+@property (nonatomic, assign) BOOL showNavButton;
+
+@property (nonatomic, assign, getter=isReadOnly) BOOL readOnly;
+@property (nonatomic, assign, getter=isThumbnailEditingEnabled) BOOL thumbnailEditingEnabled;
+@property (nonatomic, assign, getter=isContinuousAnnotationEditing) BOOL continuousAnnotationEditing;
+
+@property (nonatomic, copy, nullable) NSString* annotationAuthor;
 
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
 
+- (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon;
+
 - (BOOL)shouldSetNavigationBarHidden:(BOOL)navigationBarHidden animated:(BOOL)animated;
 - (BOOL)shouldSetToolbarHidden:(BOOL)toolbarHidden animated:(BOOL)animated;
+
+@end
+
+@interface FLThumbnailsViewController : PTThumbnailsViewController
 
 @end
 
