@@ -134,6 +134,7 @@ class Functions {
   static const setToolMode = "setToolMode";
   static const setValuesForFields = "setValuesForFields";
   static const setFlagForFields = "setFlagForFields";
+  static const setLeadingNavButtonIcon = "setLeadingNavButtonIcon";
 }
 
 class Parameters {
@@ -154,12 +155,15 @@ class Parameters {
   static const annotations = "annotations";
   static const annotation = "annotation";
   static const annotationsWithFlags = "annotationsWithFlags";
+  static const leadingNavButtonIcon = "leadingNavButtonIcon";
 }
 
 class EventParameters {
   static const action = "action";
   static const annotations = "annotations";
   static const xfdfCommand = "xfdfCommand";
+  static const previousPageNumber = "previousPageNumber";
+  static const pageNumber = "pageNumber";
 }
 
 class Buttons {

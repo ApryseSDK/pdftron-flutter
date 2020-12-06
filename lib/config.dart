@@ -10,6 +10,11 @@ class Config {
   var _hideAnnotationToolbarSwitcher;
   var _hideTopToolbars;
   var _hideTopAppNavBar;
+  var _showLeadingNavButton;
+  var _readOnly;
+  var _thumbnailViewEditingEnabled;
+  var _annotationAuthor;
+  var _continuousAnnotationEditing;
 
   Config();
 
@@ -24,6 +29,13 @@ class Config {
       _hideAnnotationToolbarSwitcher = value;
   set hideTopToolbars(bool value) => _hideTopToolbars = value;
   set hideTopAppNavBar(bool value) => _hideTopAppNavBar = value;
+  set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
+  set readOnly(bool value) => _readOnly = value;
+  set thumbnailViewEditingEnabled(bool value) =>
+      _thumbnailViewEditingEnabled = value;
+  set annotationAuthor(String value) => _annotationAuthor = value;
+  set continuousAnnotationEditing(bool value) =>
+      _continuousAnnotationEditing = value;
 
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
@@ -34,7 +46,12 @@ class Config {
         _hideDefaultAnnotationToolbars = json['hideDefaultAnnotationToolbars'],
         _hideAnnotationToolbarSwitcher = json['hideAnnotationToolbarSwitcher'],
         _hideTopToolbars = json['hideTopToolbars'],
-        _hideTopAppNavBar = json['hideTopAppNavBar'];
+        _hideTopAppNavBar = json['hideTopAppNavBar'],
+        _showLeadingNavButton = json['showLeadingNavButton'],
+        _readOnly = json['readOnly'],
+        _thumbnailViewEditingEnabled = json['thumbnailViewEditingEnabled'],
+        _annotationAuthor = json['annotationAuthor'],
+        _continuousAnnotationEditing = json['continuousAnnotationEditing'];
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -46,5 +63,10 @@ class Config {
         'hideAnnotationToolbarSwitcher': _hideAnnotationToolbarSwitcher,
         'hideTopToolbars': _hideTopToolbars,
         'hideTopAppNavBar': _hideTopAppNavBar,
+        'showLeadingNavButton': _showLeadingNavButton,
+        'readOnly': _readOnly,
+        'thumbnailViewEditingEnabled': _thumbnailViewEditingEnabled,
+        'annotationAuthor': _annotationAuthor,
+        'continuousAnnotationEditing': _continuousAnnotationEditing,
       };
 }
