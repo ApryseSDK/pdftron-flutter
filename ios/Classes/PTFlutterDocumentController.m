@@ -2,6 +2,12 @@
 #import "PTFlutterDocumentController.h"
 #import "DocumentViewFactory.h"
 
+@interface PTFlutterDocumentController()
+
+@property (nonatomic, strong, nullable) UIBarButtonItem *leadingNavButtonItem;
+
+@end
+
 @implementation PTFlutterDocumentController
 
 - (void)viewDidLoad
@@ -445,10 +451,34 @@
 
 - (void)applyNavIcon
 {
-    // TODO: After new UI, leading nav should be added like RN
     if (self.showNavButton) {
-        UIBarButtonItem *navButton =[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
-        self.navigationItem.leftBarButtonItem = navButton;
+        UIBarButtonItem* navButton = navButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
+        
+        self.leadingNavButtonItem = navButton;
+        
+        NSArray<UIBarButtonItem *> *compactItems = [self.navigationItem leftBarButtonItemsForSizeClass:UIUserInterfaceSizeClassCompact];
+        if (compactItems) {
+            NSMutableArray<UIBarButtonItem *> *mutableItems = [compactItems mutableCopy];
+            [mutableItems insertObject:navButton atIndex:0];
+            compactItems = [mutableItems copy];
+        } else {
+            compactItems = @[navButton];
+        }
+        [self.navigationItem setLeftBarButtonItems:compactItems
+                                            forSizeClass:UIUserInterfaceSizeClassCompact
+                                                animated:NO];
+        
+        NSArray<UIBarButtonItem *> *regularItems = [self.navigationItem leftBarButtonItemsForSizeClass:UIUserInterfaceSizeClassRegular];
+        if (regularItems) {
+            NSMutableArray<UIBarButtonItem *> *mutableItems = [regularItems mutableCopy];
+            [mutableItems insertObject:navButton atIndex:0];
+            regularItems = [mutableItems copy];
+        } else {
+            regularItems = @[navButton];
+        }
+        [self.navigationItem setLeftBarButtonItems:regularItems
+                                            forSizeClass:UIUserInterfaceSizeClassRegular
+                                                animated:NO];
     }
 }
 
@@ -619,21 +649,49 @@
 
 - (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon
 {
+    _leadingNavButtonIcon = leadingNavButtonIcon;
+    
     if (self.showNavButton) {
         UIImage *navImage = [UIImage imageNamed:leadingNavButtonIcon];
         if (navImage) {
-            UIBarButtonItem *navButton = self.navigationItem.leftBarButtonItem;
-            UIImage* prevImage = [navButton image];
-            if (prevImage) {
-                // if previously has an image, just set image
+            UIBarButtonItem* navButton = self.leadingNavButtonItem;
+            if ([navButton image]) {
                 [navButton setImage:navImage];
             } else {
-                // or create a new UI button if previously it was the default "CLOSE" button
                 navButton = [[UIBarButtonItem alloc] initWithImage:navImage
-                                                             style:UIBarButtonItemStylePlain
-                                                            target:self
-                                                            action:@selector(topLeftButtonPressed:)];
-                self.navigationItem.leftBarButtonItem = navButton;
+                                                            style:UIBarButtonItemStylePlain
+                                                           target:self
+                                                           action:@selector(topLeftButtonPressed:)];
+                
+                self.leadingNavButtonItem = navButton;
+                
+                NSArray<UIBarButtonItem *> *compactItems = [self.navigationItem leftBarButtonItemsForSizeClass:UIUserInterfaceSizeClassCompact];
+                if (compactItems) {
+                    NSMutableArray<UIBarButtonItem *> *mutableItems = [compactItems mutableCopy];
+                    [mutableItems removeObjectAtIndex:0];
+                    [mutableItems insertObject:navButton atIndex:0];
+                    compactItems = [mutableItems copy];
+                } else {
+                    compactItems = @[navButton];
+                }
+                
+                [self.navigationItem setLeftBarButtonItems:compactItems
+                                                    forSizeClass:UIUserInterfaceSizeClassCompact
+                                                        animated:NO];
+                
+                NSArray<UIBarButtonItem *> *regularItems = [self.navigationItem leftBarButtonItemsForSizeClass:UIUserInterfaceSizeClassRegular];
+                if (regularItems) {
+                    NSMutableArray<UIBarButtonItem *> *mutableItems = [regularItems mutableCopy];
+                    [mutableItems removeObjectAtIndex:0];
+                    [mutableItems insertObject:navButton atIndex:0];
+                    regularItems = [mutableItems copy];
+                } else {
+                    regularItems = @[navButton];
+                }
+                
+                [self.navigationItem setLeftBarButtonItems:regularItems
+                                                    forSizeClass:UIUserInterfaceSizeClassRegular
+                                                        animated:NO];
             }
         }
     }
