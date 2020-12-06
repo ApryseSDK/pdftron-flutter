@@ -68,6 +68,7 @@ public class PluginUtils {
     public static final String KEY_ANNOTATION = "annotation";
     public static final String KEY_FORMS_ONLY = "formsOnly";
     public static final String KEY_ANNOTATIONS_WITH_FLAGS = "annotationsWithFlags";
+    public static final String KEY_LEADING_NAV_BUTTON_ICON = "leadingNavButtonIcon";
 
     public static final String KEY_CONFIG_DISABLED_ELEMENTS = "disabledElements";
     public static final String KEY_CONFIG_DISABLED_TOOLS = "disabledTools";
@@ -77,6 +78,11 @@ public class PluginUtils {
     public static final String KEY_CONFIG_LAYOUT_MODE = "layoutMode";
     public static final String KEY_CONFIG_INITIAL_PAGE_NUMBER = "initialPageNumber";
     public static final String KEY_CONFIG_IS_BASE_64 = "isBase64";
+    public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
+    public static final String KEY_CONFIG_READ_ONLY = "readOnly";
+    public static final String KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED = "thumbnailViewEditingEnabled";
+    public static final String KEY_CONFIG_ANNOTATION_AUTHOR = "annotationAuthor";
+    public static final String KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING = "continuousAnnotationEditing";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -88,6 +94,8 @@ public class PluginUtils {
 
     public static final String KEY_FIELD_NAME = "fieldName";
     public static final String KEY_FIELD_VALUE = "fieldValue";
+
+    public static final String KEY_PREVIOUS_PAGE_NUMBER = "previousPageNumber";
 
     public static final String KEY_ANNOTATION_ID = "id";
 
@@ -107,6 +115,9 @@ public class PluginUtils {
     public static final String EVENT_ANNOTATION_CHANGED = "annotation_changed_event";
     public static final String EVENT_ANNOTATIONS_SELECTED = "annotations_selected_event";
     public static final String EVENT_FORM_FIELD_VALUE_CHANGED = "form_field_value_changed_event";
+    public static final String EVENT_LEADING_NAV_BUTTON_PRESSED = "leading_nav_button_pressed_event";
+    public static final String EVENT_PAGE_CHANGED = "page_changed_event";
+    public static final String EVENT_ZOOM_CHANGED = "zoom_changed_event";
 
     public static final String FUNCTION_GET_PLATFORM_VERSION = "getPlatformVersion";
     public static final String FUNCTION_GET_VERSION = "getVersion";
@@ -130,6 +141,7 @@ public class PluginUtils {
     public static final String FUNCTION_DELETE_ANNOTATIONS = "deleteAnnotations";
     public static final String FUNCTION_SELECT_ANNOTATION = "selectAnnotation";
     public static final String FUNCTION_SET_FLAGS_FOR_ANNOTATIONS = "setFlagsForAnnotations";
+    public static final String FUNCTION_SET_LEADING_NAV_BUTTON_ICON = "setLeadingNavButtonIcon";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -220,6 +232,7 @@ public class PluginUtils {
         private File tempFile;
         private JSONObject customHeaderJson;
         private Uri fileUri;
+        private boolean showLeadingNavButton;
 
         public ConfigInfo() {
             this.initialPageNumber = -1;
@@ -228,6 +241,7 @@ public class PluginUtils {
             this.tempFile = null;
             this.customHeaderJson = null;
             this.fileUri = null;
+            this.showLeadingNavButton = true;
         }
 
         public void setInitialPageNumber(int initialPageNumber) {
@@ -254,6 +268,10 @@ public class PluginUtils {
             this.fileUri = fileUri;
         }
 
+        public void setShowLeadingNavButton(boolean showLeadingNavButton) {
+            this.showLeadingNavButton = showLeadingNavButton;
+        }
+
         public int getInitialPageNumber() {
             return initialPageNumber;
         }
@@ -276,6 +294,10 @@ public class PluginUtils {
 
         public Uri getFileUri() {
             return fileUri;
+        }
+
+        public boolean isShowLeadingNavButton() {
+            return showLeadingNavButton;
         }
     }
 
@@ -328,6 +350,29 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_IS_BASE_64)) {
                     isBase64 = configJson.getBoolean(KEY_CONFIG_IS_BASE_64);
                     configInfo.setIsBase64(isBase64);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON)) {
+                    boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
+                    configInfo.setShowLeadingNavButton(showLeadingNavButton);
+                }
+                if (!configJson.isNull(KEY_CONFIG_READ_ONLY)) {
+                    boolean readOnly = configJson.getBoolean(KEY_CONFIG_READ_ONLY);
+                    builder.documentEditingEnabled(!readOnly);
+                }
+                if (!configJson.isNull(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED)) {
+                    boolean thumbnailViewEditingEnabled = configJson.getBoolean(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED);
+                    builder.thumbnailViewEditingEnabled(thumbnailViewEditingEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_AUTHOR)) {
+                    String annotationAuthor = configJson.getString(KEY_CONFIG_ANNOTATION_AUTHOR);
+                    if (!annotationAuthor.isEmpty()) {
+                        PdfViewCtrlSettingsManager.updateAuthorName(context, annotationAuthor);
+                        PdfViewCtrlSettingsManager.setAnnotListShowAuthor(context, true);
+                    }
+                }
+                if (!configJson.isNull(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING)) {
+                    boolean continuousAnnotationEditing = configJson.getBoolean(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING);
+                    PdfViewCtrlSettingsManager.setContinuousAnnotationEdit(context, continuousAnnotationEditing);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -1277,6 +1322,14 @@ public class PluginUtils {
         result.success(null);
     }
 
+    private static void setLeadingNavButtonIcon(String leadingNavButtonIcon, MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+    }
+
     // Events
 
     public static void handleDocumentLoaded(ViewerComponent component) {
@@ -1328,16 +1381,34 @@ public class PluginUtils {
             component.getImpl().removeListeners(toolManager);
         }
 
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl != null) {
+            component.getImpl().removeListeners(pdfViewCtrl);
+        }
+
         File tempFile = component.getTempFile();
         if (tempFile != null && tempFile.exists()) {
             tempFile.delete();
         }
     }
 
+    public static void handleLeadingNavButtonPressed(ViewerComponent component) {
+        EventChannel.EventSink leadingNavButtonPressedEventSink = component.getLeadingNavButtonPressedEventEmitter();
+        if (leadingNavButtonPressedEventSink != null) {
+            leadingNavButtonPressedEventSink.success(null);
+        }
+    }
+
     private static void addListeners(ViewerComponent component) {
         ToolManager toolManager = component.getToolManager();
+
         if (toolManager != null) {
             component.getImpl().addListeners(toolManager);
+        }
+
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl != null) {
+            component.getImpl().addListeners(pdfViewCtrl);
         }
     }
 

@@ -21,12 +21,17 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_DOCUMENT_LOAD
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_EXPORT_ANNOTATION_COMMAND;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_EXPORT_BOOKMARK;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_FORM_FIELD_VALUE_CHANGED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_LEADING_NAV_BUTTON_PRESSED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_PAGE_CHANGED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ZOOM_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_GET_PLATFORM_VERSION;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_GET_VERSION;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_INITIALIZE;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_OPEN_DOCUMENT;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SET_LEADING_NAV_BUTTON_ICON;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_CONFIG;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_DOCUMENT;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LEADING_NAV_BUTTON_ICON;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LICENSE_KEY;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PASSWORD;
 
@@ -139,6 +144,45 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
+        final EventChannel leadingNavButtonPressedEventChannel = new EventChannel(registrar.messenger(), EVENT_LEADING_NAV_BUTTON_PRESSED);
+        leadingNavButtonPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setLeadingNavButtonPressedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setLeadingNavButtonPressedEventEmitter(null);
+            }
+        });
+
+        final EventChannel pageChangedEventChannel = new EventChannel(registrar.messenger(), EVENT_PAGE_CHANGED);
+        pageChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setPageChangedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setPageChangedEventEmitter(null);
+            }
+        });
+
+        final EventChannel zoomChangedEventChannel = new EventChannel(registrar.messenger(), EVENT_ZOOM_CHANGED);
+        zoomChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setZoomChangedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setZoomChangedEventEmitter(null);
+            }
+        });
+
         registrar.platformViewRegistry().registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(registrar.messenger(), registrar.activeContext()));
     }
 
@@ -174,6 +218,11 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 FlutterDocumentActivity.setFlutterLoadResult(result);
                 FlutterDocumentActivity.openDocument(mContext, document, password, config);
                 break;
+            case FUNCTION_SET_LEADING_NAV_BUTTON_ICON: {
+                String leadingNavButtonIcon = call.argument(KEY_LEADING_NAV_BUTTON_ICON);
+                FlutterDocumentActivity.setLeadingNavButtonIcon(leadingNavButtonIcon);
+                break;
+            }
             default:
                 PluginUtils.onMethodCall(call, result, FlutterDocumentActivity.getCurrentActivity());
                 break;
