@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL documentLoaded;
 
 // viewer options
-@property (nonatomic, copy, nullable, getter=getThumbnailFilterModes) NSArray <NSString *> *hideThumbnailFilterModes;
+@property (nonatomic, copy, nullable) NSArray <NSString *> *hideThumbnailFilterModes;
 @property (nonatomic, assign) BOOL showNavButton;
 
 @property (nonatomic, assign, getter=isReadOnly) BOOL readOnly;
