@@ -10,6 +10,11 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
 static NSString * const PTCustomHeadersKey = @"customHeaders";
 static NSString * const PTHideThumbnailFilterModesKey = @"hideThumbnailFilterModes";
+static NSString * const PTShowLeadingNavButtonKey = @"showLeadingNavButton";
+static NSString * const PTReadOnlyKey = @"readOnly";
+static NSString * const PTThumbnailViewEditingEnabledKey = @"thumbnailViewEditingEnabled";
+static NSString * const PTAnnotationAuthorKey = @"annotationAuthor";
+static NSString * const PTContinuousAnnotationEditingKey = @"continuousAnnotationEditing";
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";
@@ -112,6 +117,7 @@ static NSString * const PTGetPageCropBoxKey = @"getPageCropBox";
 static NSString * const PTSetToolModeKey = @"setToolMode";
 static NSString * const PTSetFlagForFieldsKey = @"setFlagForFields";
 static NSString * const PTSetValuesForFieldsKey = @"setValuesForFields";
+static NSString * const PTSetLeadingNavButtonIconKey = @"setLeadingNavButtonIcon";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
@@ -131,15 +137,19 @@ static NSString * const PTAnnotationListArgumentKey = @"annotations";
 static NSString * const PTFormsOnlyArgumentKey = @"formsOnly";
 static NSString * const PTAnnotationArgumentKey = @"annotation";
 static NSString * const PTAnnotationsWithFlagsArgumentKey = @"annotationsWithFlags";
+static NSString * const PTLeadingNavButtonIconArgumentKey = @"leadingNavButtonIcon";
 
 // event strings
-static NSString * const EVENT_EXPORT_ANNOTATION_COMMAND = @"export_annotation_command_event";
-static NSString * const EVENT_EXPORT_BOOKMARK = @"export_bookmark_event";
-static NSString * const EVENT_DOCUMENT_LOADED = @"document_loaded_event";
-static NSString * const EVENT_DOCUMENT_ERROR = @"document_error_event";
-static NSString * const EVENT_ANNOTATION_CHANGED = @"annotation_changed_event";
-static NSString * const EVENT_ANNOTATIONS_SELECTED = @"annotations_selected_event";
-static NSString * const EVENT_FORM_FIELD_VALUE_CHANGED = @"form_field_value_changed_event";
+static NSString * const PTExportAnnotationCommandEventKey = @"export_annotation_command_event";
+static NSString * const PTExportBookmarkEventKey = @"export_bookmark_event";
+static NSString * const PTDocumentLoadedEventKey = @"document_loaded_event";
+static NSString * const PTDocumentErrorEventKey = @"document_error_event";
+static NSString * const PTAnnotationChangedEventKey = @"annotation_changed_event";
+static NSString * const PTAnnotationsSelectedEventKey = @"annotations_selected_event";
+static NSString * const PTFormFieldValueChangedEventKey = @"form_field_value_changed_event";
+static NSString * const PTLeadingNavButtonPressedEventKey = @"leading_nav_button_pressed_event";
+static NSString * const PTPageChangedEventKey = @"page_changed_event";
+static NSString * const PTZoomChangedEventKey = @"zoom_changed_event";
 
 // other keys
 static NSString * const PTX1Key = @"x1";
@@ -161,6 +171,9 @@ static NSString * const PTAnnotationListKey = @"annotations";
 
 static NSString * const PTFormFieldNameKey = @"fieldName";
 static NSString * const PTFormFieldValueKey = @"fieldValue";
+
+static NSString * const PTPreviousPageNumberKey = @"previousPageNumber";
+static NSString * const PTPageNumberKey = @"pageNumber";
 
 static NSString * const PTFieldNameKey = @"fieldName";
 static NSString * const PTFieldValueKey = @"fieldValue";
@@ -192,7 +205,10 @@ typedef enum {
     documentErrorId,
     annotationChangedId,
     annotationsSelectedId,
-    formFieldValueChangedId
+    formFieldValueChangedId,
+    leadingNavButtonPressedId,
+    pageChangedId,
+    zoomChangedId,
 } EventSinkId;
 
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
@@ -208,6 +224,11 @@ typedef enum {
 -(void)documentViewController:(PTDocumentViewController*)docVC annotationsChangedWithActionString:(NSString*)actionString;
 -(void)documentViewController:(PTDocumentViewController*)docVC annotationsSelected:(NSString*)annotations;
 -(void)documentViewController:(PTDocumentViewController*)docVC formFieldValueChanged:(NSString*)fieldString;
+-(void)documentViewController:(PTDocumentViewController *)docVC leadingNavButtonClicked:(nullable NSString *)nav;
+-(void)documentViewController:(PTDocumentViewController *)docVC pageChanged:(NSString*)pageNumbersString;
+-(void)documentViewController:(PTDocumentViewController *)docVC zoomChanged:(NSNumber*)zoom;
+
+- (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 
