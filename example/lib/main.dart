@@ -22,7 +22,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     initPlatformState();
 
-    // showViewer();
+    showViewer();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
     }
 
     try {
-      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
+      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
     } on PlatformException catch (e) {
       print("Failed to importBookmarkJson '${e.message}'.");
     }
@@ -112,9 +112,9 @@ class _MyAppState extends State<MyApp> {
           child: Container(
             width: double.infinity,
             height: double.infinity,
-            child: DocumentView(
-              onCreated: _onDocumentViewCreated,
-            ),
+            // child: DocumentView(
+            //   onCreated: _onDocumentViewCreated,
+            // ),
           ),
         ),
       ),
