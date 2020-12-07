@@ -16,11 +16,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 // viewer options
 
-@property (nonatomic, getter=isAutoSaveEnabled) BOOL autoSaveEnabled;
-@property (nonatomic) BOOL pageChangesOnTap;
+@property (nonatomic, assign, getter=isAutoSaveEnabled) BOOL autoSaveEnabled;
+@property (nonatomic, assign) BOOL pageChangesOnTap;
 @property (nonatomic, assign) BOOL useStylusAsPen;
-@property (nonatomic) BOOL showSavedSignatures;
-@property (nonatomic) BOOL signSignatureFieldsWithStamps;
+@property (nonatomic, assign) BOOL showSavedSignatures;
+@property (nonatomic, assign) BOOL signSignatureFieldsWithStamps;
 @property (nonatomic, assign) BOOL showNavButton;
 
 @property (nonatomic, assign, getter=isReadOnly) BOOL readOnly;
