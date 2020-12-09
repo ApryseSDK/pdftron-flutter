@@ -14,6 +14,7 @@ import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
+import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
@@ -37,6 +38,7 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleLeadingNavBut
 public class FlutterDocumentActivity extends DocumentActivity implements ViewerComponent {
 
     private ViewerImpl mImpl = new ViewerImpl(this);
+    private static PdfViewCtrlTabHostFragment sPdfViewCtrlTabHostFragment;
 
     private static boolean mShowLeadingNavButton;
 
@@ -73,29 +75,39 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         }
     }
 
-    public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
+    public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, ViewerConfig config) {
         openDocument(packageContext, fileUri, password, customHeaders, config, DEFAULT_NAV_ICON_ID);
     }
 
-    public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config, @DrawableRes int navIconId) {
-        Intent intent = new Intent(packageContext, FlutterDocumentActivity.class);
-        if (null != fileUri) {
-            intent.putExtra("extra_file_uri", fileUri);
+    public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, ViewerConfig config, @DrawableRes int navIconId) {
+
+        if (sPdfViewCtrlTabHostFragment != null) {
+            ViewerBuilder viewerBuilder = ViewerBuilder.withUri(fileUri, password)
+                    .usingCustomHeaders(customHeaders)
+                    .usingConfig(config)
+                    .usingNavIcon(navIconId);
+            sPdfViewCtrlTabHostFragment.onOpenAddNewTab(viewerBuilder.createBundle(packageContext));
+        } else {
+            DocumentActivity.IntentBuilder intentBuilder = DocumentActivity.IntentBuilder.fromActivityClass(packageContext, FlutterDocumentActivity.class);
+            Intent intent = new Intent(packageContext, FlutterDocumentActivity.class);
+            if (null != fileUri) {
+                intent.putExtra("extra_file_uri", fileUri);
+            }
+
+            if (null != password) {
+                intent.putExtra("extra_file_password", password);
+            }
+
+            if (null != customHeaders) {
+                intent.putExtra("extra_custom_headers", customHeaders.toString());
+            }
+
+            intent.putExtra("extra_nav_icon", navIconId);
+            intent.putExtra("extra_config", config);
+            intent.putExtra(EXTRA_NEW_UI, false);
+
+            packageContext.startActivity(intent);
         }
-
-        if (null != password) {
-            intent.putExtra("extra_file_password", password);
-        }
-
-        if (null != customHeaders) {
-            intent.putExtra("extra_custom_headers", customHeaders.toString());
-        }
-
-        intent.putExtra("extra_nav_icon", navIconId);
-        intent.putExtra("extra_config", config);
-        intent.putExtra(EXTRA_NEW_UI, false);
-
-        packageContext.startActivity(intent);
     }
 
     public static void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
@@ -224,6 +236,8 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         super.onCreate(savedInstanceState);
 
         attachActivity();
+
+        sPdfViewCtrlTabHostFragment = this.getPdfViewCtrlTabHostFragment();
     }
 
     @Override
@@ -242,6 +256,8 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sLeadingNavButtonPressedEventEmitter.set(null);
         sPageChangedEventEmitter.set(null);
         sZoomChangedEventEmitter.set(null);
+
+        sPdfViewCtrlTabHostFragment = null;
 
         detachActivity();
     }

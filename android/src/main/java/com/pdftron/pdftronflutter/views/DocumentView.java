@@ -84,7 +84,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
         ViewerBuilder viewerBuilder = ViewerBuilder.withUri(configInfo.getFileUri(), password)
                 .usingCustomHeaders(configInfo.getCustomHeaderJson())
                 .usingConfig(mBuilder.build())
-                .usingNavIcon(mShowNavIcon ? mNavIconRes : 0);
+                .usingNavIcon(mShowNavIcon ? mNavIconRes : 0)
+                .usingTabTitle(configInfo.getTabTitle());
         if (mPdfViewCtrlTabHostFragment != null) {
             mPdfViewCtrlTabHostFragment.onOpenAddNewTab(viewerBuilder.createBundle(getContext()));
         } else {

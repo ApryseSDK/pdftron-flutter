@@ -78,6 +78,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED = "thumbnailViewEditingEnabled";
     public static final String KEY_CONFIG_ANNOTATION_AUTHOR = "annotationAuthor";
     public static final String KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING = "continuousAnnotationEditing";
+    public static final String KEY_CONFIG_TAB_TITLE = "tabTitle";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -135,6 +136,7 @@ public class PluginUtils {
     public static final String FUNCTION_SELECT_ANNOTATION = "selectAnnotation";
     public static final String FUNCTION_SET_FLAGS_FOR_ANNOTATIONS = "setFlagsForAnnotations";
     public static final String FUNCTION_SET_LEADING_NAV_BUTTON_ICON = "setLeadingNavButtonIcon";
+    public static final String FUNCTION_CLOSE_ALL_TABS = "closeAllTabs";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -210,11 +212,13 @@ public class PluginUtils {
         private JSONObject customHeaderJson;
         private Uri fileUri;
         private boolean showLeadingNavButton;
+        private String tabTitle;
 
         public ConfigInfo() {
             this.customHeaderJson = null;
             this.fileUri = null;
             this.showLeadingNavButton = true;
+            this.tabTitle = null;
         }
 
         public void setCustomHeaderJson(JSONObject customHeaderJson) {
@@ -229,6 +233,10 @@ public class PluginUtils {
             this.showLeadingNavButton = showLeadingNavButton;
         }
 
+        public void setTabTitle(String tabTitle) {
+            this.tabTitle = tabTitle;
+        }
+
         public JSONObject getCustomHeaderJson() {
             return customHeaderJson;
         }
@@ -239,6 +247,10 @@ public class PluginUtils {
 
         public boolean isShowLeadingNavButton() {
             return showLeadingNavButton;
+        }
+
+        public String getTabTitle() {
+            return tabTitle;
         }
     }
 
@@ -295,6 +307,10 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING)) {
                     boolean continuousAnnotationEditing = configJson.getBoolean(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING);
                     PdfViewCtrlSettingsManager.setContinuousAnnotationEdit(context, continuousAnnotationEditing);
+                }
+                if (!configJson.isNull(KEY_CONFIG_TAB_TITLE)) {
+                    String tabTitle = configJson.getString(KEY_CONFIG_TAB_TITLE);
+                    configInfo.setTabTitle(tabTitle);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -654,6 +670,11 @@ public class PluginUtils {
                         result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
                     }
                 }
+                break;
+            }
+            case FUNCTION_CLOSE_ALL_TABS: {
+                checkFunctionPrecondition(component);
+                closeAllTabs(result, component);
                 break;
             }
             default:
@@ -1166,12 +1187,15 @@ public class PluginUtils {
         result.success(null);
     }
 
-    private static void setLeadingNavButtonIcon(String leadingNavButtonIcon, MethodChannel.Result result, ViewerComponent component) {
+    private static void closeAllTabs(MethodChannel.Result result, ViewerComponent component) {
         PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = component.getPdfViewCtrlTabHostFragment();
         if (pdfViewCtrlTabHostFragment == null) {
-            result.error("InvalidState", "PDFViewCtrl not found", null);
+            result.error("InvalidState", "Activity not attached", null);
             return;
         }
+
+        pdfViewCtrlTabHostFragment.closeAllTabs();
+        result.success(null);
     }
 
     // Events

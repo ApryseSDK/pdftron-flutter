@@ -134,4 +134,8 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.setLeadingNavButtonIcon,
         <String, dynamic>{Parameters.leadingNavButtonIcon: path});
   }
+
+  static Future<void> closeAllTabs() {
+    return _channel.invokeMethod(Functions.closeAllTabs);
+  }
 }
