@@ -50,11 +50,7 @@
 
 - (void)openDocumentWithURL:(NSURL *)url password:(NSString *)password
 {
-    if ([url isFileURL]) {
-        self.local = YES;
-    } else {
-        self.local = NO;
-    }
+    self.local = [url isFileURL];
     self.documentLoaded = NO;
     self.needsDocumentLoaded = NO;
     self.needsRemoteDocumentLoaded = NO;
@@ -378,7 +374,7 @@
 - (void)pdfViewCtrl:(PTPDFViewCtrl *)pdfViewCtrl onSetDoc:(PTPDFDoc *)doc
 {
     [super pdfViewCtrl:pdfViewCtrl onSetDoc:doc];
-
+    // to align with Android's document-opened-event timing.
     if (self.local && !self.documentLoaded) {
         self.needsDocumentLoaded = YES;
     }
@@ -446,7 +442,7 @@
     self.hidesControlsOnTap = hidesToolbarsOnTap;
     self.pageFitsBetweenBars = !hidesToolbarsOnTap; // Tools default is enabled.
     
-    [self applyDocumentControllerSettings];
+    [self applyToolGroupSettings];
 }
 
 - (void)applyNavIcon
@@ -482,7 +478,7 @@
     }
 }
 
-- (void)applyDocumentControllerSettings
+- (void)applyToolGroupSettings
 {
     PTToolGroupManager *toolGroupManager = self.toolGroupManager;
     
