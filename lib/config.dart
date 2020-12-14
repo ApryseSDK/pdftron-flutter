@@ -10,6 +10,11 @@ class Config {
   var _showSavedSignatures;
   var _useStylusAsPen;
   var _signSignatureFieldWithStamps;
+  var _annotationToolbars;
+  var _hideDefaultAnnotationToolbars;
+  var _hideAnnotationToolbarSwitcher;
+  var _hideTopToolbars;
+  var _hideTopAppNavBar;
   var _showLeadingNavButton;
   var _readOnly;
   var _thumbnailViewEditingEnabled;
@@ -28,6 +33,13 @@ class Config {
   set useStylusAsPen(bool value) => _useStylusAsPen;
   set signSignatureFieldWithStamps(bool value) =>
       _signSignatureFieldWithStamps = value;
+  set annotationToolbars(List value) => _annotationToolbars = value;
+  set hideDefaultAnnotationToolbars(List value) =>
+      _hideDefaultAnnotationToolbars = value;
+  set hideAnnotationToolbarSwitcher(bool value) =>
+      _hideAnnotationToolbarSwitcher = value;
+  set hideTopToolbars(bool value) => _hideTopToolbars = value;
+  set hideTopAppNavBar(bool value) => _hideTopAppNavBar = value;
   set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
   set readOnly(bool value) => _readOnly = value;
   set thumbnailViewEditingEnabled(bool value) =>
@@ -46,6 +58,11 @@ class Config {
         _showSavedSignatures = json['showSavedSignatures'],
         _useStylusAsPen = json['useStylusAsPen'],
         _signSignatureFieldWithStamps = json['signSignatureFieldWithStamps'],
+        _annotationToolbars = json['annotationToolbars'],
+        _hideDefaultAnnotationToolbars = json['hideDefaultAnnotationToolbars'],
+        _hideAnnotationToolbarSwitcher = json['hideAnnotationToolbarSwitcher'],
+        _hideTopToolbars = json['hideTopToolbars'],
+        _hideTopAppNavBar = json['hideTopAppNavBar'],
         _showLeadingNavButton = json['showLeadingNavButton'],
         _readOnly = json['readOnly'],
         _thumbnailViewEditingEnabled = json['thumbnailViewEditingEnabled'],
@@ -62,6 +79,11 @@ class Config {
         'showSavedSignatures': _showSavedSignatures,
         'useStylusAsPen': _useStylusAsPen,
         'signSignatureFieldWithStamps': _signSignatureFieldWithStamps,
+        'annotationToolbars': _annotationToolbars,
+        'hideDefaultAnnotationToolbars': _hideDefaultAnnotationToolbars,
+        'hideAnnotationToolbarSwitcher': _hideAnnotationToolbarSwitcher,
+        'hideTopToolbars': _hideTopToolbars,
+        'hideTopAppNavBar': _hideTopAppNavBar,
         'showLeadingNavButton': _showLeadingNavButton,
         'readOnly': _readOnly,
         'thumbnailViewEditingEnabled': _thumbnailViewEditingEnabled,
