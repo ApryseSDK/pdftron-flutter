@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, getter=isAnnotationToolbarSwitcherHidden) BOOL annotationToolbarSwitcherHidden; // hideAnnotationToolbarSwitcher configuration option
 @property (nonatomic, assign) BOOL topToolbarsHidden; // hideTopToolbars configuration option
 @property (nonatomic, assign) BOOL topAppNavBarHidden; // hideTopAppNavBar configuration option
-@property (nonatomic, assign) BOOL navButtonShown; // showNavButton configuration option
+@property (nonatomic, assign) BOOL showNavButton;
 
 @property (nonatomic, assign, getter=isReadOnly) BOOL readOnly;
 @property (nonatomic, assign, getter=isThumbnailEditingEnabled) BOOL thumbnailEditingEnabled;

@@ -250,7 +250,7 @@
                     NSNumber* showLeadingNavButtonNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowLeadingNavButtonKey class:[NSNumber class] error:&error];
                     
                     if (!error && showLeadingNavButtonNumber) {
-                        [documentController setNavButtonShown:[showLeadingNavButtonNumber boolValue]];
+                        [documentController setShowNavButton:[showLeadingNavButtonNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTReadOnlyKey]) {

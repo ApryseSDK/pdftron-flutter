@@ -418,7 +418,7 @@
     _topAppNavBarHidden = NO;
     _readOnly = NO;
     
-    _navButtonShown = YES;
+    _showNavButton = YES;
 }
 
 - (void)applyViewerSettings
@@ -447,7 +447,7 @@
 
 - (void)applyNavIcon
 {
-    if (self.navButtonShown) {
+    if (self.showNavButton) {
         UIBarButtonItem* navButton = navButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
         
         self.leadingNavButtonItem = navButton;
@@ -647,7 +647,7 @@
 {
     _leadingNavButtonIcon = leadingNavButtonIcon;
     
-    if (self.navButtonShown) {
+    if (self.showNavButton) {
         UIImage *navImage = [UIImage imageNamed:leadingNavButtonIcon];
         if (navImage) {
             UIBarButtonItem* navButton = self.leadingNavButtonItem;
