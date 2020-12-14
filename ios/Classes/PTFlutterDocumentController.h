@@ -16,6 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL documentLoaded;
 
 // viewer options
+@property (nonatomic, assign, getter=isAutoSaveEnabled) BOOL autoSaveEnabled;
+@property (nonatomic, assign) BOOL pageChangesOnTap;
+@property (nonatomic, assign) BOOL useStylusAsPen;
+@property (nonatomic, assign) BOOL showSavedSignatures;
+@property (nonatomic, assign) BOOL signSignatureFieldsWithStamps;
+
 @property (nonatomic, copy, nullable) NSArray<NSString *> * annotationToolbars;
 @property (nonatomic, copy, nullable) NSArray<NSString *> * hideDefaultAnnotationToolbars;
 @property (nonatomic, assign, getter=isAnnotationToolbarSwitcherHidden) BOOL annotationToolbarSwitcherHidden; // hideAnnotationToolbarSwitcher configuration option
