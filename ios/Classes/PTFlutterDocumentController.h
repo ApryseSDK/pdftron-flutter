@@ -19,8 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSArray<NSString *> * annotationToolbars;
 @property (nonatomic, copy, nullable) NSArray<NSString *> * hideDefaultAnnotationToolbars;
 @property (nonatomic, assign, getter=isAnnotationToolbarSwitcherHidden) BOOL annotationToolbarSwitcherHidden; // hideAnnotationToolbarSwitcher configuration option
-@property (nonatomic, assign) BOOL topToolbarsHidden; // hideTopToolbars configuration option
-@property (nonatomic, assign) BOOL topAppNavBarHidden; // hideTopAppNavBar configuration option
+@property (nonatomic, assign, getter=isTopToolbarsHidden) BOOL topToolbarsHidden; // hideTopToolbars configuration option
+@property (nonatomic, assign, getter=isTopAppNavBarHidden) BOOL topAppNavBarHidden; // hideTopAppNavBar configuration option
 @property (nonatomic, assign) BOOL showNavButton;
 
 @property (nonatomic, assign, getter=isReadOnly) BOOL readOnly;
