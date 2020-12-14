@@ -70,17 +70,17 @@
 
 - (BOOL)isTopToolbarEnabled
 {
-    return (!self.hideTopAppNavBar && !self.hideTopToolbars);
+    return (!self.topAppNavBarHidden && !self.topToolbarsHidden);
 }
 
 - (BOOL)areTopToolbarsEnabled
 {
-    return !self.hideTopToolbars;
+    return !self.topToolbarsHidden;
 }
 
 - (BOOL)isNavigationBarEnabled
 {
-    return !self.hideTopAppNavBar;
+    return !self.topAppNavBarHidden;;
 }
 
 - (BOOL)controlsHidden
@@ -413,12 +413,12 @@
 
 - (void)initViewerSettings
 {
-    _hideAnnotationToolbarSwitcher = NO;
-    _hideTopToolbars = NO;
-    _hideTopAppNavBar = NO;
+    _annotationToolbarSwitcherHidden = NO;
+    _topToolbarsHidden = NO;
+    _topAppNavBarHidden = NO;
     _readOnly = NO;
     
-    _showNavButton = YES;
+    _navButtonShown = YES;
 }
 
 - (void)applyViewerSettings
@@ -426,7 +426,7 @@
     // nav icon
     [self applyNavIcon];
     
-    const BOOL hideNav = (self.hideTopAppNavBar || self.hideTopToolbars);
+    const BOOL hideNav = (self.topAppNavBarHidden || self.topToolbarsHidden);
     self.controlsHidden = hideNav;
     
     const BOOL translucent = hideNav;
@@ -447,7 +447,7 @@
 
 - (void)applyNavIcon
 {
-    if (self.showNavButton) {
+    if (self.navButtonShown) {
         UIBarButtonItem* navButton = navButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
         
         self.leadingNavButtonItem = navButton;
@@ -482,7 +482,7 @@
 {
     PTToolGroupManager *toolGroupManager = self.toolGroupManager;
     
-    self.toolGroupsEnabled = !self.hideTopToolbars;
+    self.toolGroupsEnabled = !self.topToolbarsHidden;
     if ([self areToolGroupsEnabled]) {
         NSMutableArray<PTToolGroup *> *toolGroups = [toolGroupManager.groups mutableCopy];
         
@@ -538,7 +538,7 @@
         }
     }
     
-    if (self.hideAnnotationToolbarSwitcher) {
+    if (self.annotationToolbarSwitcherHidden) {
         self.navigationItem.titleView = [[UIView alloc] init];
     } else {
         if ([self areToolGroupsEnabled] && toolGroupManager.groups.count > 0) {
@@ -616,7 +616,7 @@
     return self.thumbnailsViewController.editingEnabled;
 }
 
-- (void)setContinuousAnnotationEditing:(BOOL)continuousAnnotationEditing
+- (void)setContinuousAnnotationEditingEnabled:(BOOL)continuousAnnotationEditing
 {
     self.toolManager.tool.backToPanToolAfterUse = !continuousAnnotationEditing;
 }
@@ -647,7 +647,7 @@
 {
     _leadingNavButtonIcon = leadingNavButtonIcon;
     
-    if (self.showNavButton) {
+    if (self.navButtonShown) {
         UIImage *navImage = [UIImage imageNamed:leadingNavButtonIcon];
         if (navImage) {
             UIBarButtonItem* navButton = self.leadingNavButtonItem;

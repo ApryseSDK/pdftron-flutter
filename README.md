@@ -18,6 +18,12 @@
 :--:|:--:
 ![demo](./flutter-pdftron-demo-android.gif) | ![demo](./flutter-pdftron-demo-ios.gif)
 
+## Legacy UI
+
+Version `0.0.6` is the last stable release for the legacy UI.
+
+The release can be found here: https://github.com/PDFTron/pdftron-flutter/releases/tag/legacy-ui.
+
 ## Installation
 
 The complete installation and API guides can be found at https://www.pdftron.com/documentation/android/flutter

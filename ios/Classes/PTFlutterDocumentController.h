@@ -18,14 +18,14 @@ NS_ASSUME_NONNULL_BEGIN
 // viewer options
 @property (nonatomic, copy, nullable) NSArray<NSString *> * annotationToolbars;
 @property (nonatomic, copy, nullable) NSArray<NSString *> * hideDefaultAnnotationToolbars;
-@property (nonatomic, assign) BOOL hideAnnotationToolbarSwitcher;
-@property (nonatomic, assign) BOOL hideTopToolbars;
-@property (nonatomic, assign) BOOL hideTopAppNavBar;
-@property (nonatomic, assign) BOOL showNavButton;
+@property (nonatomic, assign, getter=isAnnotationToolbarSwitcherHidden) BOOL annotationToolbarSwitcherHidden; // hideAnnotationToolbarSwitcher configuration option
+@property (nonatomic, assign) BOOL topToolbarsHidden; // hideTopToolbars configuration option
+@property (nonatomic, assign) BOOL topAppNavBarHidden; // hideTopAppNavBar configuration option
+@property (nonatomic, assign) BOOL navButtonShown; // showNavButton configuration option
 
 @property (nonatomic, assign, getter=isReadOnly) BOOL readOnly;
 @property (nonatomic, assign, getter=isThumbnailEditingEnabled) BOOL thumbnailEditingEnabled;
-@property (nonatomic, assign, getter=isContinuousAnnotationEditing) BOOL continuousAnnotationEditing;
+@property (nonatomic, assign, getter=isContinuousAnnotationEditingEnabled) BOOL continuousAnnotationEditingEnabled; // continuousAnnotationEditing configuration option
 
 @property (nonatomic, copy, nullable) NSString* annotationAuthor;
 

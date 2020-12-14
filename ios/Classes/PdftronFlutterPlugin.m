@@ -226,7 +226,7 @@
                     NSNumber* hideAnnotationToolbarSwitcherNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideAnnotationToolbarSwitcherKey class:[NSNumber class] error:&error];
                     
                     if (!error && hideAnnotationToolbarSwitcherNumber) {
-                        documentController.hideAnnotationToolbarSwitcher = [hideAnnotationToolbarSwitcherNumber boolValue];
+                        documentController.annotationToolbarSwitcherHidden = [hideAnnotationToolbarSwitcherNumber boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTHideTopToolbarsKey]) {
@@ -234,7 +234,7 @@
                     NSNumber* hideTopToolbarsNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideTopToolbarsKey class:[NSNumber class] error:&error];
                     
                     if (!error && hideTopToolbarsNumber) {
-                        documentController.hideTopToolbars = [hideTopToolbarsNumber boolValue];
+                        documentController.topToolbarsHidden = [hideTopToolbarsNumber boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTHideTopAppNavBarKey]) {
@@ -242,7 +242,7 @@
                     NSNumber* hideTopAppNavBarNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideTopAppNavBarKey class:[NSNumber class] error:&error];
                     
                     if (!error && hideTopAppNavBarNumber) {
-                        documentController.hideTopAppNavBar = [hideTopAppNavBarNumber boolValue];
+                        documentController.topAppNavBarHidden = [hideTopAppNavBarNumber boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTShowLeadingNavButtonKey]) {
@@ -250,7 +250,7 @@
                     NSNumber* showLeadingNavButtonNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowLeadingNavButtonKey class:[NSNumber class] error:&error];
                     
                     if (!error && showLeadingNavButtonNumber) {
-                        [documentController setShowNavButton:[showLeadingNavButtonNumber boolValue]];
+                        [documentController setNavButtonShown:[showLeadingNavButtonNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTReadOnlyKey]) {
@@ -282,7 +282,7 @@
                     NSNumber* contEditingNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTContinuousAnnotationEditingKey class:[NSNumber class] error:&error];
                     
                     if (!error && contEditingNumber) {
-                        [documentController setContinuousAnnotationEditing:[contEditingNumber boolValue]];
+                        [documentController setContinuousAnnotationEditingEnabled:[contEditingNumber boolValue]];
                     }
                 }
                 else
@@ -1486,7 +1486,7 @@
     if (toolClass) {
         PTTool *tool = [documentController.toolManager changeTool:toolClass];
 
-        tool.backToPanToolAfterUse = !((PTFlutterDocumentController *)documentController).isContinuousAnnotationEditing;
+        tool.backToPanToolAfterUse = !((PTFlutterDocumentController *)documentController).isContinuousAnnotationEditingEnabled;
 
         if ([tool isKindOfClass:[PTFreeHandCreate class]]
             && ![tool isKindOfClass:[PTFreeHandHighlightCreate class]]) {
