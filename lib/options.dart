@@ -95,6 +95,24 @@ class AnnotWithFlag {
       {'annotation': jsonEncode(annotation), 'flags': jsonEncode(flags)};
 }
 
+class CustomToolbar {
+  /*
+    Note: id should be unique;
+          items should be array of Buttons / Tools constants;
+          icon (optional) should be a ToolbarIcons constant
+  */
+
+  String id;
+  String name;
+  List<String> items;
+  String icon;
+
+  CustomToolbar(this.id, this.name, this.items, [this.icon]);
+
+  Map<String, dynamic> toJson() =>
+      {'id': id, 'name': name, 'items': jsonEncode(items), 'icon': icon};
+}
+
 class Functions {
   static const getPlatformVersion = "getPlatformVersion";
   static const getVersion = "getVersion";
@@ -181,6 +199,8 @@ class Buttons {
   static const fillAndSignButton = 'fillAndSignButton';
   static const prepareFormButton = 'prepareFormButton';
   static const reflowModeButton = 'reflowModeButton';
+  static const undo = 'undo';
+  static const redo = 'redo';
 }
 
 class Tools {
@@ -248,4 +268,28 @@ class AnnotationFlags {
   static const print = "print";
   static const readOnly = "readOnly";
   static const toggleNoView = "toggleNoView";
+}
+
+class DefaultToolbars {
+  static const view = "PDFTron_View";
+  static const annotate = "PDFTron_Annotate";
+  static const draw = "PDFTron_Draw";
+  static const insert = "PDFTron_Insert";
+  static const fillAndSign = "PDFTron_Fill_and_Sign";
+  static const prepareForm = "PDFTron_Prepare_Form";
+  static const measure = "PDFTron_Measure";
+  static const pens = "PDFTron_Pens";
+  static const favorite = "PDFTron_Favorite";
+}
+
+class ToolbarIcons {
+  static const view = "PDFTron_View";
+  static const annotate = "PDFTron_Annotate";
+  static const draw = "PDFTron_Draw";
+  static const insert = "PDFTron_Insert";
+  static const fillAndSign = "PDFTron_Fill_and_Sign";
+  static const prepareForm = "PDFTron_Prepare_Form";
+  static const measure = "PDFTron_Measure";
+  static const pens = "PDFTron_Pens";
+  static const favorite = "PDFTron_Favorite";
 }

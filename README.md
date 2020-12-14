@@ -18,6 +18,12 @@
 :--:|:--:
 ![demo](./flutter-pdftron-demo-android.gif) | ![demo](./flutter-pdftron-demo-ios.gif)
 
+## Legacy UI
+
+Version `0.0.6` is the last stable release for the legacy UI.
+
+The release can be found here: https://github.com/PDFTron/pdftron-flutter/releases/tag/legacy-ui.
+
 ## Installation
 
 The complete installation and API guides can be found at https://www.pdftron.com/documentation/android/flutter
@@ -303,6 +309,11 @@ fitMode | `FitModes` constant | `FitModes`.`fitWidth` | the fit mode for the doc
 layoutMode | `LayoutModes` constant | `LayoutModes`.`continuous` | the layout mode for the document window
 initialPageNumber | int | 1 | the initial page number that viewer lands on when the document opens
 isBase64 | boolean | false | whether the document is in base64 format
+annotationToolbars | array of `CustomToolbar` objects or `DefaultToolbars` constants| | Defines custom toolbars. If passed in, default toolbars will no longer appear.
+hideDefaultAnnotationToolbars | array of `DefaultToolbars` objects| empty | Defines which default toolbars should be hidden
+hideAnnotationToolbarSwitcher | boolean | false | Defines whether to show the toolbar switcher in the top toolbar
+hideTopToolbars | boolean | false | Defines whether to show both the top nav app bar and the annotation toolbar
+hideTopAppNavBar | boolean | false | Defines whether to show the top nav app bar
 showLeadingNavButton | boolean | true | Whether to show the leading navigation button
 readOnly | boolean | false | whether the document is read-only
 thumbnailViewEditingEnabled | boolean | true | whether use could modify through thumbnail view
@@ -312,6 +323,10 @@ continuousAnnotationEditing | boolean | false | whether annotations could be con
 ```dart
 var disabledElements = [Buttons.shareButton, Buttons.searchButton];
 var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
+var customToolbar = new CustomToolbar('myToolbar', 'myToolbar', [Tools.annotationCreateArrow, Tools.annotationCreateCallout], ToolbarIcons.favorite);
+var annotationToolbars = [DefaultToolbars.annotate, customToolbar];
+// var hideDefaultAnnotationToolbars = [DefaultToolbars.annotate, DefaultToolbars.draw];
+
 var config = Config();
 config.disabledElements = disabledElements;
 config.disabledTools = disabledTools;
@@ -321,6 +336,11 @@ config.fitMode = FitModes.zoom;
 config.layoutMode = LayoutModes.single;
 config.initialPageNumber = 3;
 config.isBase64 = false;
+config.annotationToolbars = annotationToolbars;
+// config.hideDefaultAnnotationToolbars = hideDefaultAnnotationToolbars;
+config.hideAnnotationToolbarSwitcher = false;
+config.hideTopToolbars = false;
+config.hideTopAppNavBar = false;
 config.showLeadingNavButton = true;
 config.readOnly = false;
 config.thumbnailViewEditingEnabled = false;
@@ -436,7 +456,6 @@ list.add(new AnnotWithFlags('Pdftron', 10, AnnotationFlags.no_zoom, true));
 PdftronFlutter.setFlagsForAnnotations(annotsWithFlags);
 ```
 
-
 ### PdftronFlutter.importAnnotationCommand(String)
 
 Imports XFDF command string to the document.
@@ -445,7 +464,7 @@ The XFDF needs to be a valid command format with `<add>` `<modify>` `<delete>` t
 ### PdftronFlutter.importBookmarkJson(String)
 
 Imports user bookmarks to the document.
-The input needs to be a valid bookmark JSON format, for example `{"0":"Page 1"}`.
+The input needs to be a valid bookmark JSON format, for example `{"0":"Page 1"}`.
 
 ### PdftronFlutter.saveDocument()
 
