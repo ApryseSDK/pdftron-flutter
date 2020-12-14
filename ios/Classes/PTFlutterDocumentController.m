@@ -19,6 +19,14 @@
     self.thumbnailSliderController.view.hidden = YES;
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+
+    // bottomToolBar / thumbnailSlider enabling
+    self.thumbnailSliderEnabled = self.bottomToolbarOn;
+}
+
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
@@ -413,6 +421,8 @@
 
 - (void)initViewerSettings
 {
+    _bottomToolbarOn = YES;
+    
     _annotationToolbarSwitcherHidden = NO;
     _topToolbarsHidden = NO;
     _topAppNavBarHidden = NO;
@@ -606,6 +616,16 @@
     return toolGroup;
 }
 
+- (void)setSelectAnnotationAfterCreation:(BOOL)selectAnnotationAfterCreation
+{
+    self.toolManager.selectAnnotationAfterCreation = selectAnnotationAfterCreation;
+}
+
+- (BOOL)selectAnnotationAfterCreation
+{
+    return self.toolManager.selectAnnotationAfterCreation;
+}
+
 - (void)setThumbnailEditingEnabled:(BOOL)thumbnailEditingEnabled
 {
     self.thumbnailsViewController.editingEnabled = thumbnailEditingEnabled;
@@ -703,10 +723,9 @@
 
 - (BOOL)shouldSetToolbarHidden:(BOOL)toolbarHidden animated:(BOOL)animated
 {
-//    TODO: uncomment this after bottomToolbarEnabled is implemented
-//    if (!toolbarHidden) {
-//        return self.bottomToolbarEnabled;
-//    }
+    if (!toolbarHidden) {
+        return self.bottomToolbarOn;
+    }
     return YES;
 }
 
