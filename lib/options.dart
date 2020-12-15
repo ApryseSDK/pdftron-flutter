@@ -95,6 +95,24 @@ class AnnotWithFlag {
       {'annotation': jsonEncode(annotation), 'flags': jsonEncode(flags)};
 }
 
+class CustomToolbar {
+  /*
+    Note: id should be unique;
+          items should be array of Buttons / Tools constants;
+          icon (optional) should be a ToolbarIcons constant
+  */
+
+  String id;
+  String name;
+  List<String> items;
+  String icon;
+
+  CustomToolbar(this.id, this.name, this.items, [this.icon]);
+
+  Map<String, dynamic> toJson() =>
+      {'id': id, 'name': name, 'items': jsonEncode(items), 'icon': icon};
+}
+
 class Functions {
   static const getPlatformVersion = "getPlatformVersion";
   static const getVersion = "getVersion";
@@ -113,6 +131,10 @@ class Functions {
   static const getPageCount = "getPageCount";
   static const handleBackButton = "handleBackButton";
   static const getPageCropBox = "getPageCropBox";
+  static const setToolMode = "setToolMode";
+  static const setValuesForFields = "setValuesForFields";
+  static const setFlagForFields = "setFlagForFields";
+  static const setLeadingNavButtonIcon = "setLeadingNavButtonIcon";
 }
 
 class Parameters {
@@ -124,16 +146,24 @@ class Parameters {
   static const xfdf = "xfdf";
   static const bookmarkJson = "bookmarkJson";
   static const pageNumber = "pageNumber";
+  static const toolMode = "toolMode";
+  static const fieldNames = "fieldNames";
+  static const fields = "fields";
+  static const flag = "flag";
+  static const flagValue = "flagValue";
   static const formsOnly = "formsOnly";
   static const annotations = "annotations";
   static const annotation = "annotation";
   static const annotationsWithFlags = "annotationsWithFlags";
+  static const leadingNavButtonIcon = "leadingNavButtonIcon";
 }
 
 class EventParameters {
   static const action = "action";
   static const annotations = "annotations";
   static const xfdfCommand = "xfdfCommand";
+  static const previousPageNumber = "previousPageNumber";
+  static const pageNumber = "pageNumber";
 }
 
 class Buttons {
@@ -167,6 +197,8 @@ class Buttons {
   static const fillAndSignButton = 'fillAndSignButton';
   static const prepareFormButton = 'prepareFormButton';
   static const reflowModeButton = 'reflowModeButton';
+  static const undo = 'undo';
+  static const redo = 'redo';
 }
 
 class Tools {
@@ -202,6 +234,11 @@ class Tools {
   static const eraser = 'Eraser';
 }
 
+class FieldFlags {
+  static const ReadOnly = 0;
+  static const Required = 1;
+}
+
 class AnnotationFlags {
   static const hidden = "hidden";
   static const invisible = "invisible";
@@ -213,4 +250,28 @@ class AnnotationFlags {
   static const print = "print";
   static const readOnly = "readOnly";
   static const toggleNoView = "toggleNoView";
+}
+
+class DefaultToolbars {
+  static const view = "PDFTron_View";
+  static const annotate = "PDFTron_Annotate";
+  static const draw = "PDFTron_Draw";
+  static const insert = "PDFTron_Insert";
+  static const fillAndSign = "PDFTron_Fill_and_Sign";
+  static const prepareForm = "PDFTron_Prepare_Form";
+  static const measure = "PDFTron_Measure";
+  static const pens = "PDFTron_Pens";
+  static const favorite = "PDFTron_Favorite";
+}
+
+class ToolbarIcons {
+  static const view = "PDFTron_View";
+  static const annotate = "PDFTron_Annotate";
+  static const draw = "PDFTron_Draw";
+  static const insert = "PDFTron_Insert";
+  static const fillAndSign = "PDFTron_Fill_and_Sign";
+  static const prepareForm = "PDFTron_Prepare_Form";
+  static const measure = "PDFTron_Measure";
+  static const pens = "PDFTron_Pens";
+  static const favorite = "PDFTron_Favorite";
 }

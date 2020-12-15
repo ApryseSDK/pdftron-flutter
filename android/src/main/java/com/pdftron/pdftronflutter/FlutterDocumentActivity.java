@@ -1,7 +1,6 @@
 package com.pdftron.pdftronflutter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -12,11 +11,14 @@ import androidx.annotation.Nullable;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.config.PDFViewCtrlConfig;
+import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
-import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
-import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
@@ -29,9 +31,13 @@ import java.util.concurrent.atomic.AtomicReference;
 import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.MethodChannel.Result;
 
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleLeadingNavButtonPressed;
+
 public class FlutterDocumentActivity extends DocumentActivity implements ViewerComponent {
 
     private ViewerImpl mImpl = new ViewerImpl(this);
+
+    private static boolean mShowLeadingNavButton;
 
     private static FlutterDocumentActivity sCurrentActivity;
     private static AtomicReference<Result> sFlutterLoadResult = new AtomicReference<>();
@@ -43,30 +49,66 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     private static AtomicReference<EventSink> sAnnotationChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sAnnotationsSelectionEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sFormFieldChangedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sLeadingNavButtonPressedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sPageChangedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sZoomChangedEventEmitter = new AtomicReference<>();
 
     private static HashMap<Annot, Integer> mSelectedAnnots;
+
+    public static void openDocument(Context packageContext, String document, String password, String configStr) {
+
+        ViewerConfig.Builder builder = new ViewerConfig.Builder().multiTabEnabled(false);
+
+        ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
+        PDFViewCtrlConfig pdfViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(packageContext);
+        PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(builder, toolManagerBuilder, pdfViewCtrlConfig, document, packageContext, configStr);
+
+        mShowLeadingNavButton = configInfo.isShowLeadingNavButton();
+
+        if (mShowLeadingNavButton) {
+            openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build());
+        } else {
+            openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build(), 0);
+        }
+    }
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
         openDocument(packageContext, fileUri, password, customHeaders, config, DEFAULT_NAV_ICON_ID);
     }
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config, @DrawableRes int navIconId) {
-        Intent intent = new Intent(packageContext, FlutterDocumentActivity.class);
+        DocumentActivity.IntentBuilder intentBuilder = DocumentActivity.IntentBuilder.fromActivityClass(packageContext, FlutterDocumentActivity.class);
+
         if (null != fileUri) {
-            intent.putExtra("extra_file_uri", fileUri);
+            intentBuilder.withUri(fileUri);
         }
 
         if (null != password) {
-            intent.putExtra("extra_file_password", password);
+            intentBuilder.usingPassword(password);
         }
 
         if (null != customHeaders) {
-            intent.putExtra("extra_custom_headers", customHeaders.toString());
+            intentBuilder.usingCustomHeaders(customHeaders);
         }
 
-        intent.putExtra("extra_nav_icon", navIconId);
-        intent.putExtra("extra_config", config);
-        packageContext.startActivity(intent);
+        intentBuilder.usingNavIcon(navIconId);
+        intentBuilder.usingConfig(config);
+        intentBuilder.usingNewUi(true);
+        packageContext.startActivity(intentBuilder.build());
+    }
+
+    public static void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
+        FlutterDocumentActivity documentActivity = getCurrentActivity();
+        if (documentActivity != null) {
+            PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment = documentActivity.getPdfViewCtrlTabHostFragment();
+            if (mShowLeadingNavButton && pdfViewCtrlTabHostFragment != null
+                    && pdfViewCtrlTabHostFragment.getToolbar() != null) {
+                int res = Utils.getResourceDrawable(pdfViewCtrlTabHostFragment.getToolbar().getContext(), leadingNavButtonIcon);
+                if (res != 0) {
+                    pdfViewCtrlTabHostFragment.getToolbar().setNavigationIcon(res);
+                }
+            }
+        }
     }
 
     public static void setExportAnnotationCommandEventEmitter(EventSink emitter) {
@@ -95,6 +137,18 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
     public static void setFormFieldValueChangedEventEmitter(EventSink emitter) {
         sFormFieldChangedEventEmitter.set(emitter);
+    }
+
+    public static void setLeadingNavButtonPressedEventEmitter(EventSink emitter) {
+        sLeadingNavButtonPressedEventEmitter.set(emitter);
+    }
+
+    public static void setPageChangedEventEmitter(EventSink emitter) {
+        sPageChangedEventEmitter.set(emitter);
+    }
+
+    public static void setZoomChangedEventEmitter(EventSink emitter) {
+        sZoomChangedEventEmitter.set(emitter);
     }
 
     public static void setFlutterLoadResult(Result result) {
@@ -140,6 +194,21 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     }
 
     @Override
+    public EventSink getLeadingNavButtonPressedEventEmitter() {
+        return sLeadingNavButtonPressedEventEmitter.get();
+    }
+
+    @Override
+    public EventSink getPageChangedEventEmitter() {
+        return sPageChangedEventEmitter.get();
+    }
+
+    @Override
+    public EventSink getZoomChangedEventEmitter() {
+        return sZoomChangedEventEmitter.get();
+    }
+
+    @Override
     public Result getFlutterLoadResult() {
         return sFlutterLoadResult.getAndSet(null);
     }
@@ -169,6 +238,9 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sAnnotationChangedEventEmitter.set(null);
         sAnnotationsSelectionEventEmitter.set(null);
         sFormFieldChangedEventEmitter.set(null);
+        sLeadingNavButtonPressedEventEmitter.set(null);
+        sPageChangedEventEmitter.set(null);
+        sZoomChangedEventEmitter.set(null);
 
         detachActivity();
     }
@@ -187,6 +259,11 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         return PluginUtils.handleOpenDocError(this);
     }
 
+    @Override
+    public void onNavButtonPressed() {
+        handleLeadingNavButtonPressed(this);
+    }
+
     private void attachActivity() {
         sCurrentActivity = this;
     }
@@ -202,14 +279,14 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     // Convenience
 
     @Nullable
-    public PdfViewCtrlTabHostFragment getPdfViewCtrlTabHostFragment() {
-        return mPdfViewCtrlTabHostFragment;
+    public PdfViewCtrlTabHostFragment2 getPdfViewCtrlTabHostFragment() {
+        return mPdfViewCtrlTabHostFragment2;
     }
 
     @Nullable
-    public PdfViewCtrlTabFragment getPdfViewCtrlTabFragment() {
-        if (mPdfViewCtrlTabHostFragment != null) {
-            return mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment();
+    public PdfViewCtrlTabFragment2 getPdfViewCtrlTabFragment() {
+        if (mPdfViewCtrlTabHostFragment2 != null) {
+            return mPdfViewCtrlTabHostFragment2.getCurrentPdfViewCtrlFragment();
         }
         return null;
     }

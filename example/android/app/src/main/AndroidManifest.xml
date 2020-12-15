@@ -32,7 +32,7 @@
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density"
             android:hardwareAccelerated="true"
             android:launchMode="singleTop"
-            android:theme="@style/CustomAppTheme"
+            android:theme="@style/PDFTronAppTheme"
             android:windowSoftInputMode="adjustPan">
             <!-- This keeps the window background of the activity showing
                  until Flutter renders its first frame. It can be removed if

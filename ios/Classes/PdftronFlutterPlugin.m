@@ -1,8 +1,9 @@
 #import "PdftronFlutterPlugin.h"
-#import "PTFlutterViewController.h"
+#import "PTFlutterDocumentController.h"
 #import "DocumentViewFactory.h"
+#import "PTNavigationController.h"
 
-@interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate, PTDocumentViewControllerDelegate>
+@interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate, PTDocumentControllerDelegate>
 
 @property (nonatomic, strong) id config;
 @property (nonatomic, strong) FlutterEventSink xfdfEventSink;
@@ -12,6 +13,9 @@
 @property (nonatomic, strong) FlutterEventSink annotationChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink annotationsSelectedEventSink;
 @property (nonatomic, strong) FlutterEventSink formFieldValueChangedEventSink;
+@property (nonatomic, strong) FlutterEventSink leadingNavButtonPressedEventSink;
+@property (nonatomic, strong) FlutterEventSink pageChangedEventSink;
+@property (nonatomic, strong) FlutterEventSink zoomChangedEventSink;
 
 @end
 
@@ -31,6 +35,7 @@
     [registrar addMethodCallDelegate:instance channel:channel];
     
     [instance registerEventChannels:[registrar messenger]];
+    [instance overrideControllerClasses];
     
     DocumentViewFactory* documentViewFactory =
     [[DocumentViewFactory alloc] initWithMessenger:registrar.messenger];
@@ -53,24 +58,38 @@
     }];
     
     [instance registerEventChannels:messenger];
+    [instance overrideControllerClasses];
     return instance;
+}
+
+- (void)overrideControllerClasses
+{
+    [PTOverrides overrideClass:[PTDocumentController class] withClass:[PTFlutterDocumentController class]];
+    
+    [PTOverrides overrideClass:[PTThumbnailsViewController class] withClass:[FLThumbnailsViewController class]];
 }
 
 - (void)registerEventChannels:(NSObject<FlutterBinaryMessenger> *)messenger
 {
-    FlutterEventChannel* xfdfEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_ANNOTATION_COMMAND binaryMessenger:messenger];
+    FlutterEventChannel* xfdfEventChannel = [FlutterEventChannel eventChannelWithName:PTExportAnnotationCommandEventKey binaryMessenger:messenger];
 
-    FlutterEventChannel* bookmarkEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_EXPORT_BOOKMARK binaryMessenger:messenger];
+    FlutterEventChannel* bookmarkEventChannel = [FlutterEventChannel eventChannelWithName:PTExportBookmarkEventKey binaryMessenger:messenger];
 
-    FlutterEventChannel* documentLoadedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_DOCUMENT_LOADED binaryMessenger:messenger];
+    FlutterEventChannel* documentLoadedEventChannel = [FlutterEventChannel eventChannelWithName:PTDocumentLoadedEventKey binaryMessenger:messenger];
     
-    FlutterEventChannel* documentErrorEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_DOCUMENT_ERROR binaryMessenger:messenger];
+    FlutterEventChannel* documentErrorEventChannel = [FlutterEventChannel eventChannelWithName:PTDocumentErrorEventKey binaryMessenger:messenger];
     
-    FlutterEventChannel* annotationChangedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_ANNOTATION_CHANGED binaryMessenger:messenger];
+    FlutterEventChannel* annotationChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTAnnotationChangedEventKey binaryMessenger:messenger];
     
-    FlutterEventChannel* annotationsSelectedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_ANNOTATIONS_SELECTED binaryMessenger:messenger];
+    FlutterEventChannel* annotationsSelectedEventChannel = [FlutterEventChannel eventChannelWithName:PTAnnotationsSelectedEventKey binaryMessenger:messenger];
     
-    FlutterEventChannel* formFieldValueChangedEventChannel = [FlutterEventChannel eventChannelWithName:EVENT_FORM_FIELD_VALUE_CHANGED binaryMessenger:messenger];
+    FlutterEventChannel* formFieldValueChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTFormFieldValueChangedEventKey binaryMessenger:messenger];
+    
+    FlutterEventChannel* leadingNavButtonPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTLeadingNavButtonPressedEventKey binaryMessenger:messenger];
+
+    FlutterEventChannel* pageChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTPageChangedEventKey binaryMessenger:messenger];
+
+    FlutterEventChannel* zoomChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTZoomChangedEventKey binaryMessenger:messenger];
 
     [xfdfEventChannel setStreamHandler:self];
     
@@ -85,30 +104,44 @@
     [annotationsSelectedEventChannel setStreamHandler:self];
     
     [formFieldValueChangedEventChannel setStreamHandler:self];
+    
+    [leadingNavButtonPressedEventChannel setStreamHandler:self];
+    
+    [pageChangedEventChannel setStreamHandler:self];
+    
+    [zoomChangedEventChannel setStreamHandler:self];
 }
 
 #pragma mark - Configurations
 
 + (void)configureTabbedDocumentViewController:(PTTabbedDocumentViewController*)tabbedDocumentViewController withConfig:(NSString*)config
 {
+    
+    tabbedDocumentViewController.viewControllerClass = [PTFlutterDocumentController class];
+    
     if(config && ![config isEqualToString:@"null"])
     {
         //convert from json to dict
-        NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
-        id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
+        id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
         
-        NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
+        if([foundationObject isKindOfClass:[NSNull class]]) {
+            return;
+        }
         
-        if([foundationObject isKindOfClass:[NSDictionary class]])
+        NSDictionary* configPairs = [PdftronFlutterPlugin PT_idAsNSDict:foundationObject];
+        
+        if(configPairs)
         {
-            NSDictionary* configPairs = (NSDictionary*)foundationObject;
-            
             for (NSString* key in configPairs.allKeys) {
                 if ([key isEqualToString:PTMultiTabEnabledKey]) {
-                    id multiTabEnabledValue = configPairs[PTMultiTabEnabledKey];
-                    if ([multiTabEnabledValue isKindOfClass:[NSNumber class]]) {
-                        BOOL multiTabEnabled = ((NSNumber *)multiTabEnabledValue).boolValue;
-                        tabbedDocumentViewController.tabsEnabled = multiTabEnabled;
+                    NSError* error;
+                    NSNumber* multiTabValue = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTMultiTabEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (error) {
+                        NSLog(@"An error occurs with config %@: %@", PTMultiTabEnabledKey, error.localizedDescription);
+                        continue;
+                    } else if (multiTabValue) {
+                        tabbedDocumentViewController.tabsEnabled = [multiTabValue boolValue];
                     }
                 }
             }
@@ -120,79 +153,145 @@
     }
 }
 
-+ (void)configureDocumentViewController:(PTDocumentViewController*)documentViewController withConfig:(NSString*)config
++ (void)configureDocumentController:(PTFlutterDocumentController*)documentController withConfig:(NSString*)config
 {
+    
+    [documentController initViewerSettings];
+    
     if (config.length == 0 || [config isEqualToString:@"null"]) {
+        [documentController applyViewerSettings];
         return;
     }
     
     //convert from json to dict
-    NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
-    id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
+    id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
     
-    NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
-    
-    if([foundationObject isKindOfClass:[NSDictionary class]])
-    {
-        //convert from json to dict
-        NSData* jsonData = [config dataUsingEncoding:NSUTF8StringEncoding];
-        id foundationObject = [NSJSONSerialization JSONObjectWithData:jsonData options:kNilOptions error:Nil];
-
-        NSAssert([foundationObject isKindOfClass:[NSDictionary class]], @"config JSON object not in expected dictionary format.");
+    if (![foundationObject isKindOfClass:[NSNull class]]) {
         
-        if([foundationObject isKindOfClass:[NSDictionary class]])
+        NSDictionary* configPairs = [PdftronFlutterPlugin PT_idAsNSDict:foundationObject];
+        
+        if(configPairs)
         {
-            NSDictionary* configPairs = (NSDictionary*)foundationObject;
+            
+            NSError* error;
             
             for (NSString* key in configPairs.allKeys) {
                 if([key isEqualToString:PTDisabledToolsKey])
                 {
-                    id toolsToDisable = configPairs[PTDisabledToolsKey];
-                    if(![toolsToDisable isEqual:[NSNull null]])
-                    {
-                        NSAssert([toolsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format.");
-                        if([toolsToDisable isKindOfClass:[NSArray class]])
-                        {
-                            [self disableTools:(NSArray*)toolsToDisable documentViewController:documentViewController];
-                        }
-                        else
-                        {
-                            NSLog(@"disabledTools JSON object not in expected array format.");
-                        }
+                    
+                    NSArray* toolsToDisable = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDisabledToolsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && toolsToDisable) {
+                        [self disableTools:toolsToDisable documentController:documentController];
                     }
                 }
                 else if([key isEqualToString:PTDisabledElementsKey])
                 {
-                    id elementsToDisable = configPairs[PTDisabledElementsKey];
                     
-                    if(![elementsToDisable isEqual:[NSNull null]])
-                    {
-                        NSAssert([elementsToDisable isKindOfClass:[NSArray class]], @"disabledTools JSON object not in expected array format.");
-                        if([elementsToDisable isKindOfClass:[NSArray class]])
-                        {
-                            [self disableElements:(NSArray*)elementsToDisable documentViewController:documentViewController];
-                        }
-                        else
-                        {
-                            NSLog(@"disabledTools JSON object not in expected array format.");
-                        }
+                    NSArray* elementsToDisable = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDisabledElementsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && elementsToDisable) {
+                        [self disableElements:(NSArray*)elementsToDisable documentController:documentController];
                     }
                 }
                 else if ([key isEqualToString:PTCustomHeadersKey]) {
-                    id customHeadersValue = configPairs[PTCustomHeadersKey];
-                    if ([customHeadersValue isKindOfClass:[NSDictionary class]]) {
-                        NSDictionary *customHeaders = (NSDictionary *)customHeadersValue;
-                        
-                        documentViewController.additionalHTTPHeaders = customHeaders;
+                    
+                    NSDictionary* customHeaders = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTCustomHeadersKey class:[NSDictionary class] error:&error];
+                    
+                    if (!error && customHeaders) {
+                        documentController.additionalHTTPHeaders = customHeaders;
                     }
                 }
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
                     // Handled by tabbed config.
                 }
+                else if ([key isEqualToString:PTAnnotationToolbarsKey]) {
+                    
+                    NSArray* annotationToolbars = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationToolbarsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && annotationToolbars) {
+                        documentController.annotationToolbars = annotationToolbars;
+                    }
+                }
+                else if ([key isEqualToString:PTHideDefaultAnnotationToolbarsKey]) {
+                    
+                    NSArray* hideDefaultAnnotationToolbars = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideDefaultAnnotationToolbarsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && hideDefaultAnnotationToolbars) {
+                        documentController.hideDefaultAnnotationToolbars = hideDefaultAnnotationToolbars;
+                    }
+                }
+                else if ([key isEqualToString:PTHideAnnotationToolbarSwitcherKey]) {
+                    
+                    NSNumber* hideAnnotationToolbarSwitcherNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideAnnotationToolbarSwitcherKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && hideAnnotationToolbarSwitcherNumber) {
+                        documentController.annotationToolbarSwitcherHidden = [hideAnnotationToolbarSwitcherNumber boolValue];
+                    }
+                }
+                else if ([key isEqualToString:PTHideTopToolbarsKey]) {
+                    
+                    NSNumber* hideTopToolbarsNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideTopToolbarsKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && hideTopToolbarsNumber) {
+                        documentController.topToolbarsHidden = [hideTopToolbarsNumber boolValue];
+                    }
+                }
+                else if ([key isEqualToString:PTHideTopAppNavBarKey]) {
+                    
+                    NSNumber* hideTopAppNavBarNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideTopAppNavBarKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && hideTopAppNavBarNumber) {
+                        documentController.topAppNavBarHidden = [hideTopAppNavBarNumber boolValue];
+                    }
+                }
+                else if ([key isEqualToString:PTShowLeadingNavButtonKey]) {
+                    
+                    NSNumber* showLeadingNavButtonNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowLeadingNavButtonKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && showLeadingNavButtonNumber) {
+                        [documentController setShowNavButton:[showLeadingNavButtonNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTReadOnlyKey]) {
+                    
+                    NSNumber* readOnlyNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTReadOnlyKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && readOnlyNumber) {
+                        [documentController setReadOnly:[readOnlyNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTThumbnailViewEditingEnabledKey]) {
+                    
+                    NSNumber* thumbnailViewEditingEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTThumbnailViewEditingEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && thumbnailViewEditingEnabledNumber) {
+                        [documentController setThumbnailEditingEnabled:[thumbnailViewEditingEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTAnnotationAuthorKey]) {
+                    
+                    NSString* annotationAuthor = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationAuthorKey class:[NSString class] error:&error];
+                    
+                    if (!error && annotationAuthor) {
+                        [documentController setAnnotationAuthor:annotationAuthor];
+                    }
+                }
+                else if ([key isEqualToString:PTContinuousAnnotationEditingKey]) {
+                    
+                    NSNumber* contEditingNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTContinuousAnnotationEditingKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && contEditingNumber) {
+                        [documentController setContinuousAnnotationEditingEnabled:[contEditingNumber boolValue]];
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
-                    NSAssert(false, @"Unknown JSON key in config.");
+                }
+                
+                if (error) {
+                    NSLog(@"An error occurs with config %@: %@", key, error.localizedDescription);
                 }
             }
         }
@@ -200,7 +299,25 @@
         {
             NSLog(@"config JSON object not in expected dictionary format.");
         }
+        
+        
     }
+    
+    [documentController applyViewerSettings];
+}
+
++ (id)getConfigValue:(NSDictionary*)configDict configKey:(NSString*)configKey class:(Class)class error:(NSError**)error
+{
+    id configResult = configDict[configKey];
+
+    if (![configResult isKindOfClass:[NSNull class]]) {
+        if (![configResult isKindOfClass:class]) {
+            NSString* errorString = [NSString stringWithFormat:@"config %@ is not in expected %@ format.", configKey, class];
+            *error = [NSError errorWithDomain:@"com.flutter.pdftron" code:NSFormattingError userInfo:@{NSLocalizedDescriptionKey: errorString}];
+        }
+        return configResult;
+    }
+    return nil;
 }
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem
@@ -210,11 +327,13 @@
     } else {
         [UIApplication.sharedApplication.keyWindow.rootViewController.presentedViewController dismissViewControllerAnimated:YES completion:Nil];
     }
+    
+    [self documentController:[self getDocumentController] leadingNavButtonClicked:nil];
 }
 
-+ (void)disableTools:(NSArray<id> *)toolsToDisable documentViewController:(PTDocumentViewController *)documentViewController
++ (void)disableTools:(NSArray<id> *)toolsToDisable documentController:(PTDocumentController *)documentController
 {
-    PTToolManager *toolManager = documentViewController.toolManager;
+    PTToolManager *toolManager = documentController.toolManager;
     
     for (id item in toolsToDisable) {
         BOOL value = NO;
@@ -249,7 +368,7 @@
                 toolManager.squigglyAnnotationOptions.canCreate = value;
             }
             else if ([string isEqualToString:PTAnnotationCreateTextStrikeoutToolKey] ||
-                     [string isEqualToString:PTStrikeoutToolButtonnKey]) {
+                     [string isEqualToString:PTStrikeoutToolButtonKey]) {
                 toolManager.strikeOutAnnotationOptions.canCreate = value;
             }
             else if ([string isEqualToString:PTAnnotationCreateFreeTextToolKey] ||
@@ -309,46 +428,46 @@
     }
 }
 
-+ (void)disableElements:(NSArray*)elementsToDisable documentViewController:(PTDocumentViewController *)documentViewController
++ (void)disableElements:(NSArray*)elementsToDisable documentController:(PTDocumentController *)documentController
 {
     typedef void (^HideElementBlock)(void);
     
     NSDictionary *hideElementActions = @{
         PTToolsButtonKey:
             ^{
-                documentViewController.annotationToolbarButtonHidden = YES;
+//                TODO: unsupported: documentController.annotationToolbarButtonHidden = YES;
             },
         PTSearchButtonKey:
             ^{
-                documentViewController.searchButtonHidden = YES;
+                documentController.searchButtonHidden = YES;
             },
         PTShareButtonKey:
             ^{
-                documentViewController.shareButtonHidden = YES;
+                documentController.shareButtonHidden = YES;
             },
         PTViewControlsButtonKey:
             ^{
-                documentViewController.viewerSettingsButtonHidden = YES;
+                documentController.viewerSettingsButtonHidden = YES;
             },
         PTThumbnailsButtonKey:
             ^{
-                documentViewController.thumbnailBrowserButtonHidden = YES;
+                documentController.thumbnailBrowserButtonHidden = YES;
             },
         PTListsButtonKey:
             ^{
-                documentViewController.navigationListsButtonHidden = YES;
+                documentController.navigationListsButtonHidden = YES;
             },
         PTReflowModeButtonKey:
             ^{
-            documentViewController.readerModeButtonHidden = YES;
+                documentController.readerModeButtonHidden = YES;
             },
         PTThumbnailSliderKey:
             ^{
-                documentViewController.thumbnailSliderHidden = YES;
+                documentController.thumbnailSliderHidden = YES;
             },
         PTSaveCopyButtonKey:
             ^{
-                documentViewController.exportButtonHidden = YES;
+                documentController.exportButtonHidden = YES;
             },
     };
     
@@ -364,36 +483,42 @@
         }
     }
     
-    [self disableTools:elementsToDisable documentViewController:documentViewController];
+    [self disableTools:elementsToDisable documentController:documentController];
 }
-
 
 #pragma mark - PTTabbedDocumentViewControllerDelegate
 
-- (void)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController willAddDocumentViewController:(PTDocumentViewController *)documentViewController
+- (void)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController willAddDocumentViewController:(PTFlutterDocumentController *)documentController
 {
-    documentViewController.delegate = self;
+    documentController.delegate = self;
     
-    [[self class] configureDocumentViewController:documentViewController
+    PTNavigationController* navigationController = (PTNavigationController*)self.tabbedDocumentViewController.navigationController;
+    navigationController.flutterDocumentController = documentController;
+    
+    [[self class] configureDocumentController:documentController
                                        withConfig:self.config];
 }
 
+- (BOOL)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController shouldHideTabBarForTraitCollection:(UITraitCollection *)traitCollection
+{
+    // Always show tab bar when enabled, regardless of the trait collection.
+    return NO;
+}
 
+#pragma mark - PTDocumentControllerDelegate
 
-#pragma mark - PTDocumentViewControllerDelegate
-
-- (void)documentViewControllerDidOpenDocument:(PTDocumentViewController *)documentViewController
+- (void)documentControllerDidOpenDocument:(PTDocumentController *)documentController
 {
     NSLog(@"Document opened successfully");
-    FlutterResult result = ((PTFlutterViewController*)documentViewController).openResult;
+    FlutterResult result = ((PTFlutterDocumentController*)documentController).openResult;
     result(@"Opened Document Successfully");
 }
 
-- (void)documentViewController:(PTDocumentViewController *)documentViewController didFailToOpenDocumentWithError:(NSError *)error
+- (void)documentController:(PTDocumentController *)documentController didFailToOpenDocumentWithError:(NSError *)error
 {
     NSLog(@"Failed to open document: %@", error);
-    FlutterResult result = ((PTFlutterViewController*)documentViewController).openResult;
-    [self documentViewController:documentViewController documentError:nil];
+    FlutterResult result = ((PTFlutterDocumentController*)documentController).openResult;
+    [self documentController:documentController documentError:nil];
     result([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
 }
 
@@ -427,6 +552,15 @@
         case formFieldValueChangedId:
             self.formFieldValueChangedEventSink = events;
             break;
+        case leadingNavButtonPressedId:
+            self.leadingNavButtonPressedEventSink = events;
+            break;
+        case pageChangedId:
+            self.pageChangedEventSink = events;
+            break;
+        case zoomChangedId:
+            self.zoomChangedEventSink = events;
+            break;
     }
     
     return Nil;
@@ -459,6 +593,15 @@
         case formFieldValueChangedId:
             self.formFieldValueChangedEventSink = nil;
             break;
+        case leadingNavButtonPressedId:
+            self.leadingNavButtonPressedEventSink = nil;
+            break;
+        case pageChangedId:
+            self.pageChangedEventSink = nil;
+            break;
+        case zoomChangedId:
+            self.zoomChangedEventSink = nil;
+            break;
     }
     
     return Nil;
@@ -473,7 +616,7 @@
 
 #pragma mark - EventSinks
 
--(void)documentViewController:(PTDocumentViewController*)docVC bookmarksDidChange:(NSString*)bookmarkJson
+-(void)documentController:(PTDocumentController*)documentController bookmarksDidChange:(NSString*)bookmarkJson
 {
     if(self.bookmarkEventSink != nil)
     {
@@ -481,7 +624,7 @@
     }
 }
 
--(void)documentViewController:(PTDocumentViewController*)docVC annotationsAsXFDFCommand:(NSString*)xfdfCommand
+-(void)documentController:(PTDocumentController*)documentController annotationsAsXFDFCommand:(NSString*)xfdfCommand
 {
     if(self.xfdfEventSink != nil)
     {
@@ -489,7 +632,7 @@
     }
 }
 
--(void)documentViewController:(PTDocumentViewController*)docVC documentLoadedFromFilePath:(NSString*)filePath
+-(void)documentController:(PTDocumentController*)documentController documentLoadedFromFilePath:(NSString*)filePath
 {
     if(self.documentLoadedEventSink != nil)
     {
@@ -497,7 +640,7 @@
     }
 }
 
--(void)documentViewController:(PTDocumentViewController*)docVC documentError:(nullable NSError*)error
+-(void)documentController:(PTDocumentController*)documentController documentError:(nullable NSError*)error
 {
     if(self.documentErrorEventSink != nil)
     {
@@ -505,7 +648,7 @@
     }
 }
 
--(void)documentViewController:(PTDocumentViewController*)docVC annotationsChangedWithActionString:(NSString*)annotationsWithActionString
+-(void)documentController:(PTDocumentController*)documentController annotationsChangedWithActionString:(NSString*)annotationsWithActionString
 {
     if(self.annotationChangedEventSink != nil)
     {
@@ -513,7 +656,7 @@
     }
 }
 
--(void)documentViewController:(PTDocumentViewController*)docVC annotationsSelected:(NSString*)annotationsString
+-(void)documentController:(PTDocumentController*)documentController annotationsSelected:(NSString*)annotationsString
 {
     if(self.annotationsSelectedEventSink != nil)
     {
@@ -521,11 +664,35 @@
     }
 }
 
--(void)documentViewController:(PTDocumentViewController*)docVC formFieldValueChanged:(NSString*)fieldsString
+-(void)documentController:(PTDocumentController*)documentController formFieldValueChanged:(NSString*)fieldsString
 {
     if(self.formFieldValueChangedEventSink != nil)
     {
         self.formFieldValueChangedEventSink(fieldsString);
+    }
+}
+
+-(void)documentController:(PTDocumentController *)docVC leadingNavButtonClicked:(nullable NSString *)nav
+{
+    if (self.leadingNavButtonPressedEventSink != nil)
+    {
+        self.leadingNavButtonPressedEventSink(nil);
+    }
+}
+
+-(void)documentController:(PTDocumentController *)docVC pageChanged:(NSString*)pageNumbersString
+{
+    if (self.pageChangedEventSink != nil)
+    {
+        self.pageChangedEventSink(pageNumbersString);
+    }
+}
+
+-(void)documentController:(PTDocumentController *)docVC zoomChanged:(NSNumber*)zoom
+{
+    if (self.zoomChangedEventSink != nil)
+    {
+        self.zoomChangedEventSink(zoom);
     }
 }
 
@@ -561,10 +728,10 @@
         [self setFlagsForAnnotations:annotationsWithFlags resultToken:result];
     } else if ([call.method isEqualToString:PTImportAnnotationCommandKey]) {
         NSString *xfdfCommand = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTXfdfCommandArgumentKey]];
-        [self importAnnotationCommand:xfdfCommand];
+        [self importAnnotationCommand:xfdfCommand resultToken:result];
     } else if ([call.method isEqualToString:PTImportBookmarksKey]) {
         NSString *bookmarkJson = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTBookmarkJsonArgumentKey]];
-        [self importBookmarks:bookmarkJson];
+        [self importBookmarks:bookmarkJson resultToken:result];
     } else if ([call.method isEqualToString:PTSaveDocumentKey]) {
         [self saveDocument:result];
     } else if ([call.method isEqualToString:PTCommitToolKey]) {
@@ -574,20 +741,35 @@
     } else if ([call.method isEqualToString:PTGetPageCropBoxKey]) {
         NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self getPageCropBox:pageNumber resultToken:result];
+    } else if ([call.method isEqualToString:PTSetToolModeKey]) {
+           NSString *toolMode = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTToolModeArgumentKey]];
+           [self setToolMode:toolMode resultToken:result];
+    } else if ([call.method isEqualToString:PTSetFlagForFieldsKey]) {
+        NSArray *fieldNames = [PdftronFlutterPlugin PT_idAsArray:call.arguments[PTFieldNamesArgumentKey]];
+        NSNumber *flag = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTFlagArgumentKey]];
+        bool flagValue = [[PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTFlagValueArgumentKey]] boolValue];
+        [self setFlagForFields:fieldNames flag:flag flagValue:flagValue resultToken:result];
+    } else if ([call.method isEqualToString:PTSetValuesForFieldsKey]) {
+        NSString *fieldWithValuesString = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTFieldsArgumentKey]];
+        [self setValuesForFields:fieldWithValuesString resultToken:result];
+    } else if ([call.method isEqualToString:PTSetLeadingNavButtonIconKey]) {
+        NSString* leadingNavButtonIcon = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTLeadingNavButtonIconArgumentKey]];
+        [self setLeadingNavButtonIcon:leadingNavButtonIcon resultToken:result];
+
     } else {
         result(FlutterMethodNotImplemented);
     }
 }
 
-+ (PTAnnot *)findAnnotWithUniqueID:(NSString *)uniqueID onPageNumber:(int)pageNumber documentViewController:(PTDocumentViewController *)docVC error:(NSError **)error
++ (PTAnnot *)findAnnotWithUniqueID:(NSString *)uniqueID onPageNumber:(int)pageNumber documentController:(PTDocumentController *)documentController error:(NSError **)error
 {
     if (uniqueID.length == 0 || pageNumber < 1) {
         return nil;
     }
-    PTPDFViewCtrl *pdfViewCtrl = docVC.pdfViewCtrl;
+    PTPDFViewCtrl *pdfViewCtrl = documentController.pdfViewCtrl;
     __block PTAnnot *resultAnnot;
 
-    [docVC.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+    [documentController.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
         NSArray<PTAnnot *> *annots = [pdfViewCtrl GetAnnotationsOnPage:pageNumber];
         for (PTAnnot *annot in annots) {
             if (![annot IsValid]) {
@@ -615,12 +797,12 @@
     return resultAnnot;
 }
 
-+(NSArray<PTAnnot *> *)getAnnotationsOnPage:(int)pageNumber documentViewController:(PTDocumentViewController *)docVC
++(NSArray<PTAnnot *> *)getAnnotationsOnPage:(int)pageNumber documentController:(PTDocumentController *)documentController
 {
     __block NSArray<PTAnnot *> *annots;
     NSError* error;
-    [docVC.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
-        annots = [docVC.pdfViewCtrl GetAnnotationsOnPage:pageNumber];
+    [documentController.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+        annots = [documentController.pdfViewCtrl GetAnnotationsOnPage:pageNumber];
     } error:&error];
     
     if (error) {
@@ -630,7 +812,7 @@
     return annots;
 }
 
-+(NSArray<PTAnnot *> *)findAnnotsWithUniqueIDs:(NSArray <NSDictionary *>*)idPageNumberPairs documentViewController:(PTDocumentViewController *)docVC error:(NSError **)error
++(NSArray<PTAnnot *> *)findAnnotsWithUniqueIDs:(NSArray <NSDictionary *>*)idPageNumberPairs documentController:(PTDocumentController *)documentController error:(NSError **)error
 {
     NSMutableArray<PTAnnot *> *resultAnnots = [[NSMutableArray alloc] init];
     
@@ -657,8 +839,8 @@
         
         __block NSArray<PTAnnot *> * annotsOnCurrPage;
         
-        [docVC.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
-            annotsOnCurrPage = [PdftronFlutterPlugin getAnnotationsOnPage:[pageNumber intValue] documentViewController:docVC];
+        [documentController.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+            annotsOnCurrPage = [PdftronFlutterPlugin getAnnotationsOnPage:[pageNumber intValue] documentController:documentController];
         } error:error];
         
         if (*error) {
@@ -691,10 +873,8 @@
     return [resultAnnots copy];
 }
 
-- (void)handleOpenDocumentMethod:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)result
+- (void)handleOpenDocumentMethod:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)flutterResult
 {
-
-    [PTOverrides overrideClass:[PTDocumentViewController class] withClass:[PTFlutterViewController class]];
     
     // Get document argument.
     NSString *document = nil;
@@ -719,12 +899,9 @@
     self.tabbedDocumentViewController = [[PTTabbedDocumentViewController alloc] init];
     self.tabbedDocumentViewController.delegate = self;
     self.tabbedDocumentViewController.tabsEnabled = NO;
+    self.tabbedDocumentViewController.viewControllerClass = [PTFlutterDocumentController class];
     
-    self.tabbedDocumentViewController.restorationIdentifier = [NSUUID UUID].UUIDString;
-    
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.tabbedDocumentViewController];
-    
-    self.tabbedDocumentViewController.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(topLeftButtonPressed:)];
+    PTNavigationController *navigationController = [[PTNavigationController alloc] initWithRootViewController:self.tabbedDocumentViewController];
     
     NSString* config = arguments[PTConfigArgumentKey];
     self.config = config;
@@ -743,8 +920,8 @@
     [self.tabbedDocumentViewController openDocumentWithURL:fileURL
                                                   password:password];
     
-    ((PTFlutterViewController*)self.tabbedDocumentViewController.childViewControllers.lastObject).openResult = result;
-    ((PTFlutterViewController*)self.tabbedDocumentViewController.childViewControllers.lastObject).plugin = self;
+    ((PTFlutterDocumentController*)self.tabbedDocumentViewController.childViewControllers.lastObject).openResult = flutterResult;
+    ((PTFlutterDocumentController*)self.tabbedDocumentViewController.childViewControllers.lastObject).plugin = self;
     
     UIViewController *presentingViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     
@@ -756,8 +933,8 @@
 
 - (void)importAnnotations:(NSString *)xfdf resultToken:(FlutterResult)flutterResult
 {
-    PTDocumentViewController *docVC = [self getDocumentViewController];
-    if(docVC.document == Nil)
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
@@ -768,7 +945,7 @@
     
     NSError* error;
     
-    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
         if([doc HasDownloader])
         {
             // too soon
@@ -780,7 +957,7 @@
         PTFDFDoc *fdfDoc = [PTFDFDoc CreateFromXFDF:xfdf];
         
         [doc FDFUpdate:fdfDoc];
-        [docVC.pdfViewCtrl Update:YES];
+        [documentController.pdfViewCtrl Update:YES];
         
     } error:&error];
     
@@ -795,8 +972,8 @@
 
 - (void)exportAnnotations:(NSString *)annotationList resultToken:(FlutterResult)flutterResult
 {
-    PTDocumentViewController *docVC = [self getDocumentViewController];
-    if(docVC.document == Nil)
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
@@ -808,7 +985,7 @@
     NSError *error;
     
     if (!annotationList) {
-        [docVC.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+        [documentController.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
             PTFDFDoc *fdfDoc = [doc FDFExtract:e_ptboth];
             flutterResult([fdfDoc SaveAsXFDFToString]);
         }error:&error];
@@ -822,7 +999,7 @@
     
     NSArray *annotArray = [PdftronFlutterPlugin PT_idAsArray:[PdftronFlutterPlugin PT_JSONStringToId:annotationList]];
     
-    NSArray <PTAnnot *> *matchingAnnots = [PdftronFlutterPlugin findAnnotsWithUniqueIDs:annotArray documentViewController:docVC error:&error];
+    NSArray <PTAnnot *> *matchingAnnots = [PdftronFlutterPlugin findAnnotsWithUniqueIDs:annotArray documentController:documentController error:&error];
     
     if (error) {
         NSLog(@"Error: Failed to get annotations from doc. %@", error.localizedDescription);
@@ -841,7 +1018,7 @@
     }
     
     __block NSString *resultString;
-    [docVC.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+    [documentController.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
         
         PTFDFDoc *fdfDoc = [doc FDFExtractAnnots:resultAnnots];
         resultString = [fdfDoc SaveAsXFDFToString];
@@ -860,10 +1037,10 @@
 
 - (void)flattenAnnotations:(bool)formsOnly resultToken:(FlutterResult)flutterResult
 {
-    PTDocumentViewController *docVC = [self getDocumentViewController];
-    [docVC.toolManager changeTool:[PTPanTool class]];
+    PTDocumentController *documentController = [self getDocumentController];
+    [documentController.toolManager changeTool:[PTPanTool class]];
     
-    if(docVC.document == Nil)
+    if(documentController.document == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
@@ -874,7 +1051,7 @@
     
     NSError *error;
     
-    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
         [doc FlattenAnnotations:formsOnly];
     } error:&error];
     
@@ -889,8 +1066,8 @@
 
 - (void)deleteAnnotations:(NSString *)annotationList resultToken:(FlutterResult)flutterResult
 {
-    PTDocumentViewController *docVC = [self getDocumentViewController];
-    if(docVC.document == Nil)
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
@@ -903,7 +1080,7 @@
     
     NSArray *annotArray = [PdftronFlutterPlugin PT_idAsArray:[PdftronFlutterPlugin PT_JSONStringToId:annotationList]];
     
-    NSArray* matchingAnnots = [PdftronFlutterPlugin findAnnotsWithUniqueIDs:annotArray documentViewController:docVC error:&error];
+    NSArray* matchingAnnots = [PdftronFlutterPlugin findAnnotsWithUniqueIDs:annotArray documentController:documentController error:&error];
     
     if (error) {
         NSLog(@"Error: Failed to get annotations from doc. %@", error.localizedDescription);
@@ -912,18 +1089,18 @@
         return;
     }
     
-    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
         for (PTAnnot *annot in matchingAnnots) {
             PTPage *page = [annot GetPage];
             if (page && [page IsValid]) {
                 int pageNumber = [page GetIndex];
-                [docVC.toolManager willRemoveAnnotation:annot onPageNumber:pageNumber];
+                [documentController.toolManager willRemoveAnnotation:annot onPageNumber:pageNumber];
                 
                 [page AnnotRemoveWithAnnot:annot];
-                [docVC.toolManager annotationRemoved:annot onPageNumber:pageNumber];
+                [documentController.toolManager annotationRemoved:annot onPageNumber:pageNumber];
             }
         }
-        [docVC.pdfViewCtrl Update:YES];
+        [documentController.pdfViewCtrl Update:YES];
     } error:&error];
         
     if (error) {
@@ -933,15 +1110,15 @@
         return;
     }
     
-    [docVC.toolManager changeTool:[PTPanTool class]];
+    [documentController.toolManager changeTool:[PTPanTool class]];
     
     flutterResult(nil);
 }
 
 - (void)selectAnnotation:(NSString *)annotation resultToken:(FlutterResult)flutterResult
 {
-    PTDocumentViewController *docVC = [self getDocumentViewController];
-    if(docVC.document == Nil)
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
@@ -958,7 +1135,7 @@
     
     NSError* error;
     
-    PTAnnot *annot = [PdftronFlutterPlugin findAnnotWithUniqueID:annotId onPageNumber:pageNumber documentViewController:docVC error:&error];
+    PTAnnot *annot = [PdftronFlutterPlugin findAnnotWithUniqueID:annotId onPageNumber:pageNumber documentController:documentController error:&error];
     
     if (error) {
         NSLog(@"Error: Failed to find annotation with unique id. %@", error.localizedDescription);
@@ -967,8 +1144,8 @@
         return;
     }
     
-    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        [docVC.toolManager selectAnnotation:annot onPageNumber:pageNumber];
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        [documentController.toolManager selectAnnotation:annot onPageNumber:pageNumber];
     } error:&error];
     
     if(error) {
@@ -981,8 +1158,8 @@
 
 - (void)setFlagsForAnnotations:(NSString *)annotationsWithFlags resultToken:(FlutterResult)flutterResult
 {
-    PTDocumentViewController *docVC = [self getDocumentViewController];
-    if(docVC.document == Nil)
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
@@ -1001,7 +1178,7 @@
         NSString *currentAnnotationId = [PdftronFlutterPlugin PT_idAsNSString:currentAnnotationDict[PTAnnotIdKey]];
         int currentPageNumber = [[PdftronFlutterPlugin PT_idAsNSNumber:currentAnnotationDict[PTAnnotPageNumberKey]] intValue];
             
-        PTAnnot *currentAnnot = [PdftronFlutterPlugin findAnnotWithUniqueID:currentAnnotationId onPageNumber:currentPageNumber documentViewController:docVC error:&error];
+        PTAnnot *currentAnnot = [PdftronFlutterPlugin findAnnotWithUniqueID:currentAnnotationId onPageNumber:currentPageNumber documentController:documentController error:&error];
         
         if (error) {
             NSLog(@"Error: Failed to find annotation with unique id. %@", error.localizedDescription);
@@ -1040,12 +1217,12 @@
                 
             if (flagNumber != -1) {
                     
-                [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-                    [docVC.toolManager willModifyAnnotation:currentAnnot onPageNumber:currentPageNumber];
+                [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+                    [documentController.toolManager willModifyAnnotation:currentAnnot onPageNumber:currentPageNumber];
                     
                     [currentAnnot SetFlag:flagNumber value:currentFlagValue];
                     
-                    [docVC.toolManager annotationModified:currentAnnot onPageNumber:currentPageNumber];
+                    [documentController.toolManager annotationModified:currentAnnot onPageNumber:currentPageNumber];
                     }error:&error];
                 
                 if (error) {
@@ -1058,23 +1235,25 @@
     flutterResult(nil);
 }
 
-- (void)importAnnotationCommand:(NSString *)xfdfCommand
+- (void)importAnnotationCommand:(NSString *)xfdfCommand resultToken:(FlutterResult)flutterResult
 {
-    PTDocumentViewController *docVC = [self getDocumentViewController];
-    if(docVC.document == Nil)
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"import_annotation_command" message:@"Failed to import annotation command" details:@"Error: The document view controller has no document."]);
         return;
     }
     
     NSError* error;
     
-    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
         if([doc HasDownloader])
         {
             // too soon
             NSLog(@"Error: The document is still being downloaded.");
+            flutterResult([FlutterError errorWithCode:@"import_annotation_command" message:@"Failed to import annotation command" details:@"Error: The document is still being downloaded."]);
             return;
         }
 
@@ -1082,33 +1261,38 @@
         [fdfDoc MergeAnnots:xfdfCommand permitted_user:@""];
         [doc FDFUpdate:fdfDoc];
 
-        [docVC.pdfViewCtrl Update:YES];
+        [documentController.pdfViewCtrl Update:YES];
 
     } error:&error];
     
     if(error)
     {
-        NSLog(@"Error: There was an error while trying to import annotation commands. %@", error.localizedDescription);
+        NSLog(@"Error: There was an error while trying to import annotation command. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"import_annotation_command" message:@"Failed to import annotation command" details:@"Error: There was an error while trying to import annotation command."]);
+    } else {
+        flutterResult(nil);
     }
 }
 
-- (void)importBookmarks:(NSString *)bookmarkJson
+- (void)importBookmarks:(NSString *)bookmarkJson resultToken:(FlutterResult)flutterResult
 {
-    PTDocumentViewController *docVC = [self getDocumentViewController];
-    if(docVC.document == Nil)
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
     {
         // something is wrong, no document.
         NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"import_bookmark_json" message:@"Failed to import bookmark json" details:@"Error: The document view controller has no document."]);
         return;
     }
     
     NSError* error;
     
-    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
         if([doc HasDownloader])
         {
             // too soon
             NSLog(@"Error: The document is still being downloaded.");
+            flutterResult([FlutterError errorWithCode:@"import_bookmark_json" message:@"Failed to import bookmark json" details:@"Error: The document is still being downloaded."]);
             return;
         }
 
@@ -1118,49 +1302,42 @@
     
     if(error)
     {
-        NSLog(@"Error: There was an error while trying to import bookmarks. %@", error.localizedDescription);
+        NSLog(@"Error: There was an error while trying to import annotation command. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"import_bookmark_json" message:@"Failed to import bookmark json" details:@"Error: There was an error while trying to import annotation command."]);
+    } else {
+        flutterResult(nil);
     }
 }
 
 - (void)saveDocument:(FlutterResult)flutterResult
 {
-    PTDocumentViewController *docVC = [self getDocumentViewController];
-    __block NSString* resultString;
+    PTDocumentController *documentController = [self getDocumentController];
 
-    if(docVC.document == Nil)
+    if(documentController.document == Nil)
     {
-        resultString = @"Error: The document view controller has no document.";
-        
         // something is wrong, no document.
-        NSLog(@"%@", resultString);
-        flutterResult(resultString);
-        
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: The document view controller has no document."]);
         return;
     }
     
     NSError* error;
     
-    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
         if([doc HasDownloader])
         {
             // too soon
-            resultString = @"Error: The document is still being downloaded and cannot be saved.";
-            NSLog(@"%@", resultString);
-            flutterResult(resultString);
+            NSLog(@"Error: The document is still being downloaded.");
+            flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: The document is still being downloaded."]);
             return;
         }
 
-        [docVC saveDocument:0 completionHandler:^(BOOL success) {
+        [documentController saveDocument:0 completionHandler:^(BOOL success) {
             if(!success)
             {
-                resultString = @"Error: The file could not be saved.";
-                NSLog(@"%@", resultString);
-                flutterResult(resultString);
-            }
-            else
-            {
-                resultString = @"The file was successfully saved.";
-                flutterResult(resultString);
+                NSLog(@"Error: The document could not be saved.");
+                flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: The document could not be saved."]);
+                return;
             }
         }];
 
@@ -1168,14 +1345,17 @@
     
     if(error)
     {
-        NSLog(@"Error: There was an error while trying to save the document. %@", error.localizedDescription);
+        NSLog(@"Error: There was an error while trying to save document. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: There was an error while trying to save document."]);
+    } else {
+        flutterResult(documentController.coordinatedDocument.fileURL.path);
     }
 }
 
 - (void)commitTool:(FlutterResult)flutterResult
 {
-    PTDocumentViewController *docVC = [self getDocumentViewController];
-    PTToolManager *toolManager = docVC.toolManager;
+    PTDocumentController *documentController = [self getDocumentController];
+    PTToolManager *toolManager = documentController.toolManager;
     if ([toolManager.tool respondsToSelector:@selector(commitAnnotation)]) {
         [toolManager.tool performSelector:@selector(commitAnnotation)];
 
@@ -1189,32 +1369,32 @@
 
 - (void)getPageCount:(FlutterResult)flutterResult
 {
-    PTDocumentViewController *docVC = [self getDocumentViewController];
-    if(docVC.document == Nil)
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
     {
-        NSString *resultString = @"Error: The document view controller has no document.";
-
         // something is wrong, no document.
-        NSLog(@"%@", resultString);
-        flutterResult(resultString);
-
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"get_page_count" message:@"Failed to get page count" details:@"Error: The document view controller has no document."]);
         return;
     }
 
-    flutterResult([NSNumber numberWithInt:docVC.pdfViewCtrl.pageCount]);
+    flutterResult([NSNumber numberWithInt:documentController.pdfViewCtrl.pageCount]);
 }
 
-- (void)getPageCropBox:(NSNumber *)pageNumber resultToken:(FlutterResult)result
+- (void)getPageCropBox:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult
 {
-    PTDocumentViewController *docVC = [self getDocumentViewController];
+    PTDocumentController *documentController = [self getDocumentController];
+    
+    if(documentController.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"get_page_crop_box" message:@"Failed to get page crop box" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+    
     NSError *error;
-    [docVC.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if([doc HasDownloader])
-        {
-            // too soon
-            NSLog(@"Error: The document is still being downloaded.");
-            return;
-        }
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
         
         PTPage *page = [doc GetPage:(int)pageNumber];
         if (page) {
@@ -1229,28 +1409,223 @@
             };
             NSData *jsonData = [NSJSONSerialization dataWithJSONObject:map options:0 error:nil];
             NSString *res = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-            
-            result(res);
+            flutterResult(res);
+        } else {
+            flutterResult(nil);
         }
 
     } error:&error];
     
     if(error)
     {
-        NSLog(@"Error: There was an error while trying to get the page crop box. %@", error.localizedDescription);
+        NSLog(@"Error: There was an error while trying to get page crop box. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to get page crop box" details:@"Error: There was an error while trying to get page crop box"]);
     }
+}
+
+- (void)setToolMode:(NSString *)toolMode resultToken:(FlutterResult)flutterResult;
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    Class toolClass = Nil;
+
+    if ([toolMode isEqualToString:PTAnnotationEditToolKey]) {
+        // multi-select not implemented
+    } else if([toolMode isEqualToString:PTAnnotationCreateStickyToolKey]) {
+        toolClass = [PTStickyNoteCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateFreeHandToolKey]) {
+        toolClass = [PTFreeHandCreate class];
+    } else if ([toolMode isEqualToString:PTTextSelectToolKey]) {
+        toolClass = [PTTextSelectTool class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateSoundToolKey]) {
+        toolClass = [PTSound class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateTextHighlightToolKey]) {
+        toolClass = [PTTextHighlightCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateTextUnderlineToolKey]) {
+        toolClass = [PTTextUnderlineCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateTextSquigglyToolKey]) {
+        toolClass = [PTTextSquigglyCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateTextStrikeoutToolKey]) {
+        toolClass = [PTTextStrikeoutCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateFreeTextToolKey]) {
+        toolClass = [PTFreeTextCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateCalloutToolKey]) {
+        toolClass = [PTCalloutCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateSignatureToolKey]) {
+        toolClass = [PTDigitalSignatureTool class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateLineToolKey]) {
+        toolClass = [PTLineCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateArrowToolKey]) {
+        toolClass = [PTArrowCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreatePolylineToolKey]) {
+        toolClass = [PTPolylineCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateStampToolKey]) {
+        toolClass = [PTImageStampCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateRectangleToolKey]) {
+        toolClass = [PTRectangleCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateEllipseToolKey]) {
+        toolClass = [PTEllipseCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreatePolygonToolKey]) {
+        toolClass = [PTPolygonCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreatePolygonCloudToolKey]) {
+        toolClass = [PTCloudCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateDistanceMeasurementToolKey]) {
+        toolClass = [PTRulerCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreatePerimeterMeasurementToolKey]) {
+        toolClass = [PTPerimeterCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateAreaMeasurementToolKey]) {
+        toolClass = [PTAreaCreate class];
+    } else if ([toolMode isEqualToString:PTEraserToolKey]) {
+        toolClass = [PTEraser class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateFreeHighlighterToolKey]) {
+        toolClass = [PTFreeHandHighlightCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateRubberStampToolKey]) {
+        toolClass = [PTRubberStampCreate class];
+
+    }
+
+    if (toolClass) {
+        PTTool *tool = [documentController.toolManager changeTool:toolClass];
+
+        tool.backToPanToolAfterUse = !((PTFlutterDocumentController *)documentController).isContinuousAnnotationEditingEnabled;
+
+        if ([tool isKindOfClass:[PTFreeHandCreate class]]
+            && ![tool isKindOfClass:[PTFreeHandHighlightCreate class]]) {
+            ((PTFreeHandCreate *)tool).multistrokeMode = YES;
+        }
+    }
+
+    flutterResult(nil);
+}
+
+- (void)setFlagForFields:(NSArray <NSString *> *)fieldNames flag:(NSNumber *)flag flagValue:(bool)flagValue resultToken:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"set_flag_for_fields" message:@"Failed to set flag for fields" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+
+    PTPDFViewCtrl *pdfViewCtrl = documentController.pdfViewCtrl;
+    PTFieldFlag fieldFlag = (PTFieldFlag)flag.intValue;
+    NSError *error;
+
+    [pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        for (NSString *fieldName in fieldNames) {
+            PTField *field = [doc GetField:fieldName];
+            if ([field IsValid]) {
+                [field SetFlag:fieldFlag value:flagValue];
+                [pdfViewCtrl UpdateWithField:field];
+            }
+        }
+    } error:&error];
+
+    if (error) {
+        NSLog(@"Error: Failed to set flag for fields. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"set_flag_for_fields" message:@"Failed to set flag for fields" details:@"Error: Failed to set flag for fields."]);
+    } else {
+        flutterResult(nil);
+    }
+}
+
+- (void)setValuesForFields:(NSString *)fieldWithValuesString resultToken:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    NSArray *fieldWithValues = [PdftronFlutterPlugin PT_idAsArray:[PdftronFlutterPlugin PT_JSONStringToId:fieldWithValuesString]];
+    if(documentController.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"set_values_for_fields" message:@"Failed to set values for fields" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+
+    PTPDFViewCtrl *pdfViewCtrl = documentController.pdfViewCtrl;
+    NSError *error;
+
+    [pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+
+        for (NSDictionary *fieldWithValue in fieldWithValues) {
+            NSString *fieldName = [PdftronFlutterPlugin PT_idAsNSString:fieldWithValue[PTFieldNameKey]];
+            id fieldValue = fieldWithValue[PTFieldValueKey];
+            PTField *field = [doc GetField:fieldName];
+
+            if ([field IsValid]) {
+                [self setFieldValue:field value:fieldValue pdfViewCtrl:pdfViewCtrl];
+            }
+        }
+
+    } error:&error];
+
+    if (error) {
+        NSLog(@"Error: Failed to set values for fields. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"set_values_for_fields" message:@"Failed to set values for fields" details:@"Error: Failed to set values for fields."]);
+    } else {
+        flutterResult(nil);
+    }
+}
+
+// write-lock required around this method
+- (void)setFieldValue:(PTField *)field value:(id)value pdfViewCtrl:(PTPDFViewCtrl *)pdfViewCtrl
+{
+    const PTFieldType fieldType = [field GetType];
+
+    // boolean or number
+    if ([value isKindOfClass:[NSNumber class]]) {
+        NSNumber *numberValue = (NSNumber *)value;
+
+        if (fieldType == e_ptcheck) {
+            const BOOL fieldValue = numberValue.boolValue;
+            PTViewChangeCollection *changeCollection = [field SetValueWithBool:fieldValue];
+            [pdfViewCtrl RefreshAndUpdate:changeCollection];
+        }
+        else if (fieldType == e_pttext) {
+            NSString *fieldValue = numberValue.stringValue;
+
+            PTViewChangeCollection *changeCollection = [field SetValueWithString:fieldValue];
+            [pdfViewCtrl RefreshAndUpdate:changeCollection];
+        }
+    }
+    // string
+    else if ([value isKindOfClass:[NSString class]]) {
+        NSString *fieldValue = (NSString *)value;
+
+        if (fieldValue &&
+            (fieldType == e_pttext || fieldType == e_ptradio || fieldType == e_ptchoice)) {
+            PTViewChangeCollection *changeCollection = [field SetValueWithString:fieldValue];
+            [pdfViewCtrl RefreshAndUpdate:changeCollection];
+        }
+    }
+}
+
+- (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon resultToken:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"set_leading_nav_button_icon" message:@"Failed to set leading nav button icon" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+
+    [(PTFlutterDocumentController *)documentController setLeadingNavButtonIcon:leadingNavButtonIcon];
+    
+    flutterResult(nil);
 }
 
 #pragma mark - Helper
 
-- (PTDocumentViewController *)getDocumentViewController {
-    PTDocumentViewController* docVC = self.tabbedDocumentViewController.selectedViewController;
+- (PTDocumentController *)getDocumentController {
+    PTDocumentController* documentController = self.tabbedDocumentViewController.selectedViewController;
     
-    if(docVC == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
+    if(documentController == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
     {
-        docVC = self.tabbedDocumentViewController.childViewControllers.lastObject;
+        documentController = self.tabbedDocumentViewController.childViewControllers.lastObject;
     }
-    return docVC;
+    return documentController;
 }
 
 + (NSString *)PT_idAsNSString:(id)value
@@ -1300,6 +1675,98 @@
 + (id)PT_JSONStringToId:(NSString *)jsonString {
     NSData *annotListData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
     return [NSJSONSerialization JSONObjectWithData:annotListData options:kNilOptions error:nil];
+}
+
++ (Class)toolClassForKey:(NSString *)key
+{
+    if ([key isEqualToString:PTAnnotationEditToolKey]) {
+        return [PTAnnotSelectTool class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateStickyToolKey] ||
+             [key isEqualToString:PTStickyToolButtonKey]) {
+        return [PTStickyNoteCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateFreeHandToolKey] ||
+             [key isEqualToString:PTFreeHandToolButtonKey]) {
+        return [PTFreeHandCreate class];
+    }
+    else if ([key isEqualToString:PTTextSelectToolKey]) {
+        return [PTTextSelectTool class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateTextHighlightToolKey] ||
+             [key isEqualToString:PTHighlightToolButtonKey]) {
+        return [PTTextHighlightCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateTextUnderlineToolKey] ||
+             [key isEqualToString:PTUnderlineToolButtonKey]) {
+        return [PTTextUnderlineCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateTextSquigglyToolKey] ||
+             [key isEqualToString:PTSquigglyToolButtonKey]) {
+        return [PTTextSquigglyCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateTextStrikeoutToolKey] ||
+             [key isEqualToString:PTStrikeoutToolButtonKey]) {
+        return [PTTextStrikeoutCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateFreeTextToolKey] ||
+             [key isEqualToString:PTFreeTextToolButtonKey]) {
+        return [PTFreeTextCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateCalloutToolKey] ||
+             [key isEqualToString:PTCalloutToolButtonKey]) {
+        return [PTCalloutCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateSignatureToolKey] ||
+             [key isEqualToString:PTSignatureToolButtonKey]) {
+        return [PTDigitalSignatureTool class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateLineToolKey] ||
+             [key isEqualToString:PTLineToolButtonKey]) {
+        return [PTLineCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateArrowToolKey] ||
+             [key isEqualToString:PTArrowToolButtonKey]) {
+        return [PTArrowCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreatePolylineToolKey] ||
+             [key isEqualToString:PTPolylineToolButtonKey]) {
+        return [PTPolylineCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateStampToolKey] ||
+             [key isEqualToString:PTStampToolButtonKey]) {
+        return [PTImageStampCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateRectangleToolKey] ||
+             [key isEqualToString:PTRectangleToolButtonKey]) {
+        return [PTRectangleCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateEllipseToolKey] ||
+             [key isEqualToString:PTEllipseToolButtonKey]) {
+        return [PTEllipseCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreatePolygonToolKey] ||
+             [key isEqualToString:PTPolygonToolButtonKey]) {
+        return [PTPolygonCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreatePolygonCloudToolKey] ||
+             [key isEqualToString:PTCloudToolButtonKey]) {
+        return [PTCloudCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateFileAttachmentToolKey]) {
+        return [PTFileAttachmentCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateDistanceMeasurementToolKey]) {
+        return [PTRulerCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreatePerimeterMeasurementToolKey]) {
+        return [PTPerimeterCreate class];
+    }
+    else if ([key isEqualToString:PTAnnotationCreateAreaMeasurementToolKey]) {
+        return [PTAreaCreate class];
+    }
+    
+    return Nil;
 }
 
 @end

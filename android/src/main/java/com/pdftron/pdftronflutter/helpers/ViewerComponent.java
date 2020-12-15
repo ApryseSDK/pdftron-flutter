@@ -6,8 +6,8 @@ import androidx.annotation.Nullable;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
-import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
-import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.ToolManager;
 
 import java.util.HashMap;
@@ -33,16 +33,22 @@ public interface ViewerComponent {
 
     EventChannel.EventSink getFormFieldValueChangedEventEmitter();
 
+    EventChannel.EventSink getLeadingNavButtonPressedEventEmitter();
+
+    EventChannel.EventSink getPageChangedEventEmitter();
+
+    EventChannel.EventSink getZoomChangedEventEmitter();
+
     MethodChannel.Result getFlutterLoadResult();
 
     HashMap<Annot, Integer> getSelectedAnnots();
 
     // Convenience
     @Nullable
-    PdfViewCtrlTabHostFragment getPdfViewCtrlTabHostFragment();
+    PdfViewCtrlTabHostFragment2 getPdfViewCtrlTabHostFragment();
 
     @Nullable
-    PdfViewCtrlTabFragment getPdfViewCtrlTabFragment();
+    PdfViewCtrlTabFragment2 getPdfViewCtrlTabFragment();
 
     @Nullable
     PDFViewCtrl getPdfViewCtrl();

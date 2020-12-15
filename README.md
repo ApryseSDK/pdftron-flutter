@@ -18,6 +18,12 @@
 :--:|:--:
 ![demo](./flutter-pdftron-demo-android.gif) | ![demo](./flutter-pdftron-demo-ios.gif)
 
+## Legacy UI
+
+Version `0.0.6` is the last stable release for the legacy UI.
+
+The release can be found here: https://github.com/PDFTron/pdftron-flutter/releases/tag/legacy-ui.
+
 ## Installation
 
 The complete installation and API guides can be found at https://www.pdftron.com/documentation/android/flutter
@@ -291,14 +297,48 @@ Optional parameters:
 - `password`: String, password to an encrypted document
 - `config`: Config, viewer configuration options
 
+configs (more info could be found in `lib/config.dart`):
+
+Name | Type | Default | Explanation
+-- | -- | -- | -- | 
+disabledElements | array of `Buttons` constants | empty | Buttons to be disabled for the viewer
+disabledTools | array of `Tools` constants | empty | Tools to be disabled for the viewer
+multiTabEnabled | boolean | false | enable document multi-tab mode
+customerHeaders | map<string, string> | empty | custom headers to use with HTTP/HTTPS requests
+annotationToolbars | array of `CustomToolbar` objects or `DefaultToolbars` constants| | Defines custom toolbars. If passed in, default toolbars will no longer appear.
+hideDefaultAnnotationToolbars | array of `DefaultToolbars` objects| empty | Defines which default toolbars should be hidden
+hideAnnotationToolbarSwitcher | boolean | false | Defines whether to show the toolbar switcher in the top toolbar
+hideTopToolbars | boolean | false | Defines whether to show both the top nav app bar and the annotation toolbar
+hideTopAppNavBar | boolean | false | Defines whether to show the top nav app bar
+showLeadingNavButton | boolean | true | Whether to show the leading navigation button
+readOnly | boolean | false | whether the document is read-only
+thumbnailViewEditingEnabled | boolean | true | whether use could modify through thumbnail view
+annotationAuthor | string | | the author name for all annotations in the current document
+continuousAnnotationEditing | boolean | false | whether annotations could be continuously edited
+
 ```dart
 var disabledElements = [Buttons.shareButton, Buttons.searchButton];
 var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
+var customToolbar = new CustomToolbar('myToolbar', 'myToolbar', [Tools.annotationCreateArrow, Tools.annotationCreateCallout], ToolbarIcons.favorite);
+var annotationToolbars = [DefaultToolbars.annotate, customToolbar];
+// var hideDefaultAnnotationToolbars = [DefaultToolbars.annotate, DefaultToolbars.draw];
+
 var config = Config();
 config.disabledElements = disabledElements;
 config.disabledTools = disabledTools;
+config.multiTabEnabled = false;
 config.customHeaders = {'headerName': 'headerValue'};
-PdftronFlutter.openDocument(_document, config: config);
+config.annotationToolbars = annotationToolbars;
+// config.hideDefaultAnnotationToolbars = hideDefaultAnnotationToolbars;
+config.hideAnnotationToolbarSwitcher = false;
+config.hideTopToolbars = false;
+config.hideTopAppNavBar = false;
+config.showLeadingNavButton = true;
+config.readOnly = false;
+config.thumbnailViewEditingEnabled = false;
+config.annotationAuthor = "PDFTron";
+config.continuousAnnotationEditing = true;
+await PdftronFlutter.openDocument(_document, config: config);
 ```
 ### PdftronFlutter.importAnnotations(String)
 Imports XFDF string to current document.
@@ -408,7 +448,6 @@ list.add(new AnnotWithFlags('Pdftron', 10, AnnotationFlags.no_zoom, true));
 PdftronFlutter.setFlagsForAnnotations(annotsWithFlags);
 ```
 
-
 ### PdftronFlutter.importAnnotationCommand(String)
 
 Imports XFDF command string to the document.
@@ -417,7 +456,7 @@ The XFDF needs to be a valid command format with `<add>` `<modify>` `<delete>` t
 ### PdftronFlutter.importBookmarkJson(String)
 
 Imports user bookmarks to the document.
-The input needs to be a valid bookmark JSON format, for example `{"0":"Page 1"}`.
+The input needs to be a valid bookmark JSON format, for example `{"0":"Page 1"}`.
 
 ### PdftronFlutter.saveDocument()
 
@@ -461,9 +500,58 @@ print("Back button handled: $handled");
 Return a map object with values for position (bottom-left: `x1`, `y1`; top-right: `x2`, `y2`) and size (`width`, `height`) of the crop box for specified page. Values all have type `double`.
 
 ```dart
-var cropBox = await controller.getPageCropBox(1);
+var cropBox = await PdftronFlutter.getPageCropBox(1);
 print('The width of crop box for page 1 is: ' + cropBox.width.toString());
 ```
+
+### PdftronFlutter.setToolMode(String)
+
+To set the current tool mode (`Tools` constants in `lib/option.dart`).
+
+```dart
+ PdftronFlutter.setToolMode(Tools.annotationCreateEllipse);
+```
+
+### PdftronFlutter.setFlagForFields(List<`String`>, flag: int, flagValue: bool)
+
+Set a field flag value on one or more form fields.
+
+Params
+Name | Type | Description
+--- | ---| ---
+fieldNames | List<`String`> | A list of field names to be set
+flag | int | The flag to be set, one of the constants from `FieldFlags` in `lib/options.dart`
+flagValue | bool | To turn on/off the flag for the fields
+
+```dart
+ PdftronFlutter.setFlagForFields(['First Name', 'Last Name'], FieldFlags.Required, true);
+```
+
+### PdftronFlutter.setValuesForFields(List<`Field`>)
+
+Set field values on one or more form fields of different types. Field values to be set could be in type number, bool or string.
+
+For more details about `Field`, please check `lib/options.dart` file.
+
+```dart
+PdftronFlutter.setValuesForFields([
+      new Field('textField1', "Pdftron"),
+      new Field('textField2', 12.34),
+      new Field('checkboxField1', true),
+      new Field('checkboxField2', false),
+      new Field('radioField', 'Yes'),
+      new Field('choiceField', 'No')
+    ]);
+```
+
+### PdftronFlutter.setLeadingNavButtonIcon(String)
+
+Set the icon path to the navigation button. The button would use the specified icon if `showLeadingNavButton` (which by default is true) is true in the config.
+
+```dart
+PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp');
+```
+
 
 ## Events
 
@@ -552,6 +640,38 @@ var fieldChangedCancel = startFormFieldValueChangedListener((fields)
     print("Field has name ${field.fieldName}");
     print("Field has value ${field.fieldValue}");
   }
+});
+```
+### startLeadingNavButtonPressedListener
+
+Event is raised when the leading navigation button is pressed.
+
+```dart
+var navPressedCancel = startLeadingNavButtonPressedListener(()
+{
+  print("flutter nav button pressed");
+});
+```
+
+### startPageChangedListener
+
+Event is raised when page changes.
+
+```dart
+var pageChangedCancel = startPageChangedListener((previousPageNumber, pageNumber)
+{
+  print("flutter page changed. from $previousPageNumber to $pageNumber");
+});
+```
+
+### startZoomChangedListener
+
+Event is raised when zoom ratio is changed in the current document.
+
+```dart
+var zoomChangedCancel = startZoomChangedListener((zoom) 
+{
+  print("flutter zoom changed. Current zoom is: $zoom");
 });
 ```
 
