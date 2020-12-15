@@ -10,7 +10,7 @@ import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.Field;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.annots.Widget;
-import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.tools.QuickMenu;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.ToolManager;
@@ -52,7 +52,7 @@ public class ViewerImpl {
         toolManager.addPdfDocModificationListener(mPdfDocModificationListener);
     }
 
-    public void addListeners(@NonNull PdfViewCtrlTabFragment pdfViewCtrlTabFragment) {
+    public void addListeners(@NonNull PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment) {
         pdfViewCtrlTabFragment.addQuickMenuListener(mQuickMenuListener);
     }
 
@@ -67,7 +67,7 @@ public class ViewerImpl {
         toolManager.removePdfDocModificationListener(mPdfDocModificationListener);
     }
 
-    public void removeListeners(@NonNull PdfViewCtrlTabFragment pdfViewCtrlTabFragment) {
+    public void removeListeners(@NonNull PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment) {
         pdfViewCtrlTabFragment.removeQuickMenuListener(mQuickMenuListener);
     }
 
