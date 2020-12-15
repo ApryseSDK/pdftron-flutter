@@ -426,6 +426,9 @@
     // nav icon
     [self applyNavIcon];
     
+    // thumbnail filter mode
+    [self applyHideThumbnailFilterModes];
+    
     const BOOL hideNav = (self.topAppNavBarHidden || self.topToolbarsHidden);
     self.controlsHidden = hideNav;
     
@@ -476,6 +479,26 @@
                                             forSizeClass:UIUserInterfaceSizeClassRegular
                                                 animated:NO];
     }
+}
+
+- (void)applyHideThumbnailFilterModes
+{
+    NSMutableArray <PTFilterMode>* filterModeArray = [[NSMutableArray alloc] init];
+
+    [filterModeArray addObject:PTThumbnailFilterAll];
+    [filterModeArray addObject:PTThumbnailFilterAnnotated];
+    [filterModeArray addObject:PTThumbnailFilterBookmarked];
+
+    for (NSString * filterModeString in self.hideThumbnailFilterModes) {
+        if ([filterModeString isEqualToString:PTAnnotatedFilterModeKey]) {
+            [filterModeArray removeObject:PTThumbnailFilterAnnotated];
+        } else if ([filterModeString isEqualToString:PTBookmarkedFilterModeKey]) {
+            [filterModeArray removeObject:PTThumbnailFilterBookmarked];
+        }
+    }
+
+    NSOrderedSet* filterModeSet = [[NSOrderedSet alloc] initWithArray:filterModeArray];
+    self.thumbnailsViewController.filterModes = filterModeSet;
 }
 
 - (void)applyToolGroupSettings

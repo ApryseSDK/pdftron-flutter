@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL documentLoaded;
 
 // viewer options
+@property (nonatomic, copy, nullable) NSArray <NSString *> *hideThumbnailFilterModes;
+
 @property (nonatomic, copy, nullable) NSArray<NSString *> * annotationToolbars;
 @property (nonatomic, copy, nullable) NSArray<NSString *> * hideDefaultAnnotationToolbars;
 @property (nonatomic, assign, getter=isAnnotationToolbarSwitcherHidden) BOOL annotationToolbarSwitcherHidden; // hideAnnotationToolbarSwitcher configuration option
