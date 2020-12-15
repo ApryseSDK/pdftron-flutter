@@ -7,16 +7,16 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
 
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
-import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
-import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
-import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
@@ -33,8 +33,7 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleLeadingNavBut
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOnDetach;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOpenDocError;
 
-public class DocumentView extends com.pdftron.pdf.controls.DocumentView implements ViewerComponent {
-
+public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 implements ViewerComponent {
     private ViewerImpl mImpl = new ViewerImpl(this);
 
     private ToolManagerBuilder mToolManagerBuilder;
@@ -55,6 +54,13 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     private MethodChannel.Result sFlutterLoadResult;
 
     private HashMap<Annot, Integer> mSelectedAnnots;
+
+    private ToolManager.AnnotationModificationListener sAnnotationModificationListener;
+    private ToolManager.PdfDocModificationListener sPdfDocModificationListener;
+    private ToolManager.AnnotationsSelectionListener sAnnotationsSelectionListener;
+
+    private int mId = 0;
+    private FragmentManager mFragmentManager;
 
     public DocumentView(@NonNull Context context) {
         this(context, null);
@@ -77,31 +83,31 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
         setDocumentUri(configInfo.getFileUri());
         setPassword(password);
         setCustomHeaders(configInfo.getCustomHeaderJson());
+
         setShowNavIcon(configInfo.isShowLeadingNavButton());
-        setViewerConfig(mBuilder.build());
+        setViewerConfig(getConfig());
         setFlutterLoadResult(result);
 
-        ViewerBuilder viewerBuilder = ViewerBuilder.withUri(configInfo.getFileUri(), password)
-                .usingCustomHeaders(configInfo.getCustomHeaderJson())
-                .usingConfig(mBuilder.build())
-                .usingNavIcon(mShowNavIcon ? mNavIconRes : 0);
-        if (mPdfViewCtrlTabHostFragment != null) {
-            mPdfViewCtrlTabHostFragment.onOpenAddNewTab(viewerBuilder.createBundle(getContext()));
-        } else {
-            mPdfViewCtrlTabHostFragment = viewerBuilder.build(getContext());
-            if (mFragmentManager != null) {
-                mFragmentManager.beginTransaction().add(mPdfViewCtrlTabHostFragment, "document_view").commitNow();
-                View fragmentView = mPdfViewCtrlTabHostFragment.getView();
-                if (fragmentView != null) {
-                    addView(fragmentView, -1, -1);
-                }
-            }
-        }
+        this.prepView();
         attachListeners();
     }
 
+    @Override
+    public void setSupportFragmentManager(FragmentManager fragmentManager) {
+        super.setSupportFragmentManager(fragmentManager);
+        mFragmentManager = fragmentManager;
+    }
+
+    @Override
+    public int getId() {
+        if (mId == 0) {
+            mId = View.generateViewId();
+        }
+        return mId;
+    }
+
     public void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
-        PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = getPdfViewCtrlTabHostFragment();
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment = getPdfViewCtrlTabHostFragment();
         if (mShowNavIcon && pdfViewCtrlTabHostFragment != null
                 && pdfViewCtrlTabHostFragment.getToolbar() != null) {
             int res = Utils.getResourceDrawable(getContext(), leadingNavButtonIcon);
@@ -151,7 +157,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
 
     @Override
     protected void onAttachedToWindow() {
-        setViewerConfig(getConfig());
+        setSupportFragmentManager(mFragmentManager);
         super.onAttachedToWindow();
     }
 
@@ -299,12 +305,12 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView implemen
     // Convenience
 
     @Nullable
-    public PdfViewCtrlTabHostFragment getPdfViewCtrlTabHostFragment() {
+    public PdfViewCtrlTabHostFragment2 getPdfViewCtrlTabHostFragment() {
         return mPdfViewCtrlTabHostFragment;
     }
 
     @Nullable
-    public PdfViewCtrlTabFragment getPdfViewCtrlTabFragment() {
+    public PdfViewCtrlTabFragment2 getPdfViewCtrlTabFragment() {
         if (mPdfViewCtrlTabHostFragment != null) {
             return mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment();
         }

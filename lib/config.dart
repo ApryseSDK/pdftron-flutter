@@ -6,6 +6,11 @@ class Config {
   var _multiTabEnabled;
   var _customHeaders;
   var _hideThumbnailFilterModes;
+  var _annotationToolbars;
+  var _hideDefaultAnnotationToolbars;
+  var _hideAnnotationToolbarSwitcher;
+  var _hideTopToolbars;
+  var _hideTopAppNavBar;
   var _showLeadingNavButton;
   var _readOnly;
   var _thumbnailViewEditingEnabled;
@@ -19,6 +24,13 @@ class Config {
   set multiTabEnabled(bool value) => _multiTabEnabled = value;
   set customHeaders(Map<String, String> value) => _customHeaders = value;
   set hideThumbnailFilterModes(List value) => _hideThumbnailFilterModes = value;
+  set annotationToolbars(List value) => _annotationToolbars = value;
+  set hideDefaultAnnotationToolbars(List value) =>
+      _hideDefaultAnnotationToolbars = value;
+  set hideAnnotationToolbarSwitcher(bool value) =>
+      _hideAnnotationToolbarSwitcher = value;
+  set hideTopToolbars(bool value) => _hideTopToolbars = value;
+  set hideTopAppNavBar(bool value) => _hideTopAppNavBar = value;
   set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
   set readOnly(bool value) => _readOnly = value;
   set thumbnailViewEditingEnabled(bool value) =>
@@ -33,6 +45,11 @@ class Config {
         _multiTabEnabled = json['multiTabEnabled'],
         _customHeaders = json['customHeaders'],
         _hideThumbnailFilterModes = json['hideThumbnailFilterModes'],
+        _annotationToolbars = json['annotationToolbars'],
+        _hideDefaultAnnotationToolbars = json['hideDefaultAnnotationToolbars'],
+        _hideAnnotationToolbarSwitcher = json['hideAnnotationToolbarSwitcher'],
+        _hideTopToolbars = json['hideTopToolbars'],
+        _hideTopAppNavBar = json['hideTopAppNavBar'],
         _showLeadingNavButton = json['showLeadingNavButton'],
         _readOnly = json['readOnly'],
         _thumbnailViewEditingEnabled = json['thumbnailViewEditingEnabled'],
@@ -45,6 +62,11 @@ class Config {
         'multiTabEnabled': _multiTabEnabled,
         'customHeaders': _customHeaders,
         'hideThumbnailFilterModes': _hideThumbnailFilterModes,
+        'annotationToolbars': _annotationToolbars,
+        'hideDefaultAnnotationToolbars': _hideDefaultAnnotationToolbars,
+        'hideAnnotationToolbarSwitcher': _hideAnnotationToolbarSwitcher,
+        'hideTopToolbars': _hideTopToolbars,
+        'hideTopAppNavBar': _hideTopAppNavBar,
         'showLeadingNavButton': _showLeadingNavButton,
         'readOnly': _readOnly,
         'thumbnailViewEditingEnabled': _thumbnailViewEditingEnabled,
