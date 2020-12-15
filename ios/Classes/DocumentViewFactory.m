@@ -1,5 +1,5 @@
 #import "PdftronFlutterPlugin.h"
-#import "PTFlutterViewController.h"
+#import "PTFlutterDocumentController.h"
 #import "DocumentViewFactory.h"
 
 @implementation DocumentViewFactory
