@@ -1,7 +1,6 @@
 package com.pdftron.pdftronflutter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 
@@ -16,8 +15,8 @@ import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
-import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
-import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
@@ -82,30 +81,30 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     }
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config, @DrawableRes int navIconId) {
-        Intent intent = new Intent(packageContext, FlutterDocumentActivity.class);
+        DocumentActivity.IntentBuilder intentBuilder = DocumentActivity.IntentBuilder.fromActivityClass(packageContext, FlutterDocumentActivity.class);
+
         if (null != fileUri) {
-            intent.putExtra("extra_file_uri", fileUri);
+            intentBuilder.withUri(fileUri);
         }
 
         if (null != password) {
-            intent.putExtra("extra_file_password", password);
+            intentBuilder.usingPassword(password);
         }
 
         if (null != customHeaders) {
-            intent.putExtra("extra_custom_headers", customHeaders.toString());
+            intentBuilder.usingCustomHeaders(customHeaders);
         }
 
-        intent.putExtra("extra_nav_icon", navIconId);
-        intent.putExtra("extra_config", config);
-        intent.putExtra(EXTRA_NEW_UI, false);
-
-        packageContext.startActivity(intent);
+        intentBuilder.usingNavIcon(navIconId);
+        intentBuilder.usingConfig(config);
+        intentBuilder.usingNewUi(true);
+        packageContext.startActivity(intentBuilder.build());
     }
 
     public static void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
         FlutterDocumentActivity documentActivity = getCurrentActivity();
         if (documentActivity != null) {
-            PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = documentActivity.getPdfViewCtrlTabHostFragment();
+            PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment = documentActivity.getPdfViewCtrlTabHostFragment();
             if (mShowLeadingNavButton && pdfViewCtrlTabHostFragment != null
                     && pdfViewCtrlTabHostFragment.getToolbar() != null) {
                 int res = Utils.getResourceDrawable(pdfViewCtrlTabHostFragment.getToolbar().getContext(), leadingNavButtonIcon);
@@ -297,14 +296,14 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     // Convenience
 
     @Nullable
-    public PdfViewCtrlTabHostFragment getPdfViewCtrlTabHostFragment() {
-        return mPdfViewCtrlTabHostFragment;
+    public PdfViewCtrlTabHostFragment2 getPdfViewCtrlTabHostFragment() {
+        return mPdfViewCtrlTabHostFragment2;
     }
 
     @Nullable
-    public PdfViewCtrlTabFragment getPdfViewCtrlTabFragment() {
-        if (mPdfViewCtrlTabHostFragment != null) {
-            return mPdfViewCtrlTabHostFragment.getCurrentPdfViewCtrlFragment();
+    public PdfViewCtrlTabFragment2 getPdfViewCtrlTabFragment() {
+        if (mPdfViewCtrlTabHostFragment2 != null) {
+            return mPdfViewCtrlTabHostFragment2.getCurrentPdfViewCtrlFragment();
         }
         return null;
     }
