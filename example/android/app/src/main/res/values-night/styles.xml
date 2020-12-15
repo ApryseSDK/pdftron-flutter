@@ -8,8 +8,4 @@
         <item name="android:colorBackground">#212634</item>
     </style>
 
-    <style name="MyThumbnailSliderStyle" parent="ThumbnailSliderStyle">
-        <item name="colorBackground">#212634</item>
-    </style>
-
 </resources>

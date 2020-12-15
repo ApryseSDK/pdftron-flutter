@@ -7,7 +7,7 @@
         <activity
             android:name=".FlutterDocumentActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize"
-            android:theme="@style/CustomAppTheme"
+            android:theme="@style/PDFTronAppTheme"
             android:windowSoftInputMode="adjustPan" />
 
     </application>

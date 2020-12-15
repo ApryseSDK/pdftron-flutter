@@ -21,8 +21,8 @@ import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
-import com.pdftron.pdf.controls.PdfViewCtrlTabFragment;
-import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment;
+import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.model.AnnotStyle;
 import com.pdftron.pdf.tools.AdvancedShapeCreate;
 import com.pdftron.pdf.tools.FreehandCreate;
@@ -33,6 +33,9 @@ import com.pdftron.pdf.utils.BookmarkManager;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.utils.ViewerUtils;
+import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
+import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
+import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 import com.pdftron.pdftronflutter.R;
 
 import org.apache.commons.io.FilenameUtils;
@@ -84,6 +87,11 @@ public class PluginUtils {
     public static final String KEY_CONFIG_HIDE_ANNOTATION_MENU = "hideAnnotationMenu";
     public static final String KEY_CONFIG_ANNOTATION_MENU_ITEMS = "annotationMenuItems";
     public static final String KEY_CONFIG_OVERRIDE_ANNOTATION_MENU_BEHAVIOR = "overrideAnnotationMenuBehavior";
+    public static final String KEY_CONFIG_ANNOTATION_TOOLBARS = "annotationToolbars";
+    public static final String KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS = "hideDefaultAnnotationToolbars";
+    public static final String KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER = "hideAnnotationToolbarSwitcher";
+    public static final String KEY_CONFIG_HIDE_TOP_TOOLBARS = "hideTopToolbars";
+    public static final String KEY_CONFIG_HIDE_TOP_APP_NAV_BAR = "hideTopAppNavBar";
     public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
     public static final String KEY_CONFIG_READ_ONLY = "readOnly";
     public static final String KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED = "thumbnailViewEditingEnabled";
@@ -167,6 +175,8 @@ public class PluginUtils {
     public static final String BUTTON_FILL_AND_SIGN = "fillAndSignButton";
     public static final String BUTTON_PREPARE_FORM = "prepareFormButton";
     public static final String BUTTON_REFLOW_MODE = "reflowModeButton";
+    public static final String BUTTON_UNDO = "undo";
+    public static final String BUTTON_REDO = "redo";
 
     public static final String TOOL_BUTTON_FREE_HAND = "freeHandToolButton";
     public static final String TOOL_BUTTON_HIGHLIGHT = "highlightToolButton";
@@ -206,13 +216,13 @@ public class PluginUtils {
     public static final String TOOL_ANNOTATION_CREATE_DISTANCE_MEASUREMENT = "AnnotationCreateDistanceMeasurement";
     public static final String TOOL_ANNOTATION_CREATE_PERIMETER_MEASUREMENT = "AnnotationCreatePerimeterMeasurement";
     public static final String TOOL_ANNOTATION_CREATE_AREA_MEASUREMENT = "AnnotationCreateAreaMeasurement";
+    public static final String TOOL_ANNOTATION_CREATE_FILE_ATTACHMENT = "AnnotationCreateFileAttachment";
     public static final String TOOL_TEXT_SELECT = "TextSelect";
     public static final String TOOL_ANNOTATION_EDIT = "AnnotationEdit";
     public static final String TOOL_ANNOTATION_CREATE_SOUND = "AnnotationCreateSound";
     public static final String TOOL_ANNOTATION_CREATE_FREE_HIGHLIGHTER = "AnnotationCreateFreeHighlighter";
     public static final String TOOL_ANNOTATION_CREATE_RUBBER_STAMP = "AnnotationCreateRubberStamp";
     public static final String TOOL_ERASER = "Eraser";
-    public static final String TOOL_ANNOTATION_CREATE_FILE_ATTACHMENT = "annotationCreateFileAttachment";
     public static final String TOOL_ANNOTATION_CREATE_REDACTION = "AnnotationCreateRedaction";
     public static final String TOOL_ANNOTATION_CREATE_REDACTION_TEXT = "AnnotationCreateRedactionText";
     public static final String TOOL_ANNOTATION_CREATE_LINK = "AnnotationCreateLink";
@@ -223,6 +233,7 @@ public class PluginUtils {
     public static final String TOOL_FORM_CREATE_RADIO_FIELD = "FormCreateRadioField";
     public static final String TOOL_FORM_CREATE_COMBO_BOX_FIELD = "FormCreateComboBoxField";
     public static final String TOOL_FORM_CREATE_TOOL_BOX_FIELD = "FormCreateToolBoxField";
+    public static final String TOOL_FORM_CREATE_LIST_BOX_FIELD = "FormCreateListBoxField";
 
     public static final String ANNOTATION_FLAG_HIDDEN = "hidden";
     public static final String ANNOTATION_FLAG_INVISIBLE = "invisible";
@@ -308,6 +319,23 @@ public class PluginUtils {
     public static final String MENU_ID_STRING_TRANSLATE = "translate";
     public static final String MENU_ID_STRING_TYPE = "type";
     public static final String MENU_ID_STRING_UNGROUP = "ungroup";
+
+    // Toolbars
+    public static final String TAG_VIEW_TOOLBAR = "PDFTron_View";
+    public static final String TAG_ANNOTATE_TOOLBAR = "PDFTron_Annotate";
+    public static final String TAG_DRAW_TOOLBAR = "PDFTron_Draw";
+    public static final String TAG_INSERT_TOOLBAR = "PDFTron_Insert";
+    public static final String TAG_FILL_AND_SIGN_TOOLBAR = "PDFTron_Fill_and_Sign";
+    public static final String TAG_PREPARE_FORM_TOOLBAR = "PDFTron_Prepare_Form";
+    public static final String TAG_MEASURE_TOOLBAR = "PDFTron_Measure";
+    public static final String TAG_PENS_TOOLBAR = "PDFTron_Pens";
+    public static final String TAG_FAVORITE_TOOLBAR = "PDFTron_Favorite";
+
+    // Custom toolbars
+    public static final String TOOLBAR_KEY_ID = "id";
+    public static final String TOOLBAR_KEY_NAME = "name";
+    public static final String TOOLBAR_KEY_ICON = "icon";
+    public static final String TOOLBAR_KEY_ITEMS = "items";
 
     public static class ConfigInfo {
         private JSONObject customHeaderJson;
@@ -455,6 +483,33 @@ public class PluginUtils {
                     ArrayList<String> annotationMenuOverrideItems = convertJSONArrayToArrayList(array);
                     configInfo.setAnnotationMenuOverrideItems(annotationMenuOverrideItems);
                 }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_TOOLBARS)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_ANNOTATION_TOOLBARS);
+                    setAnnotationBars(array, builder);
+                }
+                if (!configJson.isNull(KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS);
+                    ArrayList<String> tagList = new ArrayList<>();
+                    for (int i = 0; i < array.length(); i++) {
+                        String tag = array.getString(i);
+                        if (!Utils.isNullOrEmpty(tag)) {
+                            tagList.add(tag);
+                        }
+                    }
+                    builder = builder.hideToolbars(tagList.toArray(new String[tagList.size()]));
+                }
+                if (!configJson.isNull(KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER)) {
+                    boolean hideAnnotationToolbarSwitcher = configJson.getBoolean(KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER);
+                    builder = builder.showToolbarSwitcher(!hideAnnotationToolbarSwitcher);
+                }
+                if (!configJson.isNull(KEY_CONFIG_HIDE_TOP_TOOLBARS)) {
+                    boolean hideTopToolbars = configJson.getBoolean(KEY_CONFIG_HIDE_TOP_TOOLBARS);
+                    builder = builder.showAppBar(!hideTopToolbars);
+                }
+                if (!configJson.isNull(KEY_CONFIG_HIDE_TOP_APP_NAV_BAR)) {
+                    boolean hideTopAppNavBars = configJson.getBoolean(KEY_CONFIG_HIDE_TOP_APP_NAV_BAR);
+                    builder = builder.showTopToolbar(!hideTopAppNavBars);
+                }
                 if (!configJson.isNull(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON)) {
                     boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
                     configInfo.setShowLeadingNavButton(showLeadingNavButton);
@@ -506,6 +561,58 @@ public class PluginUtils {
                 .toolManagerBuilder(toolManagerBuilder);
 
         return configInfo;
+    }
+
+    private static void setAnnotationBars(JSONArray array, ViewerConfig.Builder builder) throws JSONException {
+        for (int i = 0; i < array.length(); i++) {
+            Object annotationBar = array.get(i);
+            if (annotationBar instanceof String) {
+                String tag = (String) annotationBar;
+                if (isValidToolbarTag(tag)) {
+                    builder = builder.addToolbarBuilder(
+                            DefaultToolbars.getDefaultAnnotationToolbarBuilderByTag(tag)
+                    );
+                }
+            } else if (annotationBar instanceof JSONObject) {
+                JSONObject object = (JSONObject) annotationBar;
+                String toolbarId = null, toolbarName = null, toolbarIcon = null;
+                JSONArray toolbarItems = null;
+
+                if (!object.isNull(TOOLBAR_KEY_ID)) {
+                    toolbarId = object.getString(TOOLBAR_KEY_ID);
+                }
+                if (!object.isNull(TOOLBAR_KEY_NAME)) {
+                    toolbarName = object.getString(TOOLBAR_KEY_NAME);
+                }
+                if (!object.isNull(TOOLBAR_KEY_ICON)) {
+                    toolbarIcon = object.getString(TOOLBAR_KEY_ICON);
+                }
+                if (!object.isNull(TOOLBAR_KEY_ITEMS)) {
+                    toolbarItems = getJSONArrayFromJSONObject(object, TOOLBAR_KEY_ITEMS);
+                }
+
+                if (!Utils.isNullOrEmpty(toolbarId) && !Utils.isNullOrEmpty(toolbarName)
+                        && toolbarItems != null && toolbarItems.length() > 0) {
+                    AnnotationToolbarBuilder toolbarBuilder = AnnotationToolbarBuilder.withTag(toolbarId)
+                            .setToolbarName(toolbarName)
+                            .setIcon(convStringToToolbarDefaultIconRes(toolbarIcon));
+                    for (int j = 0; j < toolbarItems.length(); j++) {
+                        String toolStr = toolbarItems.getString(j);
+                        ToolbarButtonType buttonType = convStringToToolbarType(toolStr);
+                        int buttonId = convStringToButtonId(toolStr);
+                        if (buttonType != null && buttonId != 0) {
+                            if (buttonType == ToolbarButtonType.UNDO ||
+                                    buttonType == ToolbarButtonType.REDO) {
+                                toolbarBuilder.addToolStickyButton(buttonType, buttonId);
+                            } else {
+                                toolbarBuilder.addToolButton(buttonType, buttonId);
+                            }
+                        }
+                    }
+                    builder = builder.addToolbarBuilder(toolbarBuilder);
+                }
+            }
+        }
     }
 
     private static Uri getUri(Context context, String path, boolean isBase64) {
@@ -875,6 +982,207 @@ public class PluginUtils {
         }
 
         return menuStr;
+    }
+
+    private static boolean isValidToolbarTag(String tag) {
+        if (tag != null) {
+            if (TAG_VIEW_TOOLBAR.equals(tag) ||
+                    TAG_ANNOTATE_TOOLBAR.equals(tag) ||
+                    TAG_DRAW_TOOLBAR.equals(tag) ||
+                    TAG_INSERT_TOOLBAR.equals(tag) ||
+                    TAG_FILL_AND_SIGN_TOOLBAR.equals(tag) ||
+                    TAG_PREPARE_FORM_TOOLBAR.equals(tag) ||
+                    TAG_MEASURE_TOOLBAR.equals(tag) ||
+                    TAG_PENS_TOOLBAR.equals(tag) ||
+                    TAG_FAVORITE_TOOLBAR.equals(tag)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static int convStringToButtonId(String item) {
+        int buttonId = 0;
+        if (TOOL_BUTTON_FREE_HAND.equals(item) || TOOL_ANNOTATION_CREATE_FREE_HAND.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.INK.value();
+        } else if (TOOL_BUTTON_HIGHLIGHT.equals(item) || TOOL_ANNOTATION_CREATE_TEXT_HIGHLIGHT.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.TEXT_HIGHLIGHT.value();
+        } else if (TOOL_BUTTON_UNDERLINE.equals(item) || TOOL_ANNOTATION_CREATE_TEXT_UNDERLINE.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.TEXT_UNDERLINE.value();
+        } else if (TOOL_BUTTON_SQUIGGLY.equals(item) || TOOL_ANNOTATION_CREATE_TEXT_SQUIGGLY.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.TEXT_SQUIGGLY.value();
+        } else if (TOOL_BUTTON_STRIKEOUT.equals(item) || TOOL_ANNOTATION_CREATE_TEXT_STRIKEOUT.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.TEXT_STRIKEOUT.value();
+        } else if (TOOL_BUTTON_RECTANGLE.equals(item) || TOOL_ANNOTATION_CREATE_RECTANGLE.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.SQUARE.value();
+        } else if (TOOL_BUTTON_ELLIPSE.equals(item) || TOOL_ANNOTATION_CREATE_ELLIPSE.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.CIRCLE.value();
+        } else if (TOOL_BUTTON_LINE.equals(item) || TOOL_ANNOTATION_CREATE_LINE.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.LINE.value();
+        } else if (TOOL_BUTTON_ARROW.equals(item) || TOOL_ANNOTATION_CREATE_ARROW.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.ARROW.value();
+        } else if (TOOL_BUTTON_POLYLINE.equals(item) || TOOL_ANNOTATION_CREATE_POLYLINE.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.POLYLINE.value();
+        } else if (TOOL_BUTTON_POLYGON.equals(item) || TOOL_ANNOTATION_CREATE_POLYGON.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.POLYGON.value();
+        } else if (TOOL_BUTTON_CLOUD.equals(item) || TOOL_ANNOTATION_CREATE_POLYGON_CLOUD.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.POLY_CLOUD.value();
+        } else if (TOOL_BUTTON_SIGNATURE.equals(item) || TOOL_ANNOTATION_CREATE_SIGNATURE.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.SIGNATURE.value();
+        } else if (TOOL_BUTTON_FREE_TEXT.equals(item) || TOOL_ANNOTATION_CREATE_FREE_TEXT.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.FREE_TEXT.value();
+        } else if (TOOL_BUTTON_STICKY.equals(item) || TOOL_ANNOTATION_CREATE_STICKY.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.STICKY_NOTE.value();
+        } else if (TOOL_BUTTON_CALLOUT.equals(item) || TOOL_ANNOTATION_CREATE_CALLOUT.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.CALLOUT.value();
+        } else if (TOOL_BUTTON_STAMP.equals(item) || TOOL_ANNOTATION_CREATE_STAMP.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.STAMP.value();
+        } else if (TOOL_ANNOTATION_CREATE_RUBBER_STAMP.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.STAMP.value();
+        } else if (TOOL_ANNOTATION_CREATE_DISTANCE_MEASUREMENT.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.RULER.value();
+        } else if (TOOL_ANNOTATION_CREATE_PERIMETER_MEASUREMENT.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.PERIMETER.value();
+        } else if (TOOL_ANNOTATION_CREATE_AREA_MEASUREMENT.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.AREA.value();
+        } else if (TOOL_ANNOTATION_CREATE_FILE_ATTACHMENT.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.ATTACHMENT.value();
+        } else if (TOOL_ANNOTATION_CREATE_SOUND.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.SOUND.value();
+        } else if (TOOL_ANNOTATION_CREATE_REDACTION.equals(item)) {
+            // TODO
+        } else if (TOOL_ANNOTATION_CREATE_LINK.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.LINK.value();
+        } else if (TOOL_ANNOTATION_CREATE_REDACTION_TEXT.equals(item)) {
+            // TODO
+        } else if (TOOL_ANNOTATION_CREATE_LINK_TEXT.equals(item)) {
+            // TODO
+        } else if (TOOL_ANNOTATION_EDIT.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.MULTI_SELECT.value();
+        } else if (TOOL_FORM_CREATE_TEXT_FIELD.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.TEXT_FIELD.value();
+        } else if (TOOL_FORM_CREATE_CHECKBOX_FIELD.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.CHECKBOX.value();
+        } else if (TOOL_FORM_CREATE_SIGNATURE_FIELD.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.SIGNATURE_FIELD.value();
+        } else if (TOOL_FORM_CREATE_RADIO_FIELD.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.RADIO_BUTTON.value();
+        } else if (TOOL_FORM_CREATE_COMBO_BOX_FIELD.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.COMBO_BOX.value();
+        } else if (TOOL_FORM_CREATE_LIST_BOX_FIELD.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.LIST_BOX.value();
+        } else if (TOOL_ERASER.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.ERASER.value();
+        } else if (BUTTON_UNDO.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.UNDO.value();
+        } else if (BUTTON_REDO.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.REDO.value();
+        }
+        return buttonId;
+    }
+
+    @Nullable
+    private static ToolbarButtonType convStringToToolbarType(String item) {
+        ToolbarButtonType buttonType = null;
+        if (TOOL_BUTTON_FREE_HAND.equals(item) || TOOL_ANNOTATION_CREATE_FREE_HAND.equals(item)) {
+            buttonType = ToolbarButtonType.INK;
+        } else if (TOOL_BUTTON_HIGHLIGHT.equals(item) || TOOL_ANNOTATION_CREATE_TEXT_HIGHLIGHT.equals(item)) {
+            buttonType = ToolbarButtonType.TEXT_HIGHLIGHT;
+        } else if (TOOL_BUTTON_UNDERLINE.equals(item) || TOOL_ANNOTATION_CREATE_TEXT_UNDERLINE.equals(item)) {
+            buttonType = ToolbarButtonType.TEXT_UNDERLINE;
+        } else if (TOOL_BUTTON_SQUIGGLY.equals(item) || TOOL_ANNOTATION_CREATE_TEXT_SQUIGGLY.equals(item)) {
+            buttonType = ToolbarButtonType.TEXT_SQUIGGLY;
+        } else if (TOOL_BUTTON_STRIKEOUT.equals(item) || TOOL_ANNOTATION_CREATE_TEXT_STRIKEOUT.equals(item)) {
+            buttonType = ToolbarButtonType.TEXT_STRIKEOUT;
+        } else if (TOOL_BUTTON_RECTANGLE.equals(item) || TOOL_ANNOTATION_CREATE_RECTANGLE.equals(item)) {
+            buttonType = ToolbarButtonType.SQUARE;
+        } else if (TOOL_BUTTON_ELLIPSE.equals(item) || TOOL_ANNOTATION_CREATE_ELLIPSE.equals(item)) {
+            buttonType = ToolbarButtonType.CIRCLE;
+        } else if (TOOL_BUTTON_LINE.equals(item) || TOOL_ANNOTATION_CREATE_LINE.equals(item)) {
+            buttonType = ToolbarButtonType.LINE;
+        } else if (TOOL_BUTTON_ARROW.equals(item) || TOOL_ANNOTATION_CREATE_ARROW.equals(item)) {
+            buttonType = ToolbarButtonType.ARROW;
+        } else if (TOOL_BUTTON_POLYLINE.equals(item) || TOOL_ANNOTATION_CREATE_POLYLINE.equals(item)) {
+            buttonType = ToolbarButtonType.POLYLINE;
+        } else if (TOOL_BUTTON_POLYGON.equals(item) || TOOL_ANNOTATION_CREATE_POLYGON.equals(item)) {
+            buttonType = ToolbarButtonType.POLYGON;
+        } else if (TOOL_BUTTON_CLOUD.equals(item) || TOOL_ANNOTATION_CREATE_POLYGON_CLOUD.equals(item)) {
+            buttonType = ToolbarButtonType.POLY_CLOUD;
+        } else if (TOOL_BUTTON_SIGNATURE.equals(item) || TOOL_ANNOTATION_CREATE_SIGNATURE.equals(item)) {
+            buttonType = ToolbarButtonType.SIGNATURE;
+        } else if (TOOL_BUTTON_FREE_TEXT.equals(item) || TOOL_ANNOTATION_CREATE_FREE_TEXT.equals(item)) {
+            buttonType = ToolbarButtonType.FREE_TEXT;
+        } else if (TOOL_BUTTON_STICKY.equals(item) || TOOL_ANNOTATION_CREATE_STICKY.equals(item)) {
+            buttonType = ToolbarButtonType.STICKY_NOTE;
+        } else if (TOOL_BUTTON_CALLOUT.equals(item) || TOOL_ANNOTATION_CREATE_CALLOUT.equals(item)) {
+            buttonType = ToolbarButtonType.CALLOUT;
+        } else if (TOOL_BUTTON_STAMP.equals(item) || TOOL_ANNOTATION_CREATE_STAMP.equals(item)) {
+            buttonType = ToolbarButtonType.STAMP;
+        } else if (TOOL_ANNOTATION_CREATE_RUBBER_STAMP.equals(item)) {
+            buttonType = ToolbarButtonType.STAMP;
+        } else if (TOOL_ANNOTATION_CREATE_DISTANCE_MEASUREMENT.equals(item)) {
+            buttonType = ToolbarButtonType.RULER;
+        } else if (TOOL_ANNOTATION_CREATE_PERIMETER_MEASUREMENT.equals(item)) {
+            buttonType = ToolbarButtonType.PERIMETER;
+        } else if (TOOL_ANNOTATION_CREATE_AREA_MEASUREMENT.equals(item)) {
+            buttonType = ToolbarButtonType.AREA;
+        } else if (TOOL_ANNOTATION_CREATE_FILE_ATTACHMENT.equals(item)) {
+            buttonType = ToolbarButtonType.ATTACHMENT;
+        } else if (TOOL_ANNOTATION_CREATE_SOUND.equals(item)) {
+            buttonType = ToolbarButtonType.SOUND;
+        } else if (TOOL_ANNOTATION_CREATE_REDACTION.equals(item)) {
+            // TODO
+        } else if (TOOL_ANNOTATION_CREATE_LINK.equals(item)) {
+            buttonType = ToolbarButtonType.LINK;
+        } else if (TOOL_ANNOTATION_CREATE_REDACTION_TEXT.equals(item)) {
+            // TODO
+        } else if (TOOL_ANNOTATION_CREATE_LINK_TEXT.equals(item)) {
+            // TODO
+        } else if (TOOL_ANNOTATION_EDIT.equals(item)) {
+            buttonType = ToolbarButtonType.MULTI_SELECT;
+        } else if (TOOL_FORM_CREATE_TEXT_FIELD.equals(item)) {
+            buttonType = ToolbarButtonType.TEXT_FIELD;
+        } else if (TOOL_FORM_CREATE_CHECKBOX_FIELD.equals(item)) {
+            buttonType = ToolbarButtonType.CHECKBOX;
+        } else if (TOOL_FORM_CREATE_SIGNATURE_FIELD.equals(item)) {
+            buttonType = ToolbarButtonType.SIGNATURE_FIELD;
+        } else if (TOOL_FORM_CREATE_RADIO_FIELD.equals(item)) {
+            buttonType = ToolbarButtonType.RADIO_BUTTON;
+        } else if (TOOL_FORM_CREATE_COMBO_BOX_FIELD.equals(item)) {
+            buttonType = ToolbarButtonType.COMBO_BOX;
+        } else if (TOOL_FORM_CREATE_LIST_BOX_FIELD.equals(item)) {
+            buttonType = ToolbarButtonType.LIST_BOX;
+        } else if (TOOL_ERASER.equals(item)) {
+            buttonType = ToolbarButtonType.ERASER;
+        } else if (BUTTON_UNDO.equals(item)) {
+            buttonType = ToolbarButtonType.UNDO;
+        } else if (BUTTON_REDO.equals(item)) {
+            buttonType = ToolbarButtonType.REDO;
+        }
+        return buttonType;
+    }
+
+    private static int convStringToToolbarDefaultIconRes(String item) {
+        if (TAG_VIEW_TOOLBAR.equals(item)) {
+            return R.drawable.ic_view;
+        } else if (TAG_ANNOTATE_TOOLBAR.equals(item)) {
+            return R.drawable.ic_annotation_underline_black_24dp;
+        } else if (TAG_DRAW_TOOLBAR.equals(item)) {
+            return R.drawable.ic_pens_and_shapes;
+        } else if (TAG_INSERT_TOOLBAR.equals(item)) {
+            return R.drawable.ic_add_image_white;
+        } else if (TAG_FILL_AND_SIGN_TOOLBAR.equals(item)) {
+            return R.drawable.ic_fill_and_sign;
+        } else if (TAG_PREPARE_FORM_TOOLBAR.equals(item)) {
+            return R.drawable.ic_prepare_form;
+        } else if (TAG_MEASURE_TOOLBAR.equals(item)) {
+            return R.drawable.ic_annotation_distance_black_24dp;
+        } else if (TAG_PENS_TOOLBAR.equals(item)) {
+            return R.drawable.ic_annotation_freehand_black_24dp;
+        } else if (TAG_FAVORITE_TOOLBAR.equals(item)) {
+            return R.drawable.ic_star_white_24dp;
+        }
+        return 0;
     }
 
     public static void onMethodCall(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
@@ -1403,7 +1711,7 @@ public class PluginUtils {
     }
 
     private static void saveDocument(MethodChannel.Result result, ViewerComponent component) {
-        PdfViewCtrlTabFragment pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
+        PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
         if (pdfViewCtrlTabFragment != null) {
             pdfViewCtrlTabFragment.setSavingEnabled(true);
             pdfViewCtrlTabFragment.save(false, true, true);
@@ -1443,7 +1751,7 @@ public class PluginUtils {
     }
 
     private static void handleBackButton(MethodChannel.Result result, ViewerComponent component) {
-        PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = component.getPdfViewCtrlTabHostFragment();
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment = component.getPdfViewCtrlTabHostFragment();
         if (pdfViewCtrlTabHostFragment == null) {
             result.error("InvalidState", "Activity not attached", null);
             return;
@@ -1570,7 +1878,7 @@ public class PluginUtils {
     }
 
     private static void setLeadingNavButtonIcon(String leadingNavButtonIcon, MethodChannel.Result result, ViewerComponent component) {
-        PdfViewCtrlTabHostFragment pdfViewCtrlTabHostFragment = component.getPdfViewCtrlTabHostFragment();
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment = component.getPdfViewCtrlTabHostFragment();
         if (pdfViewCtrlTabHostFragment == null) {
             result.error("InvalidState", "PDFViewCtrl not found", null);
             return;
@@ -1622,7 +1930,7 @@ public class PluginUtils {
             component.getImpl().removeListeners(toolManager);
         }
 
-        PdfViewCtrlTabFragment pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
+        PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
         if (pdfViewCtrlTabFragment != null) {
             component.getImpl().removeListeners(pdfViewCtrlTabFragment);
 
@@ -1647,7 +1955,7 @@ public class PluginUtils {
             component.getImpl().addListeners(toolManager);
         }
 
-        PdfViewCtrlTabFragment pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
+        PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
         if (pdfViewCtrlTabFragment != null) {
             component.getImpl().addListeners(pdfViewCtrlTabFragment);
 
