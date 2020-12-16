@@ -571,7 +571,7 @@
     [self documentController:documentController documentError:nil];
     if (result) {
         result([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
-    }
+    } 
 }
 
 #pragma mark - FlutterStreamHandler
