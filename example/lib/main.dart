@@ -16,6 +16,7 @@ class _MyAppState extends State<MyApp> {
   String _version = 'Unknown';
   String _document =
       "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
+  bool _showWidget = true;
 
   @override
   void initState() {
@@ -112,9 +113,12 @@ class _MyAppState extends State<MyApp> {
           child: Container(
             width: double.infinity,
             height: double.infinity,
-            // child: DocumentView(
-            //   onCreated: _onDocumentViewCreated,
-            // ),
+            // Uncomment this to access the widget version.
+            // child: _showWidget
+            //     ? DocumentView(
+            //         onCreated: _onDocumentViewCreated,
+            //       )
+            //     : Container(),
           ),
         ),
       ),
@@ -123,7 +127,16 @@ class _MyAppState extends State<MyApp> {
 
   void _onDocumentViewCreated(DocumentViewController controller) {
     Config config = new Config();
+
     config.showLeadingNavButton = false;
+
+    // This callback is here if you un-hide the nav button via config.
+    // var navCancel = startLeadingNavButtonPressedListener(() {
+    //   // Implement your desired functionality here.
+    //   this.setState(() {
+    //     _showWidget = !_showWidget;
+    //   });
+    // });
 
     controller.openDocument(_document, config: config);
   }
