@@ -277,6 +277,8 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     @Override
     public void onNavButtonPressed() {
         handleLeadingNavButtonPressed(this);
+
+        super.onNavButtonPressed();
     }
 
     private void attachActivity() {

@@ -122,6 +122,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _onDocumentViewCreated(DocumentViewController controller) {
-    controller.openDocument(_document);
+    Config config = new Config();
+    config.showLeadingNavButton = false;
+
+    controller.openDocument(_document, config: config);
   }
 }

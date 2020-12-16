@@ -87,7 +87,7 @@
 
 - (void)presentTabbedDocumentViewController
 {
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:self.tabbedDocumentViewController];
+    PTNavigationController *navigationController = [[PTNavigationController alloc] initWithRootViewController:self.tabbedDocumentViewController];
     
     UIViewController *presentingViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     
@@ -372,8 +372,6 @@
 {
     if (!self.isWidgetView) {
         [self.tabbedDocumentViewController.navigationController dismissViewControllerAnimated:YES completion:nil];
-    } else {
-        [UIApplication.sharedApplication.keyWindow.rootViewController dismissViewControllerAnimated:YES completion:nil];
     }
     
     [self documentController:[self getDocumentController] leadingNavButtonClicked:nil];

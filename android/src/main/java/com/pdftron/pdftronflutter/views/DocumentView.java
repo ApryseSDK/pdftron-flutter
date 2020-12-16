@@ -190,6 +190,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     @Override
     public void onNavButtonPressed() {
         handleLeadingNavButtonPressed(this);
+
+        super.onNavButtonPressed();
     }
 
     public void setExportAnnotationCommandEventEmitter(EventChannel.EventSink emitter) {
