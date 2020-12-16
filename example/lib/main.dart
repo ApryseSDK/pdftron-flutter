@@ -132,7 +132,7 @@ class _MyAppState extends State<MyApp> {
 
     // This callback is here if you un-hide the nav button via config.
     // var navCancel = startLeadingNavButtonPressedListener(() {
-    //   // Implement your desired functionality here.
+    //   // Implement your desired functionality here. The following code will hide the widget.
     //   this.setState(() {
     //     _showWidget = !_showWidget;
     //   });
