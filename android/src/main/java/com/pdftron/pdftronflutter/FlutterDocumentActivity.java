@@ -14,6 +14,7 @@ import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder;
+import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
@@ -37,7 +38,6 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleLeadingNavBut
 public class FlutterDocumentActivity extends DocumentActivity implements ViewerComponent {
 
     private ViewerImpl mImpl = new ViewerImpl(this);
-    private static PdfViewCtrlTabHostFragment2 sPdfViewCtrlTabHostFragment;
 
     private static boolean mShowLeadingNavButton;
 
@@ -80,12 +80,14 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
     public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, ViewerConfig config, @DrawableRes int navIconId) {
 
-        if (sPdfViewCtrlTabHostFragment != null) {
-            ViewerBuilder viewerBuilder = ViewerBuilder.withUri(fileUri, password)
+        if (getCurrentActivity() != null && getCurrentActivity().getPdfViewCtrlTabHostFragment() != null) {
+
+            ViewerBuilder2 viewerBuilder = ViewerBuilder2.withUri(fileUri, password)
                     .usingCustomHeaders(customHeaders)
                     .usingConfig(config)
                     .usingNavIcon(navIconId);
-            sPdfViewCtrlTabHostFragment.onOpenAddNewTab(viewerBuilder.createBundle(packageContext));
+
+            getCurrentActivity().getPdfViewCtrlTabHostFragment().onOpenAddNewTab(viewerBuilder.createBundle(packageContext));
         } else {
             DocumentActivity.IntentBuilder intentBuilder = DocumentActivity.IntentBuilder.fromActivityClass(packageContext, FlutterDocumentActivity.class);
 
@@ -234,8 +236,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         super.onCreate(savedInstanceState);
 
         attachActivity();
-
-        sPdfViewCtrlTabHostFragment = this.getPdfViewCtrlTabHostFragment();
     }
 
     @Override
@@ -254,8 +254,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sLeadingNavButtonPressedEventEmitter.set(null);
         sPageChangedEventEmitter.set(null);
         sZoomChangedEventEmitter.set(null);
-
-        sPdfViewCtrlTabHostFragment = null;
 
         detachActivity();
     }
