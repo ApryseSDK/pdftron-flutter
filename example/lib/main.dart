@@ -113,7 +113,7 @@ class _MyAppState extends State<MyApp> {
           child: Container(
             width: double.infinity,
             height: double.infinity,
-            // Uncomment this to access the widget version.
+            // Uncomment this to access the widget version. (The widget version is the non full-screen version.)
             // child: _showWidget
             //     ? DocumentView(
             //         onCreated: _onDocumentViewCreated,
