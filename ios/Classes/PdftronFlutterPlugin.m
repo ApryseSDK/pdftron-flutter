@@ -511,7 +511,9 @@
 {
     NSLog(@"Document opened successfully");
     FlutterResult result = ((PTFlutterDocumentController*)documentController).openResult;
-    result(@"Opened Document Successfully");
+    if (result) {
+        result(@"Opened Document Successfully");
+    }
 }
 
 - (void)documentController:(PTDocumentController *)documentController didFailToOpenDocumentWithError:(NSError *)error
@@ -519,7 +521,9 @@
     NSLog(@"Failed to open document: %@", error);
     FlutterResult result = ((PTFlutterDocumentController*)documentController).openResult;
     [self documentController:documentController documentError:nil];
-    result([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
+    if (result) {
+        result([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
+    } 
 }
 
 #pragma mark - FlutterStreamHandler
