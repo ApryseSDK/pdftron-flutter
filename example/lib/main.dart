@@ -25,6 +25,8 @@ class _MyAppState extends State<MyApp> {
     showViewer();
   }
 
+  var myDocumentPath;
+
   // Platform messages are asynchronous, so we initialize in an async method.
   Future<void> initPlatformState() async {
     String version;
@@ -59,8 +61,14 @@ class _MyAppState extends State<MyApp> {
 //      config.multiTabEnabled = true;
 //      config.customHeaders = {'headerName': 'headerValue'};
 
-    var documentLoadedCancel = startDocumentLoadedListener((filePath) {
+    var documentLoaded = startDocumentLoadedListener((filePath) {
       print("document loaded: $filePath");
+      myDocumentPath = filePath;
+    });
+
+    var navPressedCancel = startLeadingNavButtonPressedListener(()
+    {
+      print("Upload document, path is: $myDocumentPath");
     });
 
     await PdftronFlutter.openDocument(_document, config: config);
