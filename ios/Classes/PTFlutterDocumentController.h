@@ -31,6 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, nullable) NSString* leadingNavButtonIcon;
 
+@property (nonatomic, copy, nullable) NSString* tabTitle;
+
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
 

@@ -15,6 +15,7 @@ class Config {
   var _thumbnailViewEditingEnabled;
   var _annotationAuthor;
   var _continuousAnnotationEditing;
+  var _tabTitle;
 
   Config();
 
@@ -36,6 +37,7 @@ class Config {
   set annotationAuthor(String value) => _annotationAuthor = value;
   set continuousAnnotationEditing(bool value) =>
       _continuousAnnotationEditing = value;
+  set tabTitle(String value) => _tabTitle = value;
 
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
@@ -51,7 +53,8 @@ class Config {
         _readOnly = json['readOnly'],
         _thumbnailViewEditingEnabled = json['thumbnailViewEditingEnabled'],
         _annotationAuthor = json['annotationAuthor'],
-        _continuousAnnotationEditing = json['continuousAnnotationEditing'];
+        _continuousAnnotationEditing = json['continuousAnnotationEditing'],
+        _tabTitle = json['tabTitle'];
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -68,5 +71,6 @@ class Config {
         'thumbnailViewEditingEnabled': _thumbnailViewEditingEnabled,
         'annotationAuthor': _annotationAuthor,
         'continuousAnnotationEditing': _continuousAnnotationEditing,
+        'tabTitle': _tabTitle,
       };
 }
