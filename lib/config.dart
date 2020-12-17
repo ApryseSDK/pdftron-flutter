@@ -17,6 +17,7 @@ class Config {
   var _continuousAnnotationEditing;
   var _annotationPermissionCheckEnabled;
   var _overrideBehavior;
+  var _tabTitle;
 
   Config();
 
@@ -41,6 +42,7 @@ class Config {
   set annotationPermissionCheckEnabled(bool value) =>
       _annotationPermissionCheckEnabled = value;
   set overrideBehavior(List<String> value) => _overrideBehavior = value;
+  set tabTitle(String value) => _tabTitle = value;
 
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
@@ -59,7 +61,8 @@ class Config {
         _continuousAnnotationEditing = json['continuousAnnotationEditing'],
         _annotationPermissionCheckEnabled =
             json['annotationPermissionCheckEnabled'],
-        _overrideBehavior = json['overrideBehavior'];
+        _overrideBehavior = json['overrideBehavior'],
+        _tabTitle = json['tabTitle'];
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -78,5 +81,6 @@ class Config {
         'continuousAnnotationEditing': _continuousAnnotationEditing,
         'annotationPermissionCheckEnabled': _annotationPermissionCheckEnabled,
         'overrideBehavior': _overrideBehavior,
+        'tabTitle': _tabTitle,
       };
 }

@@ -13,6 +13,8 @@ import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
+import com.pdftron.pdf.config.ViewerBuilder;
+import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
@@ -76,29 +78,40 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         }
     }
 
-    public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config) {
+    public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, ViewerConfig config) {
         openDocument(packageContext, fileUri, password, customHeaders, config, DEFAULT_NAV_ICON_ID);
     }
 
-    public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, @Nullable ViewerConfig config, @DrawableRes int navIconId) {
-        DocumentActivity.IntentBuilder intentBuilder = DocumentActivity.IntentBuilder.fromActivityClass(packageContext, FlutterDocumentActivity.class);
+    public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, ViewerConfig config, @DrawableRes int navIconId) {
 
-        if (null != fileUri) {
-            intentBuilder.withUri(fileUri);
+        if (getCurrentActivity() != null && getCurrentActivity().getPdfViewCtrlTabHostFragment() != null) {
+
+            ViewerBuilder2 viewerBuilder = ViewerBuilder2.withUri(fileUri, password)
+                    .usingCustomHeaders(customHeaders)
+                    .usingConfig(config)
+                    .usingNavIcon(navIconId);
+
+            getCurrentActivity().getPdfViewCtrlTabHostFragment().onOpenAddNewTab(viewerBuilder.createBundle(packageContext));
+        } else {
+            DocumentActivity.IntentBuilder intentBuilder = DocumentActivity.IntentBuilder.fromActivityClass(packageContext, FlutterDocumentActivity.class);
+
+            if (null != fileUri) {
+                intentBuilder.withUri(fileUri);
+            }
+
+            if (null != password) {
+                intentBuilder.usingPassword(password);
+            }
+
+            if (null != customHeaders) {
+                intentBuilder.usingCustomHeaders(customHeaders);
+            }
+
+            intentBuilder.usingNavIcon(navIconId);
+            intentBuilder.usingConfig(config);
+            intentBuilder.usingNewUi(true);
+            packageContext.startActivity(intentBuilder.build());
         }
-
-        if (null != password) {
-            intentBuilder.usingPassword(password);
-        }
-
-        if (null != customHeaders) {
-            intentBuilder.usingCustomHeaders(customHeaders);
-        }
-
-        intentBuilder.usingNavIcon(navIconId);
-        intentBuilder.usingConfig(config);
-        intentBuilder.usingNewUi(true);
-        packageContext.startActivity(intentBuilder.build());
     }
 
     public static void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
@@ -279,6 +292,8 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     @Override
     public void onNavButtonPressed() {
         handleLeadingNavButtonPressed(this);
+
+        super.onNavButtonPressed();
     }
 
     private void attachActivity() {

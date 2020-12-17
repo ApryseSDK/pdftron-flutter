@@ -35,6 +35,8 @@
     if (![self.toolManager isReadonly] && self.readOnly) {
         self.toolManager.readonly = YES;
     }
+    
+    [self.plugin.tabbedDocumentViewController.tabManager saveItems];
 }
 
 - (void)setThumbnailSliderHidden:(BOOL)hidden animated:(BOOL)animated
@@ -684,7 +686,7 @@
     return !self.toolManager.tool.backToPanToolAfterUse;
 }
 
-- (NSString *)getAnnotationAuthor
+- (NSString *)annotationAuthor
 {
     return self.toolManager.annotationAuthor;
 }
@@ -702,6 +704,16 @@
 - (BOOL)isAnnotationPermissionCheckEnabled
 {
     return self.toolManager.isAnnotationPermissionCheckEnabled;
+}
+
+- (NSString *)tabTitle
+{
+    return self.documentTabItem.displayName;
+}
+
+- (void)setTabTitle:(NSString *)tabTitle
+{
+    self.documentTabItem.displayName = tabTitle;
 }
 
 #pragma mark - Other

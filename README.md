@@ -317,6 +317,7 @@ annotationAuthor | string | | the author name for all annotations in the current
 continuousAnnotationEditing | boolean | false | whether annotations could be continuously edited
 annotationPermissionCheckEnabled | boolean | false | Defines whether annotation's flags will be taken into account when it is selected, for example, a locked annotation can not be resized or moved
 overrideBehavior | array of `Behaviors` constants | empty | Defines actions that should skip default behavior, such as external link click
+tabTitle | String | document name | the tab title for the current document, if multiTabEnabled is true (For Android, tabTitle is only supported on the widget viewer)
 
 ```dart
 var disabledElements = [Buttons.shareButton, Buttons.searchButton];
@@ -588,6 +589,13 @@ Set the icon path to the navigation button. The button would use the specified i
 PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp');
 ```
 
+### PdftronFlutter.closeAllTabs()
+
+Close all documents that are currently opened in a multiTab environment.
+
+```dart
+PdftronFlutter.closeAllTabs();
+```
 
 ## Events
 

@@ -14,6 +14,7 @@ import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
+import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
@@ -94,7 +95,23 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
         mActionOverrideItems = configInfo.getActionOverrideItems();
 
-        this.prepView();
+        ViewerBuilder2 viewerBuilder = ViewerBuilder2.withUri(configInfo.getFileUri(), password)
+                .usingCustomHeaders(configInfo.getCustomHeaderJson())
+                .usingConfig(mBuilder.build())
+                .usingNavIcon(mShowNavIcon ? mNavIconRes : 0)
+                .usingTabTitle(configInfo.getTabTitle());
+        if (mPdfViewCtrlTabHostFragment != null) {
+            mPdfViewCtrlTabHostFragment.onOpenAddNewTab(viewerBuilder.createBundle(getContext()));
+        } else {
+            mPdfViewCtrlTabHostFragment = viewerBuilder.build(getContext());
+            if (mFragmentManager != null) {
+                mFragmentManager.beginTransaction().add(mPdfViewCtrlTabHostFragment, "document_view").commitNow();
+                View fragmentView = mPdfViewCtrlTabHostFragment.getView();
+                if (fragmentView != null) {
+                    addView(fragmentView, -1, -1);
+                }
+            }
+        }
         attachListeners();
     }
 
@@ -196,6 +213,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     @Override
     public void onNavButtonPressed() {
         handleLeadingNavButtonPressed(this);
+
+        super.onNavButtonPressed();
     }
 
     public void setExportAnnotationCommandEventEmitter(EventChannel.EventSink emitter) {
