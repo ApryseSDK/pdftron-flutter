@@ -2,7 +2,7 @@
 
 @interface PTNavigationController()
 
-@property (nonatomic, weak, nullable) PTFlutterDocumentController* currentFlutterDocumentController;
+@property (nonatomic, weak, readonly, nullable) PTFlutterDocumentController* currentFlutterDocumentController;
 
 @end
 
