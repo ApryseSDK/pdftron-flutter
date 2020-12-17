@@ -232,6 +232,7 @@ typedef enum {
 
 - (UIView*)view;
 
++ (PTDocumentController *)PT_getSelectedDocumentController:(PTTabbedDocumentViewController *)tabbedDocumentViewController;
 + (NSString *)PT_idToJSONString:(id)infoId;
 + (id)PT_JSONStringToId:(NSString *)jsonString;
 + (Class)toolClassForKey:(NSString *)key;

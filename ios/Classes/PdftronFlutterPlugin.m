@@ -89,6 +89,8 @@
 {
     PTNavigationController *navigationController = [[PTNavigationController alloc] initWithRootViewController:self.tabbedDocumentViewController];
     
+    navigationController.tabbedDocumentViewController = self.tabbedDocumentViewController;
+    
     UIViewController *presentingViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
     
     if (self.isWidgetView) {
@@ -537,9 +539,7 @@
 - (void)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController willAddDocumentViewController:(PTFlutterDocumentController *)documentController
 {
     documentController.delegate = self;
-    
-    PTNavigationController* navigationController = (PTNavigationController*)self.tabbedDocumentViewController.navigationController;
-    navigationController.flutterDocumentController = documentController;
+    documentController.plugin = self;
     
     [[self class] configureDocumentController:documentController
                                        withConfig:self.config];
@@ -973,7 +973,6 @@
     }
     
     ((PTFlutterDocumentController*)self.tabbedDocumentViewController.childViewControllers.lastObject).openResult = flutterResult;
-    ((PTFlutterDocumentController*)self.tabbedDocumentViewController.childViewControllers.lastObject).plugin = self;
 }
 
 - (void)importAnnotations:(NSString *)xfdf resultToken:(FlutterResult)flutterResult
@@ -1683,11 +1682,15 @@
 #pragma mark - Helper
 
 - (PTDocumentController *)getDocumentController {
-    PTDocumentController* documentController = self.tabbedDocumentViewController.selectedViewController;
+    return [PdftronFlutterPlugin PT_getSelectedDocumentController:self.tabbedDocumentViewController];
+}
+
++ (PTDocumentController *)PT_getSelectedDocumentController:(PTTabbedDocumentViewController *)tabbedDocumentViewController {
+    PTDocumentController* documentController = tabbedDocumentViewController.selectedViewController;
     
-    if(documentController == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
+    if(documentController == Nil && tabbedDocumentViewController.childViewControllers.count == 1)
     {
-        documentController = self.tabbedDocumentViewController.childViewControllers.lastObject;
+        documentController = tabbedDocumentViewController.childViewControllers.lastObject;
     }
     return documentController;
 }
