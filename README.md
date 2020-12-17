@@ -321,6 +321,7 @@ readOnly | boolean | false | whether the document is read-only
 thumbnailViewEditingEnabled | boolean | true | whether use could modify through thumbnail view
 annotationAuthor | string | | the author name for all annotations in the current document
 continuousAnnotationEditing | boolean | false | whether annotations could be continuously edited
+tabTitle | String | document name | the tab title for the current document, if multiTabEnabled is true (For Android, tabTitle is only supported on the widget viewer)
 
 ```dart
 var disabledElements = [Buttons.shareButton, Buttons.searchButton];
@@ -569,6 +570,13 @@ Set the icon path to the navigation button. The button would use the specified i
 PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp');
 ```
 
+### PdftronFlutter.closeAllTabs()
+
+Close all documents that are currently opened in a multiTab environment.
+
+```dart
+PdftronFlutter.closeAllTabs();
+```
 
 ## Events
 
