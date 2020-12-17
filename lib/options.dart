@@ -135,6 +135,7 @@ class Functions {
   static const setValuesForFields = "setValuesForFields";
   static const setFlagForFields = "setFlagForFields";
   static const setLeadingNavButtonIcon = "setLeadingNavButtonIcon";
+  static const closeAllTabs = "closeAllTabs";
 }
 
 class Parameters {

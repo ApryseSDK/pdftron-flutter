@@ -144,4 +144,8 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.setLeadingNavButtonIcon,
         <String, dynamic>{Parameters.leadingNavButtonIcon: path});
   }
+
+  Future<void> closeAllTabs() {
+    return _channel.invokeMethod(Functions.closeAllTabs);
+  }
 }
