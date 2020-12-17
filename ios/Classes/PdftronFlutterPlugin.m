@@ -17,6 +17,9 @@
 @property (nonatomic, strong) FlutterEventSink pageChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink zoomChangedEventSink;
 
+@property (nonatomic, assign, getter=isWidgetView) BOOL widgetView;
+@property (nonatomic, assign, getter=isMultiTabSet) BOOL multiTabSet;
+
 @end
 
 @implementation PdftronFlutterPlugin
@@ -32,10 +35,12 @@
 
     
     PdftronFlutterPlugin* instance = [[PdftronFlutterPlugin alloc] init];
+    instance.widgetView = NO;
+    
     [registrar addMethodCallDelegate:instance channel:channel];
     
     [instance registerEventChannels:[registrar messenger]];
-    [instance overrideControllerClasses];
+    [PdftronFlutterPlugin overrideControllerClasses];
     
     DocumentViewFactory* documentViewFactory =
     [[DocumentViewFactory alloc] initWithMessenger:registrar.messenger];
@@ -48,6 +53,7 @@
     FlutterMethodChannel* channel = [FlutterMethodChannel methodChannelWithName:channelName binaryMessenger:messenger];
     
     PdftronFlutterPlugin* instance = [[PdftronFlutterPlugin alloc] init];
+    instance.widgetView = YES;
     
     __weak __typeof__(instance) weakInstance = instance;
     [channel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
@@ -58,11 +64,49 @@
     }];
     
     [instance registerEventChannels:messenger];
-    [instance overrideControllerClasses];
+    
+    [instance initTabbedDocumentViewController];
+    [instance presentTabbedDocumentViewController];
+    
     return instance;
 }
 
-- (void)overrideControllerClasses
+- (void)initTabbedDocumentViewController
+{
+    // Create and wrap a tabbed controller in a navigation controller.
+    self.tabbedDocumentViewController = [[PTTabbedDocumentViewController alloc] init];
+    self.tabbedDocumentViewController.delegate = self;
+    self.tabbedDocumentViewController.tabsEnabled = NO;
+    
+    self.tabbedDocumentViewController.viewControllerClass = [PTFlutterDocumentController class];
+    
+    [self.tabbedDocumentViewController.tabManager restoreItems];
+    
+    self.tabbedDocumentViewController.restorationIdentifier = [NSUUID UUID].UUIDString;
+}
+
+- (void)presentTabbedDocumentViewController
+{
+    PTNavigationController *navigationController = [[PTNavigationController alloc] initWithRootViewController:self.tabbedDocumentViewController];
+    
+    navigationController.tabbedDocumentViewController = self.tabbedDocumentViewController;
+    
+    UIViewController *presentingViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
+    
+    if (self.isWidgetView) {
+        [presentingViewController addChildViewController:navigationController];
+        [navigationController didMoveToParentViewController:presentingViewController];
+        
+    } else {
+        navigationController.modalPresentationStyle = UIModalPresentationFullScreen;
+        
+        // Show navigation (and tabbed) controller.
+        [presentingViewController presentViewController:navigationController animated:YES completion:nil];
+        
+    }
+}
+
++ (void)overrideControllerClasses
 {
     [PTOverrides overrideClass:[PTDocumentController class] withClass:[PTFlutterDocumentController class]];
     
@@ -116,9 +160,7 @@
 
 + (void)configureTabbedDocumentViewController:(PTTabbedDocumentViewController*)tabbedDocumentViewController withConfig:(NSString*)config
 {
-    
-    tabbedDocumentViewController.viewControllerClass = [PTFlutterDocumentController class];
-    
+
     if(config && ![config isEqualToString:@"null"])
     {
         //convert from json to dict
@@ -320,6 +362,14 @@
                         [documentController setContinuousAnnotationEditingEnabled:[contEditingNumber boolValue]];
                     }
                 }
+                else if ([key isEqualToString:PTTabTitleKey]) {
+                    
+                    NSString* tabTitle = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTTabTitleKey class:[NSString class] error:&error];
+                    
+                    if (!error && tabTitle) {
+                        [documentController setTabTitle:tabTitle];
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
@@ -357,10 +407,8 @@
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem
 {
-    if (self.tabbedDocumentViewController) {
-        [self.tabbedDocumentViewController dismissViewControllerAnimated:YES completion:nil];
-    } else {
-        [UIApplication.sharedApplication.keyWindow.rootViewController.presentedViewController dismissViewControllerAnimated:YES completion:Nil];
+    if (!self.isWidgetView) {
+        [self.tabbedDocumentViewController.navigationController dismissViewControllerAnimated:YES completion:nil];
     }
     
     [self documentController:[self getDocumentController] leadingNavButtonClicked:nil];
@@ -526,9 +574,7 @@
 - (void)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController willAddDocumentViewController:(PTFlutterDocumentController *)documentController
 {
     documentController.delegate = self;
-    
-    PTNavigationController* navigationController = (PTNavigationController*)self.tabbedDocumentViewController.navigationController;
-    navigationController.flutterDocumentController = documentController;
+    documentController.plugin = self;
     
     [[self class] configureDocumentController:documentController
                                        withConfig:self.config];
@@ -546,7 +592,9 @@
 {
     NSLog(@"Document opened successfully");
     FlutterResult result = ((PTFlutterDocumentController*)documentController).openResult;
-    result(@"Opened Document Successfully");
+    if (result) {
+        result(@"Opened Document Successfully");
+    }
 }
 
 - (void)documentController:(PTDocumentController *)documentController didFailToOpenDocumentWithError:(NSError *)error
@@ -554,7 +602,9 @@
     NSLog(@"Failed to open document: %@", error);
     FlutterResult result = ((PTFlutterDocumentController*)documentController).openResult;
     [self documentController:documentController documentError:nil];
-    result([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
+    if (result) {
+        result([@"Opened Document Failed: %@" stringByAppendingString:error.description]);
+    } 
 }
 
 #pragma mark - FlutterStreamHandler
@@ -646,6 +696,7 @@
 
 -(UIView*)view
 {
+    // Note: this will only be called if it is the widget version
     return self.tabbedDocumentViewController.navigationController.view;
 }
 
@@ -790,7 +841,8 @@
     } else if ([call.method isEqualToString:PTSetLeadingNavButtonIconKey]) {
         NSString* leadingNavButtonIcon = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTLeadingNavButtonIconArgumentKey]];
         [self setLeadingNavButtonIcon:leadingNavButtonIcon resultToken:result];
-
+    } else if ([call.method isEqualToString:PTCloseAllTabsKey]) {
+        [self closeAllTabs:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -930,19 +982,14 @@
         password = (NSString *)passwordValue;
     }
     
-    // Create and wrap a tabbed controller in a navigation controller.
-    self.tabbedDocumentViewController = [[PTTabbedDocumentViewController alloc] init];
-    self.tabbedDocumentViewController.delegate = self;
-    self.tabbedDocumentViewController.tabsEnabled = NO;
-    self.tabbedDocumentViewController.viewControllerClass = [PTFlutterDocumentController class];
-    
-    PTNavigationController *navigationController = [[PTNavigationController alloc] initWithRootViewController:self.tabbedDocumentViewController];
-    
     NSString* config = arguments[PTConfigArgumentKey];
     self.config = config;
     
-    [[self class] configureTabbedDocumentViewController:self.tabbedDocumentViewController
-                                             withConfig:config];
+    if (!self.tabbedDocumentViewController) {
+        [self initTabbedDocumentViewController];
+    }
+    
+    [PdftronFlutterPlugin configureTabbedDocumentViewController:self.tabbedDocumentViewController withConfig:config];
     
     // Open a file URL.
     NSURL *fileURL = [[NSBundle mainBundle] URLForResource:document withExtension:@"pdf"];
@@ -955,15 +1002,12 @@
     [self.tabbedDocumentViewController openDocumentWithURL:fileURL
                                                   password:password];
     
+    if (!self.tabbedDocumentViewController.navigationController) {
+        
+        [self presentTabbedDocumentViewController];
+    }
+    
     ((PTFlutterDocumentController*)self.tabbedDocumentViewController.childViewControllers.lastObject).openResult = flutterResult;
-    ((PTFlutterDocumentController*)self.tabbedDocumentViewController.childViewControllers.lastObject).plugin = self;
-    
-    UIViewController *presentingViewController = UIApplication.sharedApplication.keyWindow.rootViewController;
-    
-    navigationController.modalPresentationStyle = UIModalPresentationFullScreen;
-    
-    // Show navigation (and tabbed) controller.
-    [presentingViewController presentViewController:navigationController animated:YES completion:nil];
 }
 
 - (void)importAnnotations:(NSString *)xfdf resultToken:(FlutterResult)flutterResult
@@ -1651,14 +1695,37 @@
     flutterResult(nil);
 }
 
+-(void)closeAllTabs:(FlutterResult)flutterResult
+{
+    PTDocumentTabManager *tabManager = self.tabbedDocumentViewController.tabManager;
+    NSArray<PTDocumentTabItem *> *items = [tabManager.items copy];
+    
+    // Close all tabs except the selected tab, which is displaying a view controller.
+    for (PTDocumentTabItem *item in items) {
+        if (item != tabManager.selectedItem) {
+            [tabManager removeItem:item];
+        }
+    }
+    // Close the selected tab last.
+    if (tabManager.selectedItem) {
+        [tabManager removeItem:tabManager.selectedItem];
+    }
+    
+    flutterResult(nil);
+}
+
 #pragma mark - Helper
 
 - (PTDocumentController *)getDocumentController {
-    PTDocumentController* documentController = self.tabbedDocumentViewController.selectedViewController;
+    return [PdftronFlutterPlugin PT_getSelectedDocumentController:self.tabbedDocumentViewController];
+}
+
++ (PTDocumentController *)PT_getSelectedDocumentController:(PTTabbedDocumentViewController *)tabbedDocumentViewController {
+    PTDocumentController* documentController = tabbedDocumentViewController.selectedViewController;
     
-    if(documentController == Nil && self.tabbedDocumentViewController.childViewControllers.count == 1)
+    if(documentController == Nil && tabbedDocumentViewController.childViewControllers.count == 1)
     {
-        documentController = self.tabbedDocumentViewController.childViewControllers.lastObject;
+        documentController = tabbedDocumentViewController.childViewControllers.lastObject;
     }
     return documentController;
 }

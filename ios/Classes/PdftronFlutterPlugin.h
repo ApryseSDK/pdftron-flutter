@@ -24,6 +24,7 @@ static NSString * const PTReadOnlyKey = @"readOnly";
 static NSString * const PTThumbnailViewEditingEnabledKey = @"thumbnailViewEditingEnabled";
 static NSString * const PTAnnotationAuthorKey = @"annotationAuthor";
 static NSString * const PTContinuousAnnotationEditingKey = @"continuousAnnotationEditing";
+static NSString * const PTTabTitleKey = @"tabTitle";
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";
@@ -105,6 +106,7 @@ static NSString * const PTSetToolModeKey = @"setToolMode";
 static NSString * const PTSetFlagForFieldsKey = @"setFlagForFields";
 static NSString * const PTSetValuesForFieldsKey = @"setValuesForFields";
 static NSString * const PTSetLeadingNavButtonIconKey = @"setLeadingNavButtonIcon";
+static NSString * const PTCloseAllTabsKey = @"closeAllTabs";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
@@ -237,6 +239,7 @@ typedef enum {
 
 - (UIView*)view;
 
++ (PTDocumentController *)PT_getSelectedDocumentController:(PTTabbedDocumentViewController *)tabbedDocumentViewController;
 + (NSString *)PT_idToJSONString:(id)infoId;
 + (id)PT_JSONStringToId:(NSString *)jsonString;
 + (Class)toolClassForKey:(NSString *)key;
