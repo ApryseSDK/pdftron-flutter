@@ -23,7 +23,7 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     initPlatformState();
 
-    showViewer();
+    // showViewer();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -55,9 +55,10 @@ class _MyAppState extends State<MyApp> {
 //      var disabledElements = [Buttons.shareButton, Buttons.searchButton];
 //      var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
     var config = Config();
+    config.tabTitle = "Hello!";
 //      config.disabledElements = disabledElements;
 //      config.disabledTools = disabledTools;
-//      config.multiTabEnabled = true;
+     config.multiTabEnabled = true;
 //      config.customHeaders = {'headerName': 'headerValue'};
 
     var documentLoadedCancel = startDocumentLoadedListener((filePath) {
@@ -65,6 +66,7 @@ class _MyAppState extends State<MyApp> {
     });
 
     await PdftronFlutter.openDocument(_document, config: config);
+    await PdftronFlutter.openDocument("http://pdftron.s3.amazonaws.com/downloads/pl/form.pdf", config: config);
 
     try {
       PdftronFlutter.importAnnotationCommand(
@@ -105,29 +107,90 @@ class _MyAppState extends State<MyApp> {
     // bookmarkCancel();
   }
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return MaterialApp(
+  //     home: Scaffold(
+  //       body: SafeArea(
+  //         child: Container(
+  //           width: double.infinity,
+  //           height: double.infinity,
+  //           // Uncomment this to access the widget version.
+  //           // child: _showWidget
+  //           //     ? DocumentView(
+  //           //         onCreated: _onDocumentViewCreated,
+  //           //       )
+  //           //     : Container(),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  DocumentViewController _controller;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: SafeArea(
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            // Uncomment this to access the widget version. (The widget version is the non full-screen version.)
-            // child: _showWidget
-            //     ? DocumentView(
-            //         onCreated: _onDocumentViewCreated,
-            //       )
-            //     : Container(),
+        body: new Container(
+          child: new Center(
+            child: new Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                new Column (
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget> [
+                    new FloatingActionButton(
+                      onPressed: sample1,
+                      child: new Icon(Icons.file_upload, color: Colors.black,),
+                      backgroundColor: Colors.white,),
+
+                    new FloatingActionButton(
+                      onPressed: sample2,
+                      child: new Icon(Icons.file_download, color: Colors.black,),
+                      backgroundColor: Colors.white,),
+                  ],
+                ),
+
+                Container(
+                  width: 300,
+                  height: 500,
+                  child: DocumentView(
+                    onCreated: _onDocumentViewCreated,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  void _onDocumentViewCreated(DocumentViewController controller) {
+  void sample1() {
+    _document = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
     Config config = new Config();
+    config.tabTitle = "Hello1";
+    config.multiTabEnabled = true;
+    _controller.openDocument(_document, config: config);
+  }
 
+  void sample2() {
+    // _document = "http://pdftron.s3.amazonaws.com/downloads/pl/form.pdf";
+    // Config config = new Config();
+    // config.tabTitle = "Hello2";
+    // config.multiTabEnabled = true;
+    // _controller.openDocument(_document, config: config);
+    _controller.closeAllTabs();
+  }
+
+  void _onDocumentViewCreated(DocumentViewController controller) {
+    _controller = controller;
+    Config config = new Config();
+    config.multiTabEnabled = true;
+
+    config.tabTitle = "_onDocumentViewCreated";
     config.showLeadingNavButton = false;
 
     // This callback is here if you un-hide the nav button via config.
@@ -138,6 +201,7 @@ class _MyAppState extends State<MyApp> {
     //   });
     // });
 
-    controller.openDocument(_document, config: config);
+    controller.openDocument("http://pdftron.s3.amazonaws.com/officedemo/officeshowcase/sample_docs/BloodMeridianReport.docx", config: config);
+    // controller.openDocument("http://pdftron.s3.amazonaws.com/downloads/pl/form.pdf", config: config);
   }
 }
