@@ -313,6 +313,8 @@ Name | Type | Required | Description
 --- | --- | --- | ---
 key | String | true | your PDFTron license key
 
+Return a Future.
+
 ```dart
 PdftronFlutter.initialize('your_licensey_key');
 ```
@@ -328,6 +330,8 @@ Name | Type | Required | Description
 document | String | true | path to the document
 password | String | false | password to an encrypted document
 config | Config | false | viewer configuration options
+
+Return a Future that would resolve when document is loaded.
 
 For configs (more info could be found [here](./lib/config.dart)):
 
@@ -500,6 +504,8 @@ Name | Type | Description
 --- | --- | ---
 xfdf | String | the XFDF string for import
 
+Return a Future.
+
 ```dart
 
 var xfdf = '<?xml version="1.0" encoding="UTF-8"?>\n<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">\n\t<annots>\n\t\t<circle style="solid" width="5" color="#E44234" opacity="1" creationdate="D:20190729202215Z" flags="print" date="D:20190729202215Z" page="0" rect="138.824,653.226,236.28,725.159" title="" /></annots>\n\t<pages>\n\t\t<defmtx matrix="1.333333,0.000000,0.000000,-1.333333,0.000000,1056.000000" />\n\t</pages>\n\t<pdf-info version="2" xmlns="http://www.pdftron.com/pdfinfo" />\n</xfdf>';
@@ -514,6 +520,8 @@ Parameters:
 Name | Type | Description
 --- | --- | ---
 annotationList | List<`Annot`> | If not null, export the XFDF string for the valid annotations; Otherwise, export the XFDF string for all annotations
+
+Return a Future.
 
 Future Parameters:
 
@@ -542,6 +550,8 @@ Name | Type | Description
 --- | --- | ---
 formsOnly | bool | If true, only forms will be flattened; Otherwise, all annotations would be flattened.
 
+Return a Future.
+
 ```dart
 PdftronFlutter.flattenAnnotations(true);
 ```
@@ -553,6 +563,8 @@ Parameters:
 Name | Type | Description
 --- | --- | ---
 annotations | List<`Annot`> | the list of annotations to be deleted
+
+Return a Future.
 
 ```dart
 List<Annot> annotList = new List<Annot>();
@@ -569,6 +581,8 @@ Name | Type | Description
 --- | --- | ---
 annotation | `Annot` | the annotation to be selected
 
+Return a Future.
+
 ```dart
 PdftronFlutter.selectAnnotation(new Annot('Hello', 1));
 ```
@@ -580,6 +594,8 @@ Parameters:
 Name | Type | Description
 --- | --- | ---
 annotationWithFlagsList | List<`AnnotWithFlags`> | a list of annotations with respective flags to be set
+
+Return a Future.
 
 ```dart
 List<AnnotWithFlags> annotsWithFlags = new List<AnnotWithFlags>();
@@ -608,6 +624,8 @@ Name | Type | Description
 --- | --- | ---
 xfdfCommand | String | the XFDF command string for import
 
+Return a Future.
+
 ```dart
 var xfdfCommand = 'xfdfCommand <?xml version="1.0" encoding="UTF-8"?><xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve"><add><circle style="solid" width="5" color="#E44234" opacity="1" creationdate="D:20201218025606Z" flags="print" date="D:20201218025606Z" name="9d0f2d63-a0cc-4f06-b786-58178c4bd2b1" page="0" rect="56.4793,584.496,208.849,739.369" title="PDF" /></add><modify /><delete /><pdf-info import-version="3" version="2" xmlns="http://www.pdftron.com/pdfinfo" /></xfdf>';
 PdftronFlutter.importAnnotationCommand(xfdfCommand);
@@ -622,12 +640,16 @@ Name | Type | Description
 --- | --- | ---
 bookmarkJson | String | needs to be in valid bookmark JSON format, for example {"0": "Page 1"}. The page numbers are 1-indexed
 
+Return a Future.
+
 ```dart
 PdftronFlutter.importBookmarkJson("{\"0\": \"Page 1\", \"3\": \"Page 4\"}");
 ```
 
 ### saveDocument()
 To save the currently opened document in the viewer and get the absolute path to the file. Must only be called when the document is opened in the viewer.
+
+Return a Future.
 
 Future Parameters:
 
@@ -641,6 +663,8 @@ var path = await PdftronFlutter.saveDocument();
 
 ### commitTool()
 To commit the annotation being created by the tool to the PDF, only available for multi-stroke ink and poly-shape.
+
+Return a Future.
 
 Future Parameters:
 
@@ -656,6 +680,8 @@ print("Tool committed: $committed");
 ### getPageCount()
 To get the total number of pages in the currently displayed document.
 
+Return a Future.
+
 Future Parameters:
 
 Name | Type | Description
@@ -670,6 +696,8 @@ print("The current doc has $pageCount pages");
 ### handleBackButton()
 To handle back button in search mode (Android only).
 
+Return a Future.
+
 Future Parameters:
 
 Name | Type | Description
@@ -683,6 +711,8 @@ print("Back button handled: $handled");
 
 ### getPageCropBox(int)
 To get a map object of the crop box for specified page.
+
+Return a Future.
 
 Parameters:
 
@@ -704,6 +734,8 @@ print('The width of crop box for page 1 is: ' + cropBox.width.toString());
 ### setToolMode(String)
 To set the current tool mode.
 
+Return a Future.
+
 Parameters:
 
 Name | Type | Description
@@ -716,6 +748,8 @@ toolMode | String | the tool mode to be set, one of the constants from `Tools`
 
 ### setFlagForFields(List<`String`>, flag: int, flagValue: bool)
 To set a field flag value on one or more form fields.
+
+Return a Future.
 
 Parameters:
 
@@ -731,6 +765,8 @@ flagValue | bool | To turn on/off the flag for the fields
 
 ### setValuesForFields(List<`Field`>)
 To set field values on one or more form fields of different types.
+
+Return a Future.
 
 Parameters:
 
@@ -750,7 +786,9 @@ PdftronFlutter.setValuesForFields([
 ```
 
 ### setLeadingNavButtonIcon(String)
-To set the icon path to the navigation button. The button would use the specified icon if [`showLeadingNavButton`](#showLeadingNavButton) (which by default is true) is true in the config.
+To set the icon path to the navigation button. The button would use the specified icon if [showLeadingNavButton](#showLeadingNavButton) (which by default is true) is true in the config.
+
+Return a Future.
 
 Parameters:
 
@@ -774,7 +812,7 @@ PdftronFlutter.closeAllTabs();
 ### startExportAnnotationCommandListener
 Event is raised when local annotation changes committed to the document.
 
-Future Parameters:
+Event Parameters:
 Name | Type | Description
 --- | --- | ---
 xfdfCommand | String | the XFDF command string exported
@@ -790,7 +828,7 @@ var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
 ### startExportBookmarkListener
 Event is raised when user bookmark changes committed to the document.
 
-Future Parameters:
+Event Parameters:
 Name | Type | Description
 --- | --- | ---
 bookmarkJson | String | the bookmark json string exported
@@ -804,7 +842,7 @@ var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
 ### startDocumentLoadedListener
 Event is raised when the document finishes loading.
 
-Future Parameters:
+Event Parameters:
 Name | Type | Description
 --- | --- | ---
 path | String | the path to where the document is saved
@@ -828,7 +866,7 @@ var documentErrorCancel = startDocumentErrorListener((){
 ### startAnnotationChangedListener
 Event is raised when there is a change to annotations to the document.
 
-Future Parameters:
+Event Parameters:
 Name | Type | Description
 --- | --- | ---
 action | String | the action that occurred (add, delete, modify)
@@ -848,7 +886,7 @@ var annotChangedCancel = startAnnotationChangedListener((action, annotations)
 ### startAnnotationsSelectedListener
 Event is raised when annotations are selected.
 
-Future Parameters:
+Event Parameters:
 Name | Type | Description
 --- | --- | ---
 annotationWithRects | List<`AnnotWithRect`> | The list of annotations with their respective rects
@@ -868,7 +906,7 @@ var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects
 ### startFormFieldValueChangedListener
 Event is raised when there are changes to form field values.
 
-Future Parameters:
+Event Parameters:
 Name | Type | Description
 --- | --- | ---
 fields | List<`Field`> | The fields that are changed
@@ -896,7 +934,7 @@ var navPressedCancel = startLeadingNavButtonPressedListener(()
 ### startPageChangedListener
 Event is raised when page changes.
 
-Future Parameters:
+Event Parameters:
 Name | Type | Description
 --- | --- | ---
 previousPageNumber | int | The previous page number
@@ -912,7 +950,7 @@ var pageChangedCancel = startPageChangedListener((previousPageNumber, pageNumber
 ### startZoomChangedListener
 Event is raised when zoom ratio is changed in the current document.
 
-Future Parameters:
+Event Parameters:
 Name | Type | Description
 --- | --- | ---
 zoom | double | the zoom ratio in the current document viewer
