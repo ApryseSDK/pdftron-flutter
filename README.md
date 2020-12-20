@@ -285,6 +285,27 @@ We suggest that you stick with either version for the APIs that are callable in 
 
 There are several custom classes used in these APIs: `Annot`, `AnnotWithRect`, `Field`, `Rect`, `AnnotFlag`,`AnnotWithFlag` and `CustomToolbar`. These classes together with constants that are used in the examples below are all listed [here](./lib/options.dart).
 
+- [version](#PdftronFlutter.version)
+- [platformVersion](#PdftronFlutter.version)
+- [initialize](#PdftronFlutter.initialize(String))
+- [openDocument](#openDocument(String,{password:String,config:Config})))
+- [importAnnotations](#importAnnotations(String))
+- [exportAnnotations](#exportAnnotations(List<`Annot`>))
+- [flattenAnnotations](#flattenAnnotations(bool))
+- [deleteAnnotations](#deleteAnnotations(List<`Annot`>))
+- [selectAnnotation](#selectAnnotation(`Annot`))
+- [setFlagsForAnnotations](#setFlagsForAnnotations(List<`AnnotWithFlags`>))
+- [importBookmarkJson](#importBookmarkJson(String))
+- [saveDocument](#saveDocument())
+- [commitTool](#commitTool())
+- [getPageCount](#getPageCount())
+- [handleBackButton](#handleBackButton())
+- [getPageCropBox](#getPageCropBox(int))
+- [setToolMode](#setToolMode(String))
+- [setFlagForFields](#setFlagForFields(List<`String`>,flag:int,flagValue:bool))
+- [setValuesForFields](#setValuesForFields(List<`Field`>))
+- [setLeadingNavButtonIcon](#setLeadingNavButtonIcon(String))
+- [closeAllTabs](#closeAllTabs())
 ### PdftronFlutter.version
 
 To obtain PDFTron SDK version.
@@ -319,7 +340,7 @@ Return a Future.
 PdftronFlutter.initialize('your_licensey_key');
 ```
 
-### openDocument
+### openDocument(String,{password:String,config:Config})
 
 Opens a document in the viewer with options to remove buttons and disable tools
 
@@ -334,6 +355,21 @@ config | Config | false | viewer configuration options
 Return a Future that would resolve when document is loaded.
 
 For configs (more info could be found [here](./lib/config.dart)):
+- [disabledElements](#disabledElements)
+- [disabledTools](#disabledTools)
+- [multiTabEnabled](#multiTabEnabled)
+- [customerHeaders](#customerHeaders)
+- [annotationToolbars](#annotationToolbars)
+- [hideDefaultAnnotationToolbars](#hideDefaultAnnotationToolbars)
+- [hideAnnotationToolbarSwitcher](#hideAnnotationToolbarSwitcher)
+- [hideTopToolbars](#hideTopToolbars)
+- [hideTopAppNavBar](#hideTopAppNavBar)
+- [showLeadingNavButton](#showLeadingNavButton)
+- [readOnly](#readOnly)
+- [thumbnailViewEditingEnabled](#thumbnailViewEditingEnabled)
+- [annotationAuthor](#annotationAuthor)
+- [continuousAnnotationEditing](#continuousAnnotationEditing)
+- [tabTitle](#tabTitle)
 
 #### disabledElements
 array of `Buttons` constants, default to none.
@@ -746,7 +782,7 @@ toolMode | String | the tool mode to be set, one of the constants from `Tools`
  PdftronFlutter.setToolMode(Tools.annotationCreateEllipse);
 ```
 
-### setFlagForFields(List<`String`>, flag: int, flagValue: bool)
+### setFlagForFields(List<`String`>,flag:int,flagValue:bool)
 To set a field flag value on one or more form fields.
 
 Return a Future.
@@ -808,6 +844,16 @@ PdftronFlutter.closeAllTabs();
 ```
 
 ## Event APIs
+- [startExportAnnotationCommandListener](#startExportAnnotationCommandListener)
+- [startExportBookmarkListener](#startExportBookmarkListener)
+- [startDocumentLoadedListener](#startDocumentLoadedListener)
+- [startDocumentErrorListener](#startDocumentErrorListener)
+- [startAnnotationChangedListener](#startAnnotationChangedListener)
+- [startAnnotationsSelectedListener](#startAnnotationsSelectedListener)
+- [startFormFieldValueChangedListener](#startFormFieldValueChangedListener)
+- [startLeadingNavButtonPressedListener](#startLeadingNavButtonPressedListener)
+- [startPageChangedListener](#startPageChangedListener)
+- [startZoomChangedListener](#startZoomChangedListener)
 
 ### startExportAnnotationCommandListener
 Event is raised when local annotation changes committed to the document.
