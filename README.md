@@ -583,6 +583,7 @@ var xfdf = await PdftronFlutter.exportAnnotations(annotList);
 To flatten the forms and (optionally) annotations in the current document.
 
 Parameters:
+
 Name | Type | Description
 --- | --- | ---
 formsOnly | bool | If true, only forms will be flattened; Otherwise, all annotations would be flattened.
@@ -597,6 +598,7 @@ PdftronFlutter.flattenAnnotations(true);
 To delete the specified annotations in the current document.
 
 Parameters:
+
 Name | Type | Description
 --- | --- | ---
 annotations | List<`Annot`> | the list of annotations to be deleted
@@ -614,6 +616,7 @@ PdftronFlutter.deleteAnnotations(annotList);
 To select the specified annotation in the current document.
 
 Parameters:
+
 Name | Type | Description
 --- | --- | ---
 annotation | `Annot` | the annotation to be selected
@@ -628,6 +631,7 @@ PdftronFlutter.selectAnnotation(new Annot('Hello', 1));
 To set flags for specified annotations in the current document.
 
 Parameters:
+
 Name | Type | Description
 --- | --- | ---
 annotationWithFlagsList | List<`AnnotWithFlags`> | a list of annotations with respective flags to be set
@@ -860,6 +864,7 @@ PdftronFlutter.closeAllTabs();
 Event is raised when local annotation changes committed to the document.
 
 Event Parameters:
+
 Name | Type | Description
 --- | --- | ---
 xfdfCommand | String | the XFDF command string exported
@@ -876,6 +881,7 @@ var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
 Event is raised when user bookmark changes committed to the document.
 
 Event Parameters:
+
 Name | Type | Description
 --- | --- | ---
 bookmarkJson | String | the bookmark json string exported
@@ -890,6 +896,7 @@ var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
 Event is raised when the document finishes loading.
 
 Event Parameters:
+
 Name | Type | Description
 --- | --- | ---
 path | String | the path to where the document is saved
@@ -914,6 +921,7 @@ var documentErrorCancel = startDocumentErrorListener((){
 Event is raised when there is a change to annotations to the document.
 
 Event Parameters:
+
 Name | Type | Description
 --- | --- | ---
 action | String | the action that occurred (add, delete, modify)
@@ -934,6 +942,7 @@ var annotChangedCancel = startAnnotationChangedListener((action, annotations)
 Event is raised when annotations are selected.
 
 Event Parameters:
+
 Name | Type | Description
 --- | --- | ---
 annotationWithRects | List<`AnnotWithRect`> | The list of annotations with their respective rects
@@ -954,6 +963,7 @@ var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects
 Event is raised when there are changes to form field values.
 
 Event Parameters:
+
 Name | Type | Description
 --- | --- | ---
 fields | List<`Field`> | The fields that are changed
@@ -982,6 +992,7 @@ var navPressedCancel = startLeadingNavButtonPressedListener(()
 Event is raised when page changes.
 
 Event Parameters:
+
 Name | Type | Description
 --- | --- | ---
 previousPageNumber | int | The previous page number
@@ -998,6 +1009,7 @@ var pageChangedCancel = startPageChangedListener((previousPageNumber, pageNumber
 Event is raised when zoom ratio is changed in the current document.
 
 Event Parameters:
+
 Name | Type | Description
 --- | --- | ---
 zoom | double | the zoom ratio in the current document viewer
