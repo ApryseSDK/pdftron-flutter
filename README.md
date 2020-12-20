@@ -259,7 +259,7 @@ class _MyAppState extends State<MyApp> {
 
 ### Note 
 
-For APIs that start with `PdftronFlutter`, these would only be callable in a plugin fashion. Below is an example for [initialize](#PdftronFlutter.initialize);
+For APIs that states "**PdftronFlutter only**", these would only be callable in a plugin fashion. Below is an example for [initialize](#PdftronFlutter.initialize);
 
 ```dart
 PdftronFlutter.initialize('your_license_key');
@@ -285,9 +285,9 @@ We suggest that you stick with either version for the APIs that are callable in 
 
 There are several custom classes used in these APIs: `Annot`, `AnnotWithRect`, `Field`, `Rect`, `AnnotFlag`,`AnnotWithFlag` and `CustomToolbar`. These classes together with constants that are used in the examples below are all listed [here](./lib/options.dart).
 
-- [version](#PdftronFlutter.version)
-- [platformVersion](#PdftronFlutter.version)
-- [initialize](#PdftronFlutter.initialize)
+- [version](#version)
+- [platformVersion](#version)
+- [initialize](#initialize)
 - [openDocument](#openDocument)
 - [importAnnotations](#importAnnotations)
 - [exportAnnotations](#exportAnnotations)
@@ -307,27 +307,27 @@ There are several custom classes used in these APIs: `Annot`, `AnnotWithRect`, `
 - [setLeadingNavButtonIcon](#setLeadingNavButtonIcon)
 - [closeAllTabs](#closeAllTabs)
 
-### PdftronFlutter.version
+### version
 
-To obtain PDFTron SDK version.
+To obtain PDFTron SDK version. **PdftronFlutter only**.
 
 ```dart
 String version = PdftronFlutter.version;
 print('Current PDFTron SDK version is: ' + version);
 ```
 
-### PdftronFlutter.platformVersion
+### platformVersion
 
-To obtain the current platform version.
+To obtain the current platform version. **PdftronFlutter only**.
 
 ```dart
 String platformVersion = PdftronFlutter.platformVersion;
 print('App is currently running on: ' + platformVersion);
 ```
 
-### PdftronFlutter.initialize
+### initialize
 
-To initialize PDFTron SDK.
+To initialize PDFTron SDK. **PdftronFlutter only**.
 
 Parameters:
 
