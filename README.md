@@ -753,13 +753,13 @@ print("Back button handled: $handled");
 ### getPageCropBox
 To get a map object of the crop box for specified page.
 
-Return a Future.
-
 Parameters:
 
 Name | Type | Description
 --- | --- | ---
 pageNumber | int | the page number for the target crop box
+
+Return a Future.
 
 Future Parameters:
 
@@ -775,13 +775,13 @@ print('The width of crop box for page 1 is: ' + cropBox.width.toString());
 ### setToolMode
 To set the current tool mode.
 
-Return a Future.
-
 Parameters:
 
 Name | Type | Description
 --- | --- | ---
 toolMode | String | the tool mode to be set, one of the constants from `Tools`
+
+Return a Future.
 
 ```dart
  PdftronFlutter.setToolMode(Tools.annotationCreateEllipse);
@@ -789,8 +789,6 @@ toolMode | String | the tool mode to be set, one of the constants from `Tools`
 
 ### setFlagForFields
 To set a field flag value on one or more form fields.
-
-Return a Future.
 
 Parameters:
 
@@ -800,6 +798,8 @@ fieldNames | List<`String`> | A list of field names to be set
 flag | int | The flag to be set, one of the constants from `FieldFlags`
 flagValue | bool | To turn on/off the flag for the fields
 
+Return a Future.
+
 ```dart
  PdftronFlutter.setFlagForFields(['First Name', 'Last Name'], FieldFlags.Required, true);
 ```
@@ -807,13 +807,13 @@ flagValue | bool | To turn on/off the flag for the fields
 ### setValuesForFields
 To set field values on one or more form fields of different types.
 
-Return a Future.
-
 Parameters:
 
 Name | Type | Description
 --- | ---| ---
 fields | List<`Field`> | A list of fields with name and the value that you would like to set to, could be in type number, bool or string
+
+Return a Future.
 
 ```dart
 PdftronFlutter.setValuesForFields([
@@ -829,13 +829,13 @@ PdftronFlutter.setValuesForFields([
 ### setLeadingNavButtonIcon
 To set the icon path to the navigation button. The button would use the specified icon if [showLeadingNavButton](#showLeadingNavButton) (which by default is true) is true in the config.
 
-Return a Future.
-
 Parameters:
 
 Name | Type | Description
 --- | ---| ---
 leadingNavButtonIcon | String | the icon path to the navigation button
+
+Return a Future.
 
 ```dart
 PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp');
