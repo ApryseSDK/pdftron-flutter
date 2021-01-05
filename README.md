@@ -308,7 +308,7 @@ customerHeaders | map<string, string> | empty | custom headers to use with HTTP/
 fitMode | `FitModes` constant | `FitModes`.`fitWidth` | the fit mode for the document window
 layoutMode | `LayoutModes` constant | `LayoutModes`.`continuous` | the layout mode for the document window
 initialPageNumber | int | 1 | the initial page number that viewer lands on when the document opens
-isBase64 | boolean | false | whether the document is in base64 format
+isBase64 | boolean | false | whether the document is in base64 format. Android only
 annotationToolbars | array of `CustomToolbar` objects or `DefaultToolbars` constants| | Defines custom toolbars. If passed in, default toolbars will no longer appear.
 hideDefaultAnnotationToolbars | array of `DefaultToolbars` objects| empty | Defines which default toolbars should be hidden
 hideAnnotationToolbarSwitcher | boolean | false | Defines whether to show the toolbar switcher in the top toolbar
