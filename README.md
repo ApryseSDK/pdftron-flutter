@@ -270,42 +270,20 @@ But for those that are not specified, these would be callable in both plugin and
 Plugin:
 ```dart
 void showViewer() async {
-  PdftronFlutter.openDocument('sample.pdf');
+  PdftronFlutter.openDocument('https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_about.pdf');
 }
 ```
 
 Widget (DocumentViewController):
 ```dart
 void _onDocumentViewCreated(DocumentViewController controller) {
-    controller.openDocument('sample.pdf');
+    controller.openDocument('https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_about.pdf');
 }
 ```
 
 We suggest that you stick with either version for the APIs that are callable in both versions, to avoid unnecessary problems.
 
 There are several custom classes used in these APIs: `Annot`, `AnnotWithRect`, `Field`, `Rect`, `AnnotFlag`,`AnnotWithFlag` and `CustomToolbar`. These classes together with constants that are used in the examples below are all listed [here](./lib/options.dart).
-
-- [version](#version)
-- [platformVersion](#version)
-- [initialize](#initialize)
-- [openDocument](#openDocument)
-- [importAnnotations](#importAnnotations)
-- [exportAnnotations](#exportAnnotations)
-- [flattenAnnotations](#flattenAnnotations)
-- [deleteAnnotations](#deleteAnnotations)
-- [selectAnnotation](#selectAnnotation)
-- [setFlagsForAnnotations](#setFlagsForAnnotations)
-- [importBookmarkJson](#importBookmarkJson)
-- [saveDocument](#saveDocument)
-- [commitTool](#commitTool)
-- [getPageCount](#getPageCount)
-- [handleBackButton](#handleBackButton)
-- [getPageCropBox](#getPageCropBox)
-- [setToolMode](#setToolMode)
-- [setFlagForFields](#setFlagForFields)
-- [setValuesForFields](#setValuesForFields)
-- [setLeadingNavButtonIcon](#setLeadingNavButtonIcon)
-- [closeAllTabs](#closeAllTabs)
 
 ### version
 
@@ -327,7 +305,7 @@ print('App is currently running on: ' + platformVersion);
 
 ### initialize
 
-To initialize PDFTron SDK. **PdftronFlutter only**.
+Initialize PDFTron SDK with your PDFTron commercial license key. You can run PDFTron in demo mode by passing an empty string. **PdftronFlutter only**.
 
 Parameters:
 
@@ -343,7 +321,7 @@ PdftronFlutter.initialize('your_licensey_key');
 
 ### openDocument
 
-Opens a document in the viewer with options to remove buttons and disable tools
+Open a document in the viewer with options to remove buttons and disable tools.
 
 Parameters:
 
@@ -356,24 +334,9 @@ config | Config | false | viewer configuration options
 Return a Future that would resolve when document is loaded.
 
 For configs (more info could be found [here](./lib/config.dart)):
-- [disabledElements](#disabledElements)
-- [disabledTools](#disabledTools)
-- [multiTabEnabled](#multiTabEnabled)
-- [customerHeaders](#customerHeaders)
-- [annotationToolbars](#annotationToolbars)
-- [hideDefaultAnnotationToolbars](#hideDefaultAnnotationToolbars)
-- [hideAnnotationToolbarSwitcher](#hideAnnotationToolbarSwitcher)
-- [hideTopToolbars](#hideTopToolbars)
-- [hideTopAppNavBar](#hideTopAppNavBar)
-- [showLeadingNavButton](#showLeadingNavButton)
-- [readOnly](#readOnly)
-- [thumbnailViewEditingEnabled](#thumbnailViewEditingEnabled)
-- [annotationAuthor](#annotationAuthor)
-- [continuousAnnotationEditing](#continuousAnnotationEditing)
-- [tabTitle](#tabTitle)
 
 #### disabledElements
-array of `Buttons` constants, default to none.
+array of [Buttons](./lib/config.dart) constants, defaults to none.
 
 Defines buttons to be disabled for the viewer.
 
@@ -383,7 +346,7 @@ config.disabledElements = disabledElements;
 ```
 
 #### disabledTools
-array of `Tools` constants, default to none.
+array of [Tools](./lib/config.dart) constants, defaults to none.
 
 Defines tools to be disabled for the viewer.
 
@@ -393,16 +356,16 @@ config.disabledTools = disabledTools;
 ```
 
 #### multiTabEnabled
-bool, default to false.
+bool, defaults to false.
 
-Defines whether viewer will show tabs for documents opened. Calling [openDocument](#openDocument) with this value being true will cause a new tab to be opened with the associated document.
+Defines whether viewer will use tabs in order to have more than one document open simultaneously (like a web browser). Calling [openDocument](#openDocument) with this value being true will cause a new tab to be opened with the associated document.
 
 ```dart
 config.multiTabEnabled = true;
 ```
 
 #### customerHeaders
-map<string, string>, default to empty.
+map<string, string>, defaults to empty.
 
 Defines custom headers to use with HTTP/HTTPS requests.
 
@@ -411,9 +374,9 @@ config.customHeaders = {'headerName': 'headerValue'};
 ```
 
 #### annotationToolbars
-array of `CustomToolbar` objects or `DefaultToolbars` constants
+array of [`CustomToolbar`](./lib/config.dart) objects or [`DefaultToolbars`](./lib/config.dart) constants.
 
-Defines custom toolbars. If passed in, the set of default toolbars will no longer appear.
+Defines custom toolbars. If passed in, the set of default toolbars will no longer appear. It is possible to mix and match with default toolbars. See example below:
 
 ```dart
 // Viewer will use a custom defined toolbar and a default annotate toolbar in this case
@@ -422,9 +385,9 @@ var annotationToolbars = [DefaultToolbars.annotate, customToolbar];
 ```
 
 #### hideDefaultAnnotationToolbars
-array of `DefaultToolbars` constants, default to none
+array of [`DefaultToolbars`](./lib/config.dart) constants, defaults to none.
 
-Defines which default annotation toolbars should be hidden. Note that this should be used when annotationToolbars is not defined.
+Defines which default annotation toolbars should be hidden. Note that this should be used when [annotationToolbars](#annotationToolbars) is not defined.
 
 ```dart
 // Viewer will use all the default toolbars except annotate or draw in this case
@@ -433,7 +396,7 @@ config.hideDefaultAnnotationToolbars = hideDefaultAnnotationToolbars;
 ```
 
 #### hideAnnotationToolbarSwitcher
-bool, default to false
+bool, defaults to false.
 
 Defines whether to show the toolbar switcher in the top toolbar.
 
@@ -442,25 +405,25 @@ config.hideAnnotationToolbarSwitcher = true;
 ```
 
 #### hideTopToolbars
-bool, default to false
+bool, defaults to false.
 
-Defines whether to show both the top nav app bar and the annotation toolbar.
+Defines whether to hide both the top app nav bar and the annotation toolbar.
 
 ```dart
 config.hideTopToolbars = true;
 ```
 
 #### hideTopAppNavBar
-bool, default to false
+bool, defaults to false.
 
-Defines whether to show the top nav app bar.
+Defines whether to hide the top navigation app bar.
 
 ```dart
 config.hideTopAppNavBar = true;
 ```
 
 #### showLeadingNavButton
-bool, default to true
+bool, defaults to true.
 
 Defines whether to show the leading navigation button.
 
@@ -469,45 +432,45 @@ config.showLeadingNavButton = true;
 ```
 
 #### readOnly
-bool, default to false
+bool, defaults to false.
 
-Defines whether the document is read-only.
+Defines whether the viewer is read-only. If true, the UI will not allow the user to change the document.
 
 ```dart
 config.readOnly = true;
 ```
 
 #### thumbnailViewEditingEnabled
-bool, default to true
+bool, defaults to true.
 
-Defines whether use could modify through thumbnail view.
+Defines whether user can modify the document using the thumbnail view (eg add/remove/rotate pages).
 
 ```dart
 config.thumbnailViewEditingEnabled = false;
 ```
 
 #### annotationAuthor
-String
+String.
 
-Defines the author name for all annotations in the current document
+Defines the author name for all annotations created on the current document. Exported xfdfCommand will include this piece of information.
 
 ```dart
 config.annotationAuthor = 'PDFTron';
 ```
 
 #### continuousAnnotationEditing
-bool, default to false
+bool, defaults to true.
 
-Defines whether annotations could be continuously edited
+If true, the active annotation creation tool will revert to the "pan tool" after an annotation is created. If false, it will remain in the current annotation creation tool.
 
 ```dart
 config.continuousAnnotationEditing = true;
 ```
 
 #### tabTitle
-String, default to the document name
+String, default is the file name.
 
-Defines the tab title for the current document, if [multiTabEnabled](#multiTabEnabled) is true (For Android, tabTitle is only supported on the widget viewer)
+Set the tab title if [multiTabEnabled](#multiTabEnabled) is true. (For Android, tabTitle is only supported on the widget viewer)
 
 ```dart
 config.tabTitle = 'tab1';
@@ -533,13 +496,13 @@ await PdftronFlutter.openDocument(_document, password: password, config: config)
 ```
 
 ### importAnnotations
-To import XFDF annotation string to current document.
+Import XFDF annotation string to current document.
 
 Parameters:
 
 Name | Type | Description
 --- | --- | ---
-xfdf | String | the XFDF string for import
+xfdf | String | annotation string in XFDF format for import
 
 Return a Future.
 
@@ -550,13 +513,14 @@ PdftronFlutter.importAnnotations(xfdf);
 ```
 
 ### exportAnnotations
-To extract XFDF from the current document. If `annotationList` is null, export all annotations from the document; Else export the valid ones specified.
+
+Extract XFDF from the current document. If `annotationList` is null, export all annotations from the document; Else export the valid ones specified.
 
 Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationList | List<`Annot`> | If not null, export the XFDF string for the valid annotations; Otherwise, export the XFDF string for all annotations
+annotationList | List<`Annot`> | If not null, export the XFDF string for the valid annotations; Otherwise, export the XFDF string for all annotations in the current document.
 
 Return a Future.
 
@@ -564,7 +528,7 @@ Future Parameters:
 
 Name | Type | Description
 -- | -- | --
-xfdf | String | The exported XFDF string
+xfdf | String | annotation string in XFDF format
 
 Export all annotations:
 ```dart
@@ -580,13 +544,13 @@ var xfdf = await PdftronFlutter.exportAnnotations(annotList);
 ```
 
 ### flattenAnnotations
-To flatten the forms and (optionally) annotations in the current document.
+Flatten the forms and (optionally) annotations in the current document.
 
 Parameters:
 
 Name | Type | Description
 --- | --- | ---
-formsOnly | bool | If true, only forms will be flattened; Otherwise, all annotations would be flattened.
+formsOnly | bool | Defines whether only forms are flattened. If false, all annotations will be flattened.
 
 Return a Future.
 
@@ -595,13 +559,13 @@ PdftronFlutter.flattenAnnotations(true);
 ```
 
 ### deleteAnnotations
-To delete the specified annotations in the current document.
+Delete the specified annotations in the current document.
 
 Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotations | List<`Annot`> | the list of annotations to be deleted
+annotations | List<`Annot`> | the annotations to be deleted
 
 Return a Future.
 
@@ -613,7 +577,7 @@ PdftronFlutter.deleteAnnotations(annotList);
 ```
 
 ### selectAnnotation
-To select the specified annotation in the current document.
+Select the specified annotation in the current document.
 
 Parameters:
 
@@ -628,7 +592,7 @@ PdftronFlutter.selectAnnotation(new Annot('Hello', 1));
 ```
 
 ### setFlagsForAnnotations
-To set flags for specified annotations in the current document.
+Set flags for specified annotations in the current document.
 
 Parameters:
 
@@ -656,8 +620,7 @@ PdftronFlutter.setFlagsForAnnotations(annotsWithFlags);
 ```
 
 ### importAnnotationCommand
-To import XFDF command string to the document.
-The XFDF needs to be a valid command format with `<add>` `<modify>` `<delete>` tags.
+Import remote annotation command to local document. The XFDF needs to be a valid command format with `<add>` `<modify>` `<delete>` tags.
 
 Parameters:
 
@@ -673,13 +636,13 @@ PdftronFlutter.importAnnotationCommand(xfdfCommand);
 ```
 
 ### importBookmarkJson
-To import user bookmarks to the document. The input needs to be a valid bookmark JSON format.
+Import user bookmarks into the document. The input needs to be a valid bookmark JSON format.
 
 Parameters:
 
 Name | Type | Description
 --- | --- | ---
-bookmarkJson | String | needs to be in valid bookmark JSON format, for example {"0": "Page 1"}. The page numbers are 1-indexed
+bookmarkJson | String | The bookmark json for import. It needs to be in valid bookmark JSON format, for example {"0": "Page 1"}. The page numbers are 1-indexed
 
 Return a Future.
 
@@ -688,7 +651,7 @@ PdftronFlutter.importBookmarkJson("{\"0\": \"Page 1\", \"3\": \"Page 4\"}");
 ```
 
 ### saveDocument
-To save the currently opened document in the viewer and get the absolute path to the file. Must only be called when the document is opened in the viewer.
+Save the currently opened document in the viewer and get the absolute path to the document. Must only be called when the document is opened in the viewer.
 
 Return a Future.
 
@@ -696,14 +659,14 @@ Future Parameters:
 
 Name | Type | Description
 --- | --- | ---
-path | String | the absolute path to the saved file
+path | String | the location of the saved document
 
 ```dart
 var path = await PdftronFlutter.saveDocument();
 ```
 
 ### commitTool
-To commit the annotation being created by the tool to the PDF, only available for multi-stroke ink and poly-shape.
+Commit the current tool, only available for multi-stroke ink and poly-shape.
 
 Return a Future.
 
@@ -719,7 +682,7 @@ print("Tool committed: $committed");
 ```
 
 ### getPageCount
-To get the total number of pages in the currently displayed document.
+Get the total number of pages in the currently displayed document.
 
 Return a Future.
 
@@ -735,7 +698,7 @@ print("The current doc has $pageCount pages");
 ```
 
 ### handleBackButton
-To handle back button in search mode (Android only).
+Handle the back button in search mode. Android only.
 
 Return a Future.
 
@@ -743,7 +706,7 @@ Future Parameters:
 
 Name | Type | Description
 --- | --- | ---
-handled | bool | whether the back button was handled successfully
+handled | bool | whether the back button is handled successfully
 
 ```dart
 var handled = await PdftronFlutter.handleBackButton();
@@ -751,13 +714,13 @@ print("Back button handled: $handled");
 ```
 
 ### getPageCropBox
-To get a map object of the crop box for specified page.
+Get a map object of the crop box for specified page.
 
 Parameters:
 
 Name | Type | Description
 --- | --- | ---
-pageNumber | int | the page number for the target crop box
+pageNumber | int | the page number for the target crop box. It is 1-indexed
 
 Return a Future.
 
@@ -765,7 +728,7 @@ Future Parameters:
 
 Name | Type | Description
 --- | --- | ---
-cropBox | Map<String, double> | the crop box information map. It contains information for position (bottom-left: `x1`, `y1`; top-right: `x2`, `y2`) and size (`width`, `height`)
+cropBox | [`Rect`](./lib/config.dart) | the crop box information map. It contains information for position (bottom-left: `x1`, `y1`; top-right: `x2`, `y2`) and size (`width`, `height`)
 
 ```dart
 var cropBox = await PdftronFlutter.getPageCropBox(1);
@@ -773,13 +736,13 @@ print('The width of crop box for page 1 is: ' + cropBox.width.toString());
 ```
 
 ### setToolMode
-To set the current tool mode.
+Set the current tool mode.
 
 Parameters:
 
 Name | Type | Description
 --- | --- | ---
-toolMode | String | the tool mode to be set, one of the constants from `Tools`
+toolMode | String | One of [Tools](./lib/config.dart) string constants, representing to tool mode to set
 
 Return a Future.
 
@@ -788,15 +751,15 @@ Return a Future.
 ```
 
 ### setFlagForFields
-To set a field flag value on one or more form fields.
+Set a field flag value on one or more form fields.
 
 Parameters:
 
 Name | Type | Description
 --- | ---| ---
-fieldNames | List<`String`> | A list of field names to be set
-flag | int | The flag to be set, one of the constants from `FieldFlags`
-flagValue | bool | To turn on/off the flag for the fields
+fieldNames | List<`String`> | list of field names for which the flag should be set
+flag | int | the flag to be set, one of the constants from [`FieldFlags`](./lib/config.dart)
+flagValue | bool | value to set for flag
 
 Return a Future.
 
@@ -805,7 +768,7 @@ Return a Future.
 ```
 
 ### setValuesForFields
-To set field values on one or more form fields of different types.
+Set field values on one or more form fields of different types.
 
 Parameters:
 
@@ -827,7 +790,7 @@ PdftronFlutter.setValuesForFields([
 ```
 
 ### setLeadingNavButtonIcon
-To set the icon path to the navigation button. The button would use the specified icon if [showLeadingNavButton](#showLeadingNavButton) (which by default is true) is true in the config.
+Set the path to an icon to be used for the leading navigation button. The button would use the specified icon if [showLeadingNavButton](#showLeadingNavButton) (which by default is true) is true in the config.
 
 Parameters:
 
@@ -842,23 +805,13 @@ PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png
 ```
 
 ### closeAllTabs
-To close all documents that are currently opened in a multiTab environment (that is, [multiTabEnabled](#multiTabEnabled) is true in the config).
+Close all documents that are currently opened in a multiTab environment (that is, [multiTabEnabled](#multiTabEnabled) is true in the config).
 
 ```dart
 PdftronFlutter.closeAllTabs();
 ```
 
 ## Event APIs
-- [startExportAnnotationCommandListener](#startExportAnnotationCommandListener)
-- [startExportBookmarkListener](#startExportBookmarkListener)
-- [startDocumentLoadedListener](#startDocumentLoadedListener)
-- [startDocumentErrorListener](#startDocumentErrorListener)
-- [startAnnotationChangedListener](#startAnnotationChangedListener)
-- [startAnnotationsSelectedListener](#startAnnotationsSelectedListener)
-- [startFormFieldValueChangedListener](#startFormFieldValueChangedListener)
-- [startLeadingNavButtonPressedListener](#startLeadingNavButtonPressedListener)
-- [startPageChangedListener](#startPageChangedListener)
-- [startZoomChangedListener](#startZoomChangedListener)
 
 ### startExportAnnotationCommandListener
 Event is raised when local annotation changes committed to the document.
@@ -966,7 +919,7 @@ Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-fields | List<`Field`> | The fields that are changed
+fields | List<`Field`> | the fields that are changed
 
 ```dart
 var fieldChangedCancel = startFormFieldValueChangedListener((fields)
@@ -995,7 +948,7 @@ Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-previousPageNumber | int | The previous page number
+previousPageNumber | int | the previous page number
 pageNumber | int | the current page number
 
 ```dart
