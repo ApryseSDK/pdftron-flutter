@@ -32,7 +32,7 @@ class _ViewerState extends State<Viewer> {
     super.initState();
     initPlatformState();
 
-    // showViewer();
+    showViewer();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -120,11 +120,13 @@ class _ViewerState extends State<Viewer> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        child: _showViewer
-            ? DocumentView(
-                onCreated: _onDocumentViewCreated,
-              )
-            : Container(),
+        child:
+            // Uncomment this to use Widget version of the viewer
+            // _showViewer
+            // ? DocumentView(
+            //     onCreated: _onDocumentViewCreated,
+            //   ):
+            Container(),
       ),
     );
   }
