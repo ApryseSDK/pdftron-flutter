@@ -7,22 +7,32 @@ import 'package:pdftron_flutter/pdftron_flutter.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Viewer(),
+    );
+  }
 }
 
-class _MyAppState extends State<MyApp> {
+class Viewer extends StatefulWidget {
+  @override
+  _ViewerState createState() => _ViewerState();
+}
+
+class _ViewerState extends State<Viewer> {
   String _version = 'Unknown';
   String _document =
       "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
+  bool _showViewer = true;
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
 
-    showViewer();
+    // showViewer();
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -106,17 +116,15 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: SafeArea(
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            // child: DocumentView(
-            //   onCreated: _onDocumentViewCreated,
-            // ),
-          ),
-        ),
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        child: _showViewer
+            ? DocumentView(
+                onCreated: _onDocumentViewCreated,
+              )
+            : Container(),
       ),
     );
   }
@@ -124,6 +132,40 @@ class _MyAppState extends State<MyApp> {
   void _onDocumentViewCreated(DocumentViewController controller) async {
     Config config = new Config();
 
+    var leadingNavCancel = startLeadingNavButtonPressedListener(() {
+      // Uncomment this to quit the viewer when leading navigation button is pressed
+      // this.setState(() {
+      //   _showViewer = !_showViewer;
+      // });
+
+      // Show a dialog when leading navigation button is pressed
+      _showMyDialog();
+    });
+
     controller.openDocument(_document, config: config);
+  }
+
+  Future<void> _showMyDialog() async {
+    print('hello');
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('AlertDialog'),
+          content: SingleChildScrollView(
+            child: Text('Leading navigation button has been pressed.'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
