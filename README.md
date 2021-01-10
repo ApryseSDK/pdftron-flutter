@@ -287,7 +287,7 @@ There are several custom classes used in these APIs: `Annot`, `AnnotWithRect`, `
 
 ### version
 
-To obtain PDFTron SDK version. **PdftronFlutter only**.
+Obtains PDFTron SDK version. **PdftronFlutter only**.
 
 ```dart
 String version = PdftronFlutter.version;
@@ -296,7 +296,7 @@ print('Current PDFTron SDK version is: ' + version);
 
 ### platformVersion
 
-To obtain the current platform version. **PdftronFlutter only**.
+Obtains the current platform version. **PdftronFlutter only**.
 
 ```dart
 String platformVersion = PdftronFlutter.platformVersion;
@@ -305,7 +305,7 @@ print('App is currently running on: ' + platformVersion);
 
 ### initialize
 
-Initialize PDFTron SDK with your PDFTron commercial license key. You can run PDFTron in demo mode by passing an empty string. **PdftronFlutter only**.
+Initializes PDFTron SDK with your PDFTron commercial license key. You can run PDFTron in demo mode by passing an empty string. **PdftronFlutter only**.
 
 Parameters:
 
@@ -313,7 +313,7 @@ Name | Type | Required | Description
 --- | --- | --- | ---
 key | String | true | your PDFTron license key
 
-Return a Future.
+Returns a Future.
 
 ```dart
 PdftronFlutter.initialize('your_licensey_key');
@@ -321,7 +321,7 @@ PdftronFlutter.initialize('your_licensey_key');
 
 ### openDocument
 
-Open a document in the viewer with options to remove buttons and disable tools.
+Opens a document in the viewer with options to remove buttons and disable tools.
 
 Parameters:
 
@@ -331,7 +331,7 @@ document | String | true | path to the document
 password | String | false | password to an encrypted document
 config | Config | false | viewer configuration options
 
-Return a Future that would resolve when document is loaded.
+Returns a Future that would resolve when document is loaded.
 
 For configs (more info could be found [here](./lib/config.dart)):
 
@@ -461,7 +461,7 @@ config.annotationAuthor = 'PDFTron';
 #### continuousAnnotationEditing
 bool, defaults to true.
 
-If true, the active annotation creation tool will revert to the "pan tool" after an annotation is created. If false, it will remain in the current annotation creation tool.
+If true, the active annotation creation tool will remain in the current annotation creation tool. Otherwise, it will revert to the "pan tool" after an annotation is created.
 
 ```dart
 config.continuousAnnotationEditing = true;
@@ -470,7 +470,7 @@ config.continuousAnnotationEditing = true;
 #### tabTitle
 String, default is the file name.
 
-Set the tab title if [multiTabEnabled](#multiTabEnabled) is true. (For Android, tabTitle is only supported on the widget viewer)
+Sets the tab title if [multiTabEnabled](#multiTabEnabled) is true. (For Android, tabTitle is only supported on the widget viewer)
 
 ```dart
 config.tabTitle = 'tab1';
@@ -496,7 +496,7 @@ await PdftronFlutter.openDocument(_document, password: password, config: config)
 ```
 
 ### importAnnotations
-Import XFDF annotation string to current document.
+Imports XFDF annotation string to current document.
 
 Parameters:
 
@@ -504,7 +504,7 @@ Name | Type | Description
 --- | --- | ---
 xfdf | String | annotation string in XFDF format for import
 
-Return a Future.
+Returns a Future.
 
 ```dart
 
@@ -514,7 +514,7 @@ PdftronFlutter.importAnnotations(xfdf);
 
 ### exportAnnotations
 
-Extract XFDF from the current document. If `annotationList` is null, export all annotations from the document; Else export the valid ones specified.
+Extracts XFDF from the current document. If `annotationList` is null, export all annotations from the document; Else export the valid ones specified.
 
 Parameters:
 
@@ -522,7 +522,7 @@ Name | Type | Description
 --- | --- | ---
 annotationList | List<`Annot`> | If not null, export the XFDF string for the valid annotations; Otherwise, export the XFDF string for all annotations in the current document.
 
-Return a Future.
+Returns a Future.
 
 Future Parameters:
 
@@ -530,12 +530,12 @@ Name | Type | Description
 -- | -- | --
 xfdf | String | annotation string in XFDF format
 
-Export all annotations:
+Exports all annotations:
 ```dart
 var xfdf = await PdftronFlutter.exportAnnotations(null);
 ```
 
-Export specified annotations:
+Exports specified annotations:
 ```dart
 List<Annot> annotList = new List<Annot>();
 list.add(new Annot('Hello', 1));
@@ -544,7 +544,7 @@ var xfdf = await PdftronFlutter.exportAnnotations(annotList);
 ```
 
 ### flattenAnnotations
-Flatten the forms and (optionally) annotations in the current document.
+Flattens the forms and (optionally) annotations in the current document.
 
 Parameters:
 
@@ -552,14 +552,14 @@ Name | Type | Description
 --- | --- | ---
 formsOnly | bool | Defines whether only forms are flattened. If false, all annotations will be flattened.
 
-Return a Future.
+Returns a Future.
 
 ```dart
 PdftronFlutter.flattenAnnotations(true);
 ```
 
 ### deleteAnnotations
-Delete the specified annotations in the current document.
+Deletes the specified annotations in the current document.
 
 Parameters:
 
@@ -567,7 +567,7 @@ Name | Type | Description
 --- | --- | ---
 annotations | List<`Annot`> | the annotations to be deleted
 
-Return a Future.
+Returns a Future.
 
 ```dart
 List<Annot> annotList = new List<Annot>();
@@ -577,7 +577,7 @@ PdftronFlutter.deleteAnnotations(annotList);
 ```
 
 ### selectAnnotation
-Select the specified annotation in the current document.
+Selects the specified annotation in the current document.
 
 Parameters:
 
@@ -585,14 +585,14 @@ Name | Type | Description
 --- | --- | ---
 annotation | `Annot` | the annotation to be selected
 
-Return a Future.
+Returns a Future.
 
 ```dart
 PdftronFlutter.selectAnnotation(new Annot('Hello', 1));
 ```
 
 ### setFlagsForAnnotations
-Set flags for specified annotations in the current document.
+Sets flags for specified annotations in the current document.
 
 Parameters:
 
@@ -600,7 +600,7 @@ Name | Type | Description
 --- | --- | ---
 annotationWithFlagsList | List<`AnnotWithFlags`> | a list of annotations with respective flags to be set
 
-Return a Future.
+Returns a Future.
 
 ```dart
 List<AnnotWithFlags> annotsWithFlags = new List<AnnotWithFlags>();
@@ -620,7 +620,7 @@ PdftronFlutter.setFlagsForAnnotations(annotsWithFlags);
 ```
 
 ### importAnnotationCommand
-Import remote annotation command to local document. The XFDF needs to be a valid command format with `<add>` `<modify>` `<delete>` tags.
+Imports remote annotation command to local document. The XFDF needs to be a valid command format with `<add>` `<modify>` `<delete>` tags.
 
 Parameters:
 
@@ -628,7 +628,7 @@ Name | Type | Description
 --- | --- | ---
 xfdfCommand | String | the XFDF command string for import
 
-Return a Future.
+Returns a Future.
 
 ```dart
 var xfdfCommand = 'xfdfCommand <?xml version="1.0" encoding="UTF-8"?><xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve"><add><circle style="solid" width="5" color="#E44234" opacity="1" creationdate="D:20201218025606Z" flags="print" date="D:20201218025606Z" name="9d0f2d63-a0cc-4f06-b786-58178c4bd2b1" page="0" rect="56.4793,584.496,208.849,739.369" title="PDF" /></add><modify /><delete /><pdf-info import-version="3" version="2" xmlns="http://www.pdftron.com/pdfinfo" /></xfdf>';
@@ -636,7 +636,7 @@ PdftronFlutter.importAnnotationCommand(xfdfCommand);
 ```
 
 ### importBookmarkJson
-Import user bookmarks into the document. The input needs to be a valid bookmark JSON format.
+Imports user bookmarks into the document. The input needs to be a valid bookmark JSON format.
 
 Parameters:
 
@@ -644,16 +644,16 @@ Name | Type | Description
 --- | --- | ---
 bookmarkJson | String | The bookmark json for import. It needs to be in valid bookmark JSON format, for example {"0": "Page 1"}. The page numbers are 1-indexed
 
-Return a Future.
+Returns a Future.
 
 ```dart
 PdftronFlutter.importBookmarkJson("{\"0\": \"Page 1\", \"3\": \"Page 4\"}");
 ```
 
 ### saveDocument
-Save the currently opened document in the viewer and get the absolute path to the document. Must only be called when the document is opened in the viewer.
+Saves the currently opened document in the viewer and get the absolute path to the document. Must only be called when the document is opened in the viewer.
 
-Return a Future.
+Returns a Future.
 
 Future Parameters:
 
@@ -666,9 +666,9 @@ var path = await PdftronFlutter.saveDocument();
 ```
 
 ### commitTool
-Commit the current tool, only available for multi-stroke ink and poly-shape.
+Commits the current tool, only available for multi-stroke ink and poly-shape.
 
-Return a Future.
+Returns a Future.
 
 Future Parameters:
 
@@ -682,9 +682,9 @@ print("Tool committed: $committed");
 ```
 
 ### getPageCount
-Get the total number of pages in the currently displayed document.
+Gets the total number of pages in the currently displayed document.
 
-Return a Future.
+Returns a Future.
 
 Future Parameters:
 
@@ -698,9 +698,9 @@ print("The current doc has $pageCount pages");
 ```
 
 ### handleBackButton
-Handle the back button in search mode. Android only.
+Handles the back button in search mode. Android only.
 
-Return a Future.
+Returns a Future.
 
 Future Parameters:
 
@@ -714,7 +714,7 @@ print("Back button handled: $handled");
 ```
 
 ### getPageCropBox
-Get a map object of the crop box for specified page.
+Gets a map object of the crop box for specified page.
 
 Parameters:
 
@@ -722,7 +722,7 @@ Name | Type | Description
 --- | --- | ---
 pageNumber | int | the page number for the target crop box. It is 1-indexed
 
-Return a Future.
+Returns a Future.
 
 Future Parameters:
 
@@ -736,7 +736,7 @@ print('The width of crop box for page 1 is: ' + cropBox.width.toString());
 ```
 
 ### setToolMode
-Set the current tool mode.
+Sets the current tool mode.
 
 Parameters:
 
@@ -744,14 +744,14 @@ Name | Type | Description
 --- | --- | ---
 toolMode | String | One of [Tools](./lib/config.dart) string constants, representing to tool mode to set
 
-Return a Future.
+Returns a Future.
 
 ```dart
  PdftronFlutter.setToolMode(Tools.annotationCreateEllipse);
 ```
 
 ### setFlagForFields
-Set a field flag value on one or more form fields.
+Sets a field flag value on one or more form fields.
 
 Parameters:
 
@@ -761,14 +761,14 @@ fieldNames | List<`String`> | list of field names for which the flag should be s
 flag | int | the flag to be set, one of the constants from [`FieldFlags`](./lib/config.dart)
 flagValue | bool | value to set for flag
 
-Return a Future.
+Returns a Future.
 
 ```dart
  PdftronFlutter.setFlagForFields(['First Name', 'Last Name'], FieldFlags.Required, true);
 ```
 
 ### setValuesForFields
-Set field values on one or more form fields of different types.
+Sets field values on one or more form fields of different types.
 
 Parameters:
 
@@ -776,7 +776,7 @@ Name | Type | Description
 --- | ---| ---
 fields | List<`Field`> | A list of fields with name and the value that you would like to set to, could be in type number, bool or string
 
-Return a Future.
+Returns a Future.
 
 ```dart
 PdftronFlutter.setValuesForFields([
@@ -790,7 +790,7 @@ PdftronFlutter.setValuesForFields([
 ```
 
 ### setLeadingNavButtonIcon
-Set the path to an icon to be used for the leading navigation button. The button would use the specified icon if [showLeadingNavButton](#showLeadingNavButton) (which by default is true) is true in the config.
+Sets the file name of the icon to be used for the leading navigation button. The button will use the specified icon if [showLeadingNavButton](#showLeadingNavButton) (which by default is true) is true in the config.
 
 Parameters:
 
@@ -798,14 +798,35 @@ Name | Type | Description
 --- | ---| ---
 leadingNavButtonIcon | String | the icon path to the navigation button
 
-Return a Future.
+Returns a Future.
 
 ```dart
 PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp');
 ```
 
+**Note**: to add the image file to your application, please follow the steps below:
+
+#### Android
+1. Add the image resource to the [example/android/app/src/main/res/drawable](./example/android/app/src/main/res/drawable) directory. For details about supported file types and potential compression, check out [here](https://developer.android.com/guide/topics/graphics/drawables#drawables-from-images).
+
+<img alt='demo-android' src='android_add_resources.png'/>
+
+2. Now you can use the image in the viewer. For example, if you add `button_close.png` to drawable, you could use `'button_close'` in leadingNavButtonIcon.
+
+#### iOS
+1. After pods has been installed, open the .xcworkspace file for this application in Xcode (in this case, it's [Runner.xcworkspace](./example/ios/Runner.xcworkspace)), and navigate through the list below. This would allow you to add resources, in this case, an image, to your project.
+- "Project navigator"
+- "Runner" (or the app name)
+- "Build Phases"
+- "Copy Bundle Resources"
+- "+".
+
+<img alt='demo-android' src='ios_add_resources.png'/>
+
+2. Now you can use the image in the viewer. For example, if you add `button_open.png` to the bundle, you could use `'button_open.png'` in leadingNavButtonIcon.
+
 ### closeAllTabs
-Close all documents that are currently opened in a multiTab environment (that is, [multiTabEnabled](#multiTabEnabled) is true in the config).
+Closes all documents that are currently opened in a multiTab environment (that is, [multiTabEnabled](#multiTabEnabled) is true in the config).
 
 ```dart
 PdftronFlutter.closeAllTabs();
