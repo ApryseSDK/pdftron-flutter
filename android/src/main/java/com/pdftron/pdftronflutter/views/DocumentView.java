@@ -198,6 +198,14 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     public void onDetachedFromWindow() {
         handleOnDetach(this);
 
+        // remove detached view
+        if (mPdfViewCtrlTabHostFragment != null) {
+            View fragmentView = this.mPdfViewCtrlTabHostFragment.getView();
+            if (fragmentView != null) {
+                this.removeView(fragmentView);
+            }
+        }
+
         super.onDetachedFromWindow();
     }
 
