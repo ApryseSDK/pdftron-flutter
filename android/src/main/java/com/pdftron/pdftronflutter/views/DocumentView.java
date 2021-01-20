@@ -63,6 +63,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private int mId = 0;
     private FragmentManager mFragmentManager;
 
+    private String mTabTitle;
+
     public DocumentView(@NonNull Context context) {
         this(context, null);
     }
@@ -89,24 +91,19 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         setViewerConfig(getConfig());
         setFlutterLoadResult(result);
 
-        ViewerBuilder2 viewerBuilder = ViewerBuilder2.withUri(configInfo.getFileUri(), password)
-                .usingCustomHeaders(configInfo.getCustomHeaderJson())
-                .usingConfig(mBuilder.build())
-                .usingNavIcon(mShowNavIcon ? mNavIconRes : 0)
-                .usingTabTitle(configInfo.getTabTitle());
-        if (mPdfViewCtrlTabHostFragment != null) {
-            mPdfViewCtrlTabHostFragment.onOpenAddNewTab(viewerBuilder.createBundle(getContext()));
-        } else {
-            mPdfViewCtrlTabHostFragment = viewerBuilder.build(getContext());
-            if (mFragmentManager != null) {
-                mFragmentManager.beginTransaction().add(mPdfViewCtrlTabHostFragment, "document_view").commitNow();
-                View fragmentView = mPdfViewCtrlTabHostFragment.getView();
-                if (fragmentView != null) {
-                    addView(fragmentView, -1, -1);
-                }
-            }
-        }
+        mTabTitle = configInfo.getTabTitle();
+
+        prepView();
         attachListeners();
+    }
+
+    @Override
+    protected void buildViewer() {
+        mViewerBuilder = ViewerBuilder2.withUri(mDocumentUri, mPassword)
+                .usingConfig(mViewerConfig)
+                .usingNavIcon(mShowNavIcon ? mNavIconRes : 0)
+                .usingCustomHeaders(mCustomHeaders)
+                .usingTabTitle(mTabTitle);
     }
 
     @Override
@@ -201,14 +198,20 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     public void onDetachedFromWindow() {
         handleOnDetach(this);
 
+        // remove detached view
+        if (mPdfViewCtrlTabHostFragment != null) {
+            View fragmentView = this.mPdfViewCtrlTabHostFragment.getView();
+            if (fragmentView != null) {
+                this.removeView(fragmentView);
+            }
+        }
+
         super.onDetachedFromWindow();
     }
 
     @Override
     public void onNavButtonPressed() {
         handleLeadingNavButtonPressed(this);
-
-        super.onNavButtonPressed();
     }
 
     public void setExportAnnotationCommandEventEmitter(EventChannel.EventSink emitter) {
