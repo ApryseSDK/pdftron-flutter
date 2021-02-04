@@ -101,7 +101,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
 		...
 	```
 
-5a. (Optional, required if using `DocumentView` widget) In your `MainActivity` file (either kotlin or java), change the parent class to `FlutterFragmentActivity`:
+5a. (If using `DocumentView` widget) In your `MainActivity` file (either kotlin or java), change the parent class to `FlutterFragmentActivity`:
 ```
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterFragmentActivity
