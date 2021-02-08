@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdftron_flutter/pdftron_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
@@ -32,7 +33,25 @@ class _ViewerState extends State<Viewer> {
     super.initState();
     initPlatformState();
 
-    showViewer();
+    if (Platform.isIOS) {
+      // Open the document for iOS, no need for permission
+      showViewer();
+    } else {
+      // Request for permissions for android before opening document
+      launchWithPermission();
+    }
+  }
+
+  Future<void> launchWithPermission() async {
+    Map<PermissionGroup, PermissionStatus> permissions =
+        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    if (granted(permissions[PermissionGroup.storage])) {
+      showViewer();
+    }
+  }
+
+  bool granted(PermissionStatus status) {
+    return status == PermissionStatus.granted;
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
