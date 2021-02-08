@@ -101,7 +101,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
 		...
 	```
 
-5a. (Optional, required if using `DocumentView` widget) In your `MainActivity` file (either kotlin or java), change the parent class to `FlutterFragmentActivity`:
+5a. (If using `DocumentView` widget) In your `MainActivity` file (either kotlin or java), change the parent class to `FlutterFragmentActivity`:
 ```
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterFragmentActivity
@@ -168,14 +168,25 @@ import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Viewer(),
+    );
+  }
 }
 
-class _MyAppState extends State<MyApp> {
+class Viewer extends StatefulWidget {
+  @override
+  _ViewerState createState() => _ViewerState();
+}
+
+class _ViewerState extends State<Viewer> {
   String _version = 'Unknown';
-  String _document = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
+  String _document =
+      "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
+  bool _showViewer = true;
 
   @override
   void initState() {
@@ -185,7 +196,6 @@ class _MyAppState extends State<MyApp> {
     if (Platform.isIOS) {
       // Open the document for iOS, no need for permission
       showViewer();
-
     } else {
       // Request for permissions for android before opening document
       launchWithPermission();
@@ -193,10 +203,15 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> launchWithPermission() async {
-    Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    Map<PermissionGroup, PermissionStatus> permissions =
+        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
     if (granted(permissions[PermissionGroup.storage])) {
       showViewer();
     }
+  }
+
+  bool granted(PermissionStatus status) {
+    return status == PermissionStatus.granted;
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -204,7 +219,7 @@ class _MyAppState extends State<MyApp> {
     String version;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      PdftronFlutter.initialize("Insert commercial license key here after purchase");
+      PdftronFlutter.initialize("your_pdftron_license_key");
       version = await PdftronFlutter.version;
     } on PlatformException {
       version = 'Failed to get platform version.';
@@ -220,36 +235,118 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void showViewer() async {
+    // opening without a config file will have all functionality enabled.
+    // await PdftronFlutter.openDocument(_document);
 
-  void showViewer() {
-    // Shows how to disable functionality. Uncomment to configure your viewer with a Config object.
-    //  var disabledElements = [Buttons.shareButton, Buttons.searchButton];
-    //  var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
-    //  var config = Config();
-    //  config.disabledElements = disabledElements;
-    //  config.disabledTools = disabledTools;
-    // config.customHeaders = {'headerName': 'headerValue'};
-    //  PdftronFlutter.openDocument(_document, config: config);
+    // shows how to disale functionality
+//      var disabledElements = [Buttons.shareButton, Buttons.searchButton];
+//      var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
+    var config = Config();
+//      config.disabledElements = disabledElements;
+//      config.disabledTools = disabledTools;
+//      config.multiTabEnabled = true;
+//      config.customHeaders = {'headerName': 'headerValue'};
 
-    // Open document without a config file which will have all functionality enabled.
-    PdftronFlutter.openDocument(_document);
-  }
+    var documentLoadedCancel = startDocumentLoadedListener((filePath) {
+      print("document loaded: $filePath");
+    });
 
-  bool granted(PermissionStatus status) {
-    return status == PermissionStatus.granted;
+    await PdftronFlutter.openDocument(_document, config: config);
+
+    try {
+      PdftronFlutter.importAnnotationCommand(
+          "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+              "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
+              "      <add>\n" +
+              "        <square style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20200619203211Z\" flags=\"print\" date=\"D:20200619203211Z\" name=\"c684da06-12d2-4ccd-9361-0a1bf2e089e3\" page=\"1\" rect=\"113.312,277.056,235.43,350.173\" title=\"\" />\n" +
+              "      </add>\n" +
+              "      <modify />\n" +
+              "      <delete />\n" +
+              "      <pdf-info import-version=\"3\" version=\"2\" xmlns=\"http://www.pdftron.com/pdfinfo\" />\n" +
+              "    </xfdf>");
+    } on PlatformException catch (e) {
+      print("Failed to importAnnotationCommand '${e.message}'.");
+    }
+
+    try {
+      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
+    } on PlatformException catch (e) {
+      print("Failed to importBookmarkJson '${e.message}'.");
+    }
+
+    var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
+      // local annotation changed
+      // upload XFDF command to server here
+      print("flutter xfdfCommand: $xfdfCommand");
+    });
+
+    var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
+      print("flutter bookmark: $bookmarkJson");
+    });
+
+    var path = await PdftronFlutter.saveDocument();
+    print("flutter save: $path");
+
+    // to cancel event:
+    // annotCancel();
+    // bookmarkCancel();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('PDFTron flutter app'),
-        ),
-        body: Center(
-          child: Text('Running on: $_version\n'),
-        ),
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        child:
+            // Uncomment this to use Widget version of the viewer
+            // _showViewer
+            // ? DocumentView(
+            //     onCreated: _onDocumentViewCreated,
+            //   ):
+            Container(),
       ),
+    );
+  }
+
+  void _onDocumentViewCreated(DocumentViewController controller) async {
+    Config config = new Config();
+
+    var leadingNavCancel = startLeadingNavButtonPressedListener(() {
+      // Uncomment this to quit the viewer when leading navigation button is pressed
+      // this.setState(() {
+      //   _showViewer = !_showViewer;
+      // });
+
+      // Show a dialog when leading navigation button is pressed
+      _showMyDialog();
+    });
+
+    controller.openDocument(_document, config: config);
+  }
+
+  Future<void> _showMyDialog() async {
+    print('hello');
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('AlertDialog'),
+          content: SingleChildScrollView(
+            child: Text('Leading navigation button has been pressed.'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
