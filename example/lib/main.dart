@@ -153,6 +153,8 @@ class _ViewerState extends State<Viewer> {
   void _onDocumentViewCreated(DocumentViewController controller) async {
     Config config = new Config();
 
+    config.disabledElements = [Buttons.arrowToolButton];
+
     var leadingNavCancel = startLeadingNavButtonPressedListener(() {
       // Uncomment this to quit the viewer when leading navigation button is pressed
       // this.setState(() {
