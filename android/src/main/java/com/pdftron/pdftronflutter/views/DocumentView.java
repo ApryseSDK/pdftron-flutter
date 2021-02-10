@@ -110,6 +110,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     @Override
     protected void prepView() {
         if (mFromAttach && !mDetached) {
+            // here we only want to attach the viewer from open document
+            // unless it is not attached yet
             return;
         }
         super.prepView();
