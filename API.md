@@ -1,11 +1,11 @@
 # PDFTron Flutter API
 
-- [Utility Function APIs](#Utility-Function-APIs)
-- [Viewer Function APIs](#Viewer-Function-APIs)
-- [Event APIs](#Event-APIs)
+- [Utility Functions](#Utility-Functions)
+- [Viewer Functions](#Viewer-Functions)
+- [Events](#Events)
 - [Viewer Configurations](#Viewer-Configurations)
 
-## Utility Function APIs
+## Utility Functions
 This section is for some static methods for global library initialization, configuration, and utility. They could only be callable as a plugin. Below is an example for [initialize](#initialize):
 
 ```dart
@@ -46,7 +46,7 @@ PdftronFlutter.initialize('your_licensey_key');
 ```
 
 
-## Viewer Function APIs
+## Viewer Functions
 This section is for viewer related non-static methods. They would be callable in both plugin and widger versions. For example, [openDocument](#openDocument) is accessible in 2 ways:
 
 Plugin:
@@ -430,7 +430,7 @@ var handled = await PdftronFlutter.handleBackButton();
 print("Back button handled: $handled");
 ```
 
-### Bookmark
+### Bookmarks
 
 #### importBookmarkJson
 Imports user bookmarks into the document. The input needs to be a valid bookmark JSON format.
@@ -459,7 +459,7 @@ PdftronFlutter.closeAllTabs();
 ```
 
 
-## Event APIs
+## Events
 This section contains all the event listeners you could attach to the viewer.
 
 ### Document
@@ -489,7 +489,7 @@ var documentErrorCancel = startDocumentErrorListener((){
 });
 ```
 
-### Viewer UI Configuration
+### Viewer
 
 #### startLeadingNavButtonPressedListener
 Event is raised when the leading navigation button is pressed.
@@ -602,7 +602,7 @@ var fieldChangedCancel = startFormFieldValueChangedListener((fields)
 });
 ```
 
-### Bookmark
+### Bookmarks
 
 #### startExportBookmarkListener
 Event is raised when user bookmark changes committed to the document.
