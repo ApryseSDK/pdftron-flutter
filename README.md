@@ -519,6 +519,15 @@ Defines whether to hide the top navigation app bar.
 config.hideTopAppNavBar = true;
 ```
 
+#### hideBottomToolbar
+bool, default to false.
+
+Defines whether to hide the bottom toolbar for the current viewer.
+
+```dart
+config.hideBottomToolbar = true;
+```
+
 #### showLeadingNavButton
 bool, defaults to true.
 
