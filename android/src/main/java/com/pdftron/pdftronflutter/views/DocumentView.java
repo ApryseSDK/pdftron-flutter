@@ -62,6 +62,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private String mTabTitle;
 
     private boolean mFromAttach;
+    private boolean mDetached;
 
     public DocumentView(@NonNull Context context) {
         this(context, null);
@@ -92,6 +93,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         mTabTitle = configInfo.getTabTitle();
 
         mFromAttach = false;
+        mDetached = false;
         prepView();
         attachListeners();
     }
@@ -107,8 +109,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
     @Override
     protected void prepView() {
-        if (mFromAttach) {
-            // we only want to add viewer via open document
+        if (mFromAttach && !mDetached) {
             return;
         }
         super.prepView();
@@ -207,6 +208,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
     @Override
     public void onDetachedFromWindow() {
+        mDetached = true;
         handleOnDetach(this);
 
         // remove detached view
