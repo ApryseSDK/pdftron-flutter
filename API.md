@@ -272,7 +272,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationList | List<`Annot`> | If not null, export the XFDF string for the valid annotations; Otherwise, export the XFDF string for all annotations in the current document.
+annotationList | List<[`Annot`](./lib/options.dart)> | If not null, export the XFDF string for the valid annotations; Otherwise, export the XFDF string for all annotations in the current document.
 
 Returns a Future.
 
@@ -319,7 +319,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotations | List<`Annot`> | the annotations to be deleted
+annotations | List<[`Annot`](./lib/options.dart)> | the annotations to be deleted
 
 Returns a Future.
 
@@ -337,7 +337,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotation | `Annot` | the annotation to be selected
+annotation | [`Annot`](./lib/options.dart) | the annotation to be selected
 
 Returns a Future.
 
@@ -352,7 +352,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationWithFlagsList | List<`AnnotWithFlags`> | a list of annotations with respective flags to be set
+annotationWithFlagsList | List<[`AnnotWithFlags`](./lib/options.dart)> | a list of annotations with respective flags to be set
 
 Returns a Future.
 
@@ -397,7 +397,7 @@ Parameters:
 
 Name | Type | Description
 --- | ---| ---
-fields | List<`Field`> | A list of fields with name and the value that you would like to set to, could be in type number, bool or string
+fields | List<[`Field`](./lib/options.dart)> | A list of fields with name and the value that you would like to set to, could be in type number, bool or string
 
 Returns a Future.
 
@@ -549,7 +549,7 @@ Event Parameters:
 Name | Type | Description
 --- | --- | ---
 action | String | the action that occurred (add, delete, modify)
-annotations | List<`Annot`> | the annotations that have been changed
+annotations | List<[`Annot`](./lib/options.dart)> | the annotations that have been changed
 
 ```dart
 var annotChangedCancel = startAnnotationChangedListener((action, annotations) 
@@ -569,7 +569,7 @@ Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationWithRects | List<`AnnotWithRect`> | The list of annotations with their respective rects
+annotationWithRects | List<[`AnnotWithRect`](./lib/options.dart)> | The list of annotations with their respective rects
 
 ```dart
 var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects) 
@@ -590,7 +590,7 @@ Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-fields | List<`Field`> | the fields that are changed
+fields | List<[`Field`](./lib/options.dart)> | the fields that are changed
 
 ```dart
 var fieldChangedCancel = startFormFieldValueChangedListener((fields)
@@ -639,7 +639,7 @@ var zoomChangedCancel = startZoomChangedListener((zoom)
 
 
 ## Viewer Configurations
-This section is the configuration part of the [openDocument](#openDocument) function. You could refer to [here](./lib/config.dart) for all mutable properties.
+This section is the configuration part of the [openDocument](#openDocument) function. You could also refer to [here](./lib/config.dart) for all mutable properties.
 
 ### Document
 
@@ -664,7 +664,7 @@ config.readOnly = true;
 ### UI Customization
 
 #### disabledElements
-array of [Buttons](./lib/options.dart) constants, defaults to none.
+array of [Buttons](./lib/constants.dart) constants, defaults to none.
 
 Defines buttons to be disabled for the viewer.
 
@@ -674,7 +674,7 @@ config.disabledElements = disabledElements;
 ```
 
 #### disabledTools
-array of [Tools](./lib/options.dart) constants, defaults to none.
+array of [Tools](./lib/constants.dart) constants, defaults to none.
 
 Defines tools to be disabled for the viewer.
 
