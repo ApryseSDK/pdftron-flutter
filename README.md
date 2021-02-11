@@ -1,11 +1,14 @@
 # PDFTron Flutter Wrapper
 
+- [API](#API)
 - [Prerequisites](#Prerequisites)
-- [Preview](#preview)
-- [Installation](#installation)
-- [Usage](#usage)
-- [APIs](#apis)
-- [License](#license)
+- [Preview](#Preview)
+- [Installation](#Installation)
+- [Usage](#Usage)
+- [License](#License)
+
+## API
+APIs are available on the [API page](API.md).
 
 ## Prerequisites
 - No license key is requird for trial. However, a valid commercial license key is required after trial.
@@ -101,7 +104,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
 		...
 	```
 
-5a. (Optional, required if using `DocumentView` widget) In your `MainActivity` file (either kotlin or java), change the parent class to `FlutterFragmentActivity`:
+5a. (If using `DocumentView` widget) In your `MainActivity` file (either kotlin or java), change the parent class to `FlutterFragmentActivity`:
 ```
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterFragmentActivity
@@ -168,14 +171,25 @@ import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Viewer(),
+    );
+  }
 }
 
-class _MyAppState extends State<MyApp> {
+class Viewer extends StatefulWidget {
+  @override
+  _ViewerState createState() => _ViewerState();
+}
+
+class _ViewerState extends State<Viewer> {
   String _version = 'Unknown';
-  String _document = "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
+  String _document =
+      "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
+  bool _showViewer = true;
 
   @override
   void initState() {
@@ -185,7 +199,6 @@ class _MyAppState extends State<MyApp> {
     if (Platform.isIOS) {
       // Open the document for iOS, no need for permission
       showViewer();
-
     } else {
       // Request for permissions for android before opening document
       launchWithPermission();
@@ -193,10 +206,15 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> launchWithPermission() async {
-    Map<PermissionGroup, PermissionStatus> permissions = await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    Map<PermissionGroup, PermissionStatus> permissions =
+        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
     if (granted(permissions[PermissionGroup.storage])) {
       showViewer();
     }
+  }
+
+  bool granted(PermissionStatus status) {
+    return status == PermissionStatus.granted;
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -204,7 +222,7 @@ class _MyAppState extends State<MyApp> {
     String version;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
-      PdftronFlutter.initialize("Insert commercial license key here after purchase");
+      PdftronFlutter.initialize("your_pdftron_license_key");
       version = await PdftronFlutter.version;
     } on PlatformException {
       version = 'Failed to get platform version.';
@@ -220,470 +238,121 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void showViewer() async {
+    // opening without a config file will have all functionality enabled.
+    // await PdftronFlutter.openDocument(_document);
 
-  void showViewer() {
-    // Shows how to disable functionality. Uncomment to configure your viewer with a Config object.
-    //  var disabledElements = [Buttons.shareButton, Buttons.searchButton];
-    //  var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
-    //  var config = Config();
-    //  config.disabledElements = disabledElements;
-    //  config.disabledTools = disabledTools;
-    // config.customHeaders = {'headerName': 'headerValue'};
-    //  PdftronFlutter.openDocument(_document, config: config);
+    // shows how to disale functionality
+//      var disabledElements = [Buttons.shareButton, Buttons.searchButton];
+//      var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
+    var config = Config();
+//      config.disabledElements = disabledElements;
+//      config.disabledTools = disabledTools;
+//      config.multiTabEnabled = true;
+//      config.customHeaders = {'headerName': 'headerValue'};
 
-    // Open document without a config file which will have all functionality enabled.
-    PdftronFlutter.openDocument(_document);
-  }
+    var documentLoadedCancel = startDocumentLoadedListener((filePath) {
+      print("document loaded: $filePath");
+    });
 
-  bool granted(PermissionStatus status) {
-    return status == PermissionStatus.granted;
+    await PdftronFlutter.openDocument(_document, config: config);
+
+    try {
+      PdftronFlutter.importAnnotationCommand(
+          "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+              "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
+              "      <add>\n" +
+              "        <square style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20200619203211Z\" flags=\"print\" date=\"D:20200619203211Z\" name=\"c684da06-12d2-4ccd-9361-0a1bf2e089e3\" page=\"1\" rect=\"113.312,277.056,235.43,350.173\" title=\"\" />\n" +
+              "      </add>\n" +
+              "      <modify />\n" +
+              "      <delete />\n" +
+              "      <pdf-info import-version=\"3\" version=\"2\" xmlns=\"http://www.pdftron.com/pdfinfo\" />\n" +
+              "    </xfdf>");
+    } on PlatformException catch (e) {
+      print("Failed to importAnnotationCommand '${e.message}'.");
+    }
+
+    try {
+      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
+    } on PlatformException catch (e) {
+      print("Failed to importBookmarkJson '${e.message}'.");
+    }
+
+    var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
+      // local annotation changed
+      // upload XFDF command to server here
+      print("flutter xfdfCommand: $xfdfCommand");
+    });
+
+    var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
+      print("flutter bookmark: $bookmarkJson");
+    });
+
+    var path = await PdftronFlutter.saveDocument();
+    print("flutter save: $path");
+
+    // to cancel event:
+    // annotCancel();
+    // bookmarkCancel();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('PDFTron flutter app'),
-        ),
-        body: Center(
-          child: Text('Running on: $_version\n'),
-        ),
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        child:
+            // Uncomment this to use Widget version of the viewer
+            // _showViewer
+            // ? DocumentView(
+            //     onCreated: _onDocumentViewCreated,
+            //   ):
+            Container(),
       ),
     );
   }
+
+  void _onDocumentViewCreated(DocumentViewController controller) async {
+    Config config = new Config();
+
+    var leadingNavCancel = startLeadingNavButtonPressedListener(() {
+      // Uncomment this to quit the viewer when leading navigation button is pressed
+      // this.setState(() {
+      //   _showViewer = !_showViewer;
+      // });
+
+      // Show a dialog when leading navigation button is pressed
+      _showMyDialog();
+    });
+
+    controller.openDocument(_document, config: config);
+  }
+
+  Future<void> _showMyDialog() async {
+    print('hello');
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('AlertDialog'),
+          content: SingleChildScrollView(
+            child: Text('Leading navigation button has been pressed.'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
-```
-
-## APIs
-
-### PdftronFlutter.version
-
-Obtain PDFTron SDK version
-
-**Returns:** String
-
-### PdftronFlutter.initialize(String)
-
-Initializes PDFTron SDK
-
-#### Params
-
-##### key
-Your PDFTron license key
-
-Type | Required | Default
---- | --- | ---
-String | true | 
-
-### PdftronFlutter.openDocument(String)
-
-Opens a document in the viewer
-
-#### Params
-
-##### path
-Path to the document
-
-Type | Required | Default
---- | --- | ---
-String | true | 
-
-### PdftronFlutter.openDocument(String, password: String, config: Config)
-
-Opens a document in the viewer with options to remove buttons and disable tools
-
-Optional parameters:
-- `password`: String, password to an encrypted document
-- `config`: Config, viewer configuration options
-
-configs (more info could be found in `lib/config.dart`):
-
-Name | Type | Default | Explanation
--- | -- | -- | -- | 
-disabledElements | array of `Buttons` constants | empty | Buttons to be disabled for the viewer
-disabledTools | array of `Tools` constants | empty | Tools to be disabled for the viewer
-multiTabEnabled | boolean | false | enable document multi-tab mode
-customerHeaders | map<string, string> | empty | custom headers to use with HTTP/HTTPS requests
-hideThumbnailFilterModes | array of `ThumbnailFilterModes` constants | empty | Filter Modes that should be hidden in the thumbnails browser
-annotationToolbars | array of `CustomToolbar` objects or `DefaultToolbars` constants| | Defines custom toolbars. If passed in, default toolbars will no longer appear.
-hideDefaultAnnotationToolbars | array of `DefaultToolbars` objects| empty | Defines which default toolbars should be hidden
-hideAnnotationToolbarSwitcher | boolean | false | Defines whether to show the toolbar switcher in the top toolbar
-hideTopToolbars | boolean | false | Defines whether to show both the top nav app bar and the annotation toolbar
-hideTopAppNavBar | boolean | false | Defines whether to show the top nav app bar
-showLeadingNavButton | boolean | true | Whether to show the leading navigation button
-readOnly | boolean | false | whether the document is read-only
-thumbnailViewEditingEnabled | boolean | true | whether use could modify through thumbnail view
-annotationAuthor | string | | the author name for all annotations in the current document
-continuousAnnotationEditing | boolean | false | whether annotations could be continuously edited
-tabTitle | String | document name | the tab title for the current document, if multiTabEnabled is true (For Android, tabTitle is only supported on the widget viewer)
-
-```dart
-var disabledElements = [Buttons.shareButton, Buttons.searchButton];
-var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
-var hideThumbnailFilterModes = [ThumbnailFilterModes.annotated];
-var customToolbar = new CustomToolbar('myToolbar', 'myToolbar', [Tools.annotationCreateArrow, Tools.annotationCreateCallout], ToolbarIcons.favorite);
-var annotationToolbars = [DefaultToolbars.annotate, customToolbar];
-// var hideDefaultAnnotationToolbars = [DefaultToolbars.annotate, DefaultToolbars.draw];
-
-var config = Config();
-config.disabledElements = disabledElements;
-config.disabledTools = disabledTools;
-config.multiTabEnabled = false;
-config.customHeaders = {'headerName': 'headerValue'};
-config.hideThumbnailFilterModes = hideThumbnailFilterModes;
-config.annotationToolbars = annotationToolbars;
-// config.hideDefaultAnnotationToolbars = hideDefaultAnnotationToolbars;
-config.hideAnnotationToolbarSwitcher = false;
-config.hideTopToolbars = false;
-config.hideTopAppNavBar = false;
-config.showLeadingNavButton = true;
-config.readOnly = false;
-config.thumbnailViewEditingEnabled = false;
-config.annotationAuthor = "PDFTron";
-config.continuousAnnotationEditing = true;
-await PdftronFlutter.openDocument(_document, config: config);
-```
-### PdftronFlutter.importAnnotations(String)
-Imports XFDF string to current document.
-
-```dart
-
-var xfdf = '<?xml version="1.0" encoding="UTF-8"?>\n<xfdf xmlns="http://ns.adobe.com/xfdf/" xml:space="preserve">\n\t<annots>\n\t\t<circle style="solid" width="5" color="#E44234" opacity="1" creationdate="D:20190729202215Z" flags="print" date="D:20190729202215Z" page="0" rect="138.824,653.226,236.28,725.159" title="" /></annots>\n\t<pages>\n\t\t<defmtx matrix="1.333333,0.000000,0.000000,-1.333333,0.000000,1056.000000" />\n\t</pages>\n\t<pdf-info version="2" xmlns="http://www.pdftron.com/pdfinfo" />\n</xfdf>';
-PdftronFlutter.importAnnotations(xfdf);
-```
-
-### PdftronFlutter.exportAnnotations(List<`Annot`>)
-To extract XFDF from the current document. If `annotationList` is null, export all annotations from the document; Else export the valid ones specified.
-
-For more details about `Annot`, please check `lib/options.dart` file.
-
-Params:
-Name | Type | Description
---- | --- | ---
-annotationList | List<`Annot`> | A list of `Annot`, nullable
-
-Export all annotations:
-```dart
-var xfdf = await PdftronFlutter.exportAnnotations(null);
-```
-
-Export specified annotations:
-```dart
-List<Annot> annotList = new List<Annot>();
-list.add(new Annot('Hello', 1));
-list.add(new Annot('World', 2));
-var xfdf = await PdftronFlutter.exportAnnotations(annotList);
-```
-
-### PdftronFlutter.flattenAnnotations(bool)
-To flatten the forms and (optionally) annotations in the current document.
-
-Params:
-Name | Type | Description
---- | --- | ---
-formsOnly | bool | whether only forms are flattened
-
-Flatten only forms:
-```dart
-PdftronFlutter.flattenAnnotations(true);
-```
-
-Flatten forms and annotations:
-```dart
-PdftronFlutter.flattenAnnotations(false);
-```
-
-### PdftronFlutter.deleteAnnotations(List<`Annot`>)
-To delete the specified annotations in the current document.
-
-For more details about `Annot`, please check `lib/options.dart` file.
-
-Params:
-Name | Type | Description
---- | --- | ---
-annotationList | List<`Annot`> | A list of `Annot`
-
-```dart
-List<Annot> annotList = new List<Annot>();
-list.add(new Annot('Hello', 1));
-list.add(new Annot('World', 2));
-PdftronFlutter.deleteAnnotations(annotList);
-```
-
-### PdftronFlutter.selectAnnotation(Annot)
-Select the specified annotation in the current document.
-
-For more details about `Annot`, please check `lib/options.dart` file.
-
-Params:
-Name | Type | Description
---- | --- | ---
-annotation | Annot | the annotation to be selected
-
-```dart
-PdftronFlutter.selectAnnotation(new Annot('Hello', 1));
-```
-
-### PdftronFlutter.setFlagsForAnnotations(List<`AnnotWithFlags`>)
-To set flags for specified annotations in the current document.
-
-For more details about `Annot`, `AnnotFlag` and `AnnotWithFlags`, please check `lib/options.dart` file.
-
-Params:
-Name | Type | Description
---- | --- | ---
-annotationWithFlagsList | List<`AnnotWithFlags`> | a list of annotations with respective flags to be set
-
-```dart
-List<AnnotWithFlags> annotsWithFlags = new List<AnnotWithFlags>();
-
-Annot hello = new Annot('Hello', 1);
-Annot world = new Annot('World', 3);
-AnnotFlag printOn = new AnnotFlag(AnnotationFlags.print, true);
-AnnotFlag unlock = new AnnotFlag(AnnotationFlags.locked, false);
-
-// you can add an AnnotWithFlags object flexibly like this:
-list.add(new AnnotWithFlags.fromAnnotAndFlags(hello, [printOn, unlock]));
-list.add(new AnnotWithFlags.fromAnnotAndFlags(world, [unlock]));
-
-// Or simply use the constructor like this:
-list.add(new AnnotWithFlags('Pdftron', 10, AnnotationFlags.no_zoom, true));
-PdftronFlutter.setFlagsForAnnotations(annotsWithFlags);
-```
-
-### PdftronFlutter.importAnnotationCommand(String)
-
-Imports XFDF command string to the document.
-The XFDF needs to be a valid command format with `<add>` `<modify>` `<delete>` tags.
-
-### PdftronFlutter.importBookmarkJson(String)
-
-Imports user bookmarks to the document.
-The input needs to be a valid bookmark JSON format, for example `{"0":"Page 1"}`.
-
-### PdftronFlutter.saveDocument()
-
-Saves the currently opened document in the viewer and returns the absolute path to the file. Must only be called when the document is opened in the viewer.
-
-```dart
-var path = await PdftronFlutter.saveDocument();
-```
-
-### PdftronFlutter.commitTool()
-
-Commits the annotation being created by the tool to the PDF.
-
-Only available for multi-stroke ink and poly-shape, and will return false for all other tools.
-
-```dart
-var committed = await PdftronFlutter.commitTool();
-print("Tool committed: $committed");
-```
-
-### PdftronFlutter.getPageCount()
-
-Returns the total number of pages in the currently displayed document.
-
-```dart
-var pageCount = await PdftronFlutter.getPageCount();
-print("The current doc has $pageCount pages");
-```
-
-### PdftronFlutter.handleBackButton()
-
-Handles back button (Android only).
-
-```dart
-var handled = await PdftronFlutter.handleBackButton();
-print("Back button handled: $handled");
-```
-
-### PdftronFlutter.getPageCropBox()
-
-Return a map object with values for position (bottom-left: `x1`, `y1`; top-right: `x2`, `y2`) and size (`width`, `height`) of the crop box for specified page. Values all have type `double`.
-
-```dart
-var cropBox = await PdftronFlutter.getPageCropBox(1);
-print('The width of crop box for page 1 is: ' + cropBox.width.toString());
-```
-
-### PdftronFlutter.setToolMode(String)
-
-To set the current tool mode (`Tools` constants in `lib/option.dart`).
-
-```dart
- PdftronFlutter.setToolMode(Tools.annotationCreateEllipse);
-```
-
-### PdftronFlutter.setFlagForFields(List<`String`>, flag: int, flagValue: bool)
-
-Set a field flag value on one or more form fields.
-
-Params
-Name | Type | Description
---- | ---| ---
-fieldNames | List<`String`> | A list of field names to be set
-flag | int | The flag to be set, one of the constants from `FieldFlags` in `lib/options.dart`
-flagValue | bool | To turn on/off the flag for the fields
-
-```dart
- PdftronFlutter.setFlagForFields(['First Name', 'Last Name'], FieldFlags.Required, true);
-```
-
-### PdftronFlutter.setValuesForFields(List<`Field`>)
-
-Set field values on one or more form fields of different types. Field values to be set could be in type number, bool or string.
-
-For more details about `Field`, please check `lib/options.dart` file.
-
-```dart
-PdftronFlutter.setValuesForFields([
-      new Field('textField1', "Pdftron"),
-      new Field('textField2', 12.34),
-      new Field('checkboxField1', true),
-      new Field('checkboxField2', false),
-      new Field('radioField', 'Yes'),
-      new Field('choiceField', 'No')
-    ]);
-```
-
-### PdftronFlutter.setLeadingNavButtonIcon(String)
-
-Set the icon path to the navigation button. The button would use the specified icon if `showLeadingNavButton` (which by default is true) is true in the config.
-
-```dart
-PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png' : 'ic_arrow_back_white_24dp');
-```
-
-### PdftronFlutter.closeAllTabs()
-
-Close all documents that are currently opened in a multiTab environment.
-
-```dart
-PdftronFlutter.closeAllTabs();
-```
-
-## Events
-
-### startExportAnnotationCommandListener
-
-Event is raised when local annotation changes committed to the document.
-
-```dart
-var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
-  // local annotation changed
-  // upload XFDF command to server here
-  print("flutter xfdfCommand: $xfdfCommand");
-});
-```
-
-### startExportBookmarkListener
-
-Event is raised when user bookmark changes committed to the document.
-
-```dart
-var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
-  print("flutter bookmark: ${bookmarkJson}");
-});
-```
-
-### startDocumentLoadedListener
-
-Event is raised when the document finishes loading.
-
-```dart
-var documentLoadedCancel = startDocumentLoadedListener((path)
-{
-  print("flutter document loaded: ${path}");
-});
-```
-
-### startDocumentErrorListener
-
-Event is raised when the document has errors when loading.
-
-```dart
-var documentErrorCancel = startDocumentErrorListener((){
-  print("flutter document loaded unsuccessfully");
-});
-```
-
-### startAnnotationChangedListener
-
-Event is raised when there is a change to annotations to the document.
-
-```dart
-var annotChangedCancel = startAnnotationChangedListener((action, annotations) 
-{
-  print("flutter annotation action: ${action}");
-  for (Annot annot in annotations) {
-    print("annotation has id: ${annot.id}");
-    print("annotation is in page: ${annot.pageNumber}");
-  }
-});
-```
-
-### startAnnotationsSelectedListener
-
-Event is raised when annotations are selected.
-
-```dart
-var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects) 
-{
-  for (AnnotWithRect annotWithRect in annotationWithRects) {
-    print("annotation has id: ${annotWithRect.id}");
-    print("annotation is in page: ${annotWithRect.pageNumber}");
-    print("annotation has width: ${annotWithRect.rect.width}");
-  }
-});
-
-```
-
-### startFormFieldValueChangedListener
-
-Event is raised when there are changes to form field values.
-
-```dart
-var fieldChangedCancel = startFormFieldValueChangedListener((fields)
-{
-  for (Field field in fields) {
-    print("Field has name ${field.fieldName}");
-    print("Field has value ${field.fieldValue}");
-  }
-});
-```
-### startLeadingNavButtonPressedListener
-
-Event is raised when the leading navigation button is pressed.
-
-```dart
-var navPressedCancel = startLeadingNavButtonPressedListener(()
-{
-  print("flutter nav button pressed");
-});
-```
-
-### startPageChangedListener
-
-Event is raised when page changes.
-
-```dart
-var pageChangedCancel = startPageChangedListener((previousPageNumber, pageNumber)
-{
-  print("flutter page changed. from $previousPageNumber to $pageNumber");
-});
-```
-
-### startZoomChangedListener
-
-Event is raised when zoom ratio is changed in the current document.
-
-```dart
-var zoomChangedCancel = startZoomChangedListener((zoom) 
-{
-  print("flutter zoom changed. Current zoom is: $zoom");
-});
 ```
 
 ## Contributing

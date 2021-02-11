@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentManager;
@@ -19,6 +18,7 @@ import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
@@ -56,12 +56,13 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
     private HashMap<Annot, Integer> mSelectedAnnots;
 
-    private ToolManager.AnnotationModificationListener sAnnotationModificationListener;
-    private ToolManager.PdfDocModificationListener sPdfDocModificationListener;
-    private ToolManager.AnnotationsSelectionListener sAnnotationsSelectionListener;
-
     private int mId = 0;
     private FragmentManager mFragmentManager;
+
+    private String mTabTitle;
+
+    private boolean mFromAttach;
+    private boolean mDetached;
 
     public DocumentView(@NonNull Context context) {
         this(context, null);
@@ -89,24 +90,31 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         setViewerConfig(getConfig());
         setFlutterLoadResult(result);
 
-        ViewerBuilder2 viewerBuilder = ViewerBuilder2.withUri(configInfo.getFileUri(), password)
-                .usingCustomHeaders(configInfo.getCustomHeaderJson())
-                .usingConfig(mBuilder.build())
-                .usingNavIcon(mShowNavIcon ? mNavIconRes : 0)
-                .usingTabTitle(configInfo.getTabTitle());
-        if (mPdfViewCtrlTabHostFragment != null) {
-            mPdfViewCtrlTabHostFragment.onOpenAddNewTab(viewerBuilder.createBundle(getContext()));
-        } else {
-            mPdfViewCtrlTabHostFragment = viewerBuilder.build(getContext());
-            if (mFragmentManager != null) {
-                mFragmentManager.beginTransaction().add(mPdfViewCtrlTabHostFragment, "document_view").commitNow();
-                View fragmentView = mPdfViewCtrlTabHostFragment.getView();
-                if (fragmentView != null) {
-                    addView(fragmentView, -1, -1);
-                }
-            }
-        }
+        mTabTitle = configInfo.getTabTitle();
+
+        mFromAttach = false;
+        mDetached = false;
+        prepView();
         attachListeners();
+    }
+
+    @Override
+    protected void buildViewer() {
+        mViewerBuilder = ViewerBuilder2.withUri(mDocumentUri, mPassword)
+                .usingConfig(mViewerConfig)
+                .usingNavIcon(mShowNavIcon ? mNavIconRes : 0)
+                .usingCustomHeaders(mCustomHeaders)
+                .usingTabTitle(mTabTitle);
+    }
+
+    @Override
+    protected void prepView() {
+        if (mFromAttach && !mDetached) {
+            // here we only want to attach the viewer from open document
+            // unless it is not attached yet
+            return;
+        }
+        super.prepView();
     }
 
     @Override
@@ -139,6 +147,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         int height = ViewGroup.LayoutParams.MATCH_PARENT;
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(width, height);
         setLayoutParams(params);
+
+        PdfViewCtrlSettingsManager.setFullScreenMode(context, false);
 
         mCacheDir = context.getCacheDir().getAbsolutePath();
         mToolManagerBuilder = ToolManagerBuilder.from();
@@ -175,6 +185,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     @Override
     protected void onAttachedToWindow() {
         setSupportFragmentManager(mFragmentManager);
+        mFromAttach = true;
         super.onAttachedToWindow();
     }
 
@@ -199,7 +210,16 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
     @Override
     public void onDetachedFromWindow() {
+        mDetached = true;
         handleOnDetach(this);
+
+        // remove detached view
+        if (mPdfViewCtrlTabHostFragment != null) {
+            View fragmentView = this.mPdfViewCtrlTabHostFragment.getView();
+            if (fragmentView != null) {
+                this.removeView(fragmentView);
+            }
+        }
 
         super.onDetachedFromWindow();
     }
@@ -207,8 +227,6 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     @Override
     public void onNavButtonPressed() {
         handleLeadingNavButtonPressed(this);
-
-        super.onNavButtonPressed();
     }
 
     public void setExportAnnotationCommandEventEmitter(EventChannel.EventSink emitter) {

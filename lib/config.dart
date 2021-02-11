@@ -11,6 +11,7 @@ class Config {
   var _hideAnnotationToolbarSwitcher;
   var _hideTopToolbars;
   var _hideTopAppNavBar;
+  var _hideBottomToolbar;
   var _showLeadingNavButton;
   var _readOnly;
   var _thumbnailViewEditingEnabled;
@@ -32,6 +33,7 @@ class Config {
       _hideAnnotationToolbarSwitcher = value;
   set hideTopToolbars(bool value) => _hideTopToolbars = value;
   set hideTopAppNavBar(bool value) => _hideTopAppNavBar = value;
+  set hideBottomToolbar(bool value) => _hideBottomToolbar = value;
   set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
   set readOnly(bool value) => _readOnly = value;
   set thumbnailViewEditingEnabled(bool value) =>
@@ -52,6 +54,7 @@ class Config {
         _hideAnnotationToolbarSwitcher = json['hideAnnotationToolbarSwitcher'],
         _hideTopToolbars = json['hideTopToolbars'],
         _hideTopAppNavBar = json['hideTopAppNavBar'],
+        _hideBottomToolbar = json['hideBottomToolbar'],
         _showLeadingNavButton = json['showLeadingNavButton'],
         _readOnly = json['readOnly'],
         _thumbnailViewEditingEnabled = json['thumbnailViewEditingEnabled'],
@@ -70,6 +73,7 @@ class Config {
         'hideAnnotationToolbarSwitcher': _hideAnnotationToolbarSwitcher,
         'hideTopToolbars': _hideTopToolbars,
         'hideTopAppNavBar': _hideTopAppNavBar,
+        'hideBottomToolbar': _hideBottomToolbar,
         'showLeadingNavButton': _showLeadingNavButton,
         'readOnly': _readOnly,
         'thumbnailViewEditingEnabled': _thumbnailViewEditingEnabled,

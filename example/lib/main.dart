@@ -4,26 +4,54 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdftron_flutter/pdftron_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   @override
-  _MyAppState createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Viewer(),
+    );
+  }
 }
 
-class _MyAppState extends State<MyApp> {
+class Viewer extends StatefulWidget {
+  @override
+  _ViewerState createState() => _ViewerState();
+}
+
+class _ViewerState extends State<Viewer> {
   String _version = 'Unknown';
   String _document =
       "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
-  bool _showWidget = true;
+  bool _showViewer = true;
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
 
-    showViewer();
+    if (Platform.isIOS) {
+      // Open the document for iOS, no need for permission
+      showViewer();
+    } else {
+      // Request for permissions for android before opening document
+      launchWithPermission();
+    }
+  }
+
+  Future<void> launchWithPermission() async {
+    Map<PermissionGroup, PermissionStatus> permissions =
+        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
+    if (granted(permissions[PermissionGroup.storage])) {
+      showViewer();
+    }
+  }
+
+  bool granted(PermissionStatus status) {
+    return status == PermissionStatus.granted;
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
@@ -107,37 +135,60 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: SafeArea(
-          child: Container(
-            width: double.infinity,
-            height: double.infinity,
-            // Uncomment this to access the widget version. (The widget version is the non full-screen version.)
-            // child: _showWidget
-            //     ? DocumentView(
-            //         onCreated: _onDocumentViewCreated,
-            //       )
-            //     : Container(),
-          ),
-        ),
+    return Scaffold(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        child:
+            // Uncomment this to use Widget version of the viewer
+            // _showViewer
+            // ? DocumentView(
+            //     onCreated: _onDocumentViewCreated,
+            //   ):
+            Container(),
       ),
     );
   }
 
-  void _onDocumentViewCreated(DocumentViewController controller) {
+  void _onDocumentViewCreated(DocumentViewController controller) async {
     Config config = new Config();
 
-    config.showLeadingNavButton = false;
+    config.disabledElements = [Buttons.arrowToolButton];
 
-    // This callback is here if you un-hide the nav button via config.
-    // var navCancel = startLeadingNavButtonPressedListener(() {
-    //   // Implement your desired functionality here. The following code will hide the widget.
-    //   this.setState(() {
-    //     _showWidget = !_showWidget;
-    //   });
-    // });
+    var leadingNavCancel = startLeadingNavButtonPressedListener(() {
+      // Uncomment this to quit the viewer when leading navigation button is pressed
+      // this.setState(() {
+      //   _showViewer = !_showViewer;
+      // });
+
+      // Show a dialog when leading navigation button is pressed
+      _showMyDialog();
+    });
 
     controller.openDocument(_document, config: config);
+  }
+
+  Future<void> _showMyDialog() async {
+    print('hello');
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('AlertDialog'),
+          content: SingleChildScrollView(
+            child: Text('Leading navigation button has been pressed.'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }
