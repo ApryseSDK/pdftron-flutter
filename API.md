@@ -802,3 +802,12 @@ Defines whether user can modify the document using the thumbnail view (eg add/re
 ```dart
 config.thumbnailViewEditingEnabled = false;
 ```
+
+#### hideThumbnailFilterModes
+array of [ThumbnailFilterModes](./lib/constants.dart) constants, defaults to none.
+
+Defines filter Modes that should be hidden in the thumbnails browser.
+
+```dart
+config.hideThumbnailFilterModes = [ThumbnailFilterModes.annotated];
+```
