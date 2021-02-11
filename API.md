@@ -373,6 +373,35 @@ list.add(new AnnotWithFlags('Pdftron', 10, AnnotationFlags.no_zoom, true));
 PdftronFlutter.setFlagsForAnnotations(annotsWithFlags);
 ```
 
+#### setPropertiesForAnnotation
+Sets properties for specified annotation in the current document.
+
+Params:
+Name | Type | Description
+--- | --- | ---
+annotation | [`Annot`](./lib/options.dart) | the annotation to be modified
+property | [`AnnotProperty`](./lib/options.dart) | the properties to be set for the target annotation
+
+For settable properties:
+
+Name | Type | Markup exclusive
+--- | --- | ---
+rect | Rect | no
+contents | String | no
+subject | String | yes
+title | String | yes
+contentRect | Rect | yes
+
+```dart
+Annot pdf = new Annot('pdf', 1);
+AnnotProperty property = new AnnotProperty();
+property.rect = new Rect.fromCoordinates(1, 1.5, 100.2, 100);
+property.contents = 'Hello World';
+property.subject = 'sample';
+property.title = 'set-props-for-annot';
+PdftronFlutter.setPropertiesForAnnotation(pdf, property);
+```
+
 #### setFlagForFields
 Sets a field flag value on one or more form fields.
 
@@ -602,6 +631,25 @@ var fieldChangedCancel = startFormFieldValueChangedListener((fields)
 });
 ```
 
+### Custom Behavior
+
+#### startBehaviorActivatedListener
+Event is raised on certain behaviors, if any is passed into [`overrideBehavior`](#overrideBehavior).
+
+Event Parameters:
+
+Name | Type | Description
+--- | --- | ---
+action | String, one of the [`Behaviors`](#Behaviors) constants | The behavior which has been activated
+data | map | detailed information regarding the behavior
+
+```dart
+var behaviorActivatedCancel = startBehaviorActivatedListener((action, data) {
+  print('action is ' + action);
+  print('url is ' + data['url']);
+});
+```
+
 ### Bookmarks
 
 #### startExportBookmarkListener
@@ -754,6 +802,15 @@ config.hideBottomToolbar = true;
 
 ### Annotations
 
+#### annotationPermissionCheckEnabled
+bool, default to false.
+
+Defines whether annotation's flags will be taken into account when it is selected, for example, an annotation with a locked flag can not be resized or moved.
+
+```dart
+config.annotationPermissionCheckEnabled = true;
+```
+
 #### annotationAuthor
 String.
 
@@ -770,6 +827,17 @@ If true, the active annotation creation tool will remain in the current annotati
 
 ```dart
 config.continuousAnnotationEditing = true;
+```
+
+### Custom Behavior
+
+#### overrideBehavior
+array of [`Behaviors`](./lib/constants.dart) constants, defaults to false.
+
+Defines actions that should skip default behavior, such as external link click.
+
+```dart
+config.overrideBehavior = [Behaviors.linkPress];
 ```
 
 ### Multi-tab
