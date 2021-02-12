@@ -752,6 +752,17 @@ Defines whether to hide the bottom toolbar for the current viewer.
 config.hideBottomToolbar = true;
 ```
 
+### Page
+
+#### pageChangeOnTap
+bool, defaults to true.
+
+Defines whether the viewer should change pages when the user taps the edge of a page, when the viewer is in a horizontal viewing mode.
+
+```dart
+config.pageChangeOnTap = true;
+```
+
 ### Annotations
 
 #### annotationAuthor
@@ -792,6 +803,26 @@ Sets the tab title if [multiTabEnabled](#multiTabEnabled) is true. (For Android,
 config.tabTitle = 'tab1';
 ```
 
+### Signature
+
+#### signSignatureFieldsWithStamps
+bool, defaults to false.
+
+Defines whether signature fields will be signed with image stamps. This is useful if you are saving XFDF to remote source.
+
+```dart
+config.signSignatureFieldsWithStamps = true;
+```
+
+#### showSavedSignatures
+bool, defaults to true.
+
+Defines whether to show saved signatures for re-use when using the signing tool.
+
+```dart
+config.showSavedSignatures = true;
+```
+
 ### Thumbnail Browser
 
 #### thumbnailViewEditingEnabled
@@ -801,4 +832,24 @@ Defines whether user can modify the document using the thumbnail view (eg add/re
 
 ```dart
 config.thumbnailViewEditingEnabled = false;
+```
+
+### Others
+
+#### autoSaveEnabled
+bool, dafaults to true.
+
+Defines whether document is automatically saved by the viewer.
+
+```dart
+config.autoSaveEnabled = true;
+```
+
+#### useStylusAsPen
+bool, defaults to true.
+
+Defines whether a stylus should act as a pen when in pan mode. If false, it will act as a finger.
+
+```dart
+config.useStylusAsPen = true;
 ```
