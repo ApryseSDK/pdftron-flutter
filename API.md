@@ -380,7 +380,7 @@ Parameters:
 
 Name | Type | Description
 --- | ---| ---
-fieldNames | List of string | list of field names for which the flag should be set
+fieldNames | List of String | list of field names for which the flag should be set
 flag | int | the flag to be set, one of the constants from [`FieldFlags`](./lib/config.dart)
 flagValue | bool | value to set for flag
 
