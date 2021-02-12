@@ -692,17 +692,6 @@ Defines whether to show the leading navigation button.
 config.showLeadingNavButton = true;
 ```
 
-### Page
-
-#### pageIndicatorEnabled
-bool, defaults to true.
-
-Defines whether to show the page indicator for the viewer.
-
-```dart
-config.pageIndicatorEnabled = true;
-```
-
 ### Toolbar Customization
 
 #### annotationToolbars
@@ -761,6 +750,17 @@ Defines whether to hide the bottom toolbar for the current viewer.
 
 ```dart
 config.hideBottomToolbar = true;
+```
+
+### Page
+
+#### pageIndicatorEnabled
+bool, defaults to true.
+
+Defines whether to show the page indicator for the viewer.
+
+```dart
+config.pageIndicatorEnabled = true;
 ```
 
 ### Annotations
