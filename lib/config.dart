@@ -6,7 +6,6 @@ class Config {
   var _multiTabEnabled;
   var _customHeaders;
   var _selectAnnotationAfterCreation;
-  var _bottomToolbarEnabled;
   var _pageIndicatorEnabled;
   var _followSystemDarkMode;
   var _annotationToolbars;
@@ -30,7 +29,6 @@ class Config {
   set customHeaders(Map<String, String> value) => _customHeaders = value;
   set selectAnnotationAfterCreation(bool value) =>
       _selectAnnotationAfterCreation = value;
-  set bottomToolbarEnabled(bool value) => _bottomToolbarEnabled = value;
   set pageIndicatorEnabled(bool value) => _pageIndicatorEnabled = value;
   set followSystemDarkMode(bool value) => _followSystemDarkMode = value;
   set annotationToolbars(List value) => _annotationToolbars = value;
@@ -56,7 +54,6 @@ class Config {
         _multiTabEnabled = json['multiTabEnabled'],
         _customHeaders = json['customHeaders'],
         _selectAnnotationAfterCreation = json['selectAnnotationAfterCreation'],
-        _bottomToolbarEnabled = json['bottomToolbarEnabled'],
         _pageIndicatorEnabled = json['pageIndicatorEnabled'],
         _followSystemDarkMode = json['followSystemDarkMode'],
         _annotationToolbars = json['annotationToolbars'],
@@ -78,7 +75,6 @@ class Config {
         'multiTabEnabled': _multiTabEnabled,
         'customHeaders': _customHeaders,
         'selectAnnotationAfterCreation': _selectAnnotationAfterCreation,
-        'bottomToolbarEnabled': _bottomToolbarEnabled,
         'pageIndicatorEnabled': _pageIndicatorEnabled,
         'followSystemDarkMode': _followSystemDarkMode,
         'annotationToolbars': _annotationToolbars,

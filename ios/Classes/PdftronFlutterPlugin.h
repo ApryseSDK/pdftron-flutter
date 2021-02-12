@@ -10,7 +10,6 @@ static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
 static NSString * const PTCustomHeadersKey = @"customHeaders";
 static NSString * const PTSelectAnnotationAfterCreationKey = @"selectAnnotationAfterCreation";
-static NSString * const PTBottomToolbarEnabledKey = @"bottomToolbarEnabled";
 static NSString * const PTPageIndicatorEnabledKey = @"pageIndicatorEnabled";
 static NSString * const PTFollowSystemDarkModeKey = @"followSystemDarkModeKey";
 static NSString * const PTAnnotationToolbarsKey = @"annotationToolbars";

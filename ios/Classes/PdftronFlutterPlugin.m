@@ -255,14 +255,6 @@
                         [documentController setSelectAnnotationAfterCreation:[selectAnnotAfterCreationNumber boolValue]];
                     }
                 }
-                else if ([key isEqualToString:PTBottomToolbarEnabledKey]) {
-                    
-                    NSNumber* bottomToolbarEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTBottomToolbarEnabledKey class:[NSNumber class] error:&error];
-                    
-                    if (!error && bottomToolbarEnabledNumber) {
-                        [documentController setBottomToolbarOn:[bottomToolbarEnabledNumber boolValue]];
-                    }
-                }
                 else if ([key isEqualToString:PTPageIndicatorEnabledKey]) {
                     
                     NSNumber* pageIndicatorEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTPageIndicatorEnabledKey class:[NSNumber class] error:&error];

@@ -78,7 +78,6 @@ public class PluginUtils {
     public static final String KEY_CONFIG_MULTI_TAB_ENABLED = "multiTabEnabled";
     public static final String KEY_CONFIG_CUSTOM_HEADERS = "customHeaders";
     public static final String KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION = "selectAnnotationAfterCreation";
-    public static final String KEY_CONFIG_BOTTOM_TOOLBAR_ENABLED = "bottomToolbarEnabled";
     public static final String KEY_CONFIG_PAGE_INDICATOR_ENABLED = "pageIndicatorEnabled";
     public static final String KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE = "followSystemDarkMode";
     public static final String KEY_CONFIG_ANNOTATION_TOOLBARS = "annotationToolbars";
@@ -332,10 +331,6 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION)) {
                     boolean selectAnnotationAfterCreation = configJson.getBoolean(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION);
                     toolManagerBuilder.setAutoSelect(selectAnnotationAfterCreation);
-                }
-                if (!configJson.isNull(KEY_CONFIG_BOTTOM_TOOLBAR_ENABLED)) {
-                    boolean bottomToolbarEnabled = configJson.getBoolean(KEY_CONFIG_BOTTOM_TOOLBAR_ENABLED);
-                    builder = builder.showBottomNavBar(bottomToolbarEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_PAGE_INDICATOR_ENABLED)) {
                     boolean pageIndicatorEnabled = configJson.getBoolean(KEY_CONFIG_PAGE_INDICATOR_ENABLED);
