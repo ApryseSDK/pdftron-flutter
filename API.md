@@ -272,7 +272,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationList | List<[`Annot`](./lib/options.dart)> | If not null, export the XFDF string for the valid annotations; Otherwise, export the XFDF string for all annotations in the current document.
+annotationList | List of [`Annot`](./lib/options.dart) | If not null, export the XFDF string for the valid annotations; Otherwise, export the XFDF string for all annotations in the current document.
 
 Returns a Future.
 
@@ -319,7 +319,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotations | List<[`Annot`](./lib/options.dart)> | the annotations to be deleted
+annotations | List of [`Annot`](./lib/options.dart) | the annotations to be deleted
 
 Returns a Future.
 
@@ -352,7 +352,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationWithFlagsList | List<[`AnnotWithFlags`](./lib/options.dart)> | a list of annotations with respective flags to be set
+annotationWithFlagsList | List of [`AnnotWithFlags`](./lib/options.dart) | a list of annotations with respective flags to be set
 
 Returns a Future.
 
@@ -380,7 +380,7 @@ Parameters:
 
 Name | Type | Description
 --- | ---| ---
-fieldNames | List<`String`> | list of field names for which the flag should be set
+fieldNames | List of String | list of field names for which the flag should be set
 flag | int | the flag to be set, one of the constants from [`FieldFlags`](./lib/config.dart)
 flagValue | bool | value to set for flag
 
@@ -397,7 +397,7 @@ Parameters:
 
 Name | Type | Description
 --- | ---| ---
-fields | List<[`Field`](./lib/options.dart)> | A list of fields with name and the value that you would like to set to, could be in type number, bool or string
+fields | List of [`Field`](./lib/options.dart) | A list of fields with name and the value that you would like to set to, could be in type number, bool or string
 
 Returns a Future.
 
@@ -549,7 +549,7 @@ Event Parameters:
 Name | Type | Description
 --- | --- | ---
 action | String | the action that occurred (add, delete, modify)
-annotations | List<[`Annot`](./lib/options.dart)> | the annotations that have been changed
+annotations | List of [`Annot`](./lib/options.dart) | the annotations that have been changed
 
 ```dart
 var annotChangedCancel = startAnnotationChangedListener((action, annotations) 
@@ -569,7 +569,7 @@ Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationWithRects | List<[`AnnotWithRect`](./lib/options.dart)> | The list of annotations with their respective rects
+annotationWithRects | List of [`AnnotWithRect`](./lib/options.dart) | The list of annotations with their respective rects
 
 ```dart
 var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects) 
@@ -590,7 +590,7 @@ Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-fields | List<[`Field`](./lib/options.dart)> | the fields that are changed
+fields | List of [`Field`](./lib/options.dart) | the fields that are changed
 
 ```dart
 var fieldChangedCancel = startFormFieldValueChangedListener((fields)
