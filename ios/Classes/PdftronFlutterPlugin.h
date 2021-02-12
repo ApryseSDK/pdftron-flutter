@@ -18,6 +18,7 @@ static NSString * const PTHideDefaultAnnotationToolbarsKey = @"hideDefaultAnnota
 static NSString * const PTHideAnnotationToolbarSwitcherKey = @"hideAnnotationToolbarSwitcher";
 static NSString * const PTHideTopToolbarsKey = @"hideTopToolbars";
 static NSString * const PTHideTopAppNavBarKey = @"hideTopAppNavBar";
+static NSString * const PTHideBottomToolbarKey = @"hideBottomToolbar";
 static NSString * const PTShowLeadingNavButtonKey = @"showLeadingNavButton";
 static NSString * const PTReadOnlyKey = @"readOnly";
 static NSString * const PTThumbnailViewEditingEnabledKey = @"thumbnailViewEditingEnabled";
