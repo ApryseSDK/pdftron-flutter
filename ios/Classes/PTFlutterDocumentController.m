@@ -24,7 +24,7 @@
     [super viewWillAppear:animated];
 
     // bottomToolBar / thumbnailSlider enabling
-    self.thumbnailSliderEnabled = self.bottomToolbarOn;
+    self.thumbnailSliderEnabled = ![self isBottomToolbarHidden];
 }
 
 - (void)viewWillLayoutSubviews
@@ -423,11 +423,11 @@
 
 - (void)initViewerSettings
 {
-    _bottomToolbarOn = YES;
-    
     _annotationToolbarSwitcherHidden = NO;
     _topToolbarsHidden = NO;
     _topAppNavBarHidden = NO;
+    _bottomToolbarHidden = NO;
+    
     _readOnly = NO;
     
     _showNavButton = YES;
@@ -736,7 +736,7 @@
 - (BOOL)shouldSetToolbarHidden:(BOOL)toolbarHidden animated:(BOOL)animated
 {
     if (!toolbarHidden) {
-        return self.bottomToolbarOn;
+        return ![self isBottomToolbarHidden];
     }
     return YES;
 }
