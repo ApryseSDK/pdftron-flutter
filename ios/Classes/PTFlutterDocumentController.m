@@ -37,6 +37,14 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     self.thumbnailSliderController.view.hidden = YES;
 }
 
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+
+    // bottomToolBar / thumbnailSlider enabling
+    self.thumbnailSliderEnabled = ![self isBottomToolbarHidden];
+}
+
 - (void)viewWillLayoutSubviews
 {
     [super viewWillLayoutSubviews];
@@ -707,6 +715,8 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     _annotationToolbarSwitcherHidden = NO;
     _topToolbarsHidden = NO;
     _topAppNavBarHidden = NO;
+    _bottomToolbarHidden = NO;
+    
     _readOnly = NO;
     
     _showNavButton = YES;
@@ -1018,10 +1028,9 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 
 - (BOOL)shouldSetToolbarHidden:(BOOL)toolbarHidden animated:(BOOL)animated
 {
-//    TODO: uncomment this after bottomToolbarEnabled is implemented
-//    if (!toolbarHidden) {
-//        return self.bottomToolbarEnabled;
-//    }
+    if (!toolbarHidden) {
+        return ![self isBottomToolbarHidden];
+    }
     return YES;
 }
 

@@ -345,6 +345,14 @@
                         documentController.topAppNavBarHidden = [hideTopAppNavBarNumber boolValue];
                     }
                 }
+                else if ([key isEqualToString:PTHideBottomToolbarKey]) {
+                    
+                    NSNumber* hideBottomToolbarNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideBottomToolbarKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && hideBottomToolbarNumber) {
+                        documentController.bottomToolbarHidden = [hideBottomToolbarNumber boolValue];
+                    }
+                }
                 else if ([key isEqualToString:PTShowLeadingNavButtonKey]) {
                     
                     NSNumber* showLeadingNavButtonNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowLeadingNavButtonKey class:[NSNumber class] error:&error];

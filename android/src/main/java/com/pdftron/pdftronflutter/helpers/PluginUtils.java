@@ -92,6 +92,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER = "hideAnnotationToolbarSwitcher";
     public static final String KEY_CONFIG_HIDE_TOP_TOOLBARS = "hideTopToolbars";
     public static final String KEY_CONFIG_HIDE_TOP_APP_NAV_BAR = "hideTopAppNavBar";
+    public static final String KEY_CONFIG_HIDE_BOTTOM_TOOLBAR = "hideBottomToolbar";
     public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
     public static final String KEY_CONFIG_READ_ONLY = "readOnly";
     public static final String KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED = "thumbnailViewEditingEnabled";
@@ -521,6 +522,10 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_HIDE_TOP_APP_NAV_BAR)) {
                     boolean hideTopAppNavBars = configJson.getBoolean(KEY_CONFIG_HIDE_TOP_APP_NAV_BAR);
                     builder = builder.showTopToolbar(!hideTopAppNavBars);
+                }
+                if (!configJson.isNull(KEY_CONFIG_HIDE_BOTTOM_TOOLBAR)) {
+                    boolean hideBottomToolbar = configJson.getBoolean(KEY_CONFIG_HIDE_BOTTOM_TOOLBAR);
+                    builder = builder.showBottomToolbar(!hideBottomToolbar);
                 }
                 if (!configJson.isNull(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON)) {
                     boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
