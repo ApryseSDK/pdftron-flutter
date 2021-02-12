@@ -634,13 +634,13 @@ var fieldChangedCancel = startFormFieldValueChangedListener((fields)
 ### Custom Behavior
 
 #### startBehaviorActivatedListener
-Event is raised on certain behaviors, if any is passed into [`overrideBehavior`](#overrideBehavior).
+Event is raised on certain behaviors, if any is passed into [overrideBehavior](#overrideBehavior).
 
 Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-action | String, one of the [`Behaviors`](#Behaviors) constants | The behavior which has been activated
+action | String, one of the [Behaviors](#Behaviors) constants | The behavior which has been activated
 data | map | detailed information regarding the behavior
 
 ```dart
@@ -832,9 +832,9 @@ config.continuousAnnotationEditing = true;
 ### Custom Behavior
 
 #### overrideBehavior
-array of [`Behaviors`](./lib/constants.dart) constants, defaults to false.
+array of [Behaviors](./lib/constants.dart) constants, defaults to false.
 
-Defines actions that should skip default behavior, such as external link click.
+Defines actions that should skip default behavior, such as external link click. The event handler [startBehaviorActivatedListener](#startBehaviorActivatedListener) will be called when the behavior is activated, where custom behavior can be implemented.
 
 ```dart
 config.overrideBehavior = [Behaviors.linkPress];

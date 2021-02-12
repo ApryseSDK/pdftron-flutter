@@ -355,19 +355,6 @@ class _ViewerState extends State<Viewer> {
 }
 ```
 
-### startBehaviorActivatedListener
-
-Event is raised on certain behaviors, if any is passed into `overrideBehavior`.
-
-`action` is a constant in `Behaviors`, indicating which behavior has been activated; while `data` is a map containing information regarding the action.
-
-```dart
-var behaviorActivatedCancel = startBehaviorActivatedListener((action, data) {
-      print('action is ' + action);
-      print('url is ' + data['url']);
-    });
-```
-
 ## Contributing
 See [Contributing](./CONTRIBUTING.md)
 
