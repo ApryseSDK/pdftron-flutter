@@ -11,12 +11,15 @@ import androidx.annotation.Nullable;
 import com.pdftron.common.PDFNetException;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.ColorPt;
 import com.pdftron.pdf.Field;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.Page;
 import com.pdftron.pdf.Rect;
 import com.pdftron.pdf.ViewChangeCollection;
+import com.pdftron.pdf.annots.FreeText;
+import com.pdftron.pdf.annots.Markup;
 import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
@@ -45,6 +48,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
@@ -105,6 +109,62 @@ public class PluginUtils {
 
     public static final String KEY_ANNOTATION_ID = "id";
 
+    public static final String KEY_ANNOTATION_RECT = "rect";
+    public static final String KEY_ANNOTATION_PAGE_NUMBER = "pageNumber";
+    public static final String KEY_ANNOTATION_BORDER_STYLE_OBJECT = "borderStyleObject";
+    public static final String KEY_ANNOTATION_ROTATION = "rotation";
+    public static final String KEY_ANNOTATION_CUSTOM_DATA = "customData";
+    public static final String KEY_ANNOTATION_CONTENTS = "contents";
+    public static final String KEY_ANNOTATION_COLOR = "color";
+    public static final String KEY_ANNOTATION_MARKUP = "markup";
+
+    public static final String KEY_BORDER_STYLE = "style";
+    public static final String KEY_BORDER_STYLE_OBJECT_HORIZONTAL_CORNER_RADIUS = "horizontalCornerRadius";
+    public static final String KEY_BORDER_STYLE_OBJECT_VERTICAL_CORNER_RADIUS = "verticalCornerRadius";
+    public static final String KEY_BORDER_STYLE_OBJECT_WIDTH = "width";
+    public static final String KEY_BORDER_STYLE_OBJECT_DASH_PATTERN = "dashPattern";
+
+    public static final String KEY_BORDER_STYLE_SOLID = "solid";
+    public static final String KEY_BORDER_STYLE_DASHED = "dashed";
+    public static final String KEY_BORDER_STYLE_BEVELED = "beveled";
+    public static final String KEY_BORDER_STYLE_INSET = "inset";
+    public static final String KEY_BORDER_STYLE_UNDERLINE = "underline";
+
+    public static final String KEY_MARKUP_TITLE = "title";
+    public static final String KEY_MARKUP_SUBJECT = "subject";
+    public static final String KEY_MARKUP_OPACITY = "opacity";
+    public static final String KEY_MARKUP_BORDER_EFFECT = "borderEffect";
+    public static final String KEY_MARKUP_BORDER_EFFECT_INTENSITY = "borderEffectIntensity";
+    public static final String KEY_MARKUP_INTERIOR_COLOR = "interiorColor";
+    public static final String KEY_MARKUP_CONTENT_RECT = "contentRect";
+    public static final String KEY_MARKUP_PADDING_RECT = "paddingRect";
+    public static final String KEY_MARKUP_TYPE = "markupType";
+
+    public static final String KEY_MARKUP_TYPE_FREE_TEXT = "freeText";
+
+    public static final String KEY_BORDER_EFFECT_NONE = "none";
+    public static final String KEY_BORDER_EFFECT_CLOUDY = "cloudy";
+
+    public static final String KEY_FREE_TEXT_ANNOTATION_DEFAULT_APPEARANCE = "defaultAppearance";
+    public static final String KEY_FREE_TEXT_ANNOTATION_QUADDING_FORMAT = "quaddingFormat";
+    public static final String KEY_FREE_TEXT_ANNOTATION_INTENT_NAME = "intentName";
+    public static final String KEY_FREE_TEXT_ANNOTATION_TEXT_COLOR = "textColor";
+    public static final String KEY_FREE_TEXT_ANNOTATION_LINE_COLOR = "lineColor";
+    public static final String KEY_FREE_TEXT_ANNOTATION_FONT_SIZE = "fontSize";
+
+    public static final String KEY_QUADDING_FORMAT_LEFT_JUSTIFIED = "leftJustified";
+    public static final String KEY_QUADDING_FORMAT_CENTERED = "centered";
+    public static final String KEY_QUADDING_FORMAT_RIGHT_JUSTIFIED = "rightJustified";
+
+    public static final String KEY_INTENT_NAME_FREE_TEXT = "freeText";
+    public static final String KEY_INTENT_NAME_FREE_TEXT_CALLOUT = "freeTextCallout";
+    public static final String KEY_INTENT_NAME_FREE_TEXT_TYPE_WRITER = "freeTextTypeWriter";
+
+    public static final String KEY_COLOR_RED = "red";
+    public static final String KEY_COLOR_GREEN = "green";
+    public static final String KEY_COLOR_BLUE = "blue";
+    public static final int NUMBER_COLOR_SPACE = 3;
+
     public static final String KEY_ACTION_ADD = "add";
     public static final String KEY_ACTION_MODIFY = "modify";
     public static final String KEY_ACTION_DELETE = "delete";
@@ -145,6 +205,7 @@ public class PluginUtils {
     public static final String FUNCTION_DELETE_ANNOTATIONS = "deleteAnnotations";
     public static final String FUNCTION_SELECT_ANNOTATION = "selectAnnotation";
     public static final String FUNCTION_SET_FLAGS_FOR_ANNOTATIONS = "setFlagsForAnnotations";
+    public static final String FUNCTION_ADD_ANNOTATIONS = "addAnnotations";
     public static final String FUNCTION_SET_LEADING_NAV_BUTTON_ICON = "setLeadingNavButtonIcon";
     public static final String FUNCTION_CLOSE_ALL_TABS = "closeAllTabs";
 
@@ -896,6 +957,20 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_ADD_ANNOTATIONS: {
+                checkFunctionPrecondition(component);
+                String annotationList = call.argument(KEY_ANNOTATION_LIST);
+                try {
+                    addAnnotations(annotationList, result, component);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                    result.error(Integer.toString(ex.hashCode()), "JSONException Error: " + ex, null);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+                break;
+            }
             case FUNCTION_IMPORT_ANNOTATION_COMMAND: {
                 checkFunctionPrecondition(component);
                 String xfdfCommand = call.argument(KEY_XFDF_COMMAND);
@@ -1291,6 +1366,356 @@ public class PluginUtils {
                 pdfViewCtrl.docUnlock();
             }
         }
+    }
+
+    private static void addAnnotations(String annotationList, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        PDFDoc pdfDoc = component.getPdfDoc();
+
+        if (null == pdfViewCtrl || null == pdfDoc) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        ToolManager toolManager = (ToolManager) pdfViewCtrl.getToolManager();
+
+        JSONArray annotationJsonArray = new JSONArray(annotationList);
+
+        HashMap<Annot, Integer> validAnnotMap = new HashMap<>();
+
+        for (int i = 0; i < annotationJsonArray.length(); i ++) {
+            JSONObject currAnnotJSONObject = annotationJsonArray.getJSONObject(i);
+
+            if (currAnnotJSONObject == null || !areJSONKeysValid(currAnnotJSONObject, KEY_ANNOTATION_PAGE_NUMBER, KEY_ANNOTATION_RECT, KEY_ANNOTATION_MARKUP)) {
+                continue;
+            }
+
+            int currAnnotPageNumber = currAnnotJSONObject.getInt(KEY_ANNOTATION_PAGE_NUMBER);
+
+            Page page = pdfDoc.getPage(currAnnotPageNumber);
+
+            if (page == null || !page.isValid()) {
+                continue;
+            }
+
+            boolean markup = currAnnotJSONObject.getBoolean(KEY_ANNOTATION_MARKUP);
+
+            Annot annot;
+
+            if (markup) {
+                annot = getMarkupFromJSONObject(currAnnotJSONObject, pdfDoc);
+                if (annot == null) {
+                    continue;
+                }
+            } else {
+                continue;
+            }
+
+            if (isJSONKeyValid(currAnnotJSONObject, KEY_ANNOTATION_BORDER_STYLE_OBJECT)) {
+                JSONObject borderStyleObject = getJSONObjectFromJSONObject(currAnnotJSONObject, KEY_ANNOTATION_BORDER_STYLE_OBJECT);
+                Annot.BorderStyle borderStyle = getBorderStyleObjectFromJSONObject(borderStyleObject);
+
+                if (borderStyle != null) {
+                    annot.setBorderStyle(borderStyle);
+                }
+            }
+
+            if (isJSONKeyValid(currAnnotJSONObject, KEY_ANNOTATION_ROTATION)) {
+                int rotation = currAnnotJSONObject.getInt(KEY_ANNOTATION_ROTATION);
+                annot.setRotation(rotation);
+            }
+
+            if (isJSONKeyValid(currAnnotJSONObject, KEY_ANNOTATION_CUSTOM_DATA)) {
+                JSONObject customDataObject = getJSONObjectFromJSONObject(currAnnotJSONObject, KEY_ANNOTATION_CUSTOM_DATA);
+                Map<String, String> customData = getMapFromJSONObject(customDataObject);
+
+                for (String key: customData.keySet()) {
+                    annot.setCustomData(key, customData.get(key));
+                }
+            }
+
+            if (isJSONKeyValid(currAnnotJSONObject, KEY_ANNOTATION_CONTENTS)) {
+                String contents = currAnnotJSONObject.getString(KEY_ANNOTATION_CONTENTS);
+                annot.setContents(contents);
+            }
+
+            if (isJSONKeyValid(currAnnotJSONObject, KEY_ANNOTATION_COLOR)) {
+                JSONObject colorObject = getJSONObjectFromJSONObject(currAnnotJSONObject, KEY_ANNOTATION_COLOR);
+                ColorPt color = getColorPtFromJSONObject(colorObject);
+
+                if (color != null) {
+                    annot.setColor(color, NUMBER_COLOR_SPACE);
+                }
+            }
+
+            annot.setPage(page);
+
+            if (annot != null && annot.isValid()) {
+                validAnnotMap.put(annot, currAnnotPageNumber);
+            }
+        }
+
+        if (validAnnotMap.isEmpty()) {
+            return;
+        }
+
+        boolean shouldUnlock = false;
+        try {
+            pdfViewCtrl.docLock(true);
+            shouldUnlock = true;
+            toolManager.raiseAnnotationsPreModifyEvent(validAnnotMap);
+
+            for (Annot annot : validAnnotMap.keySet()) {
+
+                annot.getPage().annotPushBack(annot);
+                pdfViewCtrl.update(annot, annot.getPage().getIndex());
+            }
+
+            toolManager.raiseAnnotationsAddedEvent(validAnnotMap);
+            toolManager.raiseAnnotationsModifiedEvent(validAnnotMap, Tool.getAnnotationModificationBundle(null));
+        } finally {
+            if (shouldUnlock) {
+                pdfViewCtrl.docUnlock();
+            }
+        }
+    }
+
+    private static Markup getMarkupFromJSONObject(JSONObject currAnnotJSONObject, PDFDoc pdfDoc) throws PDFNetException, JSONException {
+        Markup markupAnnot;
+
+        if (!isJSONKeyValid(currAnnotJSONObject, KEY_MARKUP_TYPE)) {
+            return null;
+        }
+
+        switch(currAnnotJSONObject.getString(KEY_MARKUP_TYPE)) {
+            case KEY_MARKUP_TYPE_FREE_TEXT:
+                markupAnnot = getFreeTextFromJSONObject(currAnnotJSONObject, pdfDoc);
+                if (markupAnnot == null) {
+                    return null;
+                }
+                break;
+            default:
+                return null;
+        }
+
+        if (isJSONKeyValid(currAnnotJSONObject, KEY_MARKUP_TITLE)) {
+            String title = currAnnotJSONObject.getString(KEY_MARKUP_TITLE);
+            markupAnnot.setTitle(title);
+        }
+
+        if (isJSONKeyValid(currAnnotJSONObject, KEY_MARKUP_SUBJECT)) {
+            String subject = currAnnotJSONObject.getString(KEY_MARKUP_SUBJECT);
+            markupAnnot.setSubject(subject);
+        }
+
+        if (isJSONKeyValid(currAnnotJSONObject, KEY_MARKUP_OPACITY)) {
+            double opacity = currAnnotJSONObject.getDouble(KEY_MARKUP_OPACITY);
+            markupAnnot.setOpacity(opacity);
+        }
+
+        if (isJSONKeyValid(currAnnotJSONObject, KEY_MARKUP_BORDER_EFFECT)) {
+            String borderEffectString = currAnnotJSONObject.getString(KEY_MARKUP_BORDER_EFFECT);
+            switch (borderEffectString) {
+                case KEY_BORDER_EFFECT_NONE:
+                    markupAnnot.setBorderEffect(Markup.e_None);
+                    break;
+                case KEY_BORDER_EFFECT_CLOUDY:
+                    markupAnnot.setBorderEffect(Markup.e_Cloudy);
+                    break;
+            }
+        }
+
+        if (isJSONKeyValid(currAnnotJSONObject, KEY_MARKUP_BORDER_EFFECT_INTENSITY)) {
+            double borderEffectIntensity = currAnnotJSONObject.getDouble(KEY_MARKUP_BORDER_EFFECT_INTENSITY);
+            markupAnnot.setBorderEffectIntensity(borderEffectIntensity);
+        }
+
+        if (isJSONKeyValid(currAnnotJSONObject, KEY_MARKUP_INTERIOR_COLOR)) {
+            JSONObject colorObject = getJSONObjectFromJSONObject(currAnnotJSONObject, KEY_MARKUP_INTERIOR_COLOR);
+            ColorPt interiorColor = getColorPtFromJSONObject(colorObject);
+
+            if (interiorColor != null) {
+                markupAnnot.setInteriorColor(interiorColor, NUMBER_COLOR_SPACE);
+            }
+        }
+
+        if (isJSONKeyValid(currAnnotJSONObject, KEY_MARKUP_CONTENT_RECT)) {
+            JSONObject rectObject = getJSONObjectFromJSONObject(currAnnotJSONObject, KEY_MARKUP_CONTENT_RECT);
+            Rect contentRect = getRectFromJSONObject(rectObject);
+
+            if (contentRect != null) {
+                markupAnnot.setContentRect(contentRect);
+            }
+        }
+
+        if (isJSONKeyValid(currAnnotJSONObject, KEY_MARKUP_PADDING_RECT)) {
+            JSONObject rectObject = getJSONObjectFromJSONObject(currAnnotJSONObject, KEY_MARKUP_PADDING_RECT);
+            Rect paddingRect = getRectFromJSONObject(rectObject);
+
+            if (paddingRect != null) {
+                markupAnnot.setPadding(paddingRect);
+            }
+        }
+
+        return markupAnnot;
+    }
+
+    private static FreeText getFreeTextFromJSONObject(JSONObject currAnnotJSONObject, PDFDoc pdfDoc) throws PDFNetException, JSONException {
+
+        JSONObject rectObject = getJSONObjectFromJSONObject(currAnnotJSONObject, KEY_ANNOTATION_RECT);
+        Rect rect = getRectFromJSONObject(rectObject);
+
+        if (rect == null) {
+            return null;
+        }
+
+        FreeText freeTextAnnot = FreeText.create(pdfDoc, rect);
+
+        if (isJSONKeyValid(currAnnotJSONObject, KEY_FREE_TEXT_ANNOTATION_DEFAULT_APPEARANCE)) {
+            String defaultAppearance = currAnnotJSONObject.getString(KEY_FREE_TEXT_ANNOTATION_DEFAULT_APPEARANCE);
+            freeTextAnnot.setDefaultAppearance(defaultAppearance);
+        }
+
+        if (isJSONKeyValid(currAnnotJSONObject, KEY_FREE_TEXT_ANNOTATION_QUADDING_FORMAT)) {
+            String quaddingFormatString = currAnnotJSONObject.getString(KEY_FREE_TEXT_ANNOTATION_QUADDING_FORMAT);
+            switch (quaddingFormatString) {
+                case KEY_QUADDING_FORMAT_LEFT_JUSTIFIED:
+                    freeTextAnnot.setQuaddingFormat(0);
+                    break;
+                case KEY_QUADDING_FORMAT_CENTERED:
+                    freeTextAnnot.setQuaddingFormat(1);
+                    break;
+                case KEY_QUADDING_FORMAT_RIGHT_JUSTIFIED:
+                    freeTextAnnot.setQuaddingFormat(2);
+                    break;
+            }
+        }
+
+        if (isJSONKeyValid(currAnnotJSONObject, KEY_FREE_TEXT_ANNOTATION_INTENT_NAME)) {
+            String intentNameString = currAnnotJSONObject.getString(KEY_FREE_TEXT_ANNOTATION_INTENT_NAME);
+            switch (intentNameString) {
+                case KEY_INTENT_NAME_FREE_TEXT:
+                    freeTextAnnot.setIntentName(FreeText.e_FreeText);
+                    break;
+                case KEY_INTENT_NAME_FREE_TEXT_CALLOUT:
+                    freeTextAnnot.setIntentName(FreeText.e_FreeTextCallout);
+                    break;
+                case KEY_INTENT_NAME_FREE_TEXT_TYPE_WRITER:
+                    freeTextAnnot.setIntentName(FreeText.e_FreeTextTypeWriter);
+                    break;
+            }
+        }
+
+        if (isJSONKeyValid(currAnnotJSONObject, KEY_FREE_TEXT_ANNOTATION_TEXT_COLOR)) {
+            JSONObject colorObject = getJSONObjectFromJSONObject(currAnnotJSONObject, KEY_FREE_TEXT_ANNOTATION_TEXT_COLOR);
+            ColorPt textColor = getColorPtFromJSONObject(colorObject);
+
+            if (textColor != null) {
+                freeTextAnnot.setTextColor(textColor, NUMBER_COLOR_SPACE);
+            }
+        }
+
+        if (isJSONKeyValid(currAnnotJSONObject, KEY_FREE_TEXT_ANNOTATION_LINE_COLOR)) {
+            JSONObject colorObject = getJSONObjectFromJSONObject(currAnnotJSONObject, KEY_FREE_TEXT_ANNOTATION_LINE_COLOR);
+            ColorPt lineColor = getColorPtFromJSONObject(colorObject);
+
+            if (lineColor != null) {
+                freeTextAnnot.setLineColor(lineColor, NUMBER_COLOR_SPACE);
+            }
+        }
+
+        if (isJSONKeyValid(currAnnotJSONObject, KEY_FREE_TEXT_ANNOTATION_FONT_SIZE)) {
+            double fontSize = currAnnotJSONObject.getDouble(KEY_FREE_TEXT_ANNOTATION_FONT_SIZE);
+            freeTextAnnot.setFontSize(fontSize);
+        }
+
+        return freeTextAnnot;
+    }
+
+    private static Rect getRectFromJSONObject(JSONObject object) throws PDFNetException, JSONException {
+        if (!areJSONKeysValid(object, KEY_X1, KEY_Y1, KEY_X2, KEY_Y2)) {
+            return null;
+        }
+
+        double x1 = object.getDouble(KEY_X1);
+        double y1 = object.getDouble(KEY_Y1);
+        double x2 = object.getDouble(KEY_X2);
+        double y2 = object.getDouble(KEY_Y2);
+
+        return new Rect(x1, y1, x2, y2);
+    }
+
+    private static Map<String, String> getMapFromJSONObject (JSONObject object) throws JSONException {
+        Map<String, String> map = new HashMap<>();
+
+        Iterator<String> keyIterator = object.keys();
+        while (keyIterator.hasNext()) {
+            String key = keyIterator.next();
+            map.put(key, object.getString(key));
+        }
+
+        return map;
+    }
+
+    private static Annot.BorderStyle getBorderStyleObjectFromJSONObject(JSONObject object) throws PDFNetException, JSONException {
+        if (!areJSONKeysValid(object, KEY_BORDER_STYLE, KEY_BORDER_STYLE_OBJECT_HORIZONTAL_CORNER_RADIUS,
+                KEY_BORDER_STYLE_OBJECT_VERTICAL_CORNER_RADIUS, KEY_BORDER_STYLE_OBJECT_WIDTH)) {
+            return null;
+        }
+
+        int style;
+        switch(object.getString(KEY_BORDER_STYLE)) {
+            case KEY_BORDER_STYLE_SOLID:
+                style = Annot.BorderStyle.e_solid;
+                break;
+            case KEY_BORDER_STYLE_DASHED:
+                style = Annot.BorderStyle.e_dashed;
+                break;
+            case KEY_BORDER_STYLE_BEVELED:
+                style = Annot.BorderStyle.e_beveled;
+                break;
+            case KEY_BORDER_STYLE_INSET:
+                style = Annot.BorderStyle.e_inset;
+                break;
+            case KEY_BORDER_STYLE_UNDERLINE:
+                style = Annot.BorderStyle.e_underline;
+                break;
+            default:
+                return null;
+        }
+
+        int horizontalCornerRadius = (int)(object.getDouble(KEY_BORDER_STYLE_OBJECT_HORIZONTAL_CORNER_RADIUS) + 0.5);
+        int verticalCornerRadius = (int)(object.getDouble(KEY_BORDER_STYLE_OBJECT_VERTICAL_CORNER_RADIUS) + 0.5);
+        int width = (int)(object.getDouble(KEY_BORDER_STYLE_OBJECT_WIDTH) + 0.5);
+
+        if (isJSONKeyValid(object, KEY_BORDER_STYLE_OBJECT_DASH_PATTERN)) {
+            try {
+                JSONArray dashPatternJSONArray = getJSONArrayFromJSONObject(object, KEY_BORDER_STYLE_OBJECT_DASH_PATTERN);
+                double[] dashPattern = new double[dashPatternJSONArray.length()];
+
+                for (int i = 0; i < dashPatternJSONArray.length(); i ++) {
+                    dashPattern[i] = dashPatternJSONArray.getDouble(i);
+                }
+
+                return new Annot.BorderStyle(style, width, horizontalCornerRadius, verticalCornerRadius, dashPattern);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return new Annot.BorderStyle(style, width, horizontalCornerRadius, verticalCornerRadius);
+    }
+
+    private static ColorPt getColorPtFromJSONObject(JSONObject object) throws PDFNetException, JSONException {
+        if (!areJSONKeysValid(object, KEY_COLOR_RED, KEY_COLOR_GREEN, KEY_COLOR_BLUE)) {
+            return null;
+        }
+
+        double red = object.getDouble(KEY_COLOR_RED);
+        double green = object.getDouble(KEY_COLOR_GREEN);
+        double blue = object.getDouble(KEY_COLOR_BLUE);
+
+        return new ColorPt(red, green, blue);
     }
 
     private static void importAnnotationCommand(String xfdfCommand, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
@@ -1751,5 +2176,19 @@ public class PluginUtils {
     private static JSONObject getJSONObjectFromJSONObject(JSONObject jsonObject, String key) throws JSONException {
         String jsonObjectString = jsonObject.getString(key);
         return new JSONObject(jsonObjectString);
+    }
+
+    // this function returns true iff the key exists and does not have a null value associated with it
+    private static boolean isJSONKeyValid(JSONObject jsonObject, String key) throws JSONException {
+        return jsonObject.has(key) && !jsonObject.isNull(key) && !jsonObject.getString(key).equals("null");
+    }
+
+    private static boolean areJSONKeysValid(JSONObject jsonObject, String... keys) throws JSONException {
+        for (String key : keys) {
+            if (!isJSONKeyValid(jsonObject, key)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

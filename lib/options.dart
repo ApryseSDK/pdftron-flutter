@@ -73,6 +73,8 @@ class Rect {
         getDouble(json['height']));
   }
 
+  Map<String, dynamic> toJson() => {'x1': x1, 'y1': y1, 'x2': x2, 'y2': y2};
+
   // a helper for JSON number decoding
   static getDouble(dynamic value) {
     if (value is int) {
@@ -110,7 +112,7 @@ class AnnotWithFlag {
 
   AnnotWithFlag(String annotId, int pageNumber, String flag, bool flagValue) {
     annotation = new Annot(annotId, pageNumber);
-    flags = new List<AnnotFlag>();
+    flags = [];
     flags.add(new AnnotFlag(flag, flagValue));
   }
 

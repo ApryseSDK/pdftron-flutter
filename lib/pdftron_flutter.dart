@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -12,6 +13,7 @@ part 'document_view.dart';
 part 'events.dart';
 part 'config.dart';
 part 'constants.dart';
+part 'custom_annot.dart';
 
 class PdftronFlutter {
   static const MethodChannel _channel = const MethodChannel('pdftron_flutter');
@@ -78,6 +80,11 @@ class PdftronFlutter {
         Functions.setFlagsForAnnotations, <String, dynamic>{
       Parameters.annotationsWithFlags: jsonEncode(annotationWithFlagsList)
     });
+  }
+
+  static Future<void> addAnnotations(List<CustomAnnot> annotationList) {
+    return _channel.invokeMethod(Functions.addAnnotations,
+        <String, dynamic>{Parameters.annotations: jsonEncode(annotationList)});
   }
 
   static Future<void> importAnnotationCommand(String xfdfCommand) {
