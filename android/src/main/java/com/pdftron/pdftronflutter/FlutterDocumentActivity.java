@@ -59,7 +59,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
     public static void openDocument(Context packageContext, String document, String password, String configStr) {
 
-        ViewerConfig.Builder builder = new ViewerConfig.Builder().multiTabEnabled(false);
+        ViewerConfig.Builder builder = new ViewerConfig.Builder().multiTabEnabled(false).showCloseTabOption(false);
 
         ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
         PDFViewCtrlConfig pdfViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(packageContext);
