@@ -788,6 +788,9 @@
     } else if ([call.method isEqualToString:PTImportAnnotationCommandKey]) {
         NSString *xfdfCommand = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTXfdfCommandArgumentKey]];
         [self importAnnotationCommand:xfdfCommand resultToken:result];
+    } else if ([call.method isEqualToString:PTAddAnnotationsKey]) {
+        NSString *annotations = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationListKey]];
+        [self addAnnotations:annotations resultToken:result];
     } else if ([call.method isEqualToString:PTImportBookmarksKey]) {
         NSString *bookmarkJson = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTBookmarkJsonArgumentKey]];
         [self importBookmarks:bookmarkJson resultToken:result];
@@ -1324,6 +1327,342 @@
     } else {
         flutterResult(nil);
     }
+}
+
+- (void)addAnnotations:(NSString *)annotations resultToken:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"add_annotations" message:@"Failed to add annotations" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+    
+    NSArray *annotationJSONArray = [PdftronFlutterPlugin PT_idAsArray:[PdftronFlutterPlugin PT_JSONStringToId:annotations]];
+    
+    NSMutableArray <PTAnnot *>* validAnnotations = [[NSMutableArray alloc] init];
+    
+    for (NSDictionary* annotationDict in annotationJSONArray) {
+        PTAnnot* annot = [self getAnnotFromDict:annotationDict document:documentController.document];
+        
+        if (annot && [annot IsValid]) {
+            [validAnnotations addObject:annot];
+        }
+    }
+    
+    NSError* error;
+    
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        for (PTAnnot *annot in validAnnotations) {
+            PTPage *page = [annot GetPage];
+            if (page && [page IsValid]) {
+                int pageNumber = [page GetIndex];
+                
+                [page AnnotPushBack:annot];
+                [documentController.toolManager annotationAdded:annot onPageNumber:pageNumber];
+            }
+        }
+        [documentController.pdfViewCtrl Update:YES];
+    } error:&error];
+        
+    if (error) {
+        NSLog(@"Error: Failed to add annotations to doc. %@", error.localizedDescription);
+            
+        flutterResult([FlutterError errorWithCode:@"add_annotations" message:@"Failed to add annotations" details:@"Error: Failed to add annotations from doc."]);
+        return;
+    }
+}
+
+- (PTAnnot *)getAnnotFromDict:(NSDictionary *)annotationDict document:(PTPDFDoc *)document
+{
+    if (!annotationDict) {
+        return nil;
+    }
+    
+    if (![self dictHasKeys:annotationDict keys:@[PTAnnotPageNumberKey, PTAnnotRectKey, PTAnnotMarkupKey]]) {
+        return nil;
+    }
+    
+    NSNumber* pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:annotationDict[PTAnnotPageNumberKey]];
+    
+    PTPage* page = [document GetPage:[pageNumber unsignedIntValue]];
+    
+    if (!page || ![page IsValid]) {
+        return nil;
+    }
+    
+    bool markup = [PdftronFlutterPlugin PT_idAsBool:annotationDict[PTAnnotMarkupKey]];
+    
+    PTAnnot* annot;
+    
+    if (markup) {
+        annot = [self getMarkupFromDict:annotationDict document:document];
+        if (!annot) {
+            return nil;
+        }
+    } else {
+        return nil;
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTAnnotIdKey]]) {
+        NSString* id = [PdftronFlutterPlugin PT_idAsNSString:annotationDict[PTAnnotIdKey]];
+        [annot SetUniqueID:id id_buf_sz:(int)[id length]];
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTAnnotBorderStyleObjectKey]]) {
+        PTBorderStyle* borderStyleObject = [self getBorderStyleObjectFromDict:[PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTAnnotBorderStyleObjectKey]]];
+        
+        if (borderStyleObject) {
+            [annot SetBorderStyle:borderStyleObject oldStyleOnly:NO];
+        }
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTAnnotRotationKey]]) {
+        int rotation = [[PdftronFlutterPlugin PT_idAsNSNumber:annotationDict[PTAnnotBorderStyleObjectKey]] intValue];
+        [annot SetRotation:rotation];
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTAnnotCustomDataKey]]) {
+        NSDictionary* customData = [PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTAnnotBorderStyleObjectKey]];
+        
+        for (NSString* key in [customData allKeys]) {
+            [annot SetCustomData:key value:customData[key]];
+        }
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTAnnotContentsKey]]) {
+        NSString* contents = [PdftronFlutterPlugin PT_idAsNSString:annotationDict[PTAnnotContentsKey]];
+        [annot SetContents:contents];
+    }
+
+    if ([self dictHasKeys:annotationDict keys:@[PTAnnotColorKey]]) {
+        PTColorPt *color = [self getColorPtFromDict:[PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTAnnotColorKey]]];
+        
+        if (color) {
+            [annot SetColor:color numcomp:PTNumColorSpace];
+        }
+    }
+    
+    [annot SetPage:page];
+    
+    return annot;
+}
+
+- (PTMarkup *)getMarkupFromDict:(NSDictionary *)annotationDict document:(PTPDFDoc *)document
+{
+    PTMarkup* markupAnnot;
+    
+    if (![self dictHasKeys:annotationDict keys:@[PTMarkupTypeKey]]) {
+        return nil;
+    }
+    
+    NSString *markupType = [PdftronFlutterPlugin PT_idAsNSString:annotationDict[PTMarkupTypeKey]];
+    if ([markupType isEqualToString:PTMarkupTypeFreeTextKey]) {
+        markupAnnot = [self getFreeTextFromDict:annotationDict document:document];
+        if (!markupAnnot) {
+            return nil;
+        }
+    } else {
+        return nil;
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTMarkupTitleKey]]) {
+        NSString *title = [PdftronFlutterPlugin PT_idAsNSString:annotationDict[PTMarkupTitleKey]];
+        [markupAnnot SetTitle:title];
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTMarkupSubjectKey]]) {
+        NSString *subject = [PdftronFlutterPlugin PT_idAsNSString:annotationDict[PTMarkupSubjectKey]];
+        [markupAnnot SetSubject:subject];
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTMarkupOpacityKey]]) {
+        double opacity = [[PdftronFlutterPlugin PT_idAsNSNumber:annotationDict[PTMarkupOpacityKey]] doubleValue];
+        [markupAnnot SetOpacity:opacity];
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTMarkupBorderEffectKey]]) {
+        NSString *borderEffect = [PdftronFlutterPlugin PT_idAsNSString:annotationDict[PTMarkupBorderEffectKey]];
+        
+        if ([borderEffect isEqualToString:PTBorderEffectNoneKey]) {
+            [markupAnnot SetBorderEffect:e_ptNone];
+        } else if ([borderEffect isEqualToString:PTBorderEffectCloudyKey]) {
+            [markupAnnot SetBorderEffect:e_ptCloudy];
+        }
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTMarkupBorderEffectIntensityKey]]) {
+        double borderEffectIntensity = [[PdftronFlutterPlugin PT_idAsNSNumber:annotationDict[PTMarkupBorderEffectIntensityKey]] doubleValue];
+        [markupAnnot SetBorderEffectIntensity:borderEffectIntensity];
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTMarkupInteriorColorKey]]) {
+        PTColorPt *interiorColor = [self getColorPtFromDict:[PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTMarkupInteriorColorKey]]];
+        
+        if (interiorColor) {
+            [markupAnnot SetInteriorColor:interiorColor CompNum:PTNumColorSpace];
+        }
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTMarkupContentRectKey]]) {
+        PTPDFRect* contentRect = [self getRectFromDict:[PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTMarkupContentRectKey]]];
+        
+        if (contentRect) {
+            [markupAnnot SetContentRect:contentRect];
+        }
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTMarkupPaddingRectKey]]) {
+        PTPDFRect* paddingRect = [self getRectFromDict:[PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTMarkupPaddingRectKey]]];
+        
+        if (paddingRect) {
+            [markupAnnot SetPaddingWithRect:paddingRect];
+        }
+    }
+    
+    return markupAnnot;
+}
+
+- (PTFreeText *)getFreeTextFromDict:(NSDictionary *)annotationDict document:(PTPDFDoc *)document
+{
+    PTPDFRect* rect = [self getRectFromDict:[PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTAnnotRectKey]]];
+    
+    if (!rect) {
+        return nil;
+    }
+    
+    PTFreeText* freeText = [PTFreeText Create:[document GetSDFDoc] pos:rect];
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTFreeTextQuaddingFormatKey]]) {
+        NSString *quaddingFormatString = [PdftronFlutterPlugin PT_idAsNSString:annotationDict[PTFreeTextQuaddingFormatKey]];
+        
+        if ([quaddingFormatString isEqualToString:PTQuaddingFormatLeftJustifiedKey]) {
+            [freeText SetQuaddingFormat:0];
+        } else if ([quaddingFormatString isEqualToString:PTQuaddingFormatCenteredKey]) {
+            [freeText SetQuaddingFormat:1];
+        } else if ([quaddingFormatString isEqualToString:PTQuaddingFormatRightJustifiedKey]) {
+            [freeText SetQuaddingFormat:2];
+        } else {
+            return nil;
+        }
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTFreeTextIntentNameKey]]) {
+        NSString *intentName = [PdftronFlutterPlugin PT_idAsNSString:annotationDict[PTFreeTextIntentNameKey]];
+        
+        PTIntentName ptIntentName;
+        if ([intentName isEqualToString:PTIntentNameFreeTextKey]) {
+            ptIntentName = e_ptf_FreeText;
+        } else if ([intentName isEqualToString:PTIntentNameFreeTextCalloutKey]) {
+            ptIntentName = e_ptFreeTextCallout;
+        } else if ([intentName isEqualToString:PTIntentNameFreeTextTypeWriterKey]) {
+            ptIntentName = e_ptFreeTextTypeWriter;
+        } else {
+            return nil;
+        }
+        
+        [freeText SetIntentName:ptIntentName];
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTFreeTextTextColorKey]]) {
+        PTColorPt *textColor = [self getColorPtFromDict:[PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTFreeTextTextColorKey]]];
+        
+        if (textColor) {
+            [freeText SetTextColor:textColor col_comp:PTNumColorSpace];
+        }
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTFreeTextLineColorKey]]) {
+        PTColorPt *lineColor = [self getColorPtFromDict:[PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTFreeTextLineColorKey]]];
+        
+        if (lineColor) {
+            [freeText SetLineColor:lineColor col_comp:PTNumColorSpace];
+        }
+    }
+    
+    if ([self dictHasKeys:annotationDict keys:@[PTFreeTextFontSizeKey]]) {
+        double fontSize = [[PdftronFlutterPlugin PT_idAsNSNumber:annotationDict[PTFreeTextFontSizeKey]] doubleValue];
+        
+        [freeText SetFontSize:fontSize];
+    }
+        
+    return freeText;
+}
+
+- (PTPDFRect *)getRectFromDict:(NSDictionary *)rectDict
+{
+    if (![self dictHasKeys:rectDict keys:@[PTX1Key, PTY1Key, PTX2Key, PTY2Key]]) {
+        return nil;
+    }
+    
+    double x1 = [[PdftronFlutterPlugin PT_idAsNSNumber:rectDict[PTX1Key]] doubleValue];
+    double y1 = [[PdftronFlutterPlugin PT_idAsNSNumber:rectDict[PTY1Key]] doubleValue];
+    double x2 = [[PdftronFlutterPlugin PT_idAsNSNumber:rectDict[PTX2Key]] doubleValue];
+    double y2 = [[PdftronFlutterPlugin PT_idAsNSNumber:rectDict[PTY2Key]] doubleValue];
+    
+    return [[PTPDFRect alloc] initWithX1:x1 y1:y1 x2:x2 y2:y2];
+}
+
+- (PTBorderStyle *)getBorderStyleObjectFromDict:(NSDictionary *)borderDict
+{
+    if (![self dictHasKeys:borderDict keys:@[PTBorderStyleObjectStyleKey, PTBorderStyleObjectVerticalCornerRadiusKey, PTBorderStyleObjectVerticalCornerRadiusKey, PTBorderStyleObjectWidthKey]]) {
+        return nil;
+    }
+    
+    NSString *style = [PdftronFlutterPlugin PT_idAsNSString:borderDict[PTBorderStyleObjectStyleKey]];
+    
+    PTBdStyle borderStyle;
+    if ([style isEqualToString:PTBorderStyleSolidKey]) {
+        borderStyle = e_ptsolid;
+    } else if ([style isEqualToString:PTBorderStyleInsetKey]) {
+        borderStyle = e_ptinset;
+    } else if ([style isEqualToString:PTBorderStyleDashedKey]) {
+        borderStyle = e_ptdashed;
+    } else if ([style isEqualToString:PTBorderStyleBeveledKey]) {
+        borderStyle = e_ptbeveled;
+    } else if ([style isEqualToString:PTBorderStyleUnderlineKey]) {
+        borderStyle = e_ptunderline;
+    } else {
+        return nil;
+    }
+    
+    double horizontalRadius = [[PdftronFlutterPlugin PT_idAsNSNumber:borderDict[PTBorderStyleObjectHorizontalCornerRadiusKey]] doubleValue];
+    double verticalRadius = [[PdftronFlutterPlugin PT_idAsNSNumber:borderDict[PTBorderStyleObjectVerticalCornerRadiusKey]] doubleValue];
+    double width = [[PdftronFlutterPlugin PT_idAsNSNumber:borderDict[PTBorderStyleObjectWidthKey]] doubleValue];
+    
+    if ([self dictHasKeys:borderDict keys:@[PTBorderStyleObjectDashPatternKey]]) {
+        NSArray* dashPattern = [PdftronFlutterPlugin
+        PT_idAsArray:borderDict[PTBorderStyleObjectDashPatternKey]];
+        
+        return [[PTBorderStyle alloc] initWithS:borderStyle b_width:width b_hr:horizontalRadius b_vr:verticalRadius b_dash:[dashPattern mutableCopy]];
+    }
+    return [[PTBorderStyle alloc] initWithS:borderStyle b_width:width b_hr:horizontalRadius b_vr:verticalRadius];
+}
+
+- (PTColorPt *)getColorPtFromDict:(NSDictionary *)colorDict
+{
+    if (![self dictHasKeys:colorDict keys:@[PTColorRedKey, PTColorGreenKey, PTColorBlueKey]]) {
+        return nil;
+    }
+    
+    double red = [[PdftronFlutterPlugin PT_idAsNSNumber:colorDict[PTColorRedKey]] doubleValue];
+    double green = [[PdftronFlutterPlugin PT_idAsNSNumber:colorDict[PTColorGreenKey]] doubleValue];
+    double blue = [[PdftronFlutterPlugin PT_idAsNSNumber:colorDict[PTColorBlueKey]] doubleValue];
+    
+    return [[PTColorPt alloc] initWithX:red y:green z:blue w:0];
+}
+
+- (bool)dictHasKeys:(NSDictionary *)dict keys:(NSArray *)requiredKeys
+{
+    NSArray* dictKeys = [dict allKeys];
+    for (NSString * requiredKey in requiredKeys) {
+        if (![dictKeys containsObject:requiredKey]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 - (void)importBookmarks:(NSString *)bookmarkJson resultToken:(FlutterResult)flutterResult

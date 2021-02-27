@@ -94,43 +94,14 @@ class _ViewerState extends State<Viewer> {
 
     await PdftronFlutter.openDocument(_document, config: config);
 
-    try {
-      PdftronFlutter.importAnnotationCommand(
-          "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-              "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
-              "      <add>\n" +
-              "        <square style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20200619203211Z\" flags=\"print\" date=\"D:20200619203211Z\" name=\"c684da06-12d2-4ccd-9361-0a1bf2e089e3\" page=\"1\" rect=\"113.312,277.056,235.43,350.173\" title=\"\" />\n" +
-              "      </add>\n" +
-              "      <modify />\n" +
-              "      <delete />\n" +
-              "      <pdf-info import-version=\"3\" version=\"2\" xmlns=\"http://www.pdftron.com/pdfinfo\" />\n" +
-              "    </xfdf>");
-    } on PlatformException catch (e) {
-      print("Failed to importAnnotationCommand '${e.message}'.");
-    }
-
-    try {
-      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
-    } on PlatformException catch (e) {
-      print("Failed to importBookmarkJson '${e.message}'.");
-    }
-
-    var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
-      // local annotation changed
-      // upload XFDF command to server here
-      print("flutter xfdfCommand: $xfdfCommand");
+    startLeadingNavButtonPressedListener(() {
+      FreeText freeText =
+          new FreeText(new Rect.fromCoordinates(50, 100, 150, 200), 1);
+      freeText.fontSize = 50;
+      freeText.textColor = Colors.red;
+      freeText.title = "sss";
+      PdftronFlutter.addAnnotations([freeText]);
     });
-
-    var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
-      print("flutter bookmark: $bookmarkJson");
-    });
-
-    var path = await PdftronFlutter.saveDocument();
-    print("flutter save: $path");
-
-    // to cancel event:
-    // annotCancel();
-    // bookmarkCancel();
   }
 
   @override

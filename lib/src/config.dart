@@ -1,5 +1,3 @@
-part of pdftron;
-
 class Config {
   var _disabledElements;
   var _disabledTools;

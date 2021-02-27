@@ -1,5 +1,9 @@
-part of pdftron;
+import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+import 'options.dart';
+
+part 'annotation.g.dart';
 /*
   This file is for function addAnnotations.
 */
@@ -7,7 +11,8 @@ part of pdftron;
 /* 
   The class for all annotations. rect and pageNumber are required when initialized
 */
-abstract class CustomAnnot {
+abstract class Annotation {
+  String id; // the unique id of the annotation
   Rect rect; // the rectangle area around the annotation
   int pageNumber; // the page in which the annotation exists
   BorderStyleObject
@@ -16,28 +21,18 @@ abstract class CustomAnnot {
   Map<String, String>
       customData; // custom data to be associated with the annotation
   String contents; // contents of the annotation
+  @JsonKey(fromJson: colorFromJSON, toJson: colorToJSON)
   Color color; // color of the annotation
   bool
-      _markup; // whether this is a markup annotation. Should not be set externally
+      markup; // whether this is a markup annotation. Should not be set externally
 
-  CustomAnnot(this.rect, this.pageNumber);
-
-  Map<String, dynamic> toJson() => {
-        'rect': jsonEncode(rect),
-        'pageNumber': pageNumber,
-        'borderStyleObject': jsonEncode(borderStyleObject),
-        'rotation': rotation,
-        'customData': jsonEncode(customData),
-        'contents': contents,
-        'color': convertColorToJSONString(color),
-        'markup': _markup,
-      };
+  Annotation(this.rect, this.pageNumber);
 }
 
 /* 
   The class for all markup annotations. rect and pageNumber are required when initialized
 */
-abstract class CustomMarkupAnnot extends CustomAnnot {
+abstract class Markup extends Annotation {
   String title; // title of the markup
   String subject; // subject of the markup
   double
@@ -46,60 +41,49 @@ abstract class CustomMarkupAnnot extends CustomAnnot {
       borderEffect; // border effect of the markup. Should be an AnnotationBorderEffect constant
   double
       borderEffectIntensity; // Intensity for the border effect, between [0, 2]. 0 is the default value
+  @JsonKey(fromJson: colorFromJSON, toJson: colorToJSON)
   Color interiorColor; // Interior color of the markup
   Rect contentRect; // the content rectangle area of the markup
   Rect
       paddingRect; // the paddings describing the difference between the rect and the actual boundary
   String
-      _markupType; // which type of markup annotation. Should not be set externally
+      markupType; // which type of markup annotation. Should not be set externally
 
-  CustomMarkupAnnot(Rect rect, int pageNumber) : super(rect, pageNumber) {
-    _markup = true;
+  Markup(Rect rect, int pageNumber) : super(rect, pageNumber) {
+    markup = true;
   }
-
-  Map<String, dynamic> toJson() => {
-        'title': title,
-        'subject': subject,
-        'opacity': opacity,
-        'borderEffect': borderEffect,
-        'borderEffectIntensity': borderEffectIntensity,
-        'interiorColor': convertColorToJSONString(interiorColor),
-        'contentRect': jsonEncode(contentRect),
-        'paddingRect': jsonEncode(paddingRect),
-        'markupType': _markupType,
-      }..addAll(super.toJson());
 }
 
 /* 
   The class for FreeText annotation. rect and pageNumber are required when initialized
 */
-class CustomFreeTextAnnot extends CustomMarkupAnnot {
-  String defaultAppearance; // default appearance of the FreeText
+@JsonSerializable(includeIfNull: false)
+class FreeText extends Markup {
   String
       quaddingFormat; // quadding format of the FreeText. should be a FreeTextQuaddingFormat constant. Left-justified by default
   String
       intentName; // intent of the FreeText. should be a FreeTextIntentName constant
+  @JsonKey(fromJson: colorFromJSON, toJson: colorToJSON)
   Color textColor; // text color of the FreeText
+  @JsonKey(fromJson: colorFromJSON, toJson: colorToJSON)
   Color lineColor; // line color of the FreeText
   double fontSize; // font size of the FreeText
 
-  CustomFreeTextAnnot(Rect rect, int pageNumber) : super(rect, pageNumber) {
-    _markupType = 'freeText';
+  FreeText(Rect rect, int pageNumber) : super(rect, pageNumber) {
+    markupType = 'freeText';
   }
 
-  Map<String, dynamic> toJson() => {
-        'defaultAppearance': defaultAppearance,
-        'quaddingFormat': quaddingFormat,
-        'intentName': intentName,
-        'textColor': convertColorToJSONString(textColor),
-        'lineColor': convertColorToJSONString(lineColor),
-        'fontSize': fontSize,
-      }..addAll(super.toJson());
+  factory FreeText.fromJson(Map<String, dynamic> json) =>
+      _$FreeTextFromJson(json);
+
+  Map<String, dynamic> toJson() => _$FreeTextToJson(this);
 }
 
 /* 
   The class for border styles. all but dashPattern are required when initialized
 */
+
+@JsonSerializable(includeIfNull: false)
 class BorderStyleObject {
   String
       style; // style type of the border. Should be an AnnotationBorderStyle constant
@@ -112,26 +96,23 @@ class BorderStyleObject {
       this.verticalCornerRadius, this.width,
       [this.dashPattern]);
 
-  Map<String, dynamic> toJson() => {
-        'style': style,
-        'horizontalCornerRadius': horizontalCornerRadius,
-        'verticalCornerRadius': verticalCornerRadius,
-        'width': width,
-        'dashPattern': jsonEncode(dashPattern),
-      };
+  factory BorderStyleObject.fromJson(Map<String, dynamic> json) =>
+      _$BorderStyleObjectFromJson(json);
+
+  Map<String, dynamic> toJson() => _$BorderStyleObjectToJson(this);
 }
 
 /* 
   A customized JSON string conversion from Color
 */
-String convertColorToJSONString(Color color) {
+Map<String, double> colorToJSON(Color color) {
   if (color == null) {
     return null;
   }
 
-  double red = color.red / 256;
-  double green = color.green / 256;
-  double blue = color.blue / 256;
+  double red = color.red / 255;
+  double green = color.green / 255;
+  double blue = color.blue / 255;
 
   Map<String, double> colorMap = {
     'red': red,
@@ -139,5 +120,13 @@ String convertColorToJSONString(Color color) {
     'blue': blue,
   };
 
-  return jsonEncode(colorMap);
+  return colorMap;
+}
+
+Color colorFromJSON(Map<String, double> colorMap) {
+  int red = (colorMap['red'] * 255) as int;
+  int green = (colorMap['green'] * 255) as int;
+  int blue = (colorMap['blue'] * 255) as int;
+
+  return new Color.fromRGBO(red, green, blue, 1.0);
 }

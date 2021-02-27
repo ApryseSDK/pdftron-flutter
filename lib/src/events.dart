@@ -1,4 +1,8 @@
-part of pdftron;
+import 'dart:convert';
+import 'package:flutter/services.dart';
+
+import 'options.dart';
+import 'constants.dart';
 
 const _exportAnnotationCommandChannel =
     const EventChannel('export_annotation_command_event');
@@ -94,7 +98,7 @@ CancelListener startAnnotationChangedListener(
     String action = annotationsWithAction[EventParameters.action];
     List<dynamic> annotations =
         annotationsWithAction[EventParameters.annotations];
-    List<Annot> annotList = new List<Annot>();
+    List<Annot> annotList = [];
     for (dynamic annotation in annotations) {
       annotList.add(new Annot.fromJson(annotation));
     }
@@ -112,7 +116,7 @@ CancelListener startAnnotationsSelectedListener(
       .receiveBroadcastStream(eventSinkId.annotationsSelectedId.index)
       .listen((annotationWithRectsString) {
     List<dynamic> annotationWithRects = jsonDecode(annotationWithRectsString);
-    List<AnnotWithRect> annotWithRectList = new List<AnnotWithRect>();
+    List<AnnotWithRect> annotWithRectList = [];
     for (dynamic annotationWithRect in annotationWithRects) {
       annotWithRectList.add(new AnnotWithRect.fromJson(annotationWithRect));
     }
@@ -130,7 +134,7 @@ CancelListener startFormFieldValueChangedListener(
       .receiveBroadcastStream(eventSinkId.formFieldValueChangedId.index)
       .listen((fieldsString) {
     List<dynamic> fields = jsonDecode(fieldsString);
-    List<Field> fieldList = new List<Field>();
+    List<Field> fieldList = [];
     for (dynamic field in fields) {
       fieldList.add(new Field.fromJson(field));
     }

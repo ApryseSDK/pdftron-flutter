@@ -1,5 +1,3 @@
-part of pdftron;
-
 // Functions define the names of the functions
 class Functions {
   static const getPlatformVersion = "getPlatformVersion";

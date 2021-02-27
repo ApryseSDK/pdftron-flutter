@@ -1,4 +1,4 @@
-part of pdftron;
+import 'dart:convert';
 
 class Annot {
   /*  
