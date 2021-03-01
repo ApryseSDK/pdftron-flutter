@@ -97,9 +97,25 @@ class _ViewerState extends State<Viewer> {
     startLeadingNavButtonPressedListener(() {
       FreeText freeText =
           new FreeText(new Rect.fromCoordinates(50, 100, 150, 200), 1);
+      freeText.intentName = FreeTextIntentName.freeText;
+      freeText.lineColor = Colors.orange;
+      freeText.quaddingFormat = FreeTextQuaddingFormat.rightJustified;
+      freeText.borderEffect = AnnotationBorderEffect.cloudy;
+      freeText.borderEffectIntensity = 1;
+      freeText.borderStyleObject = new BorderStyleObject(
+          AnnotationBorderStyle.underline, 5, 10, 20, [2, 3]);
+      freeText.interiorColor = Colors.blue;
+      freeText.subject = "jjjjjjjjjjjjjjjjj";
+      freeText.opacity = 1;
+      freeText.rotation = 45;
+      // freeText.id = 'freeText123';
+      freeText.contentRect = new Rect.fromCoordinates(50, 100, 150, 200);
+      freeText.color = Colors.green;
       freeText.fontSize = 50;
       freeText.textColor = Colors.red;
-      freeText.title = "sss";
+      freeText.title = "sssssssssssssss";
+      freeText.contents = "aaaaaaaaaaaaaaaaa";
+      freeText.customData = {'key1': 'value1', 'key2': 'value2'};
       PdftronFlutter.addAnnotations([freeText]);
     });
   }

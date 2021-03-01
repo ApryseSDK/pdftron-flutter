@@ -11,15 +11,12 @@ import androidx.annotation.Nullable;
 import com.pdftron.common.PDFNetException;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
-import com.pdftron.pdf.ColorPt;
 import com.pdftron.pdf.Field;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.Page;
 import com.pdftron.pdf.Rect;
 import com.pdftron.pdf.ViewChangeCollection;
-import com.pdftron.pdf.annots.FreeText;
-import com.pdftron.pdf.annots.Markup;
 import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
@@ -48,7 +45,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
@@ -1382,7 +1378,7 @@ public class PluginUtils {
 
         HashMap<Annot, Integer> validAnnotMap = new HashMap<>();
 
-        for (int i = 0; i < annotationJsonArray.length(); i ++) {
+        for (int i = 0; i < annotationJsonArray.length(); i++) {
             JSONObject currAnnotJSONObject = annotationJsonArray.getJSONObject(i);
 
             Annot annot = JSONUtils.getAnnotationFromJSONObject(currAnnotJSONObject, pdfDoc);

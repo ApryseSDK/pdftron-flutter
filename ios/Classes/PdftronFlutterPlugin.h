@@ -1,6 +1,7 @@
 #import <Flutter/Flutter.h>
 #import <PDFNet/PDFNet.h>
 #import <Tools/Tools.h>
+#import "PTAnnotationUtils.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -176,8 +177,8 @@ static NSString * const PTAnnotContentsKey = @"contents";
 static NSString * const PTAnnotColorKey = @"color";
 
 // Markup
-static NSString * const PTMarkupTitleKey = @"markupTitle";
-static NSString * const PTMarkupSubjectKey = @"markupSubject";
+static NSString * const PTMarkupTitleKey = @"title";
+static NSString * const PTMarkupSubjectKey = @"subject";
 static NSString * const PTMarkupOpacityKey = @"opacity";
 static NSString * const PTMarkupBorderEffectKey = @"borderEffect";
 static NSString * const PTMarkupBorderEffectIntensityKey = @"borderEffectIntensity";

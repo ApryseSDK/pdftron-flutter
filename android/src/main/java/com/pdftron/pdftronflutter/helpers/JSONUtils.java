@@ -16,6 +16,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_ANNOTATION_BORDER_STYLE_OBJECT;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_ANNOTATION_COLOR;
@@ -99,6 +100,8 @@ public class JSONUtils {
         if (isJSONKeyValid(annotJSONObject, KEY_ANNOTATION_ID)) {
             String id = annotJSONObject.getString(KEY_ANNOTATION_ID);
             annot.setUniqueID(id);
+        } else {
+            annot.setUniqueID(UUID.randomUUID().toString());
         }
 
         if (isJSONKeyValid(annotJSONObject, KEY_ANNOTATION_BORDER_STYLE_OBJECT)) {
@@ -119,7 +122,7 @@ public class JSONUtils {
             JSONObject customDataObject = getJSONObjectFromJSONObject(annotJSONObject, KEY_ANNOTATION_CUSTOM_DATA);
             Map<String, String> customData = getMapFromJSONObject(customDataObject);
 
-            for (String key: customData.keySet()) {
+            for (String key : customData.keySet()) {
                 annot.setCustomData(key, customData.get(key));
             }
         }
@@ -150,7 +153,7 @@ public class JSONUtils {
             return null;
         }
 
-        switch(currAnnotJSONObject.getString(KEY_MARKUP_TYPE)) {
+        switch (currAnnotJSONObject.getString(KEY_MARKUP_TYPE)) {
             case KEY_MARKUP_TYPE_FREE_TEXT:
                 markupAnnot = getFreeTextFromJSONObject(currAnnotJSONObject, pdfDoc);
                 if (markupAnnot == null) {
@@ -303,7 +306,7 @@ public class JSONUtils {
         return new Rect(x1, y1, x2, y2);
     }
 
-    private static Map<String, String> getMapFromJSONObject (JSONObject object) throws JSONException {
+    private static Map<String, String> getMapFromJSONObject(JSONObject object) throws JSONException {
         Map<String, String> map = new HashMap<>();
 
         Iterator<String> keyIterator = object.keys();
@@ -322,7 +325,7 @@ public class JSONUtils {
         }
 
         int style;
-        switch(object.getString(KEY_BORDER_STYLE)) {
+        switch (object.getString(KEY_BORDER_STYLE)) {
             case KEY_BORDER_STYLE_SOLID:
                 style = Annot.BorderStyle.e_solid;
                 break;
@@ -342,16 +345,16 @@ public class JSONUtils {
                 return null;
         }
 
-        int horizontalCornerRadius = (int)(object.getDouble(KEY_BORDER_STYLE_OBJECT_HORIZONTAL_CORNER_RADIUS) + 0.5);
-        int verticalCornerRadius = (int)(object.getDouble(KEY_BORDER_STYLE_OBJECT_VERTICAL_CORNER_RADIUS) + 0.5);
-        int width = (int)(object.getDouble(KEY_BORDER_STYLE_OBJECT_WIDTH) + 0.5);
+        int horizontalCornerRadius = (int) (object.getDouble(KEY_BORDER_STYLE_OBJECT_HORIZONTAL_CORNER_RADIUS) + 0.5);
+        int verticalCornerRadius = (int) (object.getDouble(KEY_BORDER_STYLE_OBJECT_VERTICAL_CORNER_RADIUS) + 0.5);
+        int width = (int) (object.getDouble(KEY_BORDER_STYLE_OBJECT_WIDTH) + 0.5);
 
         if (isJSONKeyValid(object, KEY_BORDER_STYLE_OBJECT_DASH_PATTERN)) {
             try {
                 JSONArray dashPatternJSONArray = getJSONArrayFromJSONObject(object, KEY_BORDER_STYLE_OBJECT_DASH_PATTERN);
                 double[] dashPattern = new double[dashPatternJSONArray.length()];
 
-                for (int i = 0; i < dashPatternJSONArray.length(); i ++) {
+                for (int i = 0; i < dashPatternJSONArray.length(); i++) {
                     dashPattern[i] = dashPatternJSONArray.getDouble(i);
                 }
 
