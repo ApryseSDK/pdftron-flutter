@@ -1,4 +1,7 @@
 #import "PTAnnotationUtils.h"
+#import "PdftronFlutterPlugin.h"
+
+@implementation PTAnnotationUtils
 
 + (PTAnnot *)getAnnotFromDict:(NSDictionary *)annotationDict document:(PTPDFDoc *)document
 {
@@ -6,7 +9,7 @@
         return nil;
     }
     
-    if (![self dictHasKeys:annotationDict keys:@[PTAnnotPageNumberKey, PTAnnotRectKey, PTAnnotMarkupKey]]) {
+    if (![PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTAnnotPageNumberKey, PTAnnotRectKey, PTAnnotMarkupKey]]) {
         return nil;
     }
     
@@ -31,7 +34,7 @@
         return nil;
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTAnnotIdKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTAnnotIdKey]]) {
         NSString* uniqueId = [PdftronFlutterPlugin PT_idAsNSString:annotationDict[PTAnnotIdKey]];
         [annot SetUniqueID:uniqueId id_buf_sz:(int)[uniqueId length]];
     } else {
@@ -39,7 +42,7 @@
         [annot SetUniqueID:uniqueId id_buf_sz:(int)[uniqueId length]];
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTAnnotBorderStyleObjectKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTAnnotBorderStyleObjectKey]]) {
         PTBorderStyle* borderStyleObject = [self getBorderStyleObjectFromDict:[PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTAnnotBorderStyleObjectKey]]];
         
         if (borderStyleObject) {
@@ -47,12 +50,12 @@
         }
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTAnnotRotationKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTAnnotRotationKey]]) {
         int rotation = [[PdftronFlutterPlugin PT_idAsNSNumber:annotationDict[PTAnnotRotationKey]] intValue];
         [annot SetRotation:rotation];
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTAnnotCustomDataKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTAnnotCustomDataKey]]) {
         NSDictionary* customData = [PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTAnnotCustomDataKey]];
         
         for (NSString* key in [customData allKeys]) {
@@ -60,12 +63,12 @@
         }
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTAnnotContentsKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTAnnotContentsKey]]) {
         NSString* contents = [PdftronFlutterPlugin PT_idAsNSString:annotationDict[PTAnnotContentsKey]];
         [annot SetContents:contents];
     }
 
-    if ([self dictHasKeys:annotationDict keys:@[PTAnnotColorKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTAnnotColorKey]]) {
         PTColorPt *color = [self getColorPtFromDict:[PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTAnnotColorKey]]];
         
         if (color) {
@@ -82,7 +85,7 @@
 {
     PTMarkup* markupAnnot;
     
-    if (![self dictHasKeys:annotationDict keys:@[PTMarkupTypeKey]]) {
+    if (![PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTMarkupTypeKey]]) {
         return nil;
     }
     
@@ -96,22 +99,22 @@
         return nil;
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTMarkupTitleKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTMarkupTitleKey]]) {
         NSString *title = [PdftronFlutterPlugin PT_idAsNSString:annotationDict[PTMarkupTitleKey]];
         [markupAnnot SetTitle:title];
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTMarkupSubjectKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTMarkupSubjectKey]]) {
         NSString *subject = [PdftronFlutterPlugin PT_idAsNSString:annotationDict[PTMarkupSubjectKey]];
         [markupAnnot SetSubject:subject];
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTMarkupOpacityKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTMarkupOpacityKey]]) {
         double opacity = [[PdftronFlutterPlugin PT_idAsNSNumber:annotationDict[PTMarkupOpacityKey]] doubleValue];
         [markupAnnot SetOpacity:opacity];
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTMarkupBorderEffectKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTMarkupBorderEffectKey]]) {
         NSString *borderEffect = [PdftronFlutterPlugin PT_idAsNSString:annotationDict[PTMarkupBorderEffectKey]];
         
         if ([borderEffect isEqualToString:PTBorderEffectNoneKey]) {
@@ -121,12 +124,12 @@
         }
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTMarkupBorderEffectIntensityKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTMarkupBorderEffectIntensityKey]]) {
         double borderEffectIntensity = [[PdftronFlutterPlugin PT_idAsNSNumber:annotationDict[PTMarkupBorderEffectIntensityKey]] doubleValue];
         [markupAnnot SetBorderEffectIntensity:borderEffectIntensity];
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTMarkupInteriorColorKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTMarkupInteriorColorKey]]) {
         PTColorPt *interiorColor = [self getColorPtFromDict:[PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTMarkupInteriorColorKey]]];
         
         if (interiorColor) {
@@ -134,7 +137,7 @@
         }
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTMarkupContentRectKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTMarkupContentRectKey]]) {
         PTPDFRect* contentRect = [self getRectFromDict:[PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTMarkupContentRectKey]]];
         
         if (contentRect) {
@@ -142,7 +145,7 @@
         }
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTMarkupPaddingRectKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTMarkupPaddingRectKey]]) {
         PTPDFRect* paddingRect = [self getRectFromDict:[PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTMarkupPaddingRectKey]]];
         
         if (paddingRect) {
@@ -163,7 +166,7 @@
     
     PTFreeText* freeText = [PTFreeText Create:[document GetSDFDoc] pos:rect];
     
-    if ([self dictHasKeys:annotationDict keys:@[PTFreeTextQuaddingFormatKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTFreeTextQuaddingFormatKey]]) {
         NSString *quaddingFormatString = [PdftronFlutterPlugin PT_idAsNSString:annotationDict[PTFreeTextQuaddingFormatKey]];
         
         if ([quaddingFormatString isEqualToString:PTQuaddingFormatLeftJustifiedKey]) {
@@ -175,7 +178,7 @@
         }
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTFreeTextIntentNameKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTFreeTextIntentNameKey]]) {
         NSString *intentName = [PdftronFlutterPlugin PT_idAsNSString:annotationDict[PTFreeTextIntentNameKey]];
         
         if ([intentName isEqualToString:PTIntentNameFreeTextKey]) {
@@ -187,7 +190,7 @@
         }
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTFreeTextTextColorKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTFreeTextTextColorKey]]) {
         PTColorPt *textColor = [self getColorPtFromDict:[PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTFreeTextTextColorKey]]];
         
         if (textColor) {
@@ -195,7 +198,7 @@
         }
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTFreeTextLineColorKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTFreeTextLineColorKey]]) {
         PTColorPt *lineColor = [self getColorPtFromDict:[PdftronFlutterPlugin PT_idAsNSDict:annotationDict[PTFreeTextLineColorKey]]];
         
         if (lineColor) {
@@ -203,7 +206,7 @@
         }
     }
     
-    if ([self dictHasKeys:annotationDict keys:@[PTFreeTextFontSizeKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:annotationDict keys:@[PTFreeTextFontSizeKey]]) {
         double fontSize = [[PdftronFlutterPlugin PT_idAsNSNumber:annotationDict[PTFreeTextFontSizeKey]] doubleValue];
         
         [freeText SetFontSize:fontSize];
@@ -214,7 +217,7 @@
 
 + (PTPDFRect *)getRectFromDict:(NSDictionary *)rectDict
 {
-    if (![self dictHasKeys:rectDict keys:@[PTX1Key, PTY1Key, PTX2Key, PTY2Key]]) {
+    if (![PdftronFlutterPlugin dictHasKeys:rectDict keys:@[PTX1Key, PTY1Key, PTX2Key, PTY2Key]]) {
         return nil;
     }
     
@@ -228,7 +231,7 @@
 
 + (PTBorderStyle *)getBorderStyleObjectFromDict:(NSDictionary *)borderDict
 {
-    if (![self dictHasKeys:borderDict keys:@[PTBorderStyleObjectStyleKey, PTBorderStyleObjectVerticalCornerRadiusKey, PTBorderStyleObjectVerticalCornerRadiusKey, PTBorderStyleObjectWidthKey]]) {
+    if (![PdftronFlutterPlugin dictHasKeys:borderDict keys:@[PTBorderStyleObjectStyleKey, PTBorderStyleObjectVerticalCornerRadiusKey, PTBorderStyleObjectVerticalCornerRadiusKey, PTBorderStyleObjectWidthKey]]) {
         return nil;
     }
     
@@ -253,7 +256,7 @@
     double verticalRadius = [[PdftronFlutterPlugin PT_idAsNSNumber:borderDict[PTBorderStyleObjectVerticalCornerRadiusKey]] doubleValue];
     double width = [[PdftronFlutterPlugin PT_idAsNSNumber:borderDict[PTBorderStyleObjectWidthKey]] doubleValue];
     
-    if ([self dictHasKeys:borderDict keys:@[PTBorderStyleObjectDashPatternKey]]) {
+    if ([PdftronFlutterPlugin dictHasKeys:borderDict keys:@[PTBorderStyleObjectDashPatternKey]]) {
         NSArray* dashPattern = [PdftronFlutterPlugin
         PT_idAsArray:borderDict[PTBorderStyleObjectDashPatternKey]];
         
@@ -264,7 +267,7 @@
 
 + (PTColorPt *)getColorPtFromDict:(NSDictionary *)colorDict
 {
-    if (![self dictHasKeys:colorDict keys:@[PTColorRedKey, PTColorGreenKey, PTColorBlueKey]]) {
+    if (![PdftronFlutterPlugin dictHasKeys:colorDict keys:@[PTColorRedKey, PTColorGreenKey, PTColorBlueKey]]) {
         return nil;
     }
     
@@ -274,3 +277,5 @@
     
     return [[PTColorPt alloc] initWithX:red y:green z:blue w:0];
 }
+
+@end

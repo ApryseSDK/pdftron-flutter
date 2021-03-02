@@ -2,6 +2,7 @@
 #import "PTFlutterDocumentController.h"
 #import "DocumentViewFactory.h"
 #import "PTNavigationController.h"
+#import "PTAnnotationUtils.h"
 
 @interface PdftronFlutterPlugin () <PTTabbedDocumentViewControllerDelegate, PTDocumentControllerDelegate>
 
@@ -1345,7 +1346,7 @@
     NSMutableArray <PTAnnot *>* validAnnotations = [[NSMutableArray alloc] init];
     
     for (NSDictionary* annotationDict in annotationJSONArray) {
-        PTAnnot* annot = [self getAnnotFromDict:annotationDict document:documentController.document];
+        PTAnnot* annot = [PTAnnotationUtils getAnnotFromDict:annotationDict document:documentController.document];
         
         if (annot && [annot IsValid]) {
             [validAnnotations addObject:annot];
@@ -1373,17 +1374,6 @@
         flutterResult([FlutterError errorWithCode:@"add_annotations" message:@"Failed to add annotations" details:@"Error: Failed to add annotations from doc."]);
         return;
     }
-}
-
-- (bool)dictHasKeys:(NSDictionary *)dict keys:(NSArray *)requiredKeys
-{
-    NSArray* dictKeys = [dict allKeys];
-    for (NSString * requiredKey in requiredKeys) {
-        if (![dictKeys containsObject:requiredKey]) {
-            return false;
-        }
-    }
-    return true;
 }
 
 - (void)importBookmarks:(NSString *)bookmarkJson resultToken:(FlutterResult)flutterResult
@@ -1810,6 +1800,17 @@
 + (id)PT_JSONStringToId:(NSString *)jsonString {
     NSData *annotListData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
     return [NSJSONSerialization JSONObjectWithData:annotListData options:kNilOptions error:nil];
+}
+
++ (bool)dictHasKeys:(NSDictionary *)dict keys:(NSArray *)requiredKeys
+{
+    NSArray* dictKeys = [dict allKeys];
+    for (NSString * requiredKey in requiredKeys) {
+        if (![dictKeys containsObject:requiredKey]) {
+            return false;
+        }
+    }
+    return true;
 }
 
 + (Class)toolClassForKey:(NSString *)key

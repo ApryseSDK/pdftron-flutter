@@ -14,7 +14,7 @@ part 'annotation.g.dart';
 abstract class Annotation {
   String id; // the unique id of the annotation
   Rect rect; // the rectangle area around the annotation
-  int pageNumber; // the page in which the annotation exists
+  int pageNumber; // the page in which the annotation exists (1-indexed)
   BorderStyleObject
       borderStyleObject; // border style for the annotation. Typically used for Link annotations.
   int rotation; // rotation (in degrees) for the annotation. Should be multiples of 90

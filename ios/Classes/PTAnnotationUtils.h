@@ -5,7 +5,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PTAnnotationUtils
+@interface PTAnnotationUtils : NSObject
 
 + (PTAnnot *)getAnnotFromDict:(NSDictionary *)annotationDict document:(PTPDFDoc *)document;
 

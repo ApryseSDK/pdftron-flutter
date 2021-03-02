@@ -1,7 +1,6 @@
 #import <Flutter/Flutter.h>
 #import <PDFNet/PDFNet.h>
 #import <Tools/Tools.h>
-#import "PTAnnotationUtils.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -300,8 +299,23 @@ typedef enum {
 - (UIView*)view;
 
 + (PTDocumentController *)PT_getSelectedDocumentController:(PTTabbedDocumentViewController *)tabbedDocumentViewController;
+
++ (NSString *)PT_idAsNSString:(id)value;
+
++ (NSNumber *)PT_idAsNSNumber:(id)value;
+
++ (bool)PT_idAsBool:(id)value;
+
++ (NSDictionary *)PT_idAsNSDict:(id)value;
+
++ (NSArray *)PT_idAsArray:(id)value;
+
 + (NSString *)PT_idToJSONString:(id)infoId;
+
 + (id)PT_JSONStringToId:(NSString *)jsonString;
+
++ (bool)dictHasKeys:(NSDictionary *)dict keys:(NSArray *)requiredKeys;
+
 + (Class)toolClassForKey:(NSString *)key;
 
 @end
