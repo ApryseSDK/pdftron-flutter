@@ -13,6 +13,8 @@
 @property (nonatomic, strong) FlutterEventSink annotationChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink annotationsSelectedEventSink;
 @property (nonatomic, strong) FlutterEventSink formFieldValueChangedEventSink;
+@property (nonatomic, strong) FlutterEventSink longPressMenuPressedEventSink;
+@property (nonatomic, strong) FlutterEventSink annotationMenuPressedEventSink;
 @property (nonatomic, strong) FlutterEventSink leadingNavButtonPressedEventSink;
 @property (nonatomic, strong) FlutterEventSink pageChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink zoomChangedEventSink;
@@ -129,6 +131,10 @@
     
     FlutterEventChannel* formFieldValueChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTFormFieldValueChangedEventKey binaryMessenger:messenger];
     
+    FlutterEventChannel* longPressMenuPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTLongPressMenuPressedEventKey binaryMessenger:messenger];
+    
+    FlutterEventChannel* annotationMenuPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTAnnotationMenuPressedEventKey binaryMessenger:messenger];
+
     FlutterEventChannel* leadingNavButtonPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTLeadingNavButtonPressedEventKey binaryMessenger:messenger];
 
     FlutterEventChannel* pageChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTPageChangedEventKey binaryMessenger:messenger];
@@ -149,6 +155,10 @@
     
     [formFieldValueChangedEventChannel setStreamHandler:self];
     
+    [longPressMenuPressedEventChannel setStreamHandler:self];
+    
+    [annotationMenuPressedEventChannel setStreamHandler:self];
+
     [leadingNavButtonPressedEventChannel setStreamHandler:self];
     
     [pageChangedEventChannel setStreamHandler:self];
@@ -246,6 +256,54 @@
                 }
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
                     // Handled by tabbed config.
+                }
+                else if ([key isEqualToString:PTLongPressMenuEnabled]) {
+                    
+                    NSNumber* longPressMenuEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLongPressMenuEnabled class:[NSNumber class] error:&error];
+                    
+                    if (!error && longPressMenuEnabledNumber) {
+                        [documentController setLongPressMenuEnabled:[longPressMenuEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTLongPressMenuItems]) {
+                    
+                    NSArray* longPressMenuItems = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLongPressMenuItems class:[NSArray class] error:&error];
+                    
+                    if (!error && longPressMenuItems) {
+                        [documentController setLongPressMenuItems:longPressMenuItems];
+                    }
+                }
+                else if ([key isEqualToString:PTOverrideLongPressMenuBehavior]) {
+                    
+                    NSArray* overrideLongPressMenuBehavior = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTOverrideLongPressMenuBehavior class:[NSArray class] error:&error];
+                    
+                    if (!error && overrideLongPressMenuBehavior) {
+                        [documentController setOverrideLongPressMenuBehavior:overrideLongPressMenuBehavior];
+                    }
+                }
+                else if ([key isEqualToString:PTHideAnnotationMenu]) {
+                    
+                    NSArray* hideAnnotationMenuTools = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideAnnotationMenu class:[NSArray class] error:&error];
+                    
+                    if (!error && hideAnnotationMenuTools) {
+                        [documentController setHideAnnotMenuTools:hideAnnotationMenuTools];
+                    }
+                }
+                else if ([key isEqualToString:PTAnnotationMenuItems]) {
+                    
+                    NSArray* annotationMenuItems = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationMenuItems class:[NSArray class] error:&error];
+                    
+                    if (!error && annotationMenuItems) {
+                        [documentController setAnnotationMenuItems:annotationMenuItems];
+                    }
+                }
+                else if ([key isEqualToString:PTOverrideAnnotationMenuBehavior]) {
+                    
+                    NSArray* overrideAnnotationMenuBehavior = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTOverrideAnnotationMenuBehavior class:[NSArray class] error:&error];
+                    
+                    if (!error && overrideAnnotationMenuBehavior) {
+                        [documentController setOverrideAnnotationMenuBehavior:overrideAnnotationMenuBehavior];
+                    }
                 }
                 else if ([key isEqualToString:PTAutoSaveEnabledKey]) {
                     
@@ -425,6 +483,7 @@
     if (![configResult isKindOfClass:[NSNull class]]) {
         if (![configResult isKindOfClass:class]) {
             NSString* errorString = [NSString stringWithFormat:@"config %@ is not in expected %@ format.", configKey, class];
+
             *error = [NSError errorWithDomain:@"com.flutter.pdftron" code:NSFormattingError userInfo:@{NSLocalizedDescriptionKey: errorString}];
         }
         return configResult;
@@ -664,6 +723,12 @@
         case formFieldValueChangedId:
             self.formFieldValueChangedEventSink = events;
             break;
+        case longPressMenuPressedId:
+            self.longPressMenuPressedEventSink = events;
+            break;
+        case annotationMenuPressedId:
+            self.annotationMenuPressedEventSink = events;
+            break;
         case leadingNavButtonPressedId:
             self.leadingNavButtonPressedEventSink = events;
             break;
@@ -704,6 +769,12 @@
             break;
         case formFieldValueChangedId:
             self.formFieldValueChangedEventSink = nil;
+            break;
+        case longPressMenuPressedId:
+            self.longPressMenuPressedEventSink = nil;
+            break;
+        case annotationMenuPressedId:
+            self.annotationMenuPressedEventSink = nil;
             break;
         case leadingNavButtonPressedId:
             self.leadingNavButtonPressedEventSink = nil;
@@ -785,6 +856,22 @@
     }
 }
 
+-(void)documentController:(PTDocumentController*)docVC longPressMenuPressed:(NSString*)longPressMenuPressedString
+{
+    if (self.longPressMenuPressedEventSink != nil)
+    {
+        self.longPressMenuPressedEventSink(longPressMenuPressedString);
+    }
+}
+
+-(void)documentController:(PTDocumentController *)docVC annotationMenuPressed:(NSString*)annotationMenuPressedString
+{
+    if (self.annotationMenuPressedEventSink != nil)
+    {
+        self.annotationMenuPressedEventSink(annotationMenuPressedString);
+    }
+}
+    
 -(void)documentController:(PTDocumentController *)docVC leadingNavButtonClicked:(nullable NSString *)nav
 {
     if (self.leadingNavButtonPressedEventSink != nil)

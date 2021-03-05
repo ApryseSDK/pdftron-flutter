@@ -5,6 +5,12 @@ class Config {
   var _disabledTools;
   var _multiTabEnabled;
   var _customHeaders;
+  var _longPressMenuEnabled;
+  var _longPressMenuItems;
+  var _overrideLongPressMenuBehavior;
+  var _hideAnnotationMenu;
+  var _annotationMenuItems;
+  var _overrideAnnotationMenuBehavior;
   var _autoSaveEnabled;
   var _pageChangeOnTap;
   var _showSavedSignatures;
@@ -32,6 +38,14 @@ class Config {
   set disabledTools(List value) => _disabledTools = value;
   set multiTabEnabled(bool value) => _multiTabEnabled = value;
   set customHeaders(Map<String, String> value) => _customHeaders = value;
+  set longPressMenuEnabled(bool value) => _longPressMenuEnabled = value;
+  set longPressMenuItems(List value) => _longPressMenuItems = value;
+  set overrideLongPressMenuBehavior(List value) =>
+      _overrideLongPressMenuBehavior = value;
+  set hideAnnotationMenu(bool value) => _hideAnnotationMenu = value;
+  set annotationMenuItems(List value) => _annotationMenuItems = value;
+  set overrideAnnotationMenuBehavior(List value) =>
+      _overrideAnnotationMenuBehavior = value;
   set autoSaveEnabled(bool value) => _autoSaveEnabled = value;
   set pageChangeOnTap(bool value) => _pageChangeOnTap = value;
   set showSavedSignatures(bool value) => _showSavedSignatures = value;
@@ -64,6 +78,13 @@ class Config {
         _disabledTools = json['disabledTools'],
         _multiTabEnabled = json['multiTabEnabled'],
         _customHeaders = json['customHeaders'],
+        _longPressMenuEnabled = json['longPressMenuEnabled'],
+        _longPressMenuItems = json['longPressMenuItems'],
+        _overrideLongPressMenuBehavior = json['overrideLongPressMenuBehavior'],
+        _hideAnnotationMenu = json['hideAnnotationMenu'],
+        _annotationMenuItems = json['annotationMenuItems'],
+        _overrideAnnotationMenuBehavior =
+            json['overrideAnnotationMenuBehavior'],
         _autoSaveEnabled = json['autoSaveEnabled'],
         _pageChangeOnTap = json['pageChangeOnTap'],
         _showSavedSignatures = json['showSavedSignatures'],
@@ -90,6 +111,12 @@ class Config {
         'disabledTools': _disabledTools,
         'multiTabEnabled': _multiTabEnabled,
         'customHeaders': _customHeaders,
+        'longPressMenuEnabled': _longPressMenuEnabled,
+        'longPressMenuItems': _longPressMenuItems,
+        'overrideLongPressMenuBehavior': _overrideLongPressMenuBehavior,
+        'hideAnnotationMenu': _hideAnnotationMenu,
+        'annotationMenuItems': _annotationMenuItems,
+        'overrideAnnotationMenuBehavior': _overrideAnnotationMenuBehavior,
         'autoSaveEnabled': _autoSaveEnabled,
         'pageChangeOnTap': _pageChangeOnTap,
         'showSavedSignatures': _showSavedSignatures,
