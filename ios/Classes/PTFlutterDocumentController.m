@@ -578,6 +578,7 @@
         //PTAnnotationToolbarFillAndSign: [NSNull null], // not implemented
         //PTAnnotationToolbarPrepareForm: [NSNull null], // not implemented
         PTAnnotationToolbarMeasure: toolGroupManager.measureItemGroup,
+        //PTAnnotationToolbarRedaction: [NSNull null], // not implemented
         PTAnnotationToolbarPens: toolGroupManager.pensItemGroup,
         PTAnnotationToolbarFavorite: toolGroupManager.favoritesItemGroup,
     };
@@ -663,6 +664,16 @@
 - (BOOL)signSignatureFieldsWithStamps
 {
     return self.toolManager.signatureAnnotationOptions.signSignatureFieldsWithStamps;
+}
+
+- (void)setSelectAnnotationAfterCreation:(BOOL)selectAnnotationAfterCreation
+{
+    self.toolManager.selectAnnotationAfterCreation = selectAnnotationAfterCreation;
+}
+
+- (BOOL)selectAnnotationAfterCreation
+{
+    return self.toolManager.selectAnnotationAfterCreation;
 }
 
 - (void)setThumbnailEditingEnabled:(BOOL)thumbnailEditingEnabled

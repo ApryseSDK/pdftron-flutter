@@ -152,7 +152,7 @@ PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png
 - "Copy Bundle Resources"
 - "+".
 
-<img alt='demo-android' src='ios_add_resources.png'/>
+<img alt='demo-ios' src='ios_add_resources.png'/>
 
 2. Now you can use the image in the viewer. For example, if you add `button_open.png` to the bundle, you could use `'button_open.png'` in leadingNavButtonIcon.
 
@@ -272,7 +272,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationList | List<[`Annot`](./lib/options.dart)> | If not null, export the XFDF string for the valid annotations; Otherwise, export the XFDF string for all annotations in the current document.
+annotationList | List of [`Annot`](./lib/options.dart) | If not null, export the XFDF string for the valid annotations; Otherwise, export the XFDF string for all annotations in the current document.
 
 Returns a Future.
 
@@ -319,7 +319,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotations | List<[`Annot`](./lib/options.dart)> | the annotations to be deleted
+annotations | List of [`Annot`](./lib/options.dart) | the annotations to be deleted
 
 Returns a Future.
 
@@ -352,7 +352,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationWithFlagsList | List<[`AnnotWithFlags`](./lib/options.dart)> | a list of annotations with respective flags to be set
+annotationWithFlagsList | List of [`AnnotWithFlags`](./lib/options.dart) | a list of annotations with respective flags to be set
 
 Returns a Future.
 
@@ -380,7 +380,7 @@ Parameters:
 
 Name | Type | Description
 --- | ---| ---
-fieldNames | List<`String`> | list of field names for which the flag should be set
+fieldNames | List of String | list of field names for which the flag should be set
 flag | int | the flag to be set, one of the constants from [`FieldFlags`](./lib/config.dart)
 flagValue | bool | value to set for flag
 
@@ -397,7 +397,7 @@ Parameters:
 
 Name | Type | Description
 --- | ---| ---
-fields | List<[`Field`](./lib/options.dart)> | A list of fields with name and the value that you would like to set to, could be in type number, bool or string
+fields | List of [`Field`](./lib/options.dart) | A list of fields with name and the value that you would like to set to, could be in type number, bool or string
 
 Returns a Future.
 
@@ -549,7 +549,7 @@ Event Parameters:
 Name | Type | Description
 --- | --- | ---
 action | String | the action that occurred (add, delete, modify)
-annotations | List<[`Annot`](./lib/options.dart)> | the annotations that have been changed
+annotations | List of [`Annot`](./lib/options.dart) | the annotations that have been changed
 
 ```dart
 var annotChangedCancel = startAnnotationChangedListener((action, annotations) 
@@ -569,7 +569,7 @@ Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationWithRects | List<[`AnnotWithRect`](./lib/options.dart)> | The list of annotations with their respective rects
+annotationWithRects | List of [`AnnotWithRect`](./lib/options.dart) | The list of annotations with their respective rects
 
 ```dart
 var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects) 
@@ -590,7 +590,7 @@ Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-fields | List<[`Field`](./lib/options.dart)> | the fields that are changed
+fields | List of [`Field`](./lib/options.dart) | the fields that are changed
 
 ```dart
 var fieldChangedCancel = startFormFieldValueChangedListener((fields)
@@ -763,6 +763,15 @@ Defines whether the viewer should change pages when the user taps the edge of a 
 config.pageChangeOnTap = true;
 ```
 
+#### pageIndicatorEnabled
+bool, defaults to true.
+
+Defines whether to show the page indicator for the viewer.
+
+```dart
+config.pageIndicatorEnabled = true;
+```
+
 ### Annotations
 
 #### annotationAuthor
@@ -781,6 +790,15 @@ If true, the active annotation creation tool will remain in the current annotati
 
 ```dart
 config.continuousAnnotationEditing = true;
+```
+
+#### selectAnnotationAfterCreation
+bool, defaults to true.
+
+Defines whether an annotation is selected after it is created. On iOS, this functions for shape and text markup annotations only.
+
+```dart
+config.selectAnnotationAfterCreation = true;
 ```
 
 ### Multi-tab
@@ -852,4 +870,13 @@ Defines whether a stylus should act as a pen when in pan mode. If false, it will
 
 ```dart
 config.useStylusAsPen = true;
+```
+
+#### followSystemDarkMode
+bool, Android only, defaults to true
+
+Defines whether the UI will appear in a dark color when the system is dark mode. If false, it will use viewer setting instead.
+
+```dart
+config.signSignatureFieldsWithStamps = true;
 ```

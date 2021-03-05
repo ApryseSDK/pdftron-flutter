@@ -282,6 +282,25 @@
                         [documentController setSignSignatureFieldsWithStamps:[signSignatureFieldsWithStampsNumber boolValue]];
                     }
                 }
+                else if ([key isEqualToString:PTSelectAnnotationAfterCreationKey]) {
+                    
+                    NSNumber* selectAnnotAfterCreationNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSelectAnnotationAfterCreationKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && selectAnnotAfterCreationNumber) {
+                        [documentController setSelectAnnotationAfterCreation:[selectAnnotAfterCreationNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTPageIndicatorEnabledKey]) {
+                    
+                    NSNumber* pageIndicatorEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTPageIndicatorEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && pageIndicatorEnabledNumber) {
+                        [documentController setPageIndicatorEnabled:[pageIndicatorEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTFollowSystemDarkModeKey]) {
+                    // Android only.
+                }
                 else if ([key isEqualToString:PTAnnotationToolbarsKey]) {
                     
                     NSArray* annotationToolbars = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationToolbarsKey class:[NSArray class] error:&error];

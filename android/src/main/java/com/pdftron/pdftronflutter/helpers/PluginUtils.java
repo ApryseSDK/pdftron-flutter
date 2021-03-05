@@ -82,6 +82,9 @@ public class PluginUtils {
     public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
     public static final String KEY_CONFIG_USE_STYLUS_AS_PEN = "useStylusAsPen";
     public static final String KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS = "signSignatureFieldWithStamps";
+    public static final String KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION = "selectAnnotationAfterCreation";
+    public static final String KEY_CONFIG_PAGE_INDICATOR_ENABLED = "pageIndicatorEnabled";
+    public static final String KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE = "followSystemDarkMode";
     public static final String KEY_CONFIG_ANNOTATION_TOOLBARS = "annotationToolbars";
     public static final String KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS = "hideDefaultAnnotationToolbars";
     public static final String KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER = "hideAnnotationToolbarSwitcher";
@@ -245,6 +248,7 @@ public class PluginUtils {
     public static final String TAG_PREPARE_FORM_TOOLBAR = "PDFTron_Prepare_Form";
     public static final String TAG_MEASURE_TOOLBAR = "PDFTron_Measure";
     public static final String TAG_PENS_TOOLBAR = "PDFTron_Pens";
+    public static final String TAG_REDACTION_TOOLBAR = "PDFTron_redact";
     public static final String TAG_FAVORITE_TOOLBAR = "PDFTron_Favorite";
 
     // Custom toolbars
@@ -379,6 +383,18 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS)) {
                     boolean signSignatureFieldWithStamps = configJson.getBoolean(KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS);
                     configInfo.setSignSignatureFieldWithStamps(signSignatureFieldWithStamps);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION)) {
+                    boolean selectAnnotationAfterCreation = configJson.getBoolean(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION);
+                    toolManagerBuilder.setAutoSelect(selectAnnotationAfterCreation);
+                }
+                if (!configJson.isNull(KEY_CONFIG_PAGE_INDICATOR_ENABLED)) {
+                    boolean pageIndicatorEnabled = configJson.getBoolean(KEY_CONFIG_PAGE_INDICATOR_ENABLED);
+                    builder = builder.showPageNumberIndicator(pageIndicatorEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE)) {
+                    boolean followSystem = configJson.getBoolean(KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE);
+                    PdfViewCtrlSettingsManager.setFollowSystemDarkMode(context, followSystem);
                 }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_TOOLBARS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_ANNOTATION_TOOLBARS);
@@ -678,6 +694,7 @@ public class PluginUtils {
                     TAG_PREPARE_FORM_TOOLBAR.equals(tag) ||
                     TAG_MEASURE_TOOLBAR.equals(tag) ||
                     TAG_PENS_TOOLBAR.equals(tag) ||
+                    TAG_REDACTION_TOOLBAR.equals(tag) ||
                     TAG_FAVORITE_TOOLBAR.equals(tag)) {
                 return true;
             }
@@ -863,6 +880,8 @@ public class PluginUtils {
             return R.drawable.ic_annotation_distance_black_24dp;
         } else if (TAG_PENS_TOOLBAR.equals(item)) {
             return R.drawable.ic_annotation_freehand_black_24dp;
+        } else if (TAG_REDACTION_TOOLBAR.equals(item)) {
+            return R.drawable.ic_annotation_redact_black_24dp;
         } else if (TAG_FAVORITE_TOOLBAR.equals(item)) {
             return R.drawable.ic_star_white_24dp;
         }
