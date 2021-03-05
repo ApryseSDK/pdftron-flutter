@@ -243,6 +243,7 @@ public class PluginUtils {
     public static final String TAG_PREPARE_FORM_TOOLBAR = "PDFTron_Prepare_Form";
     public static final String TAG_MEASURE_TOOLBAR = "PDFTron_Measure";
     public static final String TAG_PENS_TOOLBAR = "PDFTron_Pens";
+    public static final String TAG_REDACTION_TOOLBAR = "PDFTron_redact";
     public static final String TAG_FAVORITE_TOOLBAR = "PDFTron_Favorite";
 
     // Custom toolbars
@@ -638,6 +639,7 @@ public class PluginUtils {
                     TAG_PREPARE_FORM_TOOLBAR.equals(tag) ||
                     TAG_MEASURE_TOOLBAR.equals(tag) ||
                     TAG_PENS_TOOLBAR.equals(tag) ||
+                    TAG_REDACTION_TOOLBAR.equals(tag) ||
                     TAG_FAVORITE_TOOLBAR.equals(tag)) {
                 return true;
             }
@@ -823,6 +825,8 @@ public class PluginUtils {
             return R.drawable.ic_annotation_distance_black_24dp;
         } else if (TAG_PENS_TOOLBAR.equals(item)) {
             return R.drawable.ic_annotation_freehand_black_24dp;
+        } else if (TAG_REDACTION_TOOLBAR.equals(item)) {
+            return R.drawable.ic_annotation_redact_black_24dp;
         } else if (TAG_FAVORITE_TOOLBAR.equals(item)) {
             return R.drawable.ic_star_white_24dp;
         }
