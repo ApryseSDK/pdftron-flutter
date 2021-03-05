@@ -197,14 +197,14 @@
 
 + (void)configureDocumentController:(PTFlutterDocumentController*)documentController withConfig:(NSString*)config
 {
-    
+
     [documentController initViewerSettings];
     
     if (config.length == 0 || [config isEqualToString:@"null"]) {
         [documentController applyViewerSettings];
         return;
     }
-    
+   
     //convert from json to dict
     id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
     
@@ -246,6 +246,25 @@
                 }
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
                     // Handled by tabbed config.
+                }
+                else if ([key isEqualToString:PTSelectAnnotationAfterCreationKey]) {
+                    
+                    NSNumber* selectAnnotAfterCreationNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSelectAnnotationAfterCreationKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && selectAnnotAfterCreationNumber) {
+                        [documentController setSelectAnnotationAfterCreation:[selectAnnotAfterCreationNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTPageIndicatorEnabledKey]) {
+                    
+                    NSNumber* pageIndicatorEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTPageIndicatorEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && pageIndicatorEnabledNumber) {
+                        [documentController setPageIndicatorEnabled:[pageIndicatorEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTFollowSystemDarkModeKey]) {
+                    // Android only.
                 }
                 else if ([key isEqualToString:PTAnnotationToolbarsKey]) {
                     
@@ -935,7 +954,7 @@
 
 - (void)handleOpenDocumentMethod:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)flutterResult
 {
-    
+
     // Get document argument.
     NSString *document = nil;
     id documentValue = arguments[PTDocumentArgumentKey];

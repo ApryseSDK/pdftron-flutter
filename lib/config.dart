@@ -5,6 +5,9 @@ class Config {
   var _disabledTools;
   var _multiTabEnabled;
   var _customHeaders;
+  var _selectAnnotationAfterCreation;
+  var _pageIndicatorEnabled;
+  var _followSystemDarkMode;
   var _annotationToolbars;
   var _hideDefaultAnnotationToolbars;
   var _hideAnnotationToolbarSwitcher;
@@ -24,6 +27,10 @@ class Config {
   set disabledTools(List value) => _disabledTools = value;
   set multiTabEnabled(bool value) => _multiTabEnabled = value;
   set customHeaders(Map<String, String> value) => _customHeaders = value;
+  set selectAnnotationAfterCreation(bool value) =>
+      _selectAnnotationAfterCreation = value;
+  set pageIndicatorEnabled(bool value) => _pageIndicatorEnabled = value;
+  set followSystemDarkMode(bool value) => _followSystemDarkMode = value;
   set annotationToolbars(List value) => _annotationToolbars = value;
   set hideDefaultAnnotationToolbars(List value) =>
       _hideDefaultAnnotationToolbars = value;
@@ -46,6 +53,9 @@ class Config {
         _disabledTools = json['disabledTools'],
         _multiTabEnabled = json['multiTabEnabled'],
         _customHeaders = json['customHeaders'],
+        _selectAnnotationAfterCreation = json['selectAnnotationAfterCreation'],
+        _pageIndicatorEnabled = json['pageIndicatorEnabled'],
+        _followSystemDarkMode = json['followSystemDarkMode'],
         _annotationToolbars = json['annotationToolbars'],
         _hideDefaultAnnotationToolbars = json['hideDefaultAnnotationToolbars'],
         _hideAnnotationToolbarSwitcher = json['hideAnnotationToolbarSwitcher'],
@@ -64,6 +74,9 @@ class Config {
         'disabledTools': _disabledTools,
         'multiTabEnabled': _multiTabEnabled,
         'customHeaders': _customHeaders,
+        'selectAnnotationAfterCreation': _selectAnnotationAfterCreation,
+        'pageIndicatorEnabled': _pageIndicatorEnabled,
+        'followSystemDarkMode': _followSystemDarkMode,
         'annotationToolbars': _annotationToolbars,
         'hideDefaultAnnotationToolbars': _hideDefaultAnnotationToolbars,
         'hideAnnotationToolbarSwitcher': _hideAnnotationToolbarSwitcher,

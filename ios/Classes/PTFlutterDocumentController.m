@@ -619,6 +619,16 @@
     return toolGroup;
 }
 
+- (void)setSelectAnnotationAfterCreation:(BOOL)selectAnnotationAfterCreation
+{
+    self.toolManager.selectAnnotationAfterCreation = selectAnnotationAfterCreation;
+}
+
+- (BOOL)selectAnnotationAfterCreation
+{
+    return self.toolManager.selectAnnotationAfterCreation;
+}
+
 - (void)setThumbnailEditingEnabled:(BOOL)thumbnailEditingEnabled
 {
     self.thumbnailsViewController.editingEnabled = thumbnailEditingEnabled;

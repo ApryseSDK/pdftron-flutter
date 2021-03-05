@@ -9,6 +9,9 @@ static NSString * const PTDisabledToolsKey = @"disabledTools";
 static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
 static NSString * const PTCustomHeadersKey = @"customHeaders";
+static NSString * const PTSelectAnnotationAfterCreationKey = @"selectAnnotationAfterCreation";
+static NSString * const PTPageIndicatorEnabledKey = @"pageIndicatorEnabled";
+static NSString * const PTFollowSystemDarkModeKey = @"followSystemDarkModeKey";
 static NSString * const PTAnnotationToolbarsKey = @"annotationToolbars";
 static NSString * const PTHideDefaultAnnotationToolbarsKey = @"hideDefaultAnnotationToolbars";
 static NSString * const PTHideAnnotationToolbarSwitcherKey = @"hideAnnotationToolbarSwitcher";
@@ -229,6 +232,8 @@ typedef enum {
 -(void)documentController:(PTDocumentController *)docVC leadingNavButtonClicked:(nullable NSString *)nav;
 -(void)documentController:(PTDocumentController *)docVC pageChanged:(NSString*)pageNumbersString;
 -(void)documentController:(PTDocumentController *)docVC zoomChanged:(NSNumber*)zoom;
+
+- (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 

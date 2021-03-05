@@ -16,6 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL documentLoaded;
 
 // viewer options
+@property (nonatomic, assign) BOOL selectAnnotationAfterCreation;
+@property (nonatomic, assign, getter=isBottomToolbarOn) BOOL bottomToolbarOn;
+
 @property (nonatomic, copy, nullable) NSArray<NSString *> * annotationToolbars;
 @property (nonatomic, copy, nullable) NSArray<NSString *> * hideDefaultAnnotationToolbars;
 @property (nonatomic, assign, getter=isAnnotationToolbarSwitcherHidden) BOOL annotationToolbarSwitcherHidden; // hideAnnotationToolbarSwitcher configuration option

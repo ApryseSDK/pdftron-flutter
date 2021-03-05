@@ -77,6 +77,9 @@ public class PluginUtils {
     public static final String KEY_CONFIG_DISABLED_TOOLS = "disabledTools";
     public static final String KEY_CONFIG_MULTI_TAB_ENABLED = "multiTabEnabled";
     public static final String KEY_CONFIG_CUSTOM_HEADERS = "customHeaders";
+    public static final String KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION = "selectAnnotationAfterCreation";
+    public static final String KEY_CONFIG_PAGE_INDICATOR_ENABLED = "pageIndicatorEnabled";
+    public static final String KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE = "followSystemDarkMode";
     public static final String KEY_CONFIG_ANNOTATION_TOOLBARS = "annotationToolbars";
     public static final String KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS = "hideDefaultAnnotationToolbars";
     public static final String KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER = "hideAnnotationToolbarSwitcher";
@@ -325,6 +328,18 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_CUSTOM_HEADERS)) {
                     JSONObject customHeaderJson = configJson.getJSONObject(KEY_CONFIG_CUSTOM_HEADERS);
                     configInfo.setCustomHeaderJson(customHeaderJson);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION)) {
+                    boolean selectAnnotationAfterCreation = configJson.getBoolean(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION);
+                    toolManagerBuilder.setAutoSelect(selectAnnotationAfterCreation);
+                }
+                if (!configJson.isNull(KEY_CONFIG_PAGE_INDICATOR_ENABLED)) {
+                    boolean pageIndicatorEnabled = configJson.getBoolean(KEY_CONFIG_PAGE_INDICATOR_ENABLED);
+                    builder = builder.showPageNumberIndicator(pageIndicatorEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE)) {
+                    boolean followSystem = configJson.getBoolean(KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE);
+                    PdfViewCtrlSettingsManager.setFollowSystemDarkMode(context, followSystem);
                 }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_TOOLBARS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_ANNOTATION_TOOLBARS);

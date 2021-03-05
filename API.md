@@ -752,6 +752,17 @@ Defines whether to hide the bottom toolbar for the current viewer.
 config.hideBottomToolbar = true;
 ```
 
+### Page
+
+#### pageIndicatorEnabled
+bool, defaults to true.
+
+Defines whether to show the page indicator for the viewer.
+
+```dart
+config.pageIndicatorEnabled = true;
+```
+
 ### Annotations
 
 #### annotationAuthor
@@ -770,6 +781,15 @@ If true, the active annotation creation tool will remain in the current annotati
 
 ```dart
 config.continuousAnnotationEditing = true;
+```
+
+#### selectAnnotationAfterCreation
+bool, defaults to true.
+
+Defines whether an annotation is selected after it is created. On iOS, this functions for shape and text markup annotations only.
+
+```dart
+config.selectAnnotationAfterCreation = true;
 ```
 
 ### Multi-tab
@@ -801,4 +821,15 @@ Defines whether user can modify the document using the thumbnail view (eg add/re
 
 ```dart
 config.thumbnailViewEditingEnabled = false;
+```
+
+### Others
+
+#### followSystemDarkMode
+bool, Android only, defaults to true
+
+Defines whether the UI will appear in a dark color when the system is dark mode. If false, it will use viewer setting instead.
+
+```dart
+config.signSignatureFieldsWithStamps = true;
 ```
