@@ -17,6 +17,12 @@ import io.flutter.plugin.common.MethodChannel;
 
 public interface ViewerComponent {
 
+    boolean isAutoSaveEnabled();
+
+    boolean isUseStylusAsPen();
+
+    boolean isSignSignatureFieldWithStamps();
+
     void setSelectedAnnots(HashMap<Annot, Integer> selectedAnnots);
 
     EventChannel.EventSink getExportAnnotationCommandEventEmitter();

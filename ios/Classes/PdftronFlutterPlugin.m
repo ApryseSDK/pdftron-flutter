@@ -247,6 +247,41 @@
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
                     // Handled by tabbed config.
                 }
+                else if ([key isEqualToString:PTAutoSaveEnabledKey]) {
+                    
+                    NSNumber* autoSaveEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAutoSaveEnabledKey class:[NSNumber class] error:&error];
+                    if (!error && autoSaveEnabledNumber) {
+                        [documentController setAutoSaveEnabled:[autoSaveEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTPageChangeOnTapKey]) {
+                    
+                    NSNumber* pageChangeOnTapNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTPageChangeOnTapKey class:[NSNumber class] error:&error];
+                    if (!error && pageChangeOnTapNumber) {
+                        [documentController setPageChangesOnTap:[pageChangeOnTapNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTShowSavedSignaturesKey]) {
+                    
+                    NSNumber* showSavedSignatureNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowSavedSignaturesKey class:[NSNumber class] error:&error];
+                    if (!error && showSavedSignatureNumber) {
+                        [documentController setShowSavedSignatures:[showSavedSignatureNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTUseStylusAsPenKey]) {
+                    
+                    NSNumber* useStylusAsPenNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUseStylusAsPenKey class:[NSNumber class] error:&error];
+                    if (!error && useStylusAsPenNumber) {
+                        [documentController setUseStylusAsPen:[useStylusAsPenNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTSignSignatureFieldWithStampsKey]) {
+                    
+                    NSNumber* signSignatureFieldsWithStampsNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignSignatureFieldWithStampsKey class:[NSNumber class] error:&error];
+                    if (!error && signSignatureFieldsWithStampsNumber) {
+                        [documentController setSignSignatureFieldsWithStamps:[signSignatureFieldsWithStampsNumber boolValue]];
+                    }
+                }
                 else if ([key isEqualToString:PTSelectAnnotationAfterCreationKey]) {
                     
                     NSNumber* selectAnnotAfterCreationNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSelectAnnotationAfterCreationKey class:[NSNumber class] error:&error];
@@ -377,7 +412,7 @@
             NSLog(@"config JSON object not in expected dictionary format.");
         }
         
-        
+
     }
     
     [documentController applyViewerSettings];

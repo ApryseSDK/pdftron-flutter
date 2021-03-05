@@ -77,6 +77,11 @@ public class PluginUtils {
     public static final String KEY_CONFIG_DISABLED_TOOLS = "disabledTools";
     public static final String KEY_CONFIG_MULTI_TAB_ENABLED = "multiTabEnabled";
     public static final String KEY_CONFIG_CUSTOM_HEADERS = "customHeaders";
+    public static final String KEY_CONFIG_AUTO_SAVE_ENABLED = "autoSaveEnabled";
+    public static final String KEY_CONFIG_PAGE_CHANGE_ON_TAP = "pageChangeOnTap";
+    public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
+    public static final String KEY_CONFIG_USE_STYLUS_AS_PEN = "useStylusAsPen";
+    public static final String KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS = "signSignatureFieldWithStamps";
     public static final String KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION = "selectAnnotationAfterCreation";
     public static final String KEY_CONFIG_PAGE_INDICATOR_ENABLED = "pageIndicatorEnabled";
     public static final String KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE = "followSystemDarkMode";
@@ -255,12 +260,18 @@ public class PluginUtils {
     public static class ConfigInfo {
         private JSONObject customHeaderJson;
         private Uri fileUri;
+        private boolean autoSaveEnabled;
+        private boolean useStylusAsPen;
+        private boolean signSignatureFieldWithStamps;
         private boolean showLeadingNavButton;
         private String tabTitle;
 
         public ConfigInfo() {
             this.customHeaderJson = null;
             this.fileUri = null;
+            this.autoSaveEnabled = true;
+            this.useStylusAsPen = true;
+            this.signSignatureFieldWithStamps = false;
             this.showLeadingNavButton = true;
             this.tabTitle = null;
         }
@@ -271,6 +282,18 @@ public class PluginUtils {
 
         public void setFileUri(Uri fileUri) {
             this.fileUri = fileUri;
+        }
+
+        public void setAutoSaveEnabled(boolean autoSaveEnabled) {
+            this.autoSaveEnabled = autoSaveEnabled;
+        }
+
+        public void setUseStylusAsPen(boolean useStylusAsPen) {
+            this.useStylusAsPen = useStylusAsPen;
+        }
+
+        public void setSignSignatureFieldWithStamps(boolean signSignatureFieldWithStamps) {
+            this.signSignatureFieldWithStamps = signSignatureFieldWithStamps;
         }
 
         public void setShowLeadingNavButton(boolean showLeadingNavButton) {
@@ -287,6 +310,18 @@ public class PluginUtils {
 
         public Uri getFileUri() {
             return fileUri;
+        }
+
+        public boolean isAutoSaveEnabled() {
+            return autoSaveEnabled;
+        }
+
+        public boolean isUseStylusAsPen() {
+            return useStylusAsPen;
+        }
+
+        public boolean isSignSignatureFieldWithStamps() {
+            return signSignatureFieldWithStamps;
         }
 
         public boolean isShowLeadingNavButton() {
@@ -328,6 +363,26 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_CUSTOM_HEADERS)) {
                     JSONObject customHeaderJson = configJson.getJSONObject(KEY_CONFIG_CUSTOM_HEADERS);
                     configInfo.setCustomHeaderJson(customHeaderJson);
+                }
+                if (!configJson.isNull(KEY_CONFIG_AUTO_SAVE_ENABLED)) {
+                    boolean autoSaveEnabled = configJson.getBoolean(KEY_CONFIG_AUTO_SAVE_ENABLED);
+                    configInfo.setAutoSaveEnabled(autoSaveEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_PAGE_CHANGE_ON_TAP)) {
+                    boolean pageChangeOnTap = configJson.getBoolean(KEY_CONFIG_PAGE_CHANGE_ON_TAP);
+                    PdfViewCtrlSettingsManager.setAllowPageChangeOnTap(context, pageChangeOnTap);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SHOW_SAVED_SIGNATURES)) {
+                    boolean showSavedSignatures = configJson.getBoolean(KEY_CONFIG_SHOW_SAVED_SIGNATURES);
+                    toolManagerBuilder = toolManagerBuilder.setShowSavedSignatures(showSavedSignatures);
+                }
+                if (!configJson.isNull(KEY_CONFIG_USE_STYLUS_AS_PEN)) {
+                    boolean useStylusAsPen = configJson.getBoolean(KEY_CONFIG_USE_STYLUS_AS_PEN);
+                    configInfo.setUseStylusAsPen(useStylusAsPen);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS)) {
+                    boolean signSignatureFieldWithStamps = configJson.getBoolean(KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS);
+                    configInfo.setSignSignatureFieldWithStamps(signSignatureFieldWithStamps);
                 }
                 if (!configJson.isNull(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION)) {
                     boolean selectAnnotationAfterCreation = configJson.getBoolean(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION);
@@ -1368,7 +1423,7 @@ public class PluginUtils {
         if (pdfViewCtrlTabFragment != null) {
             pdfViewCtrlTabFragment.setSavingEnabled(true);
             pdfViewCtrlTabFragment.save(false, true, true);
-            // TODO if add auto save flag: getPdfViewCtrlTabFragment().setSavingEnabled(mAutoSaveEnabled);
+            pdfViewCtrlTabFragment.setSavingEnabled(component.isAutoSaveEnabled());
             result.success(pdfViewCtrlTabFragment.getFilePath());
             return;
         }
@@ -1544,6 +1599,17 @@ public class PluginUtils {
     // Events
 
     public static void handleDocumentLoaded(ViewerComponent component) {
+        if (component.getPdfViewCtrlTabFragment() != null) {
+            if (!component.isAutoSaveEnabled()) {
+                component.getPdfViewCtrlTabFragment().setSavingEnabled(component.isAutoSaveEnabled());
+            }
+        }
+
+        if (component.getToolManager() != null) {
+            component.getToolManager().setStylusAsPen(component.isUseStylusAsPen());
+            component.getToolManager().setSignSignatureFieldsWithStamps(component.isSignSignatureFieldWithStamps());
+        }
+
         addListeners(component);
 
         MethodChannel.Result result = component.getFlutterLoadResult();

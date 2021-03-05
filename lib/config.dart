@@ -5,6 +5,11 @@ class Config {
   var _disabledTools;
   var _multiTabEnabled;
   var _customHeaders;
+  var _autoSaveEnabled;
+  var _pageChangeOnTap;
+  var _showSavedSignatures;
+  var _useStylusAsPen;
+  var _signSignatureFieldWithStamps;
   var _selectAnnotationAfterCreation;
   var _pageIndicatorEnabled;
   var _followSystemDarkMode;
@@ -27,6 +32,12 @@ class Config {
   set disabledTools(List value) => _disabledTools = value;
   set multiTabEnabled(bool value) => _multiTabEnabled = value;
   set customHeaders(Map<String, String> value) => _customHeaders = value;
+  set autoSaveEnabled(bool value) => _autoSaveEnabled = value;
+  set pageChangeOnTap(bool value) => _pageChangeOnTap = value;
+  set showSavedSignatures(bool value) => _showSavedSignatures = value;
+  set useStylusAsPen(bool value) => _useStylusAsPen;
+  set signSignatureFieldWithStamps(bool value) =>
+      _signSignatureFieldWithStamps = value;
   set selectAnnotationAfterCreation(bool value) =>
       _selectAnnotationAfterCreation = value;
   set pageIndicatorEnabled(bool value) => _pageIndicatorEnabled = value;
@@ -53,6 +64,11 @@ class Config {
         _disabledTools = json['disabledTools'],
         _multiTabEnabled = json['multiTabEnabled'],
         _customHeaders = json['customHeaders'],
+        _autoSaveEnabled = json['autoSaveEnabled'],
+        _pageChangeOnTap = json['pageChangeOnTap'],
+        _showSavedSignatures = json['showSavedSignatures'],
+        _useStylusAsPen = json['useStylusAsPen'],
+        _signSignatureFieldWithStamps = json['signSignatureFieldWithStamps'],
         _selectAnnotationAfterCreation = json['selectAnnotationAfterCreation'],
         _pageIndicatorEnabled = json['pageIndicatorEnabled'],
         _followSystemDarkMode = json['followSystemDarkMode'],
@@ -74,6 +90,11 @@ class Config {
         'disabledTools': _disabledTools,
         'multiTabEnabled': _multiTabEnabled,
         'customHeaders': _customHeaders,
+        'autoSaveEnabled': _autoSaveEnabled,
+        'pageChangeOnTap': _pageChangeOnTap,
+        'showSavedSignatures': _showSavedSignatures,
+        'useStylusAsPen': _useStylusAsPen,
+        'signSignatureFieldWithStamps': _signSignatureFieldWithStamps,
         'selectAnnotationAfterCreation': _selectAnnotationAfterCreation,
         'pageIndicatorEnabled': _pageIndicatorEnabled,
         'followSystemDarkMode': _followSystemDarkMode,
