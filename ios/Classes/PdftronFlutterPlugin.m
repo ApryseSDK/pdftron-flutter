@@ -207,7 +207,7 @@
 
 + (void)configureDocumentController:(PTFlutterDocumentController*)documentController withConfig:(NSString*)config
 {
-    
+
     [documentController initViewerSettings];
     
     if (config.length == 0 || [config isEqualToString:@"null"]) {
@@ -304,6 +304,60 @@
                     if (!error && overrideAnnotationMenuBehavior) {
                         [documentController setOverrideAnnotationMenuBehavior:overrideAnnotationMenuBehavior];
                     }
+                }
+                else if ([key isEqualToString:PTAutoSaveEnabledKey]) {
+                    
+                    NSNumber* autoSaveEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAutoSaveEnabledKey class:[NSNumber class] error:&error];
+                    if (!error && autoSaveEnabledNumber) {
+                        [documentController setAutoSaveEnabled:[autoSaveEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTPageChangeOnTapKey]) {
+                    
+                    NSNumber* pageChangeOnTapNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTPageChangeOnTapKey class:[NSNumber class] error:&error];
+                    if (!error && pageChangeOnTapNumber) {
+                        [documentController setPageChangesOnTap:[pageChangeOnTapNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTShowSavedSignaturesKey]) {
+                    
+                    NSNumber* showSavedSignatureNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowSavedSignaturesKey class:[NSNumber class] error:&error];
+                    if (!error && showSavedSignatureNumber) {
+                        [documentController setShowSavedSignatures:[showSavedSignatureNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTUseStylusAsPenKey]) {
+                    
+                    NSNumber* useStylusAsPenNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUseStylusAsPenKey class:[NSNumber class] error:&error];
+                    if (!error && useStylusAsPenNumber) {
+                        [documentController setUseStylusAsPen:[useStylusAsPenNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTSignSignatureFieldWithStampsKey]) {
+                    
+                    NSNumber* signSignatureFieldsWithStampsNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignSignatureFieldWithStampsKey class:[NSNumber class] error:&error];
+                    if (!error && signSignatureFieldsWithStampsNumber) {
+                        [documentController setSignSignatureFieldsWithStamps:[signSignatureFieldsWithStampsNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTSelectAnnotationAfterCreationKey]) {
+                    
+                    NSNumber* selectAnnotAfterCreationNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSelectAnnotationAfterCreationKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && selectAnnotAfterCreationNumber) {
+                        [documentController setSelectAnnotationAfterCreation:[selectAnnotAfterCreationNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTPageIndicatorEnabledKey]) {
+                    
+                    NSNumber* pageIndicatorEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTPageIndicatorEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && pageIndicatorEnabledNumber) {
+                        [documentController setPageIndicatorEnabled:[pageIndicatorEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTFollowSystemDarkModeKey]) {
+                    // Android only.
                 }
                 else if ([key isEqualToString:PTAnnotationToolbarsKey]) {
                     
@@ -416,7 +470,7 @@
             NSLog(@"config JSON object not in expected dictionary format.");
         }
         
-        
+
     }
     
     [documentController applyViewerSettings];

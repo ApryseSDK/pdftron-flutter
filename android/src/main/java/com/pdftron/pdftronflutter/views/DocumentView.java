@@ -48,6 +48,9 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private ArrayList<String> mHideAnnotationMenuTools;
     private ArrayList<String> mAnnotationMenuItems;
     private ArrayList<String> mAnnotationMenuOverrideItems;
+    private boolean mAutoSaveEnabled;
+    private boolean mUseStylusAsPen;
+    private boolean mSignSignatureFieldWithStamps;
 
     private EventChannel.EventSink sExportAnnotationCommandEventEmitter;
     private EventChannel.EventSink sExportBookmarkEventEmitter;
@@ -106,6 +109,9 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         setViewerConfig(getConfig());
         setFlutterLoadResult(result);
 
+        mAutoSaveEnabled = configInfo.isAutoSaveEnabled();
+        mUseStylusAsPen = configInfo.isUseStylusAsPen();
+        mSignSignatureFieldWithStamps = configInfo.isSignSignatureFieldWithStamps();
         mTabTitle = configInfo.getTabTitle();
 
         mFromAttach = false;
@@ -238,6 +244,18 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         }
 
         super.onDetachedFromWindow();
+    }
+
+    public boolean isAutoSaveEnabled() {
+        return mAutoSaveEnabled;
+    }
+
+    public boolean isUseStylusAsPen() {
+        return mUseStylusAsPen;
+    }
+
+    public boolean isSignSignatureFieldWithStamps() {
+        return mSignSignatureFieldWithStamps;
     }
 
     @Override

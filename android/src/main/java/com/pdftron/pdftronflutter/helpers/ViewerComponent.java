@@ -27,6 +27,12 @@ public interface ViewerComponent {
     ArrayList<String> getAnnotationMenuItems();
 
     ArrayList<String> getAnnotationMenuOverrideItems();
+    
+    boolean isAutoSaveEnabled();
+
+    boolean isUseStylusAsPen();
+
+    boolean isSignSignatureFieldWithStamps();
 
     void setSelectedAnnots(HashMap<Annot, Integer> selectedAnnots);
 

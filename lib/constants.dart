@@ -187,6 +187,7 @@ class DefaultToolbars {
   static const prepareForm = "PDFTron_Prepare_Form";
   static const measure = "PDFTron_Measure";
   static const pens = "PDFTron_Pens";
+  static const redaction = "PDFTron_Redact";
   static const favorite = "PDFTron_Favorite";
 }
 
@@ -200,5 +201,6 @@ class ToolbarIcons {
   static const prepareForm = "PDFTron_Prepare_Form";
   static const measure = "PDFTron_Measure";
   static const pens = "PDFTron_Pens";
+  static const redaction = "PDFTron_Redact";
   static const favorite = "PDFTron_Favorite";
 }

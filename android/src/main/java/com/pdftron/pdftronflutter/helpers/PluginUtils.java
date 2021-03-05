@@ -87,6 +87,14 @@ public class PluginUtils {
     public static final String KEY_CONFIG_HIDE_ANNOTATION_MENU = "hideAnnotationMenu";
     public static final String KEY_CONFIG_ANNOTATION_MENU_ITEMS = "annotationMenuItems";
     public static final String KEY_CONFIG_OVERRIDE_ANNOTATION_MENU_BEHAVIOR = "overrideAnnotationMenuBehavior";
+    public static final String KEY_CONFIG_AUTO_SAVE_ENABLED = "autoSaveEnabled";
+    public static final String KEY_CONFIG_PAGE_CHANGE_ON_TAP = "pageChangeOnTap";
+    public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
+    public static final String KEY_CONFIG_USE_STYLUS_AS_PEN = "useStylusAsPen";
+    public static final String KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS = "signSignatureFieldWithStamps";
+    public static final String KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION = "selectAnnotationAfterCreation";
+    public static final String KEY_CONFIG_PAGE_INDICATOR_ENABLED = "pageIndicatorEnabled";
+    public static final String KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE = "followSystemDarkMode";
     public static final String KEY_CONFIG_ANNOTATION_TOOLBARS = "annotationToolbars";
     public static final String KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS = "hideDefaultAnnotationToolbars";
     public static final String KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER = "hideAnnotationToolbarSwitcher";
@@ -332,6 +340,7 @@ public class PluginUtils {
     public static final String TAG_PREPARE_FORM_TOOLBAR = "PDFTron_Prepare_Form";
     public static final String TAG_MEASURE_TOOLBAR = "PDFTron_Measure";
     public static final String TAG_PENS_TOOLBAR = "PDFTron_Pens";
+    public static final String TAG_REDACTION_TOOLBAR = "PDFTron_redact";
     public static final String TAG_FAVORITE_TOOLBAR = "PDFTron_Favorite";
 
     // Custom toolbars
@@ -348,6 +357,9 @@ public class PluginUtils {
         private ArrayList<String> hideAnnotationMenuTools;
         private ArrayList<String> annotationMenuItems;
         private ArrayList<String> annotationMenuOverrideItems;
+        private boolean autoSaveEnabled;
+        private boolean useStylusAsPen;
+        private boolean signSignatureFieldWithStamps;
         private boolean showLeadingNavButton;
         private String tabTitle;
 
@@ -359,6 +371,9 @@ public class PluginUtils {
             this.hideAnnotationMenuTools = null;
             this.annotationMenuItems = null;
             this.annotationMenuOverrideItems = null;
+            this.autoSaveEnabled = true;
+            this.useStylusAsPen = true;
+            this.signSignatureFieldWithStamps = false;
             this.showLeadingNavButton = true;
             this.tabTitle = null;
         }
@@ -389,6 +404,18 @@ public class PluginUtils {
 
         public void setAnnotationMenuOverrideItems(ArrayList<String> annotationMenuOverrideItems) {
             this.annotationMenuOverrideItems = annotationMenuOverrideItems;
+        }
+        
+        public void setAutoSaveEnabled(boolean autoSaveEnabled) {
+            this.autoSaveEnabled = autoSaveEnabled;
+        }
+
+        public void setUseStylusAsPen(boolean useStylusAsPen) {
+            this.useStylusAsPen = useStylusAsPen;
+        }
+
+        public void setSignSignatureFieldWithStamps(boolean signSignatureFieldWithStamps) {
+            this.signSignatureFieldWithStamps = signSignatureFieldWithStamps;
         }
 
         public void setShowLeadingNavButton(boolean showLeadingNavButton) {
@@ -425,6 +452,18 @@ public class PluginUtils {
 
         public ArrayList<String> getAnnotationMenuOverrideItems() {
             return annotationMenuOverrideItems;
+        }
+        
+        public boolean isAutoSaveEnabled() {
+            return autoSaveEnabled;
+        }
+
+        public boolean isUseStylusAsPen() {
+            return useStylusAsPen;
+        }
+
+        public boolean isSignSignatureFieldWithStamps() {
+            return signSignatureFieldWithStamps;
         }
 
         public boolean isShowLeadingNavButton() {
@@ -495,6 +534,38 @@ public class PluginUtils {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_OVERRIDE_ANNOTATION_MENU_BEHAVIOR);
                     ArrayList<String> annotationMenuOverrideItems = convertJSONArrayToArrayList(array);
                     configInfo.setAnnotationMenuOverrideItems(annotationMenuOverrideItems);
+                }
+                if (!configJson.isNull(KEY_CONFIG_AUTO_SAVE_ENABLED)) {
+                    boolean autoSaveEnabled = configJson.getBoolean(KEY_CONFIG_AUTO_SAVE_ENABLED);
+                    configInfo.setAutoSaveEnabled(autoSaveEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_PAGE_CHANGE_ON_TAP)) {
+                    boolean pageChangeOnTap = configJson.getBoolean(KEY_CONFIG_PAGE_CHANGE_ON_TAP);
+                    PdfViewCtrlSettingsManager.setAllowPageChangeOnTap(context, pageChangeOnTap);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SHOW_SAVED_SIGNATURES)) {
+                    boolean showSavedSignatures = configJson.getBoolean(KEY_CONFIG_SHOW_SAVED_SIGNATURES);
+                    toolManagerBuilder = toolManagerBuilder.setShowSavedSignatures(showSavedSignatures);
+                }
+                if (!configJson.isNull(KEY_CONFIG_USE_STYLUS_AS_PEN)) {
+                    boolean useStylusAsPen = configJson.getBoolean(KEY_CONFIG_USE_STYLUS_AS_PEN);
+                    configInfo.setUseStylusAsPen(useStylusAsPen);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS)) {
+                    boolean signSignatureFieldWithStamps = configJson.getBoolean(KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS);
+                    configInfo.setSignSignatureFieldWithStamps(signSignatureFieldWithStamps);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION)) {
+                    boolean selectAnnotationAfterCreation = configJson.getBoolean(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION);
+                    toolManagerBuilder.setAutoSelect(selectAnnotationAfterCreation);
+                }
+                if (!configJson.isNull(KEY_CONFIG_PAGE_INDICATOR_ENABLED)) {
+                    boolean pageIndicatorEnabled = configJson.getBoolean(KEY_CONFIG_PAGE_INDICATOR_ENABLED);
+                    builder = builder.showPageNumberIndicator(pageIndicatorEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE)) {
+                    boolean followSystem = configJson.getBoolean(KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE);
+                    PdfViewCtrlSettingsManager.setFollowSystemDarkMode(context, followSystem);
                 }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_TOOLBARS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_ANNOTATION_TOOLBARS);
@@ -1015,6 +1086,7 @@ public class PluginUtils {
                     TAG_PREPARE_FORM_TOOLBAR.equals(tag) ||
                     TAG_MEASURE_TOOLBAR.equals(tag) ||
                     TAG_PENS_TOOLBAR.equals(tag) ||
+                    TAG_REDACTION_TOOLBAR.equals(tag) ||
                     TAG_FAVORITE_TOOLBAR.equals(tag)) {
                 return true;
             }
@@ -1200,6 +1272,8 @@ public class PluginUtils {
             return R.drawable.ic_annotation_distance_black_24dp;
         } else if (TAG_PENS_TOOLBAR.equals(item)) {
             return R.drawable.ic_annotation_freehand_black_24dp;
+        } else if (TAG_REDACTION_TOOLBAR.equals(item)) {
+            return R.drawable.ic_annotation_redact_black_24dp;
         } else if (TAG_FAVORITE_TOOLBAR.equals(item)) {
             return R.drawable.ic_star_white_24dp;
         }
@@ -1741,7 +1815,7 @@ public class PluginUtils {
         if (pdfViewCtrlTabFragment != null) {
             pdfViewCtrlTabFragment.setSavingEnabled(true);
             pdfViewCtrlTabFragment.save(false, true, true);
-            // TODO if add auto save flag: getPdfViewCtrlTabFragment().setSavingEnabled(mAutoSaveEnabled);
+            pdfViewCtrlTabFragment.setSavingEnabled(component.isAutoSaveEnabled());
             result.success(pdfViewCtrlTabFragment.getFilePath());
             return;
         }
@@ -1917,6 +1991,17 @@ public class PluginUtils {
     // Events
 
     public static void handleDocumentLoaded(ViewerComponent component) {
+        if (component.getPdfViewCtrlTabFragment() != null) {
+            if (!component.isAutoSaveEnabled()) {
+                component.getPdfViewCtrlTabFragment().setSavingEnabled(component.isAutoSaveEnabled());
+            }
+        }
+
+        if (component.getToolManager() != null) {
+            component.getToolManager().setStylusAsPen(component.isUseStylusAsPen());
+            component.getToolManager().setSignSignatureFieldsWithStamps(component.isSignSignatureFieldWithStamps());
+        }
+
         addListeners(component);
 
         MethodChannel.Result result = component.getFlutterLoadResult();

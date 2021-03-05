@@ -27,6 +27,14 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSArray<NSString*>* annotationMenuItems;
 @property (nonatomic, copy, nullable) NSArray<NSString*>* overrideAnnotationMenuBehavior;
 
+@property (nonatomic, assign, getter=isAutoSaveEnabled) BOOL autoSaveEnabled;
+@property (nonatomic, assign) BOOL pageChangesOnTap;
+@property (nonatomic, assign) BOOL useStylusAsPen;
+@property (nonatomic, assign) BOOL showSavedSignatures;
+@property (nonatomic, assign) BOOL signSignatureFieldsWithStamps;
+@property (nonatomic, assign) BOOL selectAnnotationAfterCreation;
+@property (nonatomic, assign, getter=isBottomToolbarOn) BOOL bottomToolbarOn;
+
 @property (nonatomic, copy, nullable) NSArray<NSString *> * annotationToolbars;
 @property (nonatomic, copy, nullable) NSArray<NSString *> * hideDefaultAnnotationToolbars;
 @property (nonatomic, assign, getter=isAnnotationToolbarSwitcherHidden) BOOL annotationToolbarSwitcherHidden; // hideAnnotationToolbarSwitcher configuration option

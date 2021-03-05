@@ -45,6 +45,9 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     private static ArrayList<String> mHideAnnotationMenuTools;
     private static ArrayList<String> mAnnotationMenuItems;
     private static ArrayList<String> mAnnotationMenuOverrideItems;
+    private static boolean mAutoSaveEnabled;
+    private static boolean mUseStylusAsPen;
+    private static boolean mSignSignatureFieldWithStamps;
     private static boolean mShowLeadingNavButton;
 
     private static FlutterDocumentActivity sCurrentActivity;
@@ -67,7 +70,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
     public static void openDocument(Context packageContext, String document, String password, String configStr) {
 
-        ViewerConfig.Builder builder = new ViewerConfig.Builder().multiTabEnabled(false);
+        ViewerConfig.Builder builder = new ViewerConfig.Builder().multiTabEnabled(false).showCloseTabOption(false);
 
         ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
         PDFViewCtrlConfig pdfViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(packageContext);
@@ -79,7 +82,10 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         mAnnotationMenuItems = configInfo.getAnnotationMenuItems();
         mAnnotationMenuOverrideItems = configInfo.getAnnotationMenuOverrideItems();
 
-        openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build());
+        mAutoSaveEnabled = configInfo.isAutoSaveEnabled();
+        mUseStylusAsPen = configInfo.isUseStylusAsPen();
+        mSignSignatureFieldWithStamps = configInfo.isSignSignatureFieldWithStamps();
+
         mShowLeadingNavButton = configInfo.isShowLeadingNavButton();
 
         if (mShowLeadingNavButton) {
@@ -329,6 +335,18 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         super.onOpenDocError();
 
         return PluginUtils.handleOpenDocError(this);
+    }
+
+    public boolean isAutoSaveEnabled() {
+        return mAutoSaveEnabled;
+    }
+
+    public boolean isUseStylusAsPen() {
+        return mUseStylusAsPen;
+    }
+
+    public boolean isSignSignatureFieldWithStamps() {
+        return mSignSignatureFieldWithStamps;
     }
 
     @Override

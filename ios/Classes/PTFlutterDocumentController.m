@@ -727,6 +727,13 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     // nav icon
     [self applyNavIcon];
     
+    // Use Apple Pencil as a pen
+    Class pencilTool = [PTFreeHandCreate class];
+    if (@available(iOS 13.1, *)) {
+        pencilTool = [PTPencilDrawingCreate class];
+    }
+    self.toolManager.pencilTool = self.useStylusAsPen ? pencilTool : [PTPanTool class];
+    
     const BOOL hideNav = (self.topAppNavBarHidden || self.topToolbarsHidden);
     self.controlsHidden = hideNav;
     
@@ -860,6 +867,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         //PTAnnotationToolbarFillAndSign: [NSNull null], // not implemented
         //PTAnnotationToolbarPrepareForm: [NSNull null], // not implemented
         PTAnnotationToolbarMeasure: toolGroupManager.measureItemGroup,
+        //PTAnnotationToolbarRedaction: [NSNull null], // not implemented
         PTAnnotationToolbarPens: toolGroupManager.pensItemGroup,
         PTAnnotationToolbarFavorite: toolGroupManager.favoritesItemGroup,
     };
@@ -919,6 +927,56 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     }
 
     _hideAnnotMenuToolsAnnotTypes = [hideMenuTools copy];
+}
+
+- (void)setAutoSaveEnabled:(BOOL)autoSaveEnabled
+{
+    self.automaticallySavesDocument = autoSaveEnabled;
+}
+
+- (BOOL)isAutoSaveEnabled
+{
+    return self.automaticallySavesDocument;
+}
+
+- (void)setPageChangesOnTap:(BOOL)pageChangesOnTap
+{
+    self.changesPageOnTap = pageChangesOnTap;
+}
+
+- (BOOL)pageChangesOnTap
+{
+    return self.changesPageOnTap;
+}
+
+- (void)setShowSavedSignatures:(BOOL)showSavedSignatures
+{
+    self.toolManager.showDefaultSignature = showSavedSignatures;
+}
+
+- (BOOL)showSavedSignatures
+{
+    return self.toolManager.showDefaultSignature;
+}
+
+- (void)setSignSignatureFieldsWithStamps:(BOOL)signSignatureFieldsWithStamps
+{
+    self.toolManager.signatureAnnotationOptions.signSignatureFieldsWithStamps = signSignatureFieldsWithStamps;
+}
+
+- (BOOL)signSignatureFieldsWithStamps
+{
+    return self.toolManager.signatureAnnotationOptions.signSignatureFieldsWithStamps;
+}
+
+- (void)setSelectAnnotationAfterCreation:(BOOL)selectAnnotationAfterCreation
+{
+    self.toolManager.selectAnnotationAfterCreation = selectAnnotationAfterCreation;
+}
+
+- (BOOL)selectAnnotationAfterCreation
+{
+    return self.toolManager.selectAnnotationAfterCreation;
 }
 
 - (void)setThumbnailEditingEnabled:(BOOL)thumbnailEditingEnabled
