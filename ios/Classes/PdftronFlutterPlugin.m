@@ -74,9 +74,13 @@
 - (void)initTabbedDocumentViewController
 {
     // Create and wrap a tabbed controller in a navigation controller.
-    self.tabbedDocumentViewController = [[PTTabbedDocumentViewController alloc] init];
+    self.tabbedDocumentViewController = [[PTFlutterTabbedDocumentController alloc] init];
+    
     self.tabbedDocumentViewController.delegate = self;
     self.tabbedDocumentViewController.tabsEnabled = NO;
+    
+    NSMutableArray *tempFiles = [[NSMutableArray alloc] init];
+    [(PTFlutterTabbedDocumentController *)(self.tabbedDocumentViewController) setTempFiles:[tempFiles mutableCopy]];
     
     self.tabbedDocumentViewController.viewControllerClass = [PTFlutterDocumentController class];
     
@@ -271,9 +275,9 @@
                         [documentController setInitialPageNumber:[initialPageNumber intValue]];
                     }
                 }
-                else if ([key isEqualToString:PTIsBase64Key]) {
+                else if ([key isEqualToString:PTIsBase64StringKey]) {
                     
-                    NSNumber* isBase64 = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTIsBase64Key class:[NSNumber class] error:&error];
+                    NSNumber* isBase64 = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTIsBase64StringKey class:[NSNumber class] error:&error];
                     
                     if (!error && isBase64) {
                         [documentController setBase64:[isBase64 boolValue]];
@@ -1005,11 +1009,15 @@
     
     NSError* error;
     
-    NSNumber* isBase64Number = [PdftronFlutterPlugin getConfigValue:[PdftronFlutterPlugin PT_idAsNSDict:config] configKey:PTIsBase64Key class:[NSNumber class] error:&error];
+    NSDictionary *configDict = [PdftronFlutterPlugin PT_idAsNSDict:[PdftronFlutterPlugin PT_JSONStringToId:config]];
+    
     bool isBase64 = NO;
-    if (error) {
-        NSLog(@"An error occurs with config %@: %@", PTIsBase64Key, error.localizedDescription);
-    } else if (isBase64Number) {
+    if([[configDict allKeys] containsObject:PTIsBase64StringKey]) {
+        NSNumber* isBase64Number= [PdftronFlutterPlugin getConfigValue:configDict configKey:PTIsBase64StringKey class:[NSNumber class] error:&error];
+        if (error) {
+            NSLog(@"An error occurs with config %@: %@", PTIsBase64StringKey, error.localizedDescription);
+        }
+        
         isBase64 = [isBase64Number boolValue];
     }
     
@@ -1025,8 +1033,35 @@
         [self.tabbedDocumentViewController openDocumentWithURL:fileURL
                                                       password:password];
     } else {
-        // TODO: update when tabbedDocumentViewController supports base64
-        
+        NSString *base64FileExtension = @".pdf";
+        if([[configDict allKeys] containsObject:PTBase64FileExtensionKey]) {
+            NSString *extension = [PdftronFlutterPlugin getConfigValue:configDict configKey:PTBase64FileExtensionKey class:[NSString class] error:&error];
+            if (error) {
+                NSLog(@"An error occurs with config %@: %@", PTBase64FileExtensionKey, error.localizedDescription);
+            } else {
+                base64FileExtension = extension;
+            }
+            
+            NSData *data = [[NSData alloc] initWithBase64EncodedString:document options:0];
+
+            NSMutableString *path = [[NSMutableString alloc] init];
+            [path appendFormat:@"%@tmp%@%@", NSTemporaryDirectory(), [[NSUUID UUID] UUIDString], base64FileExtension];
+
+            NSURL *fileURL = [NSURL fileURLWithPath:path isDirectory:NO];
+            NSError* error;
+
+            [data writeToURL:fileURL options:NSDataWritingAtomic error:&error];
+            
+            if (error) {
+                NSLog(@"Error: There was an error while trying to create a temporary file for base64 string. %@", error.localizedDescription);
+                return;
+            }
+            
+            [[(PTFlutterTabbedDocumentController *)(self.tabbedDocumentViewController) tempFiles] addObject:path];
+            
+            [self.tabbedDocumentViewController openDocumentWithURL:fileURL
+                                                          password:password];
+        }
     }
     
     if (!self.tabbedDocumentViewController.navigationController) {
@@ -1417,7 +1452,7 @@
 
 - (void)saveDocument:(FlutterResult)flutterResult
 {
-    PTDocumentController *documentController = [self getDocumentController];
+    PTFlutterDocumentController *documentController = (PTFlutterDocumentController *)[self getDocumentController];
     
     if(documentController.document == Nil)
     {
@@ -1427,60 +1462,24 @@
         return;
     }
     
-    NSError* error;
+    NSString *filePath = documentController.coordinatedDocument.fileURL.path;
     
-    if (![(PTFlutterDocumentController*)documentController isBase64]) {
-        
-        [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-            if([doc HasDownloader])
-            {
-                // too soon
-                NSLog(@"Error: The document is still being downloaded.");
-                flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: The document is still being downloaded."]);
-                return;
-            }
-            
-            [documentController saveDocument:0 completionHandler:^(BOOL success) {
-                if(!success)
-                {
-                    NSLog(@"Error: The document could not be saved.");
-                    flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: The document could not be saved."]);
-                    return;
-                }
-            }];
-        } error:&error];
-        
-        if (error) {
-            NSLog(@"Error: There was an error while trying to save document. %@", error.localizedDescription);
-            flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: There was an error while trying to save document."]);
+    [documentController saveDocument:e_ptincremental completionHandler:^(BOOL success) {
+        if (![documentController isBase64]) {
+            flutterResult(success ? filePath : nil);
+        } else if (!success) {
+            flutterResult(nil);
         } else {
-            flutterResult(documentController.coordinatedDocument.fileURL.path);
+            __block NSString *base64String = nil;
+            NSError *error = nil;
+            [documentController.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+                NSData *data = [doc SaveToBuf:0];
+
+                base64String = [data base64EncodedStringWithOptions:0];
+            } error:&error];
+            flutterResult((error == nil) ? base64String : nil);
         }
-        
-    } else {
-        
-        __block NSString *base64String = nil;
-        __block BOOL success = NO;
-        
-        [documentController.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
-            NSData *data = [doc SaveToBuf:0];
-            
-            base64String = [data base64EncodedStringWithOptions:0];
-            success = YES;
-        } error:&error];
-        
-        if (!success)
-        {
-            NSLog(@"Error: The document could not be saved.");
-            flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: The document could not be saved."]);
-            return;
-        } else if (error) {
-            NSLog(@"Error: There was an error while trying to save document. %@", error.localizedDescription);
-            flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to save document" details:@"Error: There was an error while trying to save document."]);
-        } else {
-            flutterResult(base64String);
-        }
-    }
+    }];
 }
 
 - (void)commitTool:(FlutterResult)flutterResult
@@ -1559,13 +1558,9 @@
     flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl SetCurrentPage:[pageNumber intValue]]]);
 }
 
-- (void) getDocumentPath:(FlutterResult)flutterResult {
+- (void)getDocumentPath:(FlutterResult)flutterResult {
     PTDocumentController *documentController = [self getDocumentController];
-    if (![(PTFlutterDocumentController*)documentController isBase64]) {
-        flutterResult(documentController.coordinatedDocument.fileURL.path);
-    } else {
-        flutterResult(nil);
-    }
+    flutterResult(documentController.coordinatedDocument.fileURL.path);
 }
 
 - (void)setToolMode:(NSString *)toolMode resultToken:(FlutterResult)flutterResult;

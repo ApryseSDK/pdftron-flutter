@@ -807,3 +807,25 @@
 }
 
 @end
+
+#pragma mark - PTFlutterTabbedDocumentController
+@implementation PTFlutterTabbedDocumentController
+
+// For base64 temp file deletion
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    if (self.tempFiles) {
+        for (NSString* path in self.tempFiles) {
+            NSError* error;
+            [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
+
+            if (error) {
+                NSLog(@"Error: There was an error while deleting the temporary file for base64. %@", error.localizedDescription);
+            }
+        }
+        [self.tempFiles removeAllObjects];
+    }
+}
+
+@end

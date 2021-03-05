@@ -25,6 +25,7 @@ import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import io.flutter.plugin.common.EventChannel;
@@ -47,7 +48,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private int mInitialPageNumber;
 
     private boolean mIsBase64;
-    private File mTempFile;
+    private ArrayList<File> mTempFiles = new ArrayList<>();
 
     private EventChannel.EventSink sExportAnnotationCommandEventEmitter;
     private EventChannel.EventSink sExportBookmarkEventEmitter;
@@ -71,6 +72,9 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private boolean mFromAttach;
     private boolean mDetached;
 
+    // TODO: remove when flutter view does not detach one additional time
+    private boolean mFirstDetached = false;
+
     public DocumentView(@NonNull Context context) {
         this(context, null);
     }
@@ -92,7 +96,9 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         mInitialPageNumber = configInfo.getInitialPageNumber();
         mIsBase64 = configInfo.isBase64();
         mCacheDir = configInfo.getCacheDir();
-        mTempFile = configInfo.getTempFile();
+
+        mTempFiles.add(configInfo.getTempFile());
+
         setDocumentUri(configInfo.getFileUri());
         setPassword(password);
         setCustomHeaders(configInfo.getCustomHeaderJson());
@@ -228,14 +234,18 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         return mIsBase64;
     }
 
-    public File getTempFile() {
-        return mTempFile;
+    public ArrayList<File> getTempFiles() {
+        return mTempFiles;
     }
 
     @Override
     public void onDetachedFromWindow() {
+        if (mFirstDetached) {
+            handleOnDetach(this);
+        }
+
+        mFirstDetached = true;
         mDetached = true;
-        handleOnDetach(this);
 
         // remove detached view
         if (mPdfViewCtrlTabHostFragment != null) {

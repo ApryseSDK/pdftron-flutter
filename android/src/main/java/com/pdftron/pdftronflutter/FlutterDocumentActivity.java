@@ -28,6 +28,7 @@ import com.pdftron.pdftronflutter.helpers.ViewerImpl;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -44,7 +45,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
     private static FlutterDocumentActivity sCurrentActivity;
 
-    private static File mTempFile;
+    private static ArrayList<File> mTempFiles = new ArrayList<>();
 
     private static boolean mIsBase64;
     private static int mInitialPageNumber;
@@ -72,7 +73,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         PDFViewCtrlConfig pdfViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(packageContext);
         PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(builder, toolManagerBuilder, pdfViewCtrlConfig, document, packageContext, configStr);
 
-        mTempFile = configInfo.getTempFile();
+        mTempFiles.add(configInfo.getTempFile());
 
         mIsBase64 = configInfo.isBase64();
         mInitialPageNumber = configInfo.getInitialPageNumber();
@@ -130,8 +131,8 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         return mIsBase64;
     }
 
-    public File getTempFile() {
-        return mTempFile;
+    public ArrayList<File> getTempFiles() {
+        return mTempFiles;
     }
 
     public static void setLeadingNavButtonIcon(String leadingNavButtonIcon) {

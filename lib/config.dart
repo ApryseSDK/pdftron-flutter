@@ -8,7 +8,8 @@ class Config {
   var _fitMode;
   var _layoutMode;
   var _initialPageNumber;
-  var _isBase64;
+  var _isBase64String;
+  var _base64FileExtension;
   var _annotationToolbars;
   var _hideDefaultAnnotationToolbars;
   var _hideAnnotationToolbarSwitcher;
@@ -31,7 +32,8 @@ class Config {
   set fitMode(String value) => _fitMode = value;
   set layoutMode(String value) => _layoutMode = value;
   set initialPageNumber(int value) => _initialPageNumber = value;
-  set isBase64(bool value) => _isBase64 = value;
+  set isBase64String(bool value) => _isBase64String = value;
+  set base64FileExtension(String value) => _base64FileExtension = value;
   set annotationToolbars(List value) => _annotationToolbars = value;
   set hideDefaultAnnotationToolbars(List value) =>
       _hideDefaultAnnotationToolbars = value;
@@ -57,7 +59,8 @@ class Config {
         _fitMode = json['fitMode'],
         _layoutMode = json['layoutMode'],
         _initialPageNumber = json['initialPageNumber'],
-        _isBase64 = json['isBase64'],
+        _isBase64String = json['isBase64String'],
+        _base64FileExtension = json['base64FileExtension'],
         _annotationToolbars = json['annotationToolbars'],
         _hideDefaultAnnotationToolbars = json['hideDefaultAnnotationToolbars'],
         _hideAnnotationToolbarSwitcher = json['hideAnnotationToolbarSwitcher'],
@@ -79,7 +82,8 @@ class Config {
         'fitMode': _fitMode,
         'layoutMode': _layoutMode,
         'initialPageNumber': _initialPageNumber,
-        'isBase64': _isBase64,
+        'isBase64String': _isBase64String,
+        'base64FileExtension': _base64FileExtension,
         'annotationToolbars': _annotationToolbars,
         'hideDefaultAnnotationToolbars': _hideDefaultAnnotationToolbars,
         'hideAnnotationToolbarSwitcher': _hideAnnotationToolbarSwitcher,

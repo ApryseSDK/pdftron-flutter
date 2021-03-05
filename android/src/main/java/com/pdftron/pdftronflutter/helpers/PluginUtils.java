@@ -81,7 +81,8 @@ public class PluginUtils {
     public static final String KEY_CONFIG_FIT_MODE = "fitMode";
     public static final String KEY_CONFIG_LAYOUT_MODE = "layoutMode";
     public static final String KEY_CONFIG_INITIAL_PAGE_NUMBER = "initialPageNumber";
-    public static final String KEY_CONFIG_IS_BASE_64 = "isBase64";
+    public static final String KEY_CONFIG_IS_BASE_64_STRING = "isBase64String";
+    public static final String KEY_CONFIG_BASE_64_FILE_EXTENSION = "base64FileExtension";
     public static final String KEY_CONFIG_ANNOTATION_TOOLBARS = "annotationToolbars";
     public static final String KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS = "hideDefaultAnnotationToolbars";
     public static final String KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER = "hideAnnotationToolbarSwitcher";
@@ -363,6 +364,7 @@ public class PluginUtils {
         ArrayList<ToolManager.ToolMode> disabledTools = new ArrayList<>();
 
         boolean isBase64 = false;
+        String base64FileExtension = null;
         String cacheDir = context.getCacheDir().getAbsolutePath();
         configInfo.setCacheDir(cacheDir);
 
@@ -399,9 +401,12 @@ public class PluginUtils {
                     int initialPageNumber = configJson.getInt(KEY_CONFIG_INITIAL_PAGE_NUMBER);
                     configInfo.setInitialPageNumber(initialPageNumber);
                 }
-                if (!configJson.isNull(KEY_CONFIG_IS_BASE_64)) {
-                    isBase64 = configJson.getBoolean(KEY_CONFIG_IS_BASE_64);
+                if (!configJson.isNull(KEY_CONFIG_IS_BASE_64_STRING)) {
+                    isBase64 = configJson.getBoolean(KEY_CONFIG_IS_BASE_64_STRING);
                     configInfo.setIsBase64(isBase64);
+                }
+                if (!configJson.isNull(KEY_CONFIG_BASE_64_FILE_EXTENSION)) {
+                    base64FileExtension = configJson.getString(KEY_CONFIG_BASE_64_FILE_EXTENSION);
                 }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_TOOLBARS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_ANNOTATION_TOOLBARS);
@@ -466,7 +471,7 @@ public class PluginUtils {
             }
         }
 
-        final Uri fileUri = getUri(context, document, isBase64);
+        final Uri fileUri = getUri(context, document, isBase64, base64FileExtension);
         configInfo.setFileUri(fileUri);
 
         if (fileUri != null) {
@@ -548,14 +553,14 @@ public class PluginUtils {
         }
     }
 
-    private static Uri getUri(Context context, String path, boolean isBase64) {
+    private static Uri getUri(Context context, String path, boolean isBase64, String base64FileExtension) {
         if (context == null || path == null) {
             return null;
         }
         try {
             if (isBase64) {
                 byte[] data = Base64.decode(path, Base64.DEFAULT);
-                File tempFile = File.createTempFile("tmp", ".pdf");
+                File tempFile = File.createTempFile("tmp", base64FileExtension == null ? ".pdf" : base64FileExtension);
                 FileOutputStream fos = null;
                 try {
                     fos = new FileOutputStream(tempFile);
@@ -1479,9 +1484,9 @@ public class PluginUtils {
             pdfViewCtrlTabFragment.setSavingEnabled(true);
             pdfViewCtrlTabFragment.save(false, true, true);
             // TODO if add auto save flag: getPdfViewCtrlTabFragment().setSavingEnabled(mAutoSaveEnabled);
-            if (component.isBase64() && component.getTempFile() != null) {
+            if (component.isBase64()) {
                 try {
-                    byte[] data = FileUtils.readFileToByteArray(component.getTempFile());
+                    byte[] data = FileUtils.readFileToByteArray(pdfViewCtrlTabFragment.getFile());
                     result.success(Base64.encodeToString(data, Base64.DEFAULT));
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -1556,15 +1561,12 @@ public class PluginUtils {
     }
 
     private static void getDocumentPath(MethodChannel.Result result, ViewerComponent component) {
-
-        String path = "";
-        if (component.isBase64() && component.getTempFile() != null) {
-            path = component.getTempFile().getAbsolutePath();
-        } else if (component.getPdfViewCtrlTabFragment() != null) {
-            path = component.getPdfViewCtrlTabFragment().getFilePath();
+        PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
+        if (pdfViewCtrlTabFragment != null) {
+            result.success(pdfViewCtrlTabFragment.getFilePath());
+        } else {
+            result.error("InvalidState", "Activity not attached", null);
         }
-
-        result.success(path);
     }
 
     private static void setFlagForFields(ArrayList<String> fieldNames, int flag, boolean flagValue, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
@@ -1734,10 +1736,13 @@ public class PluginUtils {
             component.getImpl().removeListeners(pdfViewCtrl);
         }
 
-        File tempFile = component.getTempFile();
-        if (tempFile != null && tempFile.exists()) {
-            tempFile.delete();
+        ArrayList<File> tempFiles = component.getTempFiles();
+
+        for (File file : tempFiles)
+        if (file != null && file.exists()) {
+            file.delete();
         }
+        tempFiles.clear();
     }
 
     public static void handleLeadingNavButtonPressed(ViewerComponent component) {

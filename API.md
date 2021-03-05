@@ -704,6 +704,11 @@ When viewing a document initialized with a base64 string (i.e. a memory buffer),
 config.isBase64String = true;
 ```
 
+#### base64FileExtension
+String, defaults to `.pdf`, required if using base64 string of a non-pdf file.
+
+Defines the file extension for the base64 string in document, if [isBase64String](#isBase64String) is true.
+
 ### UI Customization
 
 #### disabledElements

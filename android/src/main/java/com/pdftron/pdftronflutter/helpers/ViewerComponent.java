@@ -11,6 +11,7 @@ import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.ToolManager;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import io.flutter.plugin.common.EventChannel;
@@ -24,7 +25,7 @@ public interface ViewerComponent {
 
     boolean isBase64();
 
-    File getTempFile();
+    ArrayList<File> getTempFiles();
 
     EventChannel.EventSink getExportAnnotationCommandEventEmitter();
 

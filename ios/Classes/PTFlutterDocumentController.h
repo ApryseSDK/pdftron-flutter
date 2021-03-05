@@ -53,4 +53,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+@interface PTFlutterTabbedDocumentController: PTTabbedDocumentViewController
+
+@property (nonatomic, retain) NSMutableArray *tempFiles;
+@end
+
 NS_ASSUME_NONNULL_END
