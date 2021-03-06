@@ -19,12 +19,14 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATIONS_SELECTED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATION_CHANGED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATION_MENU_PRESSED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_DOCUMENT_ERROR;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_DOCUMENT_LOADED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_EXPORT_ANNOTATION_COMMAND;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_EXPORT_BOOKMARK;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_FORM_FIELD_VALUE_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_LEADING_NAV_BUTTON_PRESSED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_LONG_PRESS_MENU_PRESSED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_PAGE_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ZOOM_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_GET_PLATFORM_VERSION;
@@ -149,6 +151,19 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
+        final EventChannel longPressMenuPressedEventChannel = new EventChannel(registrar.messenger(), EVENT_LONG_PRESS_MENU_PRESSED);
+        longPressMenuPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setLongPressMenuPressedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setLongPressMenuPressedEventEmitter(null);
+            }
+        });
+
         final EventChannel leadingNavButtonPressedEventChannel = new EventChannel(registrar.messenger(), EVENT_LEADING_NAV_BUTTON_PRESSED);
         leadingNavButtonPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
@@ -159,6 +174,19 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             @Override
             public void onCancel(Object arguments) {
                 FlutterDocumentActivity.setLeadingNavButtonPressedEventEmitter(null);
+            }
+        });
+
+        final EventChannel annotationMenuPressedEventChannel = new EventChannel(registrar.messenger(), EVENT_ANNOTATION_MENU_PRESSED);
+        annotationMenuPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setAnnotationMenuPressedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setAnnotationMenuPressedEventEmitter(null);
             }
         });
 

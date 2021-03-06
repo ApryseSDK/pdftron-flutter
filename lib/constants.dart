@@ -53,6 +53,9 @@ class EventParameters {
   static const action = "action";
   static const annotations = "annotations";
   static const xfdfCommand = "xfdfCommand";
+  static const longPressMenuItem = "longPressMenuItem";
+  static const longPressText = "longPressText";
+  static const annotationMenuItem = "annotationMenuItem";
   static const previousPageNumber = "previousPageNumber";
   static const pageNumber = "pageNumber";
 }
@@ -176,6 +179,33 @@ class AnnotationFlags {
   static const toggleNoView = "toggleNoView";
 }
 
+// LongPressMenuItems define all menu items that could show up on long press of text or empty area
+class LongPressMenuItems {
+  static const copy = "copy";
+  static const search = "search";
+  static const share = "share";
+  static const read = "read";
+}
+
+// AnnotationMenuItems define all menu items that could show up on press of annotation
+class AnnotationMenuItems {
+  static const style = "style";
+  static const note = "note";
+  static const copy = "copy";
+  static const delete = "delete";
+  static const flatten = "flatten";
+  static const editText = "editText";
+  static const editInk = "editInk";
+  static const search = "search";
+  static const share = "share";
+  static const markupType = "markupType";
+  static const read = "read";
+  static const screenCapture = "screenCapture";
+  static const playSound = "playSound";
+  static const openAttachment = "openAttachment";
+  static const calibrate = "calibrate";
+}
+
 // DefaultToolbars define a set of pre-designed toolbars for easier customization
 class DefaultToolbars {
   static const view = "PDFTron_View";
@@ -186,6 +216,7 @@ class DefaultToolbars {
   static const prepareForm = "PDFTron_Prepare_Form";
   static const measure = "PDFTron_Measure";
   static const pens = "PDFTron_Pens";
+  static const redaction = "PDFTron_Redact";
   static const favorite = "PDFTron_Favorite";
 }
 
@@ -199,5 +230,6 @@ class ToolbarIcons {
   static const prepareForm = "PDFTron_Prepare_Form";
   static const measure = "PDFTron_Measure";
   static const pens = "PDFTron_Pens";
+  static const redaction = "PDFTron_Redact";
   static const favorite = "PDFTron_Favorite";
 }
