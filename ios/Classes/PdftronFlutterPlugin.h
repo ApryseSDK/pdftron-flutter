@@ -9,6 +9,20 @@ static NSString * const PTDisabledToolsKey = @"disabledTools";
 static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
 static NSString * const PTCustomHeadersKey = @"customHeaders";
+static NSString * const PTLongPressMenuEnabled = @"longPressMenuEnabled";
+static NSString * const PTLongPressMenuItems = @"longPressMenuItems";
+static NSString * const PTOverrideLongPressMenuBehavior = @"overrideLongPressMenuBehavior";
+static NSString * const PTHideAnnotationMenu = @"hideAnnotationMenu";
+static NSString * const PTAnnotationMenuItems = @"annotationMenuItems";
+static NSString * const PTOverrideAnnotationMenuBehavior = @"overrideAnnotationMenuBehavior";
+static NSString * const PTAutoSaveEnabledKey = @"autoSaveEnabled";
+static NSString * const PTPageChangeOnTapKey = @"pageChangeOnTap";
+static NSString * const PTShowSavedSignaturesKey = @"showSavedSignatures";
+static NSString * const PTUseStylusAsPenKey = @"useStylusAsPen";
+static NSString * const PTSignSignatureFieldWithStampsKey = @"signSignatureFieldWithStamps";
+static NSString * const PTSelectAnnotationAfterCreationKey = @"selectAnnotationAfterCreation";
+static NSString * const PTPageIndicatorEnabledKey = @"pageIndicatorEnabled";
+static NSString * const PTFollowSystemDarkModeKey = @"followSystemDarkModeKey";
 static NSString * const PTAnnotationToolbarsKey = @"annotationToolbars";
 static NSString * const PTHideDefaultAnnotationToolbarsKey = @"hideDefaultAnnotationToolbars";
 static NSString * const PTHideAnnotationToolbarSwitcherKey = @"hideAnnotationToolbarSwitcher";
@@ -83,6 +97,39 @@ static NSString * const PTReflowModeButtonKey = @"reflowModeButton";
 static NSString * const PTThumbnailSliderKey = @"thumbnailSlider";
 static NSString * const PTSaveCopyButtonKey = @"saveCopyButton";
 
+// Menu Item
+static NSString * const PTStyleMenuItemTitleKey = @"Style";
+static NSString * const PTNoteMenuItemTitleKey = @"Note";
+static NSString * const PTCopyMenuItemTitleKey = @"Copy";
+static NSString * const PTDeleteMenuItemTitleKey = @"Delete";
+static NSString * const PTTypeMenuItemTitleKey = @"Type";
+static NSString * const PTSearchMenuItemTitleKey = @"Search";
+static NSString * const PTEditMenuItemTitleKey = @"Edit";
+static NSString * const PTFlattenMenuItemTitleKey = @"Flatten";
+static NSString * const PTOpenMenuItemTitleKey = @"Open";
+static NSString * const PTShareMenuItemTitleKey = @"Share";
+static NSString * const PTReadMenuItemTitleKey = @"Read";
+static NSString * const PTCalibrateMenuItemTitleKey = @"Calibrate";
+
+static NSString * const PTStyleMenuItemIdentifierKey = @"style";
+static NSString * const PTNoteMenuItemIdentifierKey = @"note";
+static NSString * const PTCopyMenuItemIdentifierKey = @"copy";
+static NSString * const PTDeleteMenuItemIdentifierKey = @"delete";
+static NSString * const PTTypeMenuItemIdentifierKey = @"markupType";
+static NSString * const PTSearchMenuItemIdentifierKey = @"search";
+static NSString * const PTEditTextMenuItemIdentifierKey = @"editText";
+static NSString * const PTEditInkMenuItemIdentifierKey = @"editInk";
+static NSString * const PTFlattenMenuItemIdentifierKey = @"flatten";
+static NSString * const PTOpenMenuItemIdentifierKey = @"OpenAttachment";
+static NSString * const PTShareMenuItemIdentifierKey = @"share";
+static NSString * const PTReadMenuItemIdentifierKey = @"read";
+static NSString * const PTCalibrateMenuItemIdentifierKey = @"calibrate";
+
+static NSString * const PTHighlightWhiteListKey = @"Highlight";
+static NSString * const PTStrikeoutWhiteListKey = @"Strikeout";
+static NSString * const PTUnderlineWhiteListKey = @"Underline";
+static NSString * const PTSquigglyWhiteListKey = @"Squiggly";
+
 // function
 static NSString * const PTGetPlatformVersionKey = @"getPlatformVersion";
 static NSString * const PTGetVersionKey = @"getVersion";
@@ -137,6 +184,8 @@ static NSString * const PTAnnotationChangedEventKey = @"annotation_changed_event
 static NSString * const PTAnnotationsSelectedEventKey = @"annotations_selected_event";
 static NSString * const PTFormFieldValueChangedEventKey = @"form_field_value_changed_event";
 static NSString * const PTBehaviorActivatedEventKey = @"behavior_activated_event";
+static NSString * const PTLongPressMenuPressedEventKey = @"long_press_menu_pressed_event";
+static NSString * const PTAnnotationMenuPressedEventKey = @"annotation_menu_pressed_event";
 static NSString * const PTLeadingNavButtonPressedEventKey = @"leading_nav_button_pressed_event";
 static NSString * const PTPageChangedEventKey = @"page_changed_event";
 static NSString * const PTZoomChangedEventKey = @"zoom_changed_event";
@@ -187,6 +236,11 @@ static NSString * const PTFlagListKey = @"flags";
 static NSString * const PTFlagKey = @"flag";
 static NSString * const PTFlagValueKey = @"flagValue";
 
+static NSString * const PTLongPressMenuItemKey = @"longPressMenuItem";
+static NSString * const PTLongPressTextKey = @"longPressText";
+
+static NSString * const PTAnnotationMenuItemKey = @"annotationMenuItem";
+
 static NSString * const PTAnnotationFlagHiddenKey = @"hidden";
 static NSString * const PTAnnotationFlagInvisibleKey = @"invisible";
 static NSString * const PTAnnotationFlagLockedKey = @"locked";
@@ -208,6 +262,7 @@ static const PTDefaultAnnotationToolbarKey PTAnnotationToolbarFillAndSign = @"PD
 static const PTDefaultAnnotationToolbarKey PTAnnotationToolbarPrepareForm = @"PDFTron_Prepare_Form";
 static const PTDefaultAnnotationToolbarKey PTAnnotationToolbarMeasure = @"PDFTron_Measure";
 static const PTDefaultAnnotationToolbarKey PTAnnotationToolbarPens = @"PDFTron_Pens";
+static const PTDefaultAnnotationToolbarKey PTAnnotationToolbarRedaction = @"PDFTron_Redact";
 static const PTDefaultAnnotationToolbarKey PTAnnotationToolbarFavorite = @"PDFTron_Favorite";
 
 // Custom annotation toolbar keys.
@@ -226,6 +281,8 @@ typedef enum {
     annotationsSelectedId,
     formFieldValueChangedId,
     behaviorActivatedId,
+    longPressMenuPressedId,
+    annotationMenuPressedId,
     leadingNavButtonPressedId,
     pageChangedId,
     zoomChangedId,
@@ -246,9 +303,13 @@ typedef enum {
 -(void)documentController:(PTDocumentController*)documentController formFieldValueChanged:(NSString*)fieldString;
 -(void)documentController:(PTDocumentController*)docVC behaviorActivated:(NSString*)behaviorString;
 -(void)documentController:(PTDocumentController *)docVC leadingNavButtonClicked:(nullable NSString *)nav;
+-(void)documentController:(PTDocumentController*)docVC longPressMenuPressed:(NSString*)longPressMenuPressedString;
+-(void)documentController:(PTDocumentController *)docVC annotationMenuPressed:(NSString*)annotationMenuPressedString;
 -(void)documentController:(PTDocumentController *)docVC leadingNavButtonClicked:(nullable NSString *)nav;
 -(void)documentController:(PTDocumentController *)docVC pageChanged:(NSString*)pageNumbersString;
 -(void)documentController:(PTDocumentController *)docVC zoomChanged:(NSNumber*)zoom;
+
+- (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 

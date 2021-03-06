@@ -152,7 +152,7 @@ PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png
 - "Copy Bundle Resources"
 - "+".
 
-<img alt='demo-android' src='ios_add_resources.png'/>
+<img alt='demo-ios' src='ios_add_resources.png'/>
 
 2. Now you can use the image in the viewer. For example, if you add `button_open.png` to the bundle, you could use `'button_open.png'` in leadingNavButtonIcon.
 
@@ -272,7 +272,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationList | List<[`Annot`](./lib/options.dart)> | If not null, export the XFDF string for the valid annotations; Otherwise, export the XFDF string for all annotations in the current document.
+annotationList | List of [`Annot`](./lib/options.dart) | If not null, export the XFDF string for the valid annotations; Otherwise, export the XFDF string for all annotations in the current document.
 
 Returns a Future.
 
@@ -319,7 +319,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotations | List<[`Annot`](./lib/options.dart)> | the annotations to be deleted
+annotations | List of [`Annot`](./lib/options.dart) | the annotations to be deleted
 
 Returns a Future.
 
@@ -352,7 +352,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationWithFlagsList | List<[`AnnotWithFlags`](./lib/options.dart)> | a list of annotations with respective flags to be set
+annotationWithFlagsList | List of [`AnnotWithFlags`](./lib/options.dart) | a list of annotations with respective flags to be set
 
 Returns a Future.
 
@@ -409,7 +409,7 @@ Parameters:
 
 Name | Type | Description
 --- | ---| ---
-fieldNames | List<`String`> | list of field names for which the flag should be set
+fieldNames | List of String | list of field names for which the flag should be set
 flag | int | the flag to be set, one of the constants from [`FieldFlags`](./lib/config.dart)
 flagValue | bool | value to set for flag
 
@@ -426,7 +426,7 @@ Parameters:
 
 Name | Type | Description
 --- | ---| ---
-fields | List<[`Field`](./lib/options.dart)> | A list of fields with name and the value that you would like to set to, could be in type number, bool or string
+fields | List of [`Field`](./lib/options.dart) | A list of fields with name and the value that you would like to set to, could be in type number, bool or string
 
 Returns a Future.
 
@@ -578,7 +578,7 @@ Event Parameters:
 Name | Type | Description
 --- | --- | ---
 action | String | the action that occurred (add, delete, modify)
-annotations | List<[`Annot`](./lib/options.dart)> | the annotations that have been changed
+annotations | List of [`Annot`](./lib/options.dart) | the annotations that have been changed
 
 ```dart
 var annotChangedCancel = startAnnotationChangedListener((action, annotations) 
@@ -598,7 +598,7 @@ Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationWithRects | List<[`AnnotWithRect`](./lib/options.dart)> | The list of annotations with their respective rects
+annotationWithRects | List of [`AnnotWithRect`](./lib/options.dart) | The list of annotations with their respective rects
 
 ```dart
 var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects) 
@@ -619,7 +619,7 @@ Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-fields | List<[`Field`](./lib/options.dart)> | the fields that are changed
+fields | List of [`Field`](./lib/options.dart) | the fields that are changed
 
 ```dart
 var fieldChangedCancel = startFormFieldValueChangedListener((fields)
@@ -631,15 +631,56 @@ var fieldChangedCancel = startFormFieldValueChangedListener((fields)
 });
 ```
 
-### Custom Behavior
+### Annotation Menu
 
-#### startBehaviorActivatedListener
-Event is raised on certain behaviors, if any is passed into [overrideBehavior](#overrideBehavior).
+#### startAnnotationMenuPressedListener
+Event is raised on annotation menu pressed if it is passed into [overrideAnnotationMenuBehavior](#overrideAnnotationMenuBehavior).
 
 Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
+annotationMenuItem | one of the [AnnotationMenuItems] constants | The menu item that has been pressed
+annotations | List<[`Annot`](./lib/options.dart)> | The annotations associated with the menu
+
+```dart
+var annotationMenuPressedCancel = startAnnotationMenuPressedListener((annotationMenuItem, annotations) 
+{
+  print("Annotation menu item " + annotationMenuItem + " has been pressed");
+  for (Annot annotation in annotations) {
+    print("Annotation has id: " + annotation.id);
+    print("Annotation is in page: " + annotation.pageNumber.toString());
+  }
+});
+```
+
+### Long Press Menu
+
+#### startLongPressMenuPressedListener
+Event is raised on long press menu pressed if it is passed into [overrideLongPressMenuBehavior](#overrideLongPressMenuBehavior).
+
+Event Parameters:
+
+Name | Type | Description
+--- | --- | ---
+longPressMenuItem | one of the [LongPressMenuItems] constants | The menu item that has been pressed
+longPressText | string | The selected text if pressed on text, empty otherwise
+
+```dart
+var longPressMenuPressedCancel = startLongPressMenuPressedListener((longPressMenuItem, longPressText)
+{
+  print("Long press menu item " + longPressMenuItem + " has been pressed");
+  if (longPressText.length > 0) {
+    print("The selected text is: " + longPressText);
+  }
+});
+```
+
+### Custom Behavior
+
+#### startBehaviorActivatedListener
+Event is raised on certain behaviors, if any is passed into [overrideBehavior](#overrideBehavior).
+
 action | String, one of the [Behaviors](#Behaviors) constants | The behavior which has been activated
 data | map | detailed information regarding the behavior
 
@@ -647,7 +688,6 @@ data | map | detailed information regarding the behavior
 var behaviorActivatedCancel = startBehaviorActivatedListener((action, data) {
   print('action is ' + action);
   print('url is ' + data['url']);
-});
 ```
 
 ### Bookmarks
@@ -800,6 +840,26 @@ Defines whether to hide the bottom toolbar for the current viewer.
 config.hideBottomToolbar = true;
 ```
 
+### Page
+
+#### pageChangeOnTap
+bool, defaults to true.
+
+Defines whether the viewer should change pages when the user taps the edge of a page, when the viewer is in a horizontal viewing mode.
+
+```dart
+config.pageChangeOnTap = true;
+```
+
+#### pageIndicatorEnabled
+bool, defaults to true.
+
+Defines whether to show the page indicator for the viewer.
+
+```dart
+config.pageIndicatorEnabled = true;
+```
+
 ### Annotations
 
 #### annotationPermissionCheckEnabled
@@ -827,6 +887,73 @@ If true, the active annotation creation tool will remain in the current annotati
 
 ```dart
 config.continuousAnnotationEditing = true;
+```
+
+#### selectAnnotationAfterCreation
+bool, defaults to true.
+
+Defines whether an annotation is selected after it is created. On iOS, this functions for shape and text markup annotations only.
+
+```dart
+config.selectAnnotationAfterCreation = true;
+```
+
+### Annotation Menu
+
+#### hideAnnotationMenu
+array of [Tools](./lib/constants.dart) constants, defaults to none
+
+Defines annotation types that will not show the default annotation menu.
+
+```dart
+config.hideAnnotationMenu = [Tools.annotationCreateArrow, Tools.annotationEraserTool];
+```
+
+#### annotationMenuItems
+array of [AnnotationMenuItems](./lib/constants/dart) constants, default contains all items
+
+Defines the menu items that can show when an annotation is selected. 
+
+```dart
+config.annotationMenuItems = [AnnotationMenuItems.search, AnnotationMenuItems.share];
+```
+
+#### overrideAnnotationMenuBehavior
+array of [AnnotationMenuItems](./lib/constants/dart) constants, defaults to none
+
+Defines the menu items that will skip default behavior when pressed. They will still be displayed in the annotation menu, and the event handler [startAnnotationMenuPressedListener](#startAnnotationMenuPressedListener) will be called where custom behavior can be implemented.
+
+```dart
+config.overrideAnnotationMenuBehavior = [AnnotationMenuItems.copy];
+```
+
+### Long Press Menu
+
+#### longPressMenuEnabled
+bool, defaults to true
+
+Defines whether to show the popup menu of options when the user long presses on text or blank space on the document.
+
+```dart
+config.longPressMenuEnabled = false;
+```
+
+#### longPressMenuItems
+array of [LongPressMenuItems](./lib/constants.dart) constants, optional, default contains all the items
+
+Defines menu items that can show when long press on text or blank space.
+
+```dart
+config.longPressMenuItems = [LongPressMenuItems.search, LongPressMenuItems.share];
+```
+
+#### overrideLongPressMenuBehavior
+array of [LongPressMenuItems](./lib/constants.dart) constants, optional, defaults to none
+
+Defines the menu items on long press that will skip default behavior when pressed. They will still be displayed in the long press menu, and the event handler [startLongPressMenuPressedListener](#startLongPressMenuPressedListener) will be called where custom behavior can be implemented.
+
+```dart
+config.overrideLongPressMenuBehavior = [LongPressMenuItems.copy];
 ```
 
 ### Custom Behavior
@@ -860,6 +987,26 @@ Sets the tab title if [multiTabEnabled](#multiTabEnabled) is true. (For Android,
 config.tabTitle = 'tab1';
 ```
 
+### Signature
+
+#### signSignatureFieldsWithStamps
+bool, defaults to false.
+
+Defines whether signature fields will be signed with image stamps. This is useful if you are saving XFDF to remote source.
+
+```dart
+config.signSignatureFieldsWithStamps = true;
+```
+
+#### showSavedSignatures
+bool, defaults to true.
+
+Defines whether to show saved signatures for re-use when using the signing tool.
+
+```dart
+config.showSavedSignatures = true;
+```
+
 ### Thumbnail Browser
 
 #### thumbnailViewEditingEnabled
@@ -869,4 +1016,33 @@ Defines whether user can modify the document using the thumbnail view (eg add/re
 
 ```dart
 config.thumbnailViewEditingEnabled = false;
+```
+
+### Others
+
+#### autoSaveEnabled
+bool, dafaults to true.
+
+Defines whether document is automatically saved by the viewer.
+
+```dart
+config.autoSaveEnabled = true;
+```
+
+#### useStylusAsPen
+bool, defaults to true.
+
+Defines whether a stylus should act as a pen when in pan mode. If false, it will act as a finger.
+
+```dart
+config.useStylusAsPen = true;
+```
+
+#### followSystemDarkMode
+bool, Android only, defaults to true
+
+Defines whether the UI will appear in a dark color when the system is dark mode. If false, it will use viewer setting instead.
+
+```dart
+config.signSignatureFieldsWithStamps = true;
 ```

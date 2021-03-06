@@ -19,6 +19,22 @@ import io.flutter.plugin.common.MethodChannel;
 public interface ViewerComponent {
 
     ArrayList<String> getActionOverrideItems();
+    
+    ArrayList<String> getLongPressMenuItems();
+
+    ArrayList<String> getLongPressMenuOverrideItems();
+
+    ArrayList<String> getHideAnnotationMenuTools();
+
+    ArrayList<String> getAnnotationMenuItems();
+
+    ArrayList<String> getAnnotationMenuOverrideItems();
+    
+    boolean isAutoSaveEnabled();
+
+    boolean isUseStylusAsPen();
+
+    boolean isSignSignatureFieldWithStamps();
 
     void setSelectedAnnots(HashMap<Annot, Integer> selectedAnnots);
 
@@ -37,6 +53,10 @@ public interface ViewerComponent {
     EventChannel.EventSink getFormFieldValueChangedEventEmitter();
 
     EventChannel.EventSink getBehaviorActivatedEventEmitter();
+    
+    EventChannel.EventSink getLongPressMenuPressedEventEmitter();
+
+    EventChannel.EventSink getAnnotationMenuPressedEventEmitter();
 
     EventChannel.EventSink getLeadingNavButtonPressedEventEmitter();
 

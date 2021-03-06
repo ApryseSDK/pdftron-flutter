@@ -44,6 +44,14 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private String mCacheDir;
 
     private ArrayList<String> mActionOverrideItems;
+    private ArrayList<String> mLongPressMenuItems;
+    private ArrayList<String> mLongPressMenuOverrideItems;
+    private ArrayList<String> mHideAnnotationMenuTools;
+    private ArrayList<String> mAnnotationMenuItems;
+    private ArrayList<String> mAnnotationMenuOverrideItems;
+    private boolean mAutoSaveEnabled;
+    private boolean mUseStylusAsPen;
+    private boolean mSignSignatureFieldWithStamps;
 
     private EventChannel.EventSink sExportAnnotationCommandEventEmitter;
     private EventChannel.EventSink sExportBookmarkEventEmitter;
@@ -53,9 +61,12 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private EventChannel.EventSink sAnnotationsSelectedEventEmitter;
     private EventChannel.EventSink sFormFieldValueChangedEventEmitter;
     private EventChannel.EventSink sBehaviorActivatedEventEmitter;
+    private EventChannel.EventSink sLongPressMenuPressedEventEmitter;
+    private EventChannel.EventSink sAnnotationMenuPressedEventEmitter;
     private EventChannel.EventSink sLeadingNavButtonPressedEventEmitter;
     private EventChannel.EventSink sPageChangedEventEmitter;
     private EventChannel.EventSink sZoomChangedEventEmitter;
+
     private MethodChannel.Result sFlutterLoadResult;
 
     private HashMap<Annot, Integer> mSelectedAnnots;
@@ -90,11 +101,21 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         setPassword(password);
         setCustomHeaders(configInfo.getCustomHeaderJson());
 
+        mLongPressMenuItems = configInfo.getLongPressMenuItems();
+        mLongPressMenuOverrideItems = configInfo.getLongPressMenuOverrideItems();
+        mHideAnnotationMenuTools = configInfo.getHideAnnotationMenuTools();
+        mAnnotationMenuItems = configInfo.getAnnotationMenuItems();
+        mAnnotationMenuOverrideItems = configInfo.getAnnotationMenuOverrideItems();
+
         setShowNavIcon(configInfo.isShowLeadingNavButton());
         setViewerConfig(getConfig());
         setFlutterLoadResult(result);
 
         mActionOverrideItems = configInfo.getActionOverrideItems();
+
+        mAutoSaveEnabled = configInfo.isAutoSaveEnabled();
+        mUseStylusAsPen = configInfo.isUseStylusAsPen();
+        mSignSignatureFieldWithStamps = configInfo.isSignSignatureFieldWithStamps();
 
         mTabTitle = configInfo.getTabTitle();
 
@@ -230,6 +251,18 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         super.onDetachedFromWindow();
     }
 
+    public boolean isAutoSaveEnabled() {
+        return mAutoSaveEnabled;
+    }
+
+    public boolean isUseStylusAsPen() {
+        return mUseStylusAsPen;
+    }
+
+    public boolean isSignSignatureFieldWithStamps() {
+        return mSignSignatureFieldWithStamps;
+    }
+
     @Override
     public void onNavButtonPressed() {
         handleLeadingNavButtonPressed(this);
@@ -265,6 +298,14 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
     public void setBehaviorActivatedEventEmitter(EventChannel.EventSink emitter) {
         sBehaviorActivatedEventEmitter = emitter;
+    }
+
+    public void setLongPressMenuPressedEventEmitter(EventChannel.EventSink emitter) {
+        sLongPressMenuPressedEventEmitter = emitter;
+    }
+
+    public void setAnnotationMenuPressedEventEmitter(EventChannel.EventSink emitter) {
+        sAnnotationMenuPressedEventEmitter = emitter;
     }
 
     public void setLeadingNavButtonPressedEventEmitter(EventChannel.EventSink emitter) {
@@ -327,6 +368,16 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         return sBehaviorActivatedEventEmitter;
     }
 
+    @Override
+    public EventChannel.EventSink getLongPressMenuPressedEventEmitter() {
+        return sLongPressMenuPressedEventEmitter;
+    }
+
+    @Override
+    public EventChannel.EventSink getAnnotationMenuPressedEventEmitter() {
+        return sAnnotationMenuPressedEventEmitter;
+    }
+
     public EventChannel.EventSink getLeadingNavButtonPressedEventEmitter() {
         return sLeadingNavButtonPressedEventEmitter;
     }
@@ -356,6 +407,31 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     @Override
     public ArrayList<String> getActionOverrideItems() {
         return mActionOverrideItems;
+    }
+
+    @Override
+    public ArrayList<String> getLongPressMenuItems() {
+        return mLongPressMenuItems;
+    }
+
+    @Override
+    public ArrayList<String> getLongPressMenuOverrideItems() {
+        return mLongPressMenuOverrideItems;
+    }
+
+    @Override
+    public ArrayList<String> getHideAnnotationMenuTools() {
+        return mHideAnnotationMenuTools;
+    }
+
+    @Override
+    public ArrayList<String> getAnnotationMenuItems() {
+        return mAnnotationMenuItems;
+    }
+
+    @Override
+    public ArrayList<String> getAnnotationMenuOverrideItems() {
+        return mAnnotationMenuOverrideItems;
     }
 
     // Convenience
