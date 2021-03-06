@@ -794,15 +794,13 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     NSMutableArray <PTFilterMode>* filterModeArray = [[NSMutableArray alloc] init];
 
     [filterModeArray addObject:PTThumbnailFilterAll];
-    [filterModeArray addObject:PTThumbnailFilterAnnotated];
-    [filterModeArray addObject:PTThumbnailFilterBookmarked];
-
-    for (NSString * filterModeString in self.hideThumbnailFilterModes) {
-        if ([filterModeString isEqualToString:PTAnnotatedFilterModeKey]) {
-            [filterModeArray removeObject:PTThumbnailFilterAnnotated];
-        } else if ([filterModeString isEqualToString:PTBookmarkedFilterModeKey]) {
-            [filterModeArray removeObject:PTThumbnailFilterBookmarked];
-        }
+    
+    if (![self.hideThumbnailFilterModes containsObject:PTAnnotatedFilterModeKey]) {
+        [filterModeArray addObject:PTThumbnailFilterAnnotated];
+    }
+    
+    if (![self.hideThumbnailFilterModes containsObject:PTBookmarkedFilterModeKey]) {
+        [filterModeArray addObject:PTThumbnailFilterBookmarked];
     }
 
     NSOrderedSet* filterModeSet = [[NSOrderedSet alloc] initWithArray:filterModeArray];
