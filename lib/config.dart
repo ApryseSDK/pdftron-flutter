@@ -44,7 +44,7 @@ class Config {
   set longPressMenuItems(List value) => _longPressMenuItems = value;
   set overrideLongPressMenuBehavior(List value) =>
       _overrideLongPressMenuBehavior = value;
-  set hideAnnotationMenu(bool value) => _hideAnnotationMenu = value;
+  set hideAnnotationMenu(List value) => _hideAnnotationMenu = value;
   set annotationMenuItems(List value) => _annotationMenuItems = value;
   set overrideAnnotationMenuBehavior(List value) =>
       _overrideAnnotationMenuBehavior = value;
