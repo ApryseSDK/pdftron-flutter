@@ -171,11 +171,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         mCacheDir = context.getCacheDir().getAbsolutePath();
         mToolManagerBuilder = ToolManagerBuilder.from();
         mBuilder = new ViewerConfig.Builder();
-        mBuilder
-                .fullscreenModeEnabled(false)
-                .multiTabEnabled(false)
-                .showCloseTabOption(false)
-                .useSupportActionBar(false);
+        mBuilder.fullscreenModeEnabled(false);
 
         mPDFViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(context);
     }

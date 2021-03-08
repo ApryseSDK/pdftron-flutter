@@ -358,6 +358,13 @@ public class PluginUtils {
                                                 @NonNull PDFViewCtrlConfig pdfViewCtrlConfig, @NonNull String document, @NonNull Context context,
                                                 String configStr) {
 
+        builder
+                .maximumTabCount(Integer.MAX_VALUE)
+                .multiTabEnabled(false)
+                .showCloseTabOption(false)
+                .useSupportActionBar(false)
+                .skipReadOnlyCheck(true);
+
         ConfigInfo configInfo = new ConfigInfo();
 
         toolManagerBuilder.setOpenToolbar(true);
@@ -497,7 +504,6 @@ public class PluginUtils {
 
         builder.pdfViewCtrlConfig(pdfViewCtrlConfig)
                 .toolManagerBuilder(toolManagerBuilder);
-
         return configInfo;
     }
 
