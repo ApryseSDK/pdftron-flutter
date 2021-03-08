@@ -14,6 +14,8 @@
 @property (nonatomic, strong) FlutterEventSink annotationChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink annotationsSelectedEventSink;
 @property (nonatomic, strong) FlutterEventSink formFieldValueChangedEventSink;
+@property (nonatomic, strong) FlutterEventSink longPressMenuPressedEventSink;
+@property (nonatomic, strong) FlutterEventSink annotationMenuPressedEventSink;
 @property (nonatomic, strong) FlutterEventSink leadingNavButtonPressedEventSink;
 @property (nonatomic, strong) FlutterEventSink pageChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink zoomChangedEventSink;
@@ -130,6 +132,10 @@
     
     FlutterEventChannel* formFieldValueChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTFormFieldValueChangedEventKey binaryMessenger:messenger];
     
+    FlutterEventChannel* longPressMenuPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTLongPressMenuPressedEventKey binaryMessenger:messenger];
+    
+    FlutterEventChannel* annotationMenuPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTAnnotationMenuPressedEventKey binaryMessenger:messenger];
+
     FlutterEventChannel* leadingNavButtonPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTLeadingNavButtonPressedEventKey binaryMessenger:messenger];
 
     FlutterEventChannel* pageChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTPageChangedEventKey binaryMessenger:messenger];
@@ -150,6 +156,10 @@
     
     [formFieldValueChangedEventChannel setStreamHandler:self];
     
+    [longPressMenuPressedEventChannel setStreamHandler:self];
+    
+    [annotationMenuPressedEventChannel setStreamHandler:self];
+
     [leadingNavButtonPressedEventChannel setStreamHandler:self];
     
     [pageChangedEventChannel setStreamHandler:self];
@@ -198,14 +208,14 @@
 
 + (void)configureDocumentController:(PTFlutterDocumentController*)documentController withConfig:(NSString*)config
 {
-    
+
     [documentController initViewerSettings];
     
     if (config.length == 0 || [config isEqualToString:@"null"]) {
         [documentController applyViewerSettings];
         return;
     }
-    
+   
     //convert from json to dict
     id foundationObject = [PdftronFlutterPlugin PT_JSONStringToId:config];
     
@@ -247,6 +257,116 @@
                 }
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
                     // Handled by tabbed config.
+                }
+                else if ([key isEqualToString:PTHideThumbnailFilterModesKey]) {
+                    
+                    NSArray* hideThumbnailFilterModes = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideThumbnailFilterModesKey class:[NSArray class] error:&error];
+                    
+                    if (!error && hideThumbnailFilterModes) {
+                        [documentController setHideThumbnailFilterModes: hideThumbnailFilterModes];
+                    }
+                }
+                else if ([key isEqualToString:PTLongPressMenuEnabled]) {
+                    
+                    NSNumber* longPressMenuEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLongPressMenuEnabled class:[NSNumber class] error:&error];
+                    
+                    if (!error && longPressMenuEnabledNumber) {
+                        [documentController setLongPressMenuEnabled:[longPressMenuEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTLongPressMenuItems]) {
+                    
+                    NSArray* longPressMenuItems = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLongPressMenuItems class:[NSArray class] error:&error];
+                    
+                    if (!error && longPressMenuItems) {
+                        [documentController setLongPressMenuItems:longPressMenuItems];
+                    }
+                }
+                else if ([key isEqualToString:PTOverrideLongPressMenuBehavior]) {
+                    
+                    NSArray* overrideLongPressMenuBehavior = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTOverrideLongPressMenuBehavior class:[NSArray class] error:&error];
+                    
+                    if (!error && overrideLongPressMenuBehavior) {
+                        [documentController setOverrideLongPressMenuBehavior:overrideLongPressMenuBehavior];
+                    }
+                }
+                else if ([key isEqualToString:PTHideAnnotationMenu]) {
+                    
+                    NSArray* hideAnnotationMenuTools = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideAnnotationMenu class:[NSArray class] error:&error];
+                    
+                    if (!error && hideAnnotationMenuTools) {
+                        [documentController setHideAnnotMenuTools:hideAnnotationMenuTools];
+                    }
+                }
+                else if ([key isEqualToString:PTAnnotationMenuItems]) {
+                    
+                    NSArray* annotationMenuItems = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationMenuItems class:[NSArray class] error:&error];
+                    
+                    if (!error && annotationMenuItems) {
+                        [documentController setAnnotationMenuItems:annotationMenuItems];
+                    }
+                }
+                else if ([key isEqualToString:PTOverrideAnnotationMenuBehavior]) {
+                    
+                    NSArray* overrideAnnotationMenuBehavior = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTOverrideAnnotationMenuBehavior class:[NSArray class] error:&error];
+                    
+                    if (!error && overrideAnnotationMenuBehavior) {
+                        [documentController setOverrideAnnotationMenuBehavior:overrideAnnotationMenuBehavior];
+                    }
+                }
+                else if ([key isEqualToString:PTAutoSaveEnabledKey]) {
+                    
+                    NSNumber* autoSaveEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAutoSaveEnabledKey class:[NSNumber class] error:&error];
+                    if (!error && autoSaveEnabledNumber) {
+                        [documentController setAutoSaveEnabled:[autoSaveEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTPageChangeOnTapKey]) {
+                    
+                    NSNumber* pageChangeOnTapNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTPageChangeOnTapKey class:[NSNumber class] error:&error];
+                    if (!error && pageChangeOnTapNumber) {
+                        [documentController setPageChangesOnTap:[pageChangeOnTapNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTShowSavedSignaturesKey]) {
+                    
+                    NSNumber* showSavedSignatureNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowSavedSignaturesKey class:[NSNumber class] error:&error];
+                    if (!error && showSavedSignatureNumber) {
+                        [documentController setShowSavedSignatures:[showSavedSignatureNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTUseStylusAsPenKey]) {
+                    
+                    NSNumber* useStylusAsPenNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUseStylusAsPenKey class:[NSNumber class] error:&error];
+                    if (!error && useStylusAsPenNumber) {
+                        [documentController setUseStylusAsPen:[useStylusAsPenNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTSignSignatureFieldWithStampsKey]) {
+                    
+                    NSNumber* signSignatureFieldsWithStampsNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignSignatureFieldWithStampsKey class:[NSNumber class] error:&error];
+                    if (!error && signSignatureFieldsWithStampsNumber) {
+                        [documentController setSignSignatureFieldsWithStamps:[signSignatureFieldsWithStampsNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTSelectAnnotationAfterCreationKey]) {
+                    
+                    NSNumber* selectAnnotAfterCreationNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSelectAnnotationAfterCreationKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && selectAnnotAfterCreationNumber) {
+                        [documentController setSelectAnnotationAfterCreation:[selectAnnotAfterCreationNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTPageIndicatorEnabledKey]) {
+                    
+                    NSNumber* pageIndicatorEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTPageIndicatorEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && pageIndicatorEnabledNumber) {
+                        [documentController setPageIndicatorEnabled:[pageIndicatorEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTFollowSystemDarkModeKey]) {
+                    // Android only.
                 }
                 else if ([key isEqualToString:PTAnnotationToolbarsKey]) {
                     
@@ -359,7 +479,7 @@
             NSLog(@"config JSON object not in expected dictionary format.");
         }
         
-        
+
     }
     
     [documentController applyViewerSettings];
@@ -372,6 +492,7 @@
     if (![configResult isKindOfClass:[NSNull class]]) {
         if (![configResult isKindOfClass:class]) {
             NSString* errorString = [NSString stringWithFormat:@"config %@ is not in expected %@ format.", configKey, class];
+
             *error = [NSError errorWithDomain:@"com.flutter.pdftron" code:NSFormattingError userInfo:@{NSLocalizedDescriptionKey: errorString}];
         }
         return configResult;
@@ -481,6 +602,42 @@
                      [string isEqualToString:PTEraserToolButtonKey]) {
                 toolManager.eraserEnabled = value;
             }
+            else if ([string isEqualToString:PTAnnotationCreateFileAttachmentToolKey]) {
+                toolManager.fileAttachmentAnnotationOptions.canCreate = value;
+            }
+            else if ([string isEqualToString:PTAnnotationCreateRedactionToolKey]) {
+                toolManager.redactAnnotationOptions.canCreate = value;
+            }
+            else if ([string isEqualToString:PTAnnotationCreateLinkToolKey]) {
+                toolManager.linkAnnotationOptions.canCreate = value;
+            }
+            else if ([string isEqualToString:PTAnnotationCreateRedactionTextToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTAnnotationCreateLinkTextToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateTextFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateCheckboxFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateSignatureFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateRadioFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateComboBoxFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateListBoxFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTPencilKitDrawingToolKey]) {
+                toolManager.pencilDrawingAnnotationOptions.canCreate = value;
+            }
         }
     }
 }
@@ -525,6 +682,50 @@
         PTSaveCopyButtonKey:
             ^{
                 documentController.exportButtonHidden = YES;
+            },
+//        PTEditPagesButtonKey:
+//            ^{
+//
+//            },
+//        PTPrintButtonKey:
+//            ^{
+//
+//            },
+//        PTCloseButtonKey:
+//            ^{
+//
+//            },
+//        PTFillAndSignButtonKey:
+//            ^{
+//
+//            },
+//        PTPrepareFormButtonKey:
+//            ^{
+//
+//            },
+        PTOutlineListButtonKey:
+            ^{
+                documentController.outlineListHidden = YES;
+            },
+        PTAnnotationListButtonKey:
+            ^{
+                documentController.annotationListHidden = YES;
+            },
+        PTUserBookmarkListButtonKey:
+            ^{
+                documentController.bookmarkListHidden = YES;
+            },
+//        PTEditMenuButtonKey:
+//            ^{
+//
+//            },
+//        PTCropPageButtonKey:
+//            ^{
+//
+//            },
+        PTMoreItemsButtonKey:
+            ^{
+                documentController.moreItemsButtonHidden = YES;
             },
     };
     
@@ -611,6 +812,12 @@
         case formFieldValueChangedId:
             self.formFieldValueChangedEventSink = events;
             break;
+        case longPressMenuPressedId:
+            self.longPressMenuPressedEventSink = events;
+            break;
+        case annotationMenuPressedId:
+            self.annotationMenuPressedEventSink = events;
+            break;
         case leadingNavButtonPressedId:
             self.leadingNavButtonPressedEventSink = events;
             break;
@@ -651,6 +858,12 @@
             break;
         case formFieldValueChangedId:
             self.formFieldValueChangedEventSink = nil;
+            break;
+        case longPressMenuPressedId:
+            self.longPressMenuPressedEventSink = nil;
+            break;
+        case annotationMenuPressedId:
+            self.annotationMenuPressedEventSink = nil;
             break;
         case leadingNavButtonPressedId:
             self.leadingNavButtonPressedEventSink = nil;
@@ -732,6 +945,22 @@
     }
 }
 
+-(void)documentController:(PTDocumentController*)docVC longPressMenuPressed:(NSString*)longPressMenuPressedString
+{
+    if (self.longPressMenuPressedEventSink != nil)
+    {
+        self.longPressMenuPressedEventSink(longPressMenuPressedString);
+    }
+}
+
+-(void)documentController:(PTDocumentController *)docVC annotationMenuPressed:(NSString*)annotationMenuPressedString
+{
+    if (self.annotationMenuPressedEventSink != nil)
+    {
+        self.annotationMenuPressedEventSink(annotationMenuPressedString);
+    }
+}
+    
 -(void)documentController:(PTDocumentController *)docVC leadingNavButtonClicked:(nullable NSString *)nav
 {
     if (self.leadingNavButtonPressedEventSink != nil)
@@ -939,7 +1168,7 @@
 
 - (void)handleOpenDocumentMethod:(NSDictionary<NSString *, id> *)arguments resultToken:(FlutterResult)flutterResult
 {
-    
+
     // Get document argument.
     NSString *document = nil;
     id documentValue = arguments[PTDocumentArgumentKey];
@@ -1582,7 +1811,30 @@
         toolClass = [PTFreeHandHighlightCreate class];
     } else if ([toolMode isEqualToString:PTAnnotationCreateRubberStampToolKey]) {
         toolClass = [PTRubberStampCreate class];
-
+    } else if ([toolMode isEqualToString:PTAnnotationCreateFileAttachmentToolKey]) {
+        toolClass = [PTFileAttachmentCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateRedactionToolKey]) {
+        toolClass = [PTRectangleRedactionCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateLinkToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTAnnotationCreateRedactionTextToolKey]) {
+        toolClass = [PTTextRedactionCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateLinkTextToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateTextFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateCheckboxFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateSignatureFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateRadioFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateComboBoxFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateListBoxFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTPencilKitDrawingToolKey]) {
+        toolClass = [PTPencilDrawingCreate class];
     }
 
     if (toolClass) {

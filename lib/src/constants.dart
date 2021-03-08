@@ -52,6 +52,9 @@ class EventParameters {
   static const action = "action";
   static const annotations = "annotations";
   static const xfdfCommand = "xfdfCommand";
+  static const longPressMenuItem = "longPressMenuItem";
+  static const longPressText = "longPressText";
+  static const annotationMenuItem = "annotationMenuItem";
   static const previousPageNumber = "previousPageNumber";
   static const pageNumber = "pageNumber";
 }
@@ -85,9 +88,17 @@ class Buttons {
   static const saveCopyButton = 'saveCopyButton';
   static const editPagesButton = 'editPagesButton';
   static const printButton = 'printButton';
+  static const closeButton = 'closeButton';
   static const fillAndSignButton = 'fillAndSignButton';
   static const prepareFormButton = 'prepareFormButton';
+  static const outlineListButton = 'outlineListButton';
+  static const annotationListButton = 'annotationListButton';
+  static const userBookmarkListButton = 'userBookmarkListButton';
   static const reflowModeButton = 'reflowModeButton';
+  static const editMenuButton = 'editMenuButton';
+  static const cropPageButton = 'cropPageButton';
+  static const moreItemsButton = 'moreItemsButton';
+  static const eraserButton = 'eraserButton';
   static const undo = 'undo';
   static const redo = 'redo';
 }
@@ -124,12 +135,33 @@ class Tools {
       'AnnotationCreateFreeHighlighter';
   static const annotationCreateRubberStamp = 'AnnotationCreateRubberStamp';
   static const eraser = 'Eraser';
+  static const annotationCreateFileAttachment =
+      'AnnotationCreateFileAttachment';
+  static const annotationCreateRedaction = 'AnnotationCreateRedaction';
+  static const annotationCreateLink = 'AnnotationCreateLink';
+  static const annotationCreateRedactionText = 'AnnotationCreateRedactionText';
+  static const annotationCreateLinkText = 'AnnotationCreateLinkText';
+  static const formCreateTextField = 'FormCreateTextField';
+  static const formCreateCheckboxField = 'FormCreateCheckboxField';
+  static const formCreateSignatureField = 'FormCreateSignatureField';
+  static const formCreateRadioField = 'FormCreateRadioField';
+  static const formCreateComboBoxField = 'FormCreateComboBoxField';
+  static const formCreateListBoxField = 'FormCreateListBoxField';
+
+  // iOS only.
+  static const pencilKitDrawing = 'PencilKitDrawing';
 }
 
 // FieldFlags define the property flags for a form field
 class FieldFlags {
   static const ReadOnly = 0;
   static const Required = 1;
+}
+
+// ThumbnailFilterModes define the filter modes in thumbnail browser
+class ThumbnailFilterModes {
+  static const annotated = "annotated";
+  static const bookmarked = "bookmarked";
 }
 
 // AnnotationFlags define the flags for any annotation in the document
@@ -146,6 +178,33 @@ class AnnotationFlags {
   static const toggleNoView = "toggleNoView";
 }
 
+// LongPressMenuItems define all menu items that could show up on long press of text or empty area
+class LongPressMenuItems {
+  static const copy = "copy";
+  static const search = "search";
+  static const share = "share";
+  static const read = "read";
+}
+
+// AnnotationMenuItems define all menu items that could show up on press of annotation
+class AnnotationMenuItems {
+  static const style = "style";
+  static const note = "note";
+  static const copy = "copy";
+  static const delete = "delete";
+  static const flatten = "flatten";
+  static const editText = "editText";
+  static const editInk = "editInk";
+  static const search = "search";
+  static const share = "share";
+  static const markupType = "markupType";
+  static const read = "read";
+  static const screenCapture = "screenCapture";
+  static const playSound = "playSound";
+  static const openAttachment = "openAttachment";
+  static const calibrate = "calibrate";
+}
+
 // DefaultToolbars define a set of pre-designed toolbars for easier customization
 class DefaultToolbars {
   static const view = "PDFTron_View";
@@ -156,6 +215,7 @@ class DefaultToolbars {
   static const prepareForm = "PDFTron_Prepare_Form";
   static const measure = "PDFTron_Measure";
   static const pens = "PDFTron_Pens";
+  static const redaction = "PDFTron_Redact";
   static const favorite = "PDFTron_Favorite";
 }
 
@@ -169,6 +229,7 @@ class ToolbarIcons {
   static const prepareForm = "PDFTron_Prepare_Form";
   static const measure = "PDFTron_Measure";
   static const pens = "PDFTron_Pens";
+  static const redaction = "PDFTron_Redact";
   static const favorite = "PDFTron_Favorite";
 }
 

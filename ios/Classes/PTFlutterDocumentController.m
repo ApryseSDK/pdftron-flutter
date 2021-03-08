@@ -2,9 +2,27 @@
 #import "PTFlutterDocumentController.h"
 #import "DocumentViewFactory.h"
 
+#include <objc/runtime.h>
+
+static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
+{
+    const IMP implementation = imp_implementationWithBlock(block);
+
+    const BOOL added = class_addMethod(cls, selector, implementation, "v@:");
+    if (!added) {
+        imp_removeBlock(implementation);
+        return NO;
+    }
+
+    return YES;
+}
+
 @interface PTFlutterDocumentController()
 
 @property (nonatomic, strong, nullable) UIBarButtonItem *leadingNavButtonItem;
+
+// Array of wrapped PTExtendedAnnotTypes.
+@property (nonatomic, strong, nullable) NSArray<NSNumber *> *hideAnnotMenuToolsAnnotTypes;
 
 @end
 
@@ -179,7 +197,7 @@
 
 -(void)toolManager:(PTToolManager*)toolManager willRemoveAnnotation:(nonnull PTAnnot *)annotation onPageNumber:(int)pageNumber
 {
-    NSString* annotationsWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTDeleteActionKey];
+    NSString* annotationsWithActionString = [self generateAnnotationsWithActionString:@[annotation] onPageNumber:pageNumber action:PTDeleteActionKey];
     if (annotationsWithActionString) {
         [self.plugin documentController:self annotationsChangedWithActionString:annotationsWithActionString];
     }
@@ -191,7 +209,7 @@
 
 - (void)toolManager:(PTToolManager *)toolManager annotationAdded:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
 {
-    NSString* annotationsWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTAddActionKey];
+    NSString* annotationsWithActionString = [self generateAnnotationsWithActionString:@[annotation] onPageNumber:pageNumber action:PTAddActionKey];
     if (annotationsWithActionString) {
         [self.plugin documentController:self annotationsChangedWithActionString:annotationsWithActionString];
     }
@@ -202,7 +220,7 @@
 
 - (void)toolManager:(PTToolManager *)toolManager annotationModified:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
 {
-    NSString* annotationsWithActionString = [self generateAnnotationWithActionString:annotation onPageNumber:pageNumber action:PTModifyActionKey];
+    NSString* annotationsWithActionString = [self generateAnnotationsWithActionString:@[annotation] onPageNumber:pageNumber action:PTModifyActionKey];
     if (annotationsWithActionString) {
         [self.plugin documentController:self annotationsChangedWithActionString:annotationsWithActionString];
     }
@@ -289,6 +307,219 @@
     }
 }
 
+- (BOOL)toolManager:(PTToolManager *)toolManager shouldShowMenu:(UIMenuController *)menuController forAnnotation:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
+{
+    BOOL result = [super toolManager:toolManager shouldShowMenu:menuController forAnnotation:annotation onPageNumber:pageNumber];
+    if (!result) {
+        return NO;
+    }
+
+    BOOL showMenu = YES;
+    if (annotation) {
+        showMenu = [self filterMenuItemsForAnnotationSelectionMenu:menuController forAnnotation:annotation];
+    } else {
+        showMenu = [self filterMenuItemsForLongPressMenu:menuController];
+    }
+
+    return showMenu;
+}
+
+- (BOOL)filterMenuItemsForAnnotationSelectionMenu:(UIMenuController *)menuController forAnnotation:(PTAnnot *)annot
+{
+    __block PTExtendedAnnotType annotType = PTExtendedAnnotTypeUnknown;
+
+    NSError *error = nil;
+    [self.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc *doc) {
+        if ([annot IsValid]) {
+            annotType = annot.extendedAnnotType;
+        }
+    } error:&error];
+    if (error) {
+        NSLog(@"%@", error);
+    }
+
+    if ([self.hideAnnotMenuToolsAnnotTypes containsObject:@(annotType)]) {
+        return NO;
+    }
+
+    NSString *editString = ([annot GetType] == e_ptFreeText) ? PTEditTextMenuItemIdentifierKey : PTEditInkMenuItemIdentifierKey;
+
+    // Mapping from menu item title to identifier.
+    NSDictionary<NSString *, NSString *> *map = @{
+        PTStyleMenuItemTitleKey: PTStyleMenuItemIdentifierKey,
+        PTNoteMenuItemTitleKey: PTNoteMenuItemIdentifierKey,
+        PTCopyMenuItemTitleKey: PTCopyMenuItemIdentifierKey,
+        PTDeleteMenuItemTitleKey: PTDeleteMenuItemIdentifierKey,
+        PTTypeMenuItemTitleKey: PTTypeMenuItemIdentifierKey,
+        PTSearchMenuItemTitleKey: PTSearchMenuItemIdentifierKey,
+        PTEditMenuItemTitleKey: editString,
+        PTFlattenMenuItemTitleKey: PTFlattenMenuItemIdentifierKey,
+        PTOpenMenuItemTitleKey: PTOpenMenuItemIdentifierKey,
+        PTCalibrateMenuItemTitleKey: PTCalibrateMenuItemIdentifierKey,
+    };
+    // Get the localized title for each menu item.
+    NSMutableDictionary<NSString *, NSString *> *localizedMap = [NSMutableDictionary dictionary];
+    for (NSString *key in map) {
+        NSString *localizedKey = PTLocalizedString(key, nil);
+        if (!localizedKey) {
+            localizedKey = key;
+        }
+        localizedMap[localizedKey] = map[key];
+    }
+
+    NSMutableArray<UIMenuItem *> *permittedItems = [NSMutableArray array];
+
+    for (UIMenuItem *menuItem in menuController.menuItems) {
+        NSString *menuItemId = localizedMap[menuItem.title];
+
+        if (!self.annotationMenuItems) {
+            [permittedItems addObject:menuItem];
+        }
+        else {
+            if (menuItemId && [self.annotationMenuItems containsObject:menuItemId]) {
+                [permittedItems addObject:menuItem];
+            }
+        }
+
+        // Override action of of overridden annotation menu items.
+        if (menuItemId && [self.overrideAnnotationMenuBehavior containsObject:menuItemId]) {
+            NSString *actionName = [NSString stringWithFormat:@"overriddenPressed_%@",
+                                    menuItemId];
+            const SEL selector = NSSelectorFromString(actionName);
+
+            PT_addMethod([self class], selector, ^(id self) {
+                [self overriddenAnnotationMenuItemPressed:menuItemId];
+            });
+
+            menuItem.action = selector;
+        }
+    }
+
+    menuController.menuItems = [permittedItems copy];
+
+    return YES;
+}
+
+- (BOOL)filterMenuItemsForLongPressMenu:(UIMenuController *)menuController {
+    if (!self.longPressMenuEnabled) {
+        menuController.menuItems = nil;
+        return NO;
+    }
+    // Mapping from menu item title to identifier.
+    NSDictionary<NSString *, NSString *> *map = @{
+        PTCopyMenuItemTitleKey: PTCopyMenuItemIdentifierKey,
+        PTSearchMenuItemTitleKey: PTSearchMenuItemIdentifierKey,
+        PTShareMenuItemTitleKey: PTShareMenuItemIdentifierKey,
+        PTReadMenuItemTitleKey: PTReadMenuItemIdentifierKey,
+    };
+
+    // Get the localized title for each menu item.
+    NSMutableDictionary<NSString *, NSString *> *localizedMap = [NSMutableDictionary dictionary];
+    for (NSString *key in map) {
+        NSString *localizedKey = PTLocalizedString(key, nil);
+        if (!localizedKey) {
+            localizedKey = key;
+        }
+        localizedMap[localizedKey] = map[key];
+    }
+
+    NSMutableArray<UIMenuItem *> *permittedItems = [NSMutableArray array];
+    for (UIMenuItem *menuItem in menuController.menuItems) {
+        NSString *menuItemId = localizedMap[menuItem.title];
+
+        if (!self.longPressMenuItems) {
+            [permittedItems addObject:menuItem];
+        }
+        else {
+            if (!menuItemId) {
+                // If it is not one of copy, search, share and read, then it should be added
+                [permittedItems addObject:menuItem];
+            } else if ([self.longPressMenuItems containsObject:menuItemId]) {
+                [permittedItems addObject:menuItem];
+            }
+        }
+
+        // Override action of of overridden annotation menu items.
+        if (menuItemId && [self.overrideLongPressMenuBehavior containsObject:menuItemId]) {
+
+            NSString *actionName = [NSString stringWithFormat:@"overriddenPressed_%@",
+                                    menuItemId];
+            const SEL selector = NSSelectorFromString(actionName);
+
+            PT_addMethod([self class], selector, ^(id self) {
+                [self overriddenLongPressMenuItemPressed:menuItemId];
+            });
+
+            menuItem.action = selector;
+        }
+    }
+
+    menuController.menuItems = [permittedItems copy];
+
+    return YES;
+}
+
+- (void)overriddenAnnotationMenuItemPressed:(NSString *)menuItemId
+{
+    NSMutableArray<PTAnnot *> *annotations = [NSMutableArray array];
+
+    if ([self.toolManager.tool isKindOfClass:[PTAnnotEditTool class]]) {
+        PTAnnotEditTool *annotEdit = (PTAnnotEditTool *)self.toolManager.tool;
+        if (annotEdit.selectedAnnotations.count > 0) {
+            [annotations addObjectsFromArray:annotEdit.selectedAnnotations];
+        }
+    }
+    else if (self.toolManager.tool.currentAnnotation) {
+        [annotations addObject:self.toolManager.tool.currentAnnotation];
+    }
+
+    const int pageNumber = self.toolManager.tool.annotationPageNumber;
+
+    NSArray *annotArray = [self generateAnnotationDictArray:annotations onPageNumber:pageNumber];
+
+    NSDictionary* resultDict = @{
+        PTAnnotationMenuItemKey: menuItemId,
+        PTAnnotationListKey: annotArray,
+    };
+
+    [self.plugin documentController:self annotationMenuPressed:[PdftronFlutterPlugin PT_idToJSONString:resultDict]];
+}
+
+- (void)overriddenLongPressMenuItemPressed:(NSString *)menuItemId
+{
+    NSMutableString *selectedText = [NSMutableString string];
+
+    NSError *error = nil;
+    [self.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc *doc) {
+        if (![self.pdfViewCtrl HasSelection]) {
+            return;
+        }
+
+        const int selectionBeginPage = self.pdfViewCtrl.selectionBeginPage;
+        const int selectionEndPage = self.pdfViewCtrl.selectionEndPage;
+
+        for (int pageNumber = selectionBeginPage; pageNumber <= selectionEndPage; pageNumber++) {
+            if ([self.pdfViewCtrl HasSelectionOnPage:pageNumber]) {
+                PTSelection *selection = [self.pdfViewCtrl GetSelection:pageNumber];
+                NSString *selectionText = [selection GetAsUnicode];
+
+                [selectedText appendString:selectionText];
+            }
+        }
+    } error:&error];
+    if (error) {
+        NSLog(@"%@", error);
+    }
+
+    NSDictionary *resultDict = @{
+        PTLongPressMenuItemKey: menuItemId,
+        PTLongPressTextKey: selectedText,
+    };
+
+    [self.plugin documentController:self longPressMenuPressed:[PdftronFlutterPlugin PT_idToJSONString:resultDict]];
+}
+
+
 - (void)pdfViewCtrl:(PTPDFViewCtrl*)pdfViewCtrl pdfScrollViewDidZoom:(UIScrollView *)scrollView
 {
     const double zoom = self.pdfViewCtrl.zoom * self.pdfViewCtrl.zoomScale;
@@ -344,39 +575,95 @@
     return Nil;
 }
 
--(NSString*)generateAnnotationWithActionString:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber action:(NSString *)action
+-(NSString*)generateAnnotationsWithActionString:(NSArray<PTAnnot *> *)annotations onPageNumber:(unsigned long)pageNumber action:(NSString *)action
 {
     
-    if (annotation.IsValid) {
-        
-        __block NSString *uniqueId;
-        
-        NSError *error;
-        [self.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
-            PTObj *uniqueIdObj = [annotation GetUniqueID];
-            if ([uniqueIdObj IsValid] && [uniqueIdObj IsString]) {
-                uniqueId = [uniqueIdObj GetAsPDFText];
+    NSArray<NSDictionary *>* annotDictArray = [self generateAnnotationDictArray:annotations onPageNumber:pageNumber];
+    
+    NSDictionary<NSString *, NSString *>* resultDict = @{
+        PTAnnotationListKey : [PdftronFlutterPlugin PT_idToJSONString:annotDictArray],
+        PTActionKey : action,
+    };
+    
+    return [PdftronFlutterPlugin PT_idToJSONString:resultDict];
+}
+
+- (NSArray*)generateAnnotationDictArray:(NSArray<PTAnnot *> *)annotations onPageNumber:(unsigned long)pageNumber
+{
+    
+    NSMutableArray<NSDictionary *>* resultArray = [[NSMutableArray alloc] init];
+    
+    for (PTAnnot * annotation in annotations) {
+        if (annotation.IsValid) {
+            
+            __block NSString *uniqueId;
+            
+            NSError *error;
+            [self.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+                PTObj *uniqueIdObj = [annotation GetUniqueID];
+                if ([uniqueIdObj IsValid] && [uniqueIdObj IsString]) {
+                    uniqueId = [uniqueIdObj GetAsPDFText];
+                }
+            } error:&error];
+            
+            if (error) {
+                NSLog(@"An error occurred: %@", error);
+                return nil;
             }
-        } error:&error];
-        
-        if (error) {
-            NSLog(@"An error occurred: %@", error);
-            return nil;
+            
+            NSDictionary *annotDict = @{
+                PTAnnotationIdKey: uniqueId,
+                PTAnnotationPageNumberKey: [NSNumber numberWithLong:pageNumber],
+            };
+            
+            [resultArray addObject:annotDict];
         }
-        
-        NSDictionary *annotDict = @{
-            PTAnnotationIdKey: uniqueId,
-            PTAnnotationPageNumberKey: [NSNumber numberWithLong:pageNumber],
-        };
-        
-        NSDictionary *resultDict = @{
-            PTAnnotationListKey: @[annotDict],
-            PTActionKey: action,
-        };
-        
-        return [PdftronFlutterPlugin PT_idToJSONString:resultDict];
     }
-    return nil;
+    return [resultArray copy];
+}
+
+-(PTExtendedAnnotType)convertAnnotationNameToAnnotType:(NSString*)annotationName
+{
+    NSDictionary<NSString *, NSNumber *>* typeMap = @{
+        PTAnnotationCreateStickyToolKey : @(PTExtendedAnnotTypeText),
+        PTStickyToolButtonKey : @(PTExtendedAnnotTypeText),
+        PTAnnotationCreateFreeHandToolKey : @(PTExtendedAnnotTypeInk),
+        PTAnnotationCreateTextHighlightToolKey : @(PTExtendedAnnotTypeHighlight),
+        PTAnnotationCreateTextUnderlineToolKey : @(PTExtendedAnnotTypeUnderline),
+        PTAnnotationCreateTextSquigglyToolKey : @(PTExtendedAnnotTypeSquiggly),
+        PTAnnotationCreateTextStrikeoutToolKey : @(PTExtendedAnnotTypeStrikeOut),
+        PTAnnotationCreateFreeTextToolKey : @(PTExtendedAnnotTypeFreeText),
+        PTAnnotationCreateCalloutToolKey : @(PTExtendedAnnotTypeCallout),
+        PTAnnotationCreateSignatureToolKey : @(PTExtendedAnnotTypeSignature),
+        PTAnnotationCreateLineToolKey : @(PTExtendedAnnotTypeLine),
+        PTAnnotationCreateArrowToolKey : @(PTExtendedAnnotTypeArrow),
+        PTAnnotationCreatePolylineToolKey : @(PTExtendedAnnotTypePolyline),
+        PTAnnotationCreateStampToolKey : @(PTExtendedAnnotTypeImageStamp),
+        PTAnnotationCreateRectangleToolKey : @(PTExtendedAnnotTypeSquare),
+        PTAnnotationCreateEllipseToolKey : @(PTExtendedAnnotTypeCircle),
+        PTAnnotationCreatePolygonToolKey : @(PTExtendedAnnotTypePolygon),
+        PTAnnotationCreatePolygonCloudToolKey : @(PTExtendedAnnotTypeCloudy),
+        PTAnnotationCreateDistanceMeasurementToolKey : @(PTExtendedAnnotTypeRuler),
+        PTAnnotationCreatePerimeterMeasurementToolKey : @(PTExtendedAnnotTypePerimeter),
+        PTAnnotationCreateAreaMeasurementToolKey : @(PTExtendedAnnotTypeArea),
+        PTAnnotationCreateFileAttachmentToolKey : @(PTExtendedAnnotTypeFileAttachment),
+        PTAnnotationCreateSoundToolKey : @(PTExtendedAnnotTypeSound),
+//        @"FormCreateTextField" : @(),
+//        @"FormCreateCheckboxField" : @(),
+//        @"FormCreateRadioField" : @(),
+//        @"FormCreateComboBoxField" : @(),
+//        @"FormCreateListBoxField" : @()
+    };
+
+    PTExtendedAnnotType annotType = PTExtendedAnnotTypeUnknown;
+
+    if( typeMap[annotationName] )
+    {
+        annotType = [typeMap[annotationName] unsignedIntValue];
+    }
+
+    return annotType;
+
 }
 
 #pragma mark - <PTPDFViewCtrlDelegate>
@@ -423,6 +710,8 @@
 
 - (void)initViewerSettings
 {
+    _longPressMenuEnabled = true;
+    
     _annotationToolbarSwitcherHidden = NO;
     _topToolbarsHidden = NO;
     _topAppNavBarHidden = NO;
@@ -437,6 +726,16 @@
 {
     // nav icon
     [self applyNavIcon];
+    
+    // thumbnail filter mode
+    [self applyHideThumbnailFilterModes];
+
+    // Use Apple Pencil as a pen
+    Class pencilTool = [PTFreeHandCreate class];
+    if (@available(iOS 13.1, *)) {
+        pencilTool = [PTPencilDrawingCreate class];
+    }
+    self.toolManager.pencilTool = self.useStylusAsPen ? pencilTool : [PTPanTool class];
     
     const BOOL hideNav = (self.topAppNavBarHidden || self.topToolbarsHidden);
     self.controlsHidden = hideNav;
@@ -488,6 +787,24 @@
                                             forSizeClass:UIUserInterfaceSizeClassRegular
                                                 animated:NO];
     }
+}
+
+- (void)applyHideThumbnailFilterModes
+{
+    NSMutableArray <PTFilterMode>* filterModeArray = [[NSMutableArray alloc] init];
+
+    [filterModeArray addObject:PTThumbnailFilterAll];
+    
+    if (![self.hideThumbnailFilterModes containsObject:PTAnnotatedFilterModeKey]) {
+        [filterModeArray addObject:PTThumbnailFilterAnnotated];
+    }
+    
+    if (![self.hideThumbnailFilterModes containsObject:PTBookmarkedFilterModeKey]) {
+        [filterModeArray addObject:PTThumbnailFilterBookmarked];
+    }
+
+    NSOrderedSet* filterModeSet = [[NSOrderedSet alloc] initWithArray:filterModeArray];
+    self.thumbnailsViewController.filterModes = filterModeSet;
 }
 
 - (void)applyToolGroupSettings
@@ -571,6 +888,7 @@
         //PTAnnotationToolbarFillAndSign: [NSNull null], // not implemented
         //PTAnnotationToolbarPrepareForm: [NSNull null], // not implemented
         PTAnnotationToolbarMeasure: toolGroupManager.measureItemGroup,
+        //PTAnnotationToolbarRedaction: [NSNull null], // not implemented
         PTAnnotationToolbarPens: toolGroupManager.pensItemGroup,
         PTAnnotationToolbarFavorite: toolGroupManager.favoritesItemGroup,
     };
@@ -616,6 +934,70 @@
     toolGroup.identifier = toolbarId;
 
     return toolGroup;
+}
+
+- (void)setHideAnnotMenuTools:(NSArray<NSNumber *> *)hideAnnotMenuTools
+{
+    _hideAnnotMenuTools = [hideAnnotMenuTools copy];
+
+    NSMutableArray* hideMenuTools = [[NSMutableArray alloc] init];
+
+    for (NSString* hideMenuTool in hideAnnotMenuTools) {
+        PTExtendedAnnotType toolTypeToHide = [self convertAnnotationNameToAnnotType:hideMenuTool];
+        [hideMenuTools addObject:@(toolTypeToHide)];
+    }
+
+    _hideAnnotMenuToolsAnnotTypes = [hideMenuTools copy];
+}
+
+- (void)setAutoSaveEnabled:(BOOL)autoSaveEnabled
+{
+    self.automaticallySavesDocument = autoSaveEnabled;
+}
+
+- (BOOL)isAutoSaveEnabled
+{
+    return self.automaticallySavesDocument;
+}
+
+- (void)setPageChangesOnTap:(BOOL)pageChangesOnTap
+{
+    self.changesPageOnTap = pageChangesOnTap;
+}
+
+- (BOOL)pageChangesOnTap
+{
+    return self.changesPageOnTap;
+}
+
+- (void)setShowSavedSignatures:(BOOL)showSavedSignatures
+{
+    self.toolManager.showDefaultSignature = showSavedSignatures;
+}
+
+- (BOOL)showSavedSignatures
+{
+    return self.toolManager.showDefaultSignature;
+}
+
+- (void)setSignSignatureFieldsWithStamps:(BOOL)signSignatureFieldsWithStamps
+{
+    self.toolManager.signatureAnnotationOptions.signSignatureFieldsWithStamps = signSignatureFieldsWithStamps;
+}
+
+- (BOOL)signSignatureFieldsWithStamps
+{
+    return self.toolManager.signatureAnnotationOptions.signSignatureFieldsWithStamps;
+}
+
+- (void)setSelectAnnotationAfterCreation:(BOOL)selectAnnotationAfterCreation
+{
+    self.toolManager.selectAnnotationAfterCreation = selectAnnotationAfterCreation;
+}
+
+- (BOOL)selectAnnotationAfterCreation
+{
+    return self.toolManager.selectAnnotationAfterCreation;
 }
 
 - (void)setThumbnailEditingEnabled:(BOOL)thumbnailEditingEnabled
