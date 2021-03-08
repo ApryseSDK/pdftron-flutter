@@ -13,7 +13,6 @@ import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
-import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
@@ -41,6 +40,14 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
     private ViewerImpl mImpl = new ViewerImpl(this);
 
+    private static ArrayList<String> mLongPressMenuItems;
+    private static ArrayList<String> mLongPressMenuOverrideItems;
+    private static ArrayList<String> mHideAnnotationMenuTools;
+    private static ArrayList<String> mAnnotationMenuItems;
+    private static ArrayList<String> mAnnotationMenuOverrideItems;
+    private static boolean mAutoSaveEnabled;
+    private static boolean mUseStylusAsPen;
+    private static boolean mSignSignatureFieldWithStamps;
     private static boolean mShowLeadingNavButton;
 
     private static FlutterDocumentActivity sCurrentActivity;
@@ -59,6 +66,8 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     private static AtomicReference<EventSink> sAnnotationChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sAnnotationsSelectionEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sFormFieldChangedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sLongPressMenuPressedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sAnnotationMenuPressedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sLeadingNavButtonPressedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sPageChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sZoomChangedEventEmitter = new AtomicReference<>();
@@ -77,6 +86,15 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
         mIsBase64 = configInfo.isBase64();
         mInitialPageNumber = configInfo.getInitialPageNumber();
+        mLongPressMenuItems = configInfo.getLongPressMenuItems();
+        mLongPressMenuOverrideItems = configInfo.getLongPressMenuOverrideItems();
+        mHideAnnotationMenuTools = configInfo.getHideAnnotationMenuTools();
+        mAnnotationMenuItems = configInfo.getAnnotationMenuItems();
+        mAnnotationMenuOverrideItems = configInfo.getAnnotationMenuOverrideItems();
+
+        mAutoSaveEnabled = configInfo.isAutoSaveEnabled();
+        mUseStylusAsPen = configInfo.isUseStylusAsPen();
+        mSignSignatureFieldWithStamps = configInfo.isSignSignatureFieldWithStamps();
 
         mShowLeadingNavButton = configInfo.isShowLeadingNavButton();
 
@@ -177,6 +195,14 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sFormFieldChangedEventEmitter.set(emitter);
     }
 
+    public static void setLongPressMenuPressedEventEmitter(EventSink emitter) {
+        sLongPressMenuPressedEventEmitter.set(emitter);
+    }
+
+    public static void setAnnotationMenuPressedEventEmitter(EventSink emitter) {
+        sAnnotationMenuPressedEventEmitter.set(emitter);
+    }
+
     public static void setLeadingNavButtonPressedEventEmitter(EventSink emitter) {
         sLeadingNavButtonPressedEventEmitter.set(emitter);
     }
@@ -232,6 +258,15 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     }
 
     @Override
+    public EventSink getLongPressMenuPressedEventEmitter() {
+        return sLongPressMenuPressedEventEmitter.get();
+    }
+
+    @Override
+    public EventSink getAnnotationMenuPressedEventEmitter() {
+        return sAnnotationMenuPressedEventEmitter.get();
+    }
+
     public EventSink getLeadingNavButtonPressedEventEmitter() {
         return sLeadingNavButtonPressedEventEmitter.get();
     }
@@ -257,6 +292,31 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     }
 
     @Override
+    public ArrayList<String> getLongPressMenuItems() {
+        return mLongPressMenuItems;
+    }
+
+    @Override
+    public ArrayList<String> getLongPressMenuOverrideItems() {
+        return mLongPressMenuOverrideItems;
+    }
+
+    @Override
+    public ArrayList<String> getHideAnnotationMenuTools() {
+        return mHideAnnotationMenuTools;
+    }
+
+    @Override
+    public ArrayList<String> getAnnotationMenuItems() {
+        return mAnnotationMenuItems;
+    }
+
+    @Override
+    public ArrayList<String> getAnnotationMenuOverrideItems() {
+        return mAnnotationMenuOverrideItems;
+    }
+
+    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -276,6 +336,8 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sAnnotationChangedEventEmitter.set(null);
         sAnnotationsSelectionEventEmitter.set(null);
         sFormFieldChangedEventEmitter.set(null);
+        sLongPressMenuPressedEventEmitter.set(null);
+        sAnnotationMenuPressedEventEmitter.set(null);
         sLeadingNavButtonPressedEventEmitter.set(null);
         sPageChangedEventEmitter.set(null);
         sZoomChangedEventEmitter.set(null);
@@ -295,6 +357,18 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         super.onOpenDocError();
 
         return PluginUtils.handleOpenDocError(this);
+    }
+
+    public boolean isAutoSaveEnabled() {
+        return mAutoSaveEnabled;
+    }
+
+    public boolean isUseStylusAsPen() {
+        return mUseStylusAsPen;
+    }
+
+    public boolean isSignSignatureFieldWithStamps() {
+        return mSignSignatureFieldWithStamps;
     }
 
     @Override
