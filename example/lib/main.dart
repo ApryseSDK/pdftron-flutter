@@ -110,7 +110,7 @@ class _ViewerState extends State<Viewer> {
     }
 
     try {
-      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
+      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
     } on PlatformException catch (e) {
       print("Failed to importBookmarkJson '${e.message}'.");
     }

@@ -5,6 +5,7 @@ class Config {
   var _disabledTools;
   var _multiTabEnabled;
   var _customHeaders;
+  var _hideThumbnailFilterModes;
   var _longPressMenuEnabled;
   var _longPressMenuItems;
   var _overrideLongPressMenuBehavior;
@@ -38,6 +39,7 @@ class Config {
   set disabledTools(List value) => _disabledTools = value;
   set multiTabEnabled(bool value) => _multiTabEnabled = value;
   set customHeaders(Map<String, String> value) => _customHeaders = value;
+  set hideThumbnailFilterModes(List value) => _hideThumbnailFilterModes = value;
   set longPressMenuEnabled(bool value) => _longPressMenuEnabled = value;
   set longPressMenuItems(List value) => _longPressMenuItems = value;
   set overrideLongPressMenuBehavior(List value) =>
@@ -78,6 +80,7 @@ class Config {
         _disabledTools = json['disabledTools'],
         _multiTabEnabled = json['multiTabEnabled'],
         _customHeaders = json['customHeaders'],
+        _hideThumbnailFilterModes = json['hideThumbnailFilterModes'],
         _longPressMenuEnabled = json['longPressMenuEnabled'],
         _longPressMenuItems = json['longPressMenuItems'],
         _overrideLongPressMenuBehavior = json['overrideLongPressMenuBehavior'],
@@ -111,6 +114,7 @@ class Config {
         'disabledTools': _disabledTools,
         'multiTabEnabled': _multiTabEnabled,
         'customHeaders': _customHeaders,
+        'hideThumbnailFilterModes': _hideThumbnailFilterModes,
         'longPressMenuEnabled': _longPressMenuEnabled,
         'longPressMenuItems': _longPressMenuItems,
         'overrideLongPressMenuBehavior': _overrideLongPressMenuBehavior,
