@@ -13,6 +13,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -387,6 +388,14 @@ public class JSONUtils {
     public static JSONObject getJSONObjectFromJSONObject(JSONObject jsonObject, String key) throws JSONException {
         String jsonObjectString = jsonObject.getString(key);
         return new JSONObject(jsonObjectString);
+    }
+
+    public static ArrayList<String> convertJSONArrayToArrayList(JSONArray jsonArray) throws JSONException {
+        ArrayList<String> arrayList = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            arrayList.add(jsonArray.getString(i));
+        }
+        return arrayList;
     }
 
     // this function returns true iff the key exists and does not have a null value associated with it
