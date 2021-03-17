@@ -682,10 +682,10 @@
             ^{
                 documentController.exportButtonHidden = YES;
             },
-//        PTEditPagesButtonKey:
-//            ^{
-//
-//            },
+        PTEditPagesButtonKey:
+            ^{
+                documentController.addPagesButtonHidden = YES;
+            },
 //        PTPrintButtonKey:
 //            ^{
 //
