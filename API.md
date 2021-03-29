@@ -858,7 +858,7 @@ config.hideAnnotationMenu = [Tools.annotationCreateArrow, Tools.annotationEraser
 ```
 
 #### annotationMenuItems
-array of [AnnotationMenuItems](./lib/constants/dart) constants, default contains all items
+array of [AnnotationMenuItems](./lib/constants.dart) constants, default contains all items
 
 Defines the menu items that can show when an annotation is selected. 
 
@@ -867,7 +867,7 @@ config.annotationMenuItems = [AnnotationMenuItems.search, AnnotationMenuItems.sh
 ```
 
 #### overrideAnnotationMenuBehavior
-array of [AnnotationMenuItems](./lib/constants/dart) constants, defaults to none
+array of [AnnotationMenuItems](./lib/constants.dart) constants, defaults to none
 
 Defines the menu items that will skip default behavior when pressed. They will still be displayed in the annotation menu, and the event handler [`startAnnotationMenuPressedListener`](#startAnnotationMenuPressedListener) will be called where custom behavior can be implemented.
 
