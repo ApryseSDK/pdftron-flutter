@@ -5,6 +5,11 @@ class Config {
   var _disabledTools;
   var _multiTabEnabled;
   var _customHeaders;
+  var _fitMode;
+  var _layoutMode;
+  var _initialPageNumber;
+  var _isBase64String;
+  var _base64FileExtension;
   var _hideThumbnailFilterModes;
   var _longPressMenuEnabled;
   var _longPressMenuItems;
@@ -41,6 +46,11 @@ class Config {
   set disabledTools(List value) => _disabledTools = value;
   set multiTabEnabled(bool value) => _multiTabEnabled = value;
   set customHeaders(Map<String, String> value) => _customHeaders = value;
+  set fitMode(String value) => _fitMode = value;
+  set layoutMode(String value) => _layoutMode = value;
+  set initialPageNumber(int value) => _initialPageNumber = value;
+  set isBase64String(bool value) => _isBase64String = value;
+  set base64FileExtension(String value) => _base64FileExtension = value;
   set hideThumbnailFilterModes(List value) => _hideThumbnailFilterModes = value;
   set longPressMenuEnabled(bool value) => _longPressMenuEnabled = value;
   set longPressMenuItems(List value) => _longPressMenuItems = value;
@@ -85,6 +95,11 @@ class Config {
         _disabledTools = json['disabledTools'],
         _multiTabEnabled = json['multiTabEnabled'],
         _customHeaders = json['customHeaders'],
+        _fitMode = json['fitMode'],
+        _layoutMode = json['layoutMode'],
+        _initialPageNumber = json['initialPageNumber'],
+        _isBase64String = json['isBase64String'],
+        _base64FileExtension = json['base64FileExtension'],
         _hideThumbnailFilterModes = json['hideThumbnailFilterModes'],
         _longPressMenuEnabled = json['longPressMenuEnabled'],
         _longPressMenuItems = json['longPressMenuItems'],
@@ -122,6 +137,11 @@ class Config {
         'disabledTools': _disabledTools,
         'multiTabEnabled': _multiTabEnabled,
         'customHeaders': _customHeaders,
+        'fitMode': _fitMode,
+        'layoutMode': _layoutMode,
+        'initialPageNumber': _initialPageNumber,
+        'isBase64String': _isBase64String,
+        'base64FileExtension': _base64FileExtension,
         'hideThumbnailFilterModes': _hideThumbnailFilterModes,
         'longPressMenuEnabled': _longPressMenuEnabled,
         'longPressMenuItems': _longPressMenuItems,

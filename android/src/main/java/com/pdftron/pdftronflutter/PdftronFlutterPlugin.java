@@ -4,11 +4,8 @@ import android.content.Context;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFNet;
-import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdftronflutter.factories.DocumentViewFactory;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
-
-import java.util.ArrayList;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
@@ -47,8 +44,6 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PASSWORD;
 public class PdftronFlutterPlugin implements MethodCallHandler {
 
     private final Context mContext;
-
-    private ArrayList<ToolManager.ToolMode> mDisabledTools = new ArrayList<>();
 
     public PdftronFlutterPlugin(Context context) {
         mContext = context;

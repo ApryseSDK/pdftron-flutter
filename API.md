@@ -118,6 +118,21 @@ path | String | the location of the saved document
 var path = await PdftronFlutter.saveDocument();
 ```
 
+#### getDocumentPath
+Returns the path of the current document.
+
+Returns a Future.
+
+Future Parameters:
+
+Name | Type | Description
+--- | ---| ---
+path | String | the document path
+
+```dart
+var path = await PdftronFlutter.getDocumentPath();
+```
+
 ### Viewer UI Configuration
 
 #### setLeadingNavButtonIcon
@@ -190,6 +205,23 @@ print("Tool committed: $committed");
 ```
 
 ### Page
+
+#### setCurrentPage
+
+Sets current page of the document. Page numbers are 1-indexed.
+
+Returns a Future.
+
+Future Parameters:
+
+Name | Type | Description
+-- | -- | --
+success | bool | whether the setting process is successful.
+
+```dart
+var setResult = await controller.setCurrentPage(5);
+print('Page set ' + setResult ? 'successfully' : 'unsuccessfully');
+```
 
 #### getPageCount
 Gets the total number of pages in the currently displayed document.
@@ -749,6 +781,22 @@ Defines whether the viewer is read-only. If true, the UI will not allow the user
 config.readOnly = true;
 ```
 
+#### isBase64String
+bool, defaults to false.
+
+If true, document in [openDocument](#openDocument) will be treated as a base64 string.
+
+When viewing a document initialized with a base64 string (i.e. a memory buffer), a temporary file is created on Android, but not on iOS. (If you need access to a file-backed PDF on iOS, save the base64 string to disk, and open the file located at that path.)
+
+```dart
+config.isBase64String = true;
+```
+
+#### base64FileExtension
+String, defaults to `.pdf`, required if using base64 string of a non-pdf file.
+
+Defines the file extension for the base64 string in document, if [isBase64String](#isBase64String) is true.
+
 ### UI Customization
 
 #### disabledElements
@@ -838,6 +886,37 @@ Defines whether to hide the bottom toolbar for the current viewer.
 
 ```dart
 config.hideBottomToolbar = true;
+```
+
+### Layout
+
+#### fitMode
+one of the [FitModes](./lib/constants.dart) constants, default value is 'FitWidth'.
+
+Defines the fit mode (default zoom level) of the viewer.
+
+```dart
+config.fitMode = FitModes.fitHeight;
+```
+
+#### layoutMode
+one of the [LayoutModes](./lib/constants.dart) constants, default value is 'Continuous'.
+
+Defines the layout mode of the viewer.
+
+```dart
+config.layoutMode = LayoutModes.facingCover;
+```
+
+### Page
+
+#### initialPageNumber
+number, optional
+
+Defines the initial page number that viewer displays when the document is opened. Note that page numbers are 1-indexed.
+
+```dart
+config.initialPageNumber = 5;
 ```
 
 ### Page

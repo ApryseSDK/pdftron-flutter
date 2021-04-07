@@ -10,6 +10,7 @@ import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.ToolManager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -29,7 +30,7 @@ public interface ViewerComponent {
     ArrayList<String> getAnnotationMenuItems();
 
     ArrayList<String> getAnnotationMenuOverrideItems();
-    
+
     boolean isAutoSaveEnabled();
 
     boolean isUseStylusAsPen();
@@ -37,6 +38,12 @@ public interface ViewerComponent {
     boolean isSignSignatureFieldWithStamps();
 
     void setSelectedAnnots(HashMap<Annot, Integer> selectedAnnots);
+
+    int getInitialPageNumber();
+
+    boolean isBase64();
+
+    ArrayList<File> getTempFiles();
 
     EventChannel.EventSink getExportAnnotationCommandEventEmitter();
 

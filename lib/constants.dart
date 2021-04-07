@@ -20,6 +20,8 @@ class Functions {
   static const getPageCount = "getPageCount";
   static const handleBackButton = "handleBackButton";
   static const getPageCropBox = "getPageCropBox";
+  static const setCurrentPage = "setCurrentPage";
+  static const getDocumentPath = "getDocumentPath";
   static const setToolMode = "setToolMode";
   static const setValuesForFields = "setValuesForFields";
   static const setFlagForFields = "setFlagForFields";
@@ -154,6 +156,24 @@ class Tools {
 
   // iOS only.
   static const pencilKitDrawing = 'PencilKitDrawing';
+}
+
+// FitModes define all fit modes in the viewer
+class FitModes {
+  static const fitPage = 'FitPage';
+  static const fitWidth = 'FitWidth';
+  static const fitHeight = 'FitHeight';
+  static const zoom = 'Zoom';
+}
+
+// LayoutModes define all layout modes in the viewer
+class LayoutModes {
+  static const single = 'Single';
+  static const continuous = 'Continuous';
+  static const facing = 'Facing';
+  static const facingContinuous = 'FacingContinuous';
+  static const facingCover = 'FacingCover';
+  static const facingCoverContinuous = 'FacingCoverContinuous';
 }
 
 // FieldFlags define the property flags for a form field

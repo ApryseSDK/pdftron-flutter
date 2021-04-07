@@ -41,6 +41,7 @@ import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 import com.pdftron.pdftronflutter.R;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
@@ -85,6 +86,11 @@ public class PluginUtils {
     public static final String KEY_CONFIG_DISABLED_TOOLS = "disabledTools";
     public static final String KEY_CONFIG_MULTI_TAB_ENABLED = "multiTabEnabled";
     public static final String KEY_CONFIG_CUSTOM_HEADERS = "customHeaders";
+    public static final String KEY_CONFIG_FIT_MODE = "fitMode";
+    public static final String KEY_CONFIG_LAYOUT_MODE = "layoutMode";
+    public static final String KEY_CONFIG_INITIAL_PAGE_NUMBER = "initialPageNumber";
+    public static final String KEY_CONFIG_IS_BASE_64_STRING = "isBase64String";
+    public static final String KEY_CONFIG_BASE_64_FILE_EXTENSION = "base64FileExtension";
     public static final String KEY_CONFIG_HIDE_THUMBNAIL_FILTER_MODES = "hideThumbnailFilterModes";
     public static final String KEY_CONFIG_LONG_PRESS_MENU_ENABLED = "longPressMenuEnabled";
     public static final String KEY_CONFIG_LONG_PRESS_MENU_ITEMS = "longPressMenuItems";
@@ -178,6 +184,8 @@ public class PluginUtils {
     public static final String FUNCTION_GET_PAGE_COUNT = "getPageCount";
     public static final String FUNCTION_HANDLE_BACK_BUTTON = "handleBackButton";
     public static final String FUNCTION_GET_PAGE_CROP_BOX = "getPageCropBox";
+    public static final String FUNCTION_SET_CURRENT_PAGE = "setCurrentPage";
+    public static final String FUNCTION_GET_DOCUMENT_PATH = "getDocumentPath";
     public static final String FUNCTION_SET_TOOL_MODE = "setToolMode";
     public static final String FUNCTION_SET_FLAG_FOR_FIELDS = "setFlagForFields";
     public static final String FUNCTION_SET_VALUES_FOR_FIELDS = "setValuesForFields";
@@ -282,6 +290,18 @@ public class PluginUtils {
     public static final String ANNOTATION_FLAG_READ_ONLY = "readOnly";
     public static final String ANNOTATION_FLAG_TOGGLE_NO_VIEW = "toggleNoView";
 
+    private static final String LAYOUT_MODE_SINGLE = "Single";
+    private static final String LAYOUT_MODE_CONTINUOUS = "Continuous";
+    private static final String LAYOUT_MODE_FACING = "facing";
+    private static final String LAYOUT_MODE_FACING_CONTINUOUS = "facingContinuous";
+    private static final String LAYOUT_MODE_FACING_OVER = "facingOver";
+    private static final String LAYOUT_MODE_FACING_OVER_CONTINUOUS = "facingOverContinuous";
+
+    private static final String FIT_MODE_FIT_PAGE = "FitPage";
+    private static final String FIT_MODE_FIT_WIDTH = "FitWidth";
+    private static final String FIT_MODE_FIT_HEIGHT = "FitHeight";
+    private static final String FIT_MODE_ZOOM = "Zoom";
+
     public static final String THUMBNAIL_FILTER_MODE_ANNOTATED = "annotated";
     public static final String THUMBNAIL_FILTER_MODE_BOOKMARKED = "bookmarked";
 
@@ -378,6 +398,10 @@ public class PluginUtils {
     public static final String TOOLBAR_KEY_ITEMS = "items";
 
     public static class ConfigInfo {
+        private int initialPageNumber;
+        private boolean isBase64;
+        private String cacheDir;
+        private File tempFile;
         private JSONObject customHeaderJson;
         private Uri fileUri;
         private ArrayList<String> longPressMenuItems;
@@ -393,6 +417,10 @@ public class PluginUtils {
         private String tabTitle;
 
         public ConfigInfo() {
+            this.initialPageNumber = -1;
+            this.isBase64 = false;
+            this.cacheDir = null;
+            this.tempFile = null;
             this.customHeaderJson = null;
             this.fileUri = null;
             this.longPressMenuItems = null;
@@ -406,6 +434,22 @@ public class PluginUtils {
             this.showLeadingNavButton = true;
             this.actionOverrideItems = null;
             this.tabTitle = null;
+        }
+
+        public void setInitialPageNumber(int initialPageNumber) {
+            this.initialPageNumber = initialPageNumber;
+        }
+
+        public void setIsBase64(boolean isBase64) {
+            this.isBase64 = isBase64;
+        }
+
+        public void setCacheDir(String cacheDir) {
+            this.cacheDir = cacheDir;
+        }
+
+        public void setTempFile(File tempFile) {
+            this.tempFile = tempFile;
         }
 
         public void setCustomHeaderJson(JSONObject customHeaderJson) {
@@ -435,7 +479,7 @@ public class PluginUtils {
         public void setAnnotationMenuOverrideItems(ArrayList<String> annotationMenuOverrideItems) {
             this.annotationMenuOverrideItems = annotationMenuOverrideItems;
         }
-        
+
         public void setAutoSaveEnabled(boolean autoSaveEnabled) {
             this.autoSaveEnabled = autoSaveEnabled;
         }
@@ -458,6 +502,22 @@ public class PluginUtils {
 
         public void setTabTitle(String tabTitle) {
             this.tabTitle = tabTitle;
+        }
+
+        public int getInitialPageNumber() {
+            return initialPageNumber;
+        }
+
+        public boolean isBase64() {
+            return isBase64;
+        }
+
+        public String getCacheDir() {
+            return cacheDir;
+        }
+
+        public File getTempFile() {
+            return tempFile;
         }
 
         public JSONObject getCustomHeaderJson() {
@@ -487,7 +547,7 @@ public class PluginUtils {
         public ArrayList<String> getAnnotationMenuOverrideItems() {
             return annotationMenuOverrideItems;
         }
-        
+
         public boolean isAutoSaveEnabled() {
             return autoSaveEnabled;
         }
@@ -517,13 +577,22 @@ public class PluginUtils {
                                                 @NonNull PDFViewCtrlConfig pdfViewCtrlConfig, @NonNull String document, @NonNull Context context,
                                                 String configStr) {
 
+        builder
+                .maximumTabCount(Integer.MAX_VALUE)
+                .multiTabEnabled(false)
+                .showCloseTabOption(false)
+                .useSupportActionBar(false)
+                .skipReadOnlyCheck(true);
+
         ConfigInfo configInfo = new ConfigInfo();
 
         toolManagerBuilder.setOpenToolbar(true);
         ArrayList<ToolManager.ToolMode> disabledTools = new ArrayList<>();
 
         boolean isBase64 = false;
+        String base64FileExtension = null;
         String cacheDir = context.getCacheDir().getAbsolutePath();
+        configInfo.setCacheDir(cacheDir);
 
         if (configStr != null && !configStr.equals("null")) {
             try {
@@ -543,6 +612,27 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_CUSTOM_HEADERS)) {
                     JSONObject customHeaderJson = configJson.getJSONObject(KEY_CONFIG_CUSTOM_HEADERS);
                     configInfo.setCustomHeaderJson(customHeaderJson);
+                }
+                if (!configJson.isNull(KEY_CONFIG_FIT_MODE)) {
+                    String fitString = configJson.getString(KEY_CONFIG_FIT_MODE);
+                    PDFViewCtrl.PageViewMode fitMode = convStringToFitMode(fitString);
+                    pdfViewCtrlConfig.setPageViewMode(fitMode);
+                }
+                if (!configJson.isNull(KEY_CONFIG_LAYOUT_MODE)) {
+                    String layoutString = configJson.getString(KEY_CONFIG_LAYOUT_MODE);
+                    String layoutMode = convStringToLayoutMode(layoutString);
+                    PdfViewCtrlSettingsManager.updateViewMode(context, layoutMode);
+                }
+                if (!configJson.isNull(KEY_CONFIG_INITIAL_PAGE_NUMBER)) {
+                    int initialPageNumber = configJson.getInt(KEY_CONFIG_INITIAL_PAGE_NUMBER);
+                    configInfo.setInitialPageNumber(initialPageNumber);
+                }
+                if (!configJson.isNull(KEY_CONFIG_IS_BASE_64_STRING)) {
+                    isBase64 = configJson.getBoolean(KEY_CONFIG_IS_BASE_64_STRING);
+                    configInfo.setIsBase64(isBase64);
+                }
+                if (!configJson.isNull(KEY_CONFIG_BASE_64_FILE_EXTENSION)) {
+                    base64FileExtension = configJson.getString(KEY_CONFIG_BASE_64_FILE_EXTENSION);
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_THUMBNAIL_FILTER_MODES)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_HIDE_THUMBNAIL_FILTER_MODES);
@@ -692,7 +782,7 @@ public class PluginUtils {
             }
         }
 
-        final Uri fileUri = getUri(context, document, isBase64);
+        final Uri fileUri = getUri(context, document, isBase64, base64FileExtension);
         configInfo.setFileUri(fileUri);
 
         if (fileUri != null) {
@@ -704,11 +794,20 @@ public class PluginUtils {
                     toolManagerBuilder.disableToolModes(modes);
                 }
             }
+
+//        TODO: ViewModePickerItems
+//        if (mViewModePickerItems.size() > 0) {
+//            builder = builder.hideViewModeItems(mViewModePickerItems.toArray(new ViewModePickerDialogFragment.ViewModePickerItems[0]));
+//        }
+
+            if (isBase64 && fileUri.getPath() != null) {
+                File tempFile = new File(fileUri.getPath());
+                configInfo.setTempFile(tempFile);
+            }
         }
 
         builder.pdfViewCtrlConfig(pdfViewCtrlConfig)
                 .toolManagerBuilder(toolManagerBuilder);
-
         return configInfo;
     }
 
@@ -764,14 +863,14 @@ public class PluginUtils {
         }
     }
 
-    private static Uri getUri(Context context, String path, boolean isBase64) {
+    private static Uri getUri(Context context, String path, boolean isBase64, String base64FileExtension) {
         if (context == null || path == null) {
             return null;
         }
         try {
             if (isBase64) {
                 byte[] data = Base64.decode(path, Base64.DEFAULT);
-                File tempFile = File.createTempFile("tmp", ".pdf");
+                File tempFile = File.createTempFile("tmp", base64FileExtension == null ? ".pdf" : base64FileExtension);
                 FileOutputStream fos = null;
                 try {
                     fos = new FileOutputStream(tempFile);
@@ -804,6 +903,7 @@ public class PluginUtils {
         }
         return null;
     }
+
 
     private static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
 
@@ -960,6 +1060,38 @@ public class PluginUtils {
             mode = ToolManager.ToolMode.FORM_LIST_BOX_CREATE;
         }
         return mode;
+    }
+
+    private static String convStringToLayoutMode(String layoutString) {
+        String layoutMode = null;
+        if (LAYOUT_MODE_SINGLE.equals(layoutString)) {
+            layoutMode = PdfViewCtrlSettingsManager.KEY_PREF_VIEWMODE_SINGLEPAGE_VALUE;
+        } else if (LAYOUT_MODE_CONTINUOUS.equals(layoutString)) {
+            layoutMode = PdfViewCtrlSettingsManager.KEY_PREF_VIEWMODE_CONTINUOUS_VALUE;
+        } else if (LAYOUT_MODE_FACING.equals(layoutString)) {
+            layoutMode = PdfViewCtrlSettingsManager.KEY_PREF_VIEWMODE_FACING_VALUE;
+        } else if (LAYOUT_MODE_FACING_CONTINUOUS.equals(layoutString)) {
+            layoutMode = PdfViewCtrlSettingsManager.KEY_PREF_VIEWMODE_FACING_CONT_VALUE;
+        } else if (LAYOUT_MODE_FACING_OVER.equals(layoutString)) {
+            layoutMode = PdfViewCtrlSettingsManager.KEY_PREF_VIEWMODE_FACINGCOVER_VALUE;
+        } else if (LAYOUT_MODE_FACING_OVER_CONTINUOUS.equals(layoutString)) {
+            layoutMode = PdfViewCtrlSettingsManager.KEY_PREF_VIEWMODE_FACINGCOVER_CONT_VALUE;
+        }
+        return layoutMode;
+    }
+
+    private static PDFViewCtrl.PageViewMode convStringToFitMode(String fitString) {
+        PDFViewCtrl.PageViewMode fitMode = null;
+        if (FIT_MODE_FIT_PAGE.equals(fitString)) {
+            fitMode = PDFViewCtrl.PageViewMode.FIT_PAGE;
+        } else if (FIT_MODE_FIT_WIDTH.equals(fitString)) {
+            fitMode = PDFViewCtrl.PageViewMode.FIT_WIDTH;
+        } else if (FIT_MODE_FIT_HEIGHT.equals(fitString)) {
+            fitMode = PDFViewCtrl.PageViewMode.FIT_HEIGHT;
+        } else if (FIT_MODE_ZOOM.equals(fitString)) {
+            fitMode = PDFViewCtrl.PageViewMode.ZOOM;
+        }
+        return fitMode;
     }
 
     @Nullable
@@ -1548,6 +1680,19 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_SET_CURRENT_PAGE: {
+                checkFunctionPrecondition(component);
+                Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
+                if (pageNumber != null) {
+                    setCurrentPage(pageNumber, result, component);
+                }
+                break;
+            }
+            case FUNCTION_GET_DOCUMENT_PATH: {
+                checkFunctionPrecondition(component);
+                getDocumentPath(result, component);
+                break;
+            }
             case FUNCTION_SET_TOOL_MODE: {
                 checkFunctionPrecondition(component);
                 String toolModeString = call.argument(KEY_TOOL_MODE);
@@ -2018,10 +2163,21 @@ public class PluginUtils {
     private static void saveDocument(MethodChannel.Result result, ViewerComponent component) {
         PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
         if (pdfViewCtrlTabFragment != null) {
-            pdfViewCtrlTabFragment.setSavingEnabled(true);
-            pdfViewCtrlTabFragment.save(false, true, true);
             pdfViewCtrlTabFragment.setSavingEnabled(component.isAutoSaveEnabled());
-            result.success(pdfViewCtrlTabFragment.getFilePath());
+            pdfViewCtrlTabFragment.save(false, true, true);
+
+            // TODO if add auto save flag: getPdfViewCtrlTabFragment().setSavingEnabled(mAutoSaveEnabled);
+            if (component.isBase64()) {
+                try {
+                    byte[] data = FileUtils.readFileToByteArray(pdfViewCtrlTabFragment.getFile());
+                    result.success(Base64.encodeToString(data, Base64.DEFAULT));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    result.success("");
+                }
+            } else {
+                result.success(pdfViewCtrlTabFragment.getFilePath());
+            }
             return;
         }
         result.error("InvalidState", "Activity not attached", null);
@@ -2080,6 +2236,20 @@ public class PluginUtils {
         jsonObject.put(KEY_WIDTH, rect.getWidth());
         jsonObject.put(KEY_HEIGHT, rect.getHeight());
         result.success(jsonObject.toString());
+    }
+
+    private static void setCurrentPage(int pageNumber, MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        result.success(pdfViewCtrl != null && pdfViewCtrl.setCurrentPage(pageNumber));
+    }
+
+    private static void getDocumentPath(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
+        if (pdfViewCtrlTabFragment != null) {
+            result.success(pdfViewCtrlTabFragment.getFilePath());
+        } else {
+            result.error("InvalidState", "Activity not attached", null);
+        }
     }
 
     private static void setFlagForFields(ArrayList<String> fieldNames, int flag, boolean flagValue, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
@@ -2196,6 +2366,12 @@ public class PluginUtils {
     // Events
 
     public static void handleDocumentLoaded(ViewerComponent component) {
+
+        // Set initial page number
+        if (component.getInitialPageNumber() > 0 && component.getPdfViewCtrl() != null) {
+            component.getPdfViewCtrl().setCurrentPage(component.getInitialPageNumber());
+        }
+
         if (component.getPdfViewCtrlTabFragment() != null) {
             if (!component.isAutoSaveEnabled()) {
                 component.getPdfViewCtrlTabFragment().setSavingEnabled(component.isAutoSaveEnabled());
@@ -2258,6 +2434,14 @@ public class PluginUtils {
                 component.getImpl().removeListeners(pdfViewCtrl);
             }
         }
+
+        ArrayList<File> tempFiles = component.getTempFiles();
+
+        for (File file : tempFiles)
+            if (file != null && file.exists()) {
+                file.delete();
+            }
+        tempFiles.clear();
     }
 
     public static void handleLeadingNavButtonPressed(ViewerComponent component) {

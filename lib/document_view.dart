@@ -130,6 +130,15 @@ class DocumentViewController {
     return Rect.fromJson(jsonDecode(cropBoxString));
   }
 
+  Future<bool> setCurrentPage(int pageNumber) {
+    return _channel.invokeMethod(Functions.setCurrentPage,
+        <String, dynamic>{Parameters.pageNumber: pageNumber});
+  }
+
+  Future<String> getDocumentPath() {
+    return _channel.invokeMethod(Functions.getDocumentPath);
+  }
+
   Future<void> setToolMode(String toolMode) {
     return _channel.invokeMethod(Functions.setToolMode,
         <String, dynamic>{Parameters.toolMode: toolMode});

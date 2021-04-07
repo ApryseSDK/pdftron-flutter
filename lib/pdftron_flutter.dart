@@ -121,6 +121,15 @@ class PdftronFlutter {
     return Rect.fromJson(jsonDecode(cropBoxString));
   }
 
+  static Future<bool> setCurrentPage(int pageNumber) {
+    return _channel.invokeMethod(Functions.setCurrentPage,
+        <String, dynamic>{Parameters.pageNumber: pageNumber});
+  }
+
+  static Future<String> getDocumentPath() {
+    return _channel.invokeMethod(Functions.getDocumentPath);
+  }
+
   static Future<void> setToolMode(String toolMode) {
     return _channel.invokeMethod(Functions.setToolMode,
         <String, dynamic>{Parameters.toolMode: toolMode});

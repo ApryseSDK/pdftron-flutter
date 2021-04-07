@@ -13,7 +13,6 @@ import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
-import com.pdftron.pdf.config.ViewerBuilder;
 import com.pdftron.pdf.config.ViewerBuilder2;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.DocumentActivity;
@@ -27,6 +26,7 @@ import com.pdftron.pdftronflutter.helpers.ViewerImpl;
 
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -52,6 +52,12 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     private static ArrayList<String> mActionOverrideItems;
 
     private static FlutterDocumentActivity sCurrentActivity;
+
+    private static ArrayList<File> mTempFiles = new ArrayList<>();
+
+    private static boolean mIsBase64;
+    private static int mInitialPageNumber;
+
     private static AtomicReference<Result> sFlutterLoadResult = new AtomicReference<>();
 
     private static AtomicReference<EventSink> sExportAnnotationCommandEventEmitter = new AtomicReference<>();
@@ -72,12 +78,16 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
     public static void openDocument(Context packageContext, String document, String password, String configStr) {
 
-        ViewerConfig.Builder builder = new ViewerConfig.Builder().multiTabEnabled(false).showCloseTabOption(false);
+        ViewerConfig.Builder builder = new ViewerConfig.Builder();
 
         ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
         PDFViewCtrlConfig pdfViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(packageContext);
         PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(builder, toolManagerBuilder, pdfViewCtrlConfig, document, packageContext, configStr);
 
+        mTempFiles.add(configInfo.getTempFile());
+
+        mIsBase64 = configInfo.isBase64();
+        mInitialPageNumber = configInfo.getInitialPageNumber();
         mLongPressMenuItems = configInfo.getLongPressMenuItems();
         mLongPressMenuOverrideItems = configInfo.getLongPressMenuOverrideItems();
         mHideAnnotationMenuTools = configInfo.getHideAnnotationMenuTools();
@@ -132,6 +142,18 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
             intentBuilder.usingNewUi(true);
             packageContext.startActivity(intentBuilder.build());
         }
+    }
+
+    public int getInitialPageNumber() {
+        return mInitialPageNumber;
+    }
+
+    public boolean isBase64() {
+        return mIsBase64;
+    }
+
+    public ArrayList<File> getTempFiles() {
+        return mTempFiles;
     }
 
     public static void setLeadingNavButtonIcon(String leadingNavButtonIcon) {
