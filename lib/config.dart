@@ -31,6 +31,8 @@ class Config {
   var _thumbnailViewEditingEnabled;
   var _annotationAuthor;
   var _continuousAnnotationEditing;
+  var _annotationPermissionCheckEnabled;
+  var _overrideBehavior;
   var _tabTitle;
 
   Config();
@@ -73,6 +75,9 @@ class Config {
   set annotationAuthor(String value) => _annotationAuthor = value;
   set continuousAnnotationEditing(bool value) =>
       _continuousAnnotationEditing = value;
+  set annotationPermissionCheckEnabled(bool value) =>
+      _annotationPermissionCheckEnabled = value;
+  set overrideBehavior(List<String> value) => _overrideBehavior = value;
   set tabTitle(String value) => _tabTitle = value;
 
   Config.fromJson(Map<String, dynamic> json)
@@ -107,6 +112,9 @@ class Config {
         _thumbnailViewEditingEnabled = json['thumbnailViewEditingEnabled'],
         _annotationAuthor = json['annotationAuthor'],
         _continuousAnnotationEditing = json['continuousAnnotationEditing'],
+        _annotationPermissionCheckEnabled =
+            json['annotationPermissionCheckEnabled'],
+        _overrideBehavior = json['overrideBehavior'],
         _tabTitle = json['tabTitle'];
 
   Map<String, dynamic> toJson() => {
@@ -140,6 +148,8 @@ class Config {
         'thumbnailViewEditingEnabled': _thumbnailViewEditingEnabled,
         'annotationAuthor': _annotationAuthor,
         'continuousAnnotationEditing': _continuousAnnotationEditing,
+        'annotationPermissionCheckEnabled': _annotationPermissionCheckEnabled,
+        'overrideBehavior': _overrideBehavior,
         'tabTitle': _tabTitle,
       };
 }

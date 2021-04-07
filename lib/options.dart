@@ -81,6 +81,15 @@ class Rect {
       return value;
     }
   }
+
+  Map<String, dynamic> toJson() => {
+        'x1': x1,
+        'y1': y1,
+        'x2': x2,
+        'y2': y2,
+        'width': width,
+        'height': height,
+      };
 }
 
 class AnnotFlag {
@@ -116,6 +125,30 @@ class AnnotWithFlag {
 
   Map<String, dynamic> toJson() =>
       {'annotation': jsonEncode(annotation), 'flags': jsonEncode(flags)};
+}
+
+class AnnotProperty {
+  /*
+      Description: The annotation property object
+      Note: some of the properties are markup annotation exclusive, some are not
+  */
+  // not markup exclusive
+  Rect rect;
+  String contents;
+  // markup exclusive
+  String subject;
+  String title;
+  Rect contentRect;
+
+  AnnotProperty();
+
+  Map<String, dynamic> toJson() => {
+        AnnotationProperties.rect: jsonEncode(rect),
+        AnnotationProperties.contents: contents,
+        AnnotationProperties.subject: subject,
+        AnnotationProperties.title: title,
+        AnnotationProperties.contentRect: jsonEncode(rect),
+      };
 }
 
 class CustomToolbar {

@@ -35,6 +35,8 @@ static NSString * const PTReadOnlyKey = @"readOnly";
 static NSString * const PTThumbnailViewEditingEnabledKey = @"thumbnailViewEditingEnabled";
 static NSString * const PTAnnotationAuthorKey = @"annotationAuthor";
 static NSString * const PTContinuousAnnotationEditingKey = @"continuousAnnotationEditing";
+static NSString * const PTAnnotationPermissionCheckEnabledKey = @"annotationPermissionCheckEnabled";
+static NSString * const PTOverrideBehaviorKey = @"overrideBehavior";
 static NSString * const PTTabTitleKey = @"tabTitle";
 
 // tool
@@ -162,6 +164,7 @@ static NSString * const PTFlattenAnnotationsKey = @"flattenAnnotations";
 static NSString * const PTDeleteAnnotationsKey = @"deleteAnnotations";
 static NSString * const PTSelectAnnotationKey = @"selectAnnotation";
 static NSString * const PTSetFlagsForAnnotationsKey = @"setFlagsForAnnotations";
+static NSString * const PTSetPropertiesForAnnotationKey = @"setPropertiesForAnnotation";
 static NSString * const PTImportAnnotationCommandKey = @"importAnnotationCommand";
 static NSString * const PTImportBookmarksKey = @"importBookmarkJson";
 static NSString * const PTSaveDocumentKey = @"saveDocument";
@@ -192,6 +195,7 @@ static NSString * const PTAnnotationListArgumentKey = @"annotations";
 static NSString * const PTFormsOnlyArgumentKey = @"formsOnly";
 static NSString * const PTAnnotationArgumentKey = @"annotation";
 static NSString * const PTAnnotationsWithFlagsArgumentKey = @"annotationsWithFlags";
+static NSString * const PTAnnotationPropertiesArgumentKey = @"annotationProperties";
 static NSString * const PTLeadingNavButtonIconArgumentKey = @"leadingNavButtonIcon";
 
 // event strings
@@ -202,6 +206,7 @@ static NSString * const PTDocumentErrorEventKey = @"document_error_event";
 static NSString * const PTAnnotationChangedEventKey = @"annotation_changed_event";
 static NSString * const PTAnnotationsSelectedEventKey = @"annotations_selected_event";
 static NSString * const PTFormFieldValueChangedEventKey = @"form_field_value_changed_event";
+static NSString * const PTBehaviorActivatedEventKey = @"behavior_activated_event";
 static NSString * const PTLongPressMenuPressedEventKey = @"long_press_menu_pressed_event";
 static NSString * const PTAnnotationMenuPressedEventKey = @"annotation_menu_pressed_event";
 static NSString * const PTLeadingNavButtonPressedEventKey = @"leading_nav_button_pressed_event";
@@ -237,6 +242,19 @@ static NSString * const PTFieldValueKey = @"fieldValue";
 
 static NSString * const PTAnnotPageNumberKey = @"pageNumber";
 static NSString * const PTAnnotIdKey = @"id";
+
+static NSString * const PTContentRectAnnotationPropertyKey = @"contentRect";
+static NSString * const PTContentsAnnotationPropertyKey = @"contents";
+static NSString * const PTSubjectAnnotationPropertyKey = @"subject";
+static NSString * const PTTitleAnnotationPropertyKey = @"title";
+static NSString * const PTRectAnnotationPropertyKey = @"rect";
+
+static NSString * const PTLinkPressLinkAnnotationKey = @"linkPress";
+static NSString * const PTURILinkAnnotationKey = @"URI";
+static NSString * const PTURLLinkAnnotationKey = @"url";
+static NSString * const PTDataLinkAnnotationKey = @"data";
+static NSString * const PTActionLinkAnnotationKey = @"action";
+
 static NSString * const PTFlagListKey = @"flags";
 static NSString * const PTFlagKey = @"flag";
 static NSString * const PTFlagValueKey = @"flagValue";
@@ -288,6 +306,7 @@ typedef enum {
     annotationChangedId,
     annotationsSelectedId,
     formFieldValueChangedId,
+    behaviorActivatedId,
     longPressMenuPressedId,
     annotationMenuPressedId,
     leadingNavButtonPressedId,
@@ -308,6 +327,8 @@ typedef enum {
 -(void)documentController:(PTDocumentController*)documentController annotationsChangedWithActionString:(NSString*)actionString;
 -(void)documentController:(PTDocumentController*)documentController annotationsSelected:(NSString*)annotations;
 -(void)documentController:(PTDocumentController*)documentController formFieldValueChanged:(NSString*)fieldString;
+-(void)documentController:(PTDocumentController*)docVC behaviorActivated:(NSString*)behaviorString;
+-(void)documentController:(PTDocumentController *)docVC leadingNavButtonClicked:(nullable NSString *)nav;
 -(void)documentController:(PTDocumentController*)docVC longPressMenuPressed:(NSString*)longPressMenuPressedString;
 -(void)documentController:(PTDocumentController *)docVC annotationMenuPressed:(NSString*)annotationMenuPressedString;
 -(void)documentController:(PTDocumentController *)docVC leadingNavButtonClicked:(nullable NSString *)nav;

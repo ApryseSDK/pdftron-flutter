@@ -666,6 +666,64 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 
 }
 
+- (BOOL)toolManager:(PTToolManager *)toolManager shouldHandleLinkAnnotation:(PTAnnot *)annotation orLinkInfo:(PTLinkInfo *)linkInfo onPageNumber:(unsigned long)pageNumber
+{
+    if (![self.overrideBehavior containsObject:PTLinkPressLinkAnnotationKey]) {
+        return YES;
+    }
+
+    PTPDFViewCtrl *pdfViewCtrl = self.pdfViewCtrl;
+
+    __block NSString *url = nil;
+
+    NSError *error = nil;
+    [pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+        // Check for a valid link annotation.
+        if (![annotation IsValid] ||
+            annotation.extendedAnnotType != PTExtendedAnnotTypeLink) {
+            return;
+        }
+
+        PTLink *linkAnnot = [[PTLink alloc] initWithAnn:annotation];
+
+        // Check for a valid URI action.
+        PTAction *action = [linkAnnot GetAction];
+        if (![action IsValid] ||
+            [action GetType] != e_ptURI) {
+            return;
+        }
+
+        PTObj *actionObj = [action GetSDFObj];
+        if (![actionObj IsValid]) {
+            return;
+        }
+
+        // Get the action's URI.
+        PTObj *uriObj = [actionObj FindObj:PTURILinkAnnotationKey];
+        if ([uriObj IsValid] && [uriObj IsString]) {
+            url = [uriObj GetAsPDFText];
+        }
+    } error:&error];
+    if (error) {
+        NSLog(@"%@", error);
+    }
+    if (url) {
+
+        NSDictionary* behaviorDict = @{
+            PTActionLinkAnnotationKey: PTLinkPressLinkAnnotationKey,
+            PTDataLinkAnnotationKey: @{
+                PTURLLinkAnnotationKey: url,
+            },
+        };
+
+        [self.plugin documentController:self behaviorActivated:[PdftronFlutterPlugin PT_idToJSONString: behaviorDict]];
+        // Link handled.
+        return NO;
+    }
+
+    return YES;
+}
+
 #pragma mark - <PTPDFViewCtrlDelegate>
 
 - (void)pdfViewCtrl:(PTPDFViewCtrl *)pdfViewCtrl onSetDoc:(PTPDFDoc *)doc
@@ -1028,6 +1086,16 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 - (void)setAnnotationAuthor:(NSString *)annotationAuthor
 {
     self.toolManager.annotationAuthor = annotationAuthor;
+}
+
+- (void)setAnnotationPermissionCheckEnabled:(BOOL)annotationPermissionCheckEnabled
+{
+    self.toolManager.annotationPermissionCheckEnabled = annotationPermissionCheckEnabled;
+}
+
+- (BOOL)isAnnotationPermissionCheckEnabled
+{
+    return self.toolManager.isAnnotationPermissionCheckEnabled;
 }
 
 - (NSString *)tabTitle

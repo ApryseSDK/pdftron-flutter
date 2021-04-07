@@ -6,6 +6,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.pdftron.pdf.Action;
+import com.pdftron.pdf.ActionParameter;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.Field;
 import com.pdftron.pdf.PDFViewCtrl;
@@ -14,6 +16,8 @@ import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.tools.QuickMenu;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.ActionUtils;
+import com.pdftron.sdf.Obj;
 import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.ViewerUtils;
 
@@ -28,6 +32,10 @@ import java.util.Map;
 
 import io.flutter.plugin.common.EventChannel;
 
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.BEHAVIOR_LINK_PRESS;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_ACTION;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_DATA;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LINK_BEHAVIOR_DATA;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_ANNOTATION_LIST;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_ANNOTATION_MENU_ITEM;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LONG_PRESS_MENU_ITEM;
@@ -75,6 +83,11 @@ public class ViewerImpl {
         pdfViewCtrl.removeOnCanvasSizeChangeListener(mOnCanvasSizeChangedListener);
         pdfViewCtrl.removePageChangeListener(mPageChangedListener);
     }
+
+    public void setActionInterceptCallback() {
+        ActionUtils.getInstance().setActionInterceptCallback(mActionInterceptCallback);
+    }
+
 
     private ToolManager.AnnotationModificationListener mAnnotationModificationListener = new ToolManager.AnnotationModificationListener() {
         @Override
@@ -211,6 +224,60 @@ public class ViewerImpl {
         @Override
         public void onAnnotationAction() {
 
+        }
+    };
+
+    private ActionUtils.ActionInterceptCallback mActionInterceptCallback = new ActionUtils.ActionInterceptCallback() {
+        @Override
+        public boolean onInterceptExecuteAction(ActionParameter actionParameter, PDFViewCtrl pdfViewCtrl) {
+            ArrayList<String> actionOverrideItems = mViewerComponent.getActionOverrideItems();
+            if (actionOverrideItems == null || !actionOverrideItems.contains(BEHAVIOR_LINK_PRESS)) {
+                return false;
+            }
+
+            String url = null;
+            boolean shouldUnlockRead = false;
+            try {
+                pdfViewCtrl.docLockRead();
+                shouldUnlockRead = true;
+
+                Action action = actionParameter.getAction();
+                int action_type = action.getType();
+                if (action_type == Action.e_URI) {
+                    Obj o = action.getSDFObj();
+                    o = o.findObj("URI");
+                    if (o != null) {
+                        url = o.getAsPDFText();
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                if (shouldUnlockRead) {
+                    pdfViewCtrl.docUnlockRead();
+                }
+            }
+            if (url != null) {
+                try {
+                    JSONObject behaviorObject = new JSONObject();
+
+                    behaviorObject.put(KEY_ACTION, BEHAVIOR_LINK_PRESS);
+
+                    JSONObject dataObject = new JSONObject();
+                    dataObject.put(KEY_LINK_BEHAVIOR_DATA, url);
+
+                    behaviorObject.put(KEY_DATA, dataObject);
+
+                    EventChannel.EventSink eventSink = mViewerComponent.getBehaviorActivatedEventEmitter();
+                    if (eventSink != null) {
+                        eventSink.success(behaviorObject.toString());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+            return false;
         }
     };
 
