@@ -11,6 +11,12 @@ const _annotationsSelectedChannel =
     const EventChannel('annotations_selected_event');
 const _formFieldValueChangedChannel =
     const EventChannel('form_field_value_changed_event');
+const _behaviorActivatedChannel =
+    const EventChannel('behavior_activated_event');
+const _longPressMenuPressedChannel =
+    const EventChannel('long_press_menu_pressed_event');
+const _annotationMenuPressedChannel =
+    const EventChannel('annotation_menu_pressed_event');
 const _leadingNavButtonPressedChannel =
     const EventChannel('leading_nav_button_pressed_event');
 const _pageChangedChannel = const EventChannel('page_changed_event');
@@ -23,6 +29,11 @@ typedef void DocumentErrorListener();
 typedef void AnnotationChangedListener(dynamic action, dynamic annotations);
 typedef void AnnotationsSelectedListener(dynamic annotationWithRects);
 typedef void FormFieldValueChangedListener(dynamic fields);
+typedef void BehaviorActivatedListener(dynamic action, dynamic data);
+typedef void LongPressMenuPressedChannelListener(
+    dynamic longPressMenuItem, dynamic longPressText);
+typedef void AnnotationMenuPressedChannelListener(
+    dynamic annotationMenuItem, dynamic annotations);
 typedef void LeadingNavbuttonPressedlistener();
 typedef void PageChangedListener(
     dynamic previousPageNumber, dynamic pageNumber);
@@ -37,6 +48,9 @@ enum eventSinkId {
   annotationChangedId,
   annotationsSelectedId,
   formFieldValueChangedId,
+  behaviorActivatedId,
+  longPressMenuPressedId,
+  annotationMenuPressedId,
   leadingNavButtonPressedId,
   pageChangedId,
   zoomChangedId,
@@ -135,6 +149,59 @@ CancelListener startFormFieldValueChangedListener(
       fieldList.add(new Field.fromJson(field));
     }
     listener(fieldList);
+  }, cancelOnError: true);
+
+  return () {
+    subscription.cancel();
+  };
+}
+
+CancelListener startBehaviorActivatedListener(
+    BehaviorActivatedListener listener) {
+  var subscription = _behaviorActivatedChannel
+      .receiveBroadcastStream(eventSinkId.behaviorActivatedId.index)
+      .listen((behaviorString) {
+    dynamic behaviorObject = jsonDecode(behaviorString);
+    dynamic action = behaviorObject[EventParameters.action];
+    dynamic data = behaviorObject[EventParameters.data];
+    listener(action, data);
+  }, cancelOnError: true);
+
+  return () {
+    subscription.cancel();
+  };
+}
+
+CancelListener startLongPressMenuPressedListener(
+    LongPressMenuPressedChannelListener listener) {
+  var subscription = _longPressMenuPressedChannel
+      .receiveBroadcastStream(eventSinkId.longPressMenuPressedId.index)
+      .listen((longPressString) {
+    dynamic longPressObject = jsonDecode(longPressString);
+    dynamic longPressMenuItem =
+        longPressObject[EventParameters.longPressMenuItem];
+    dynamic longPressText = longPressObject[EventParameters.longPressText];
+    listener(longPressMenuItem, longPressText);
+  }, cancelOnError: true);
+  return () {
+    subscription.cancel();
+  };
+}
+
+CancelListener startAnnotationMenuPressedListener(
+    AnnotationMenuPressedChannelListener listener) {
+  var subscription = _annotationMenuPressedChannel
+      .receiveBroadcastStream(eventSinkId.annotationMenuPressedId.index)
+      .listen((annotationMenuString) {
+    dynamic annotationMenuObject = jsonDecode(annotationMenuString);
+    dynamic annotationMenuItem =
+        annotationMenuObject[EventParameters.annotationMenuItem];
+    dynamic annotations = annotationMenuObject[EventParameters.annotations];
+    List<Annot> annotList = new List<Annot>();
+    for (dynamic annotation in annotations) {
+      annotList.add(Annot.fromJson(annotation));
+    }
+    listener(annotationMenuItem, annotList);
   }, cancelOnError: true);
 
   return () {

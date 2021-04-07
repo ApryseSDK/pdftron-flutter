@@ -11,6 +11,7 @@ part 'options.dart';
 part 'document_view.dart';
 part 'events.dart';
 part 'config.dart';
+part 'constants.dart';
 
 class PdftronFlutter {
   static const MethodChannel _channel = const MethodChannel('pdftron_flutter');
@@ -79,6 +80,15 @@ class PdftronFlutter {
     });
   }
 
+  static Future<void> setPropertiesForAnnotation(
+      Annot annotation, AnnotProperty property) {
+    return _channel
+        .invokeMethod(Functions.setPropertiesForAnnotation, <String, dynamic>{
+      Parameters.annotation: jsonEncode(annotation),
+      Parameters.annotationProperties: jsonEncode(property),
+    });
+  }
+
   static Future<void> importAnnotationCommand(String xfdfCommand) {
     return _channel.invokeMethod(Functions.importAnnotationCommand,
         <String, dynamic>{Parameters.xfdfCommand: xfdfCommand});
@@ -109,6 +119,15 @@ class PdftronFlutter {
     String cropBoxString = await _channel.invokeMethod(Functions.getPageCropBox,
         <String, dynamic>{Parameters.pageNumber: pageNumber});
     return Rect.fromJson(jsonDecode(cropBoxString));
+  }
+
+  static Future<bool> setCurrentPage(int pageNumber) {
+    return _channel.invokeMethod(Functions.setCurrentPage,
+        <String, dynamic>{Parameters.pageNumber: pageNumber});
+  }
+
+  static Future<String> getDocumentPath() {
+    return _channel.invokeMethod(Functions.getDocumentPath);
   }
 
   static Future<void> setToolMode(String toolMode) {
