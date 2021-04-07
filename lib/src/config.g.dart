@@ -16,6 +16,11 @@ Config _$ConfigFromJson(Map<String, dynamic> json) {
     ..customHeaders = (json['customHeaders'] as Map<String, dynamic>)?.map(
       (k, e) => MapEntry(k, e as String),
     )
+    ..fitMode = json['fitMode'] as String
+    ..layoutMode = json['layoutMode'] as String
+    ..initialPageNumber = json['initialPageNumber'] as int
+    ..isBase64String = json['isBase64String'] as bool
+    ..base64FileExtension = json['base64FileExtension'] as String
     ..hideThumbnailFilterModes = (json['hideThumbnailFilterModes'] as List)
         ?.map((e) => e as String)
         ?.toList()
@@ -58,6 +63,9 @@ Config _$ConfigFromJson(Map<String, dynamic> json) {
     ..thumbnailViewEditingEnabled = json['thumbnailViewEditingEnabled'] as bool
     ..annotationAuthor = json['annotationAuthor'] as String
     ..continuousAnnotationEditing = json['continuousAnnotationEditing'] as bool
+    ..annotationPermissionCheckEnabled =
+        json['annotationPermissionCheckEnabled'] as bool
+    ..overrideBehavior = json['overrideBehavior'] as String
     ..tabTitle = json['tabTitle'] as String;
 }
 
@@ -74,6 +82,11 @@ Map<String, dynamic> _$ConfigToJson(Config instance) {
   writeNotNull('disabledTools', instance.disabledTools);
   writeNotNull('multiTabEnabled', instance.multiTabEnabled);
   writeNotNull('customHeaders', instance.customHeaders);
+  writeNotNull('fitMode', instance.fitMode);
+  writeNotNull('layoutMode', instance.layoutMode);
+  writeNotNull('initialPageNumber', instance.initialPageNumber);
+  writeNotNull('isBase64String', instance.isBase64String);
+  writeNotNull('base64FileExtension', instance.base64FileExtension);
   writeNotNull('hideThumbnailFilterModes', instance.hideThumbnailFilterModes);
   writeNotNull('longPressMenuEnabled', instance.longPressMenuEnabled);
   writeNotNull('longPressMenuItems', instance.longPressMenuItems);
@@ -108,6 +121,9 @@ Map<String, dynamic> _$ConfigToJson(Config instance) {
   writeNotNull('annotationAuthor', instance.annotationAuthor);
   writeNotNull(
       'continuousAnnotationEditing', instance.continuousAnnotationEditing);
+  writeNotNull('annotationPermissionCheckEnabled',
+      instance.annotationPermissionCheckEnabled);
+  writeNotNull('overrideBehavior', instance.overrideBehavior);
   writeNotNull('tabTitle', instance.tabTitle);
   return val;
 }

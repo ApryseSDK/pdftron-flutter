@@ -294,7 +294,7 @@ public class JSONUtils {
         return freeTextAnnot;
     }
 
-    private static Rect getRectFromJSONObject(JSONObject object) throws PDFNetException, JSONException {
+    public static Rect getRectFromJSONObject(JSONObject object) throws PDFNetException, JSONException {
         if (!areJSONKeysValid(object, KEY_X1, KEY_Y1, KEY_X2, KEY_Y2)) {
             return null;
         }

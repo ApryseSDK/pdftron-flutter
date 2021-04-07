@@ -8,6 +8,11 @@ class Config {
   List<String> disabledTools;
   bool multiTabEnabled;
   Map<String, String> customHeaders;
+  String fitMode;
+  String layoutMode;
+  int initialPageNumber;
+  bool isBase64String;
+  String base64FileExtension;
   List<String> hideThumbnailFilterModes;
   bool longPressMenuEnabled;
   List<String> longPressMenuItems;
@@ -34,6 +39,8 @@ class Config {
   bool thumbnailViewEditingEnabled;
   String annotationAuthor;
   bool continuousAnnotationEditing;
+  bool annotationPermissionCheckEnabled;
+  String overrideBehavior;
   String tabTitle;
 
   Config();
