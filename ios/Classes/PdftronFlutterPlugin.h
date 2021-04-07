@@ -9,6 +9,7 @@ static NSString * const PTDisabledToolsKey = @"disabledTools";
 static NSString * const PTDisabledElementsKey = @"disabledElements";
 static NSString * const PTMultiTabEnabledKey = @"multiTabEnabled";
 static NSString * const PTCustomHeadersKey = @"customHeaders";
+static NSString * const PTHideThumbnailFilterModesKey = @"hideThumbnailFilterModes";
 static NSString * const PTLongPressMenuEnabled = @"longPressMenuEnabled";
 static NSString * const PTLongPressMenuItems = @"longPressMenuItems";
 static NSString * const PTOverrideLongPressMenuBehavior = @"overrideLongPressMenuBehavior";
@@ -60,12 +61,23 @@ static NSString * const PTAnnotationCreatePolygonToolKey = @"AnnotationCreatePol
 static NSString * const PTAnnotationCreatePolygonCloudToolKey = @"AnnotationCreatePolygonCloud";
 static NSString * const PTAnnotationCreateFreeHighlighterToolKey = @"AnnotationCreateFreeHighlighter";
 static NSString * const PTEraserToolKey = @"Eraser";
-static NSString * const PTAnnotationCreateRubberStampToolKey = @"annotationCreateRubberStamp";
-static NSString * const PTAnnotationCreateSoundToolKey = @"annotationCreateSound";
-static NSString * const PTAnnotationCreateDistanceMeasurementToolKey = @"annotationCreateDistanceMeasurement";
-static NSString * const PTAnnotationCreatePerimeterMeasurementToolKey = @"annotationCreatePerimeterMeasurement";
-static NSString * const PTAnnotationCreateAreaMeasurementToolKey = @"annotationCreateAreaMeasurement";
+static NSString * const PTAnnotationCreateRubberStampToolKey = @"AnnotationCreateRubberStamp";
+static NSString * const PTAnnotationCreateSoundToolKey = @"AnnotationCreateSound";
+static NSString * const PTAnnotationCreateDistanceMeasurementToolKey = @"AnnotationCreateDistanceMeasurement";
+static NSString * const PTAnnotationCreatePerimeterMeasurementToolKey = @"AnnotationCreatePerimeterMeasurement";
+static NSString * const PTAnnotationCreateAreaMeasurementToolKey = @"AnnotationCreateAreaMeasurement";
 static NSString * const PTAnnotationCreateFileAttachmentToolKey = @"AnnotationCreateFileAttachment";
+static NSString * const PTAnnotationCreateRedactionToolKey = @"AnnotationCreateRedaction";
+static NSString * const PTAnnotationCreateLinkToolKey = @"AnnotationCreateLink";
+static NSString * const PTAnnotationCreateRedactionTextToolKey = @"AnnotationCreateRedactionText";
+static NSString * const PTAnnotationCreateLinkTextToolKey = @"AnnotationCreateLinkText";
+static NSString * const PTFormCreateTextFieldToolKey = @"FormCreateTextField";
+static NSString * const PTFormCreateCheckboxFieldToolKey = @"FormCreateCheckboxField";
+static NSString * const PTFormCreateSignatureFieldToolKey = @"FormCreateSignatureField";
+static NSString * const PTFormCreateRadioFieldToolKey = @"FormCreateRadioField";
+static NSString * const PTFormCreateComboBoxFieldToolKey = @"FormCreateComboBoxField";
+static NSString * const PTFormCreateListBoxFieldToolKey = @"FormCreateListBoxField";
+static NSString * const PTPencilKitDrawingToolKey = @"PencilKitDrawing";
 
 // button
 static NSString * const PTStickyToolButtonKey = @"stickyToolButton";
@@ -96,6 +108,17 @@ static NSString * const PTListsButtonKey = @"listsButton";
 static NSString * const PTReflowModeButtonKey = @"reflowModeButton";
 static NSString * const PTThumbnailSliderKey = @"thumbnailSlider";
 static NSString * const PTSaveCopyButtonKey = @"saveCopyButton";
+static NSString * const PTEditPagesButtonKey = @"editPagesButton";
+static NSString * const PTPrintButtonKey = @"printButton";
+static NSString * const PTCloseButtonKey = @"closeButton";
+static NSString * const PTFillAndSignButtonKey = @"fillAndSignButton";
+static NSString * const PTPrepareFormButtonKey = @"prepareFormButton";
+static NSString * const PTOutlineListButtonKey = @"outlineListButton";
+static NSString * const PTAnnotationListButtonKey = @"annotationListButton";
+static NSString * const PTUserBookmarkListButtonKey = @"userBookmarkListButton";
+static NSString * const PTEditMenuButtonKey = @"editMenuButton";
+static NSString * const PTCropPageButtonKey = @"cropPageButton";
+static NSString * const PTMoreItemsButtonKey = @"moreItemsButton";
 
 // Menu Item
 static NSString * const PTStyleMenuItemTitleKey = @"Style";
@@ -251,6 +274,9 @@ static NSString * const PTAnnotationFlagNoZoomKey = @"noZoom";
 static NSString * const PTAnnotationFlagPrintKey = @"print";
 static NSString * const PTAnnotationFlagReadOnlyKey = @"readOnly";
 static NSString * const PTAnnotationFlagToggleNoViewKey = @"toggleNoView";
+
+static NSString * const PTAnnotatedFilterModeKey = @"annotated";
+static NSString * const PTBookmarkedFilterModeKey = @"bookmarked";
 
 // Default annotation toolbar names.
 typedef NSString * PTDefaultAnnotationToolbarKey;

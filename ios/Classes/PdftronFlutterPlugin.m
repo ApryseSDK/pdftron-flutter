@@ -262,6 +262,14 @@
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
                     // Handled by tabbed config.
                 }
+                else if ([key isEqualToString:PTHideThumbnailFilterModesKey]) {
+                    
+                    NSArray* hideThumbnailFilterModes = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideThumbnailFilterModesKey class:[NSArray class] error:&error];
+                    
+                    if (!error && hideThumbnailFilterModes) {
+                        [documentController setHideThumbnailFilterModes: hideThumbnailFilterModes];
+                    }
+                }
                 else if ([key isEqualToString:PTLongPressMenuEnabled]) {
                     
                     NSNumber* longPressMenuEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLongPressMenuEnabled class:[NSNumber class] error:&error];
@@ -615,6 +623,42 @@
                      [string isEqualToString:PTEraserToolButtonKey]) {
                 toolManager.eraserEnabled = value;
             }
+            else if ([string isEqualToString:PTAnnotationCreateFileAttachmentToolKey]) {
+                toolManager.fileAttachmentAnnotationOptions.canCreate = value;
+            }
+            else if ([string isEqualToString:PTAnnotationCreateRedactionToolKey]) {
+                toolManager.redactAnnotationOptions.canCreate = value;
+            }
+            else if ([string isEqualToString:PTAnnotationCreateLinkToolKey]) {
+                toolManager.linkAnnotationOptions.canCreate = value;
+            }
+            else if ([string isEqualToString:PTAnnotationCreateRedactionTextToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTAnnotationCreateLinkTextToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateTextFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateCheckboxFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateSignatureFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateRadioFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateComboBoxFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTFormCreateListBoxFieldToolKey]) {
+                // TODO
+            }
+            else if ([string isEqualToString:PTPencilKitDrawingToolKey]) {
+                toolManager.pencilDrawingAnnotationOptions.canCreate = value;
+            }
         }
     }
 }
@@ -659,6 +703,50 @@
         PTSaveCopyButtonKey:
             ^{
                 documentController.exportButtonHidden = YES;
+            },
+        PTEditPagesButtonKey:
+            ^{
+                documentController.addPagesButtonHidden = YES;
+            },
+//        PTPrintButtonKey:
+//            ^{
+//
+//            },
+//        PTCloseButtonKey:
+//            ^{
+//
+//            },
+//        PTFillAndSignButtonKey:
+//            ^{
+//
+//            },
+//        PTPrepareFormButtonKey:
+//            ^{
+//
+//            },
+        PTOutlineListButtonKey:
+            ^{
+                documentController.outlineListHidden = YES;
+            },
+        PTAnnotationListButtonKey:
+            ^{
+                documentController.annotationListHidden = YES;
+            },
+        PTUserBookmarkListButtonKey:
+            ^{
+                documentController.bookmarkListHidden = YES;
+            },
+//        PTEditMenuButtonKey:
+//            ^{
+//
+//            },
+//        PTCropPageButtonKey:
+//            ^{
+//
+//            },
+        PTMoreItemsButtonKey:
+            ^{
+                documentController.moreItemsButtonHidden = YES;
             },
     };
     
@@ -1819,7 +1907,30 @@
         toolClass = [PTFreeHandHighlightCreate class];
     } else if ([toolMode isEqualToString:PTAnnotationCreateRubberStampToolKey]) {
         toolClass = [PTRubberStampCreate class];
-
+    } else if ([toolMode isEqualToString:PTAnnotationCreateFileAttachmentToolKey]) {
+        toolClass = [PTFileAttachmentCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateRedactionToolKey]) {
+        toolClass = [PTRectangleRedactionCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateLinkToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTAnnotationCreateRedactionTextToolKey]) {
+        toolClass = [PTTextRedactionCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationCreateLinkTextToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateTextFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateCheckboxFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateSignatureFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateRadioFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateComboBoxFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTFormCreateListBoxFieldToolKey]) {
+        // TODO
+    } else if ([toolMode isEqualToString:PTPencilKitDrawingToolKey]) {
+        toolClass = [PTPencilDrawingCreate class];
     }
 
     if (toolClass) {

@@ -785,6 +785,9 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     // nav icon
     [self applyNavIcon];
     
+    // thumbnail filter mode
+    [self applyHideThumbnailFilterModes];
+
     // Use Apple Pencil as a pen
     Class pencilTool = [PTFreeHandCreate class];
     if (@available(iOS 13.1, *)) {
@@ -842,6 +845,24 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
                                             forSizeClass:UIUserInterfaceSizeClassRegular
                                                 animated:NO];
     }
+}
+
+- (void)applyHideThumbnailFilterModes
+{
+    NSMutableArray <PTFilterMode>* filterModeArray = [[NSMutableArray alloc] init];
+
+    [filterModeArray addObject:PTThumbnailFilterAll];
+    
+    if (![self.hideThumbnailFilterModes containsObject:PTAnnotatedFilterModeKey]) {
+        [filterModeArray addObject:PTThumbnailFilterAnnotated];
+    }
+    
+    if (![self.hideThumbnailFilterModes containsObject:PTBookmarkedFilterModeKey]) {
+        [filterModeArray addObject:PTThumbnailFilterBookmarked];
+    }
+
+    NSOrderedSet* filterModeSet = [[NSOrderedSet alloc] initWithArray:filterModeArray];
+    self.thumbnailsViewController.filterModes = filterModeSet;
 }
 
 - (void)applyToolGroupSettings
