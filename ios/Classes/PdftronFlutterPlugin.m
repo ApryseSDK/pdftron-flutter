@@ -13,6 +13,7 @@
 @property (nonatomic, strong) FlutterEventSink annotationChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink annotationsSelectedEventSink;
 @property (nonatomic, strong) FlutterEventSink formFieldValueChangedEventSink;
+@property (nonatomic, strong) FlutterEventSink behaviorActivatedEventSink;
 @property (nonatomic, strong) FlutterEventSink longPressMenuPressedEventSink;
 @property (nonatomic, strong) FlutterEventSink annotationMenuPressedEventSink;
 @property (nonatomic, strong) FlutterEventSink leadingNavButtonPressedEventSink;
@@ -135,6 +136,8 @@
     
     FlutterEventChannel* formFieldValueChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTFormFieldValueChangedEventKey binaryMessenger:messenger];
     
+    FlutterEventChannel* behaviorActivatedEventChannel = [FlutterEventChannel eventChannelWithName:PTBehaviorActivatedEventKey binaryMessenger:messenger];
+    
     FlutterEventChannel* longPressMenuPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTLongPressMenuPressedEventKey binaryMessenger:messenger];
     
     FlutterEventChannel* annotationMenuPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTAnnotationMenuPressedEventKey binaryMessenger:messenger];
@@ -159,6 +162,8 @@
     
     [formFieldValueChangedEventChannel setStreamHandler:self];
     
+    [behaviorActivatedEventChannel setStreamHandler:self];
+
     [longPressMenuPressedEventChannel setStreamHandler:self];
     
     [annotationMenuPressedEventChannel setStreamHandler:self];
@@ -491,6 +496,23 @@
                         [documentController setContinuousAnnotationEditingEnabled:[contEditingNumber boolValue]];
                     }
                 }
+                else if ([key isEqualToString:PTAnnotationPermissionCheckEnabledKey]) {
+                    
+                    NSNumber* checkEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationPermissionCheckEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && checkEnabledNumber) {
+                        
+                        [documentController setAnnotationPermissionCheckEnabled:[checkEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTOverrideBehaviorKey]) {
+                    
+                    NSArray* overrideBehavior = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTOverrideBehaviorKey class:[NSArray class] error:&error];
+                    
+                    if (!error && overrideBehavior) {
+                        [documentController setOverrideBehavior:overrideBehavior];
+                    }
+                }
                 else if ([key isEqualToString:PTTabTitleKey]) {
                     
                     NSString* tabTitle = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTTabTitleKey class:[NSString class] error:&error];
@@ -718,10 +740,10 @@
             ^{
                 documentController.exportButtonHidden = YES;
             },
-//        PTEditPagesButtonKey:
-//            ^{
-//
-//            },
+        PTEditPagesButtonKey:
+            ^{
+                documentController.addPagesButtonHidden = YES;
+            },
 //        PTPrintButtonKey:
 //            ^{
 //
@@ -847,6 +869,9 @@
         case formFieldValueChangedId:
             self.formFieldValueChangedEventSink = events;
             break;
+        case behaviorActivatedId:
+            self.behaviorActivatedEventSink = events;
+            break;
         case longPressMenuPressedId:
             self.longPressMenuPressedEventSink = events;
             break;
@@ -893,6 +918,9 @@
             break;
         case formFieldValueChangedId:
             self.formFieldValueChangedEventSink = nil;
+            break;
+        case behaviorActivatedId:
+            self.behaviorActivatedEventSink = nil;
             break;
         case longPressMenuPressedId:
             self.longPressMenuPressedEventSink = nil;
@@ -980,6 +1008,14 @@
     }
 }
 
+-(void)documentController:(PTDocumentViewController*)docVC behaviorActivated:(NSString*)behaviorString
+{
+    if(self.behaviorActivatedEventSink != nil)
+    {
+        self.behaviorActivatedEventSink(behaviorString);
+    }
+}
+
 -(void)documentController:(PTDocumentController*)docVC longPressMenuPressed:(NSString*)longPressMenuPressedString
 {
     if (self.longPressMenuPressedEventSink != nil)
@@ -1050,6 +1086,10 @@
     } else if ([call.method isEqualToString:PTSetFlagsForAnnotationsKey]) {
         NSString *annotationsWithFlags = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationsWithFlagsArgumentKey]];
         [self setFlagsForAnnotations:annotationsWithFlags resultToken:result];
+    } else if ([call.method isEqualToString:PTSetPropertiesForAnnotationKey]) {
+        NSString *annotation = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationArgumentKey]];
+        NSString *properties = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationPropertiesArgumentKey]];
+        [self setPropertiesForAnnotation:annotation properties:properties resultToken:result];
     } else if ([call.method isEqualToString:PTImportAnnotationCommandKey]) {
         NSString *xfdfCommand = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTXfdfCommandArgumentKey]];
         [self importAnnotationCommand:xfdfCommand resultToken:result];
@@ -1603,6 +1643,112 @@
     }
     
     flutterResult(nil);
+}
+
+- (void)setPropertiesForAnnotation:(NSString *)annotation properties:(NSString *)properties resultToken:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"set_properties_for_annotation" message:@"Failed to set properties for annotation" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+    
+    NSDictionary *annotationMap = [PdftronFlutterPlugin PT_idAsNSDict:[PdftronFlutterPlugin PT_JSONStringToId:annotation]];
+    
+    NSString *annotId = [PdftronFlutterPlugin PT_idAsNSString:annotationMap[PTAnnotIdKey]];
+    int pageNumber = [[PdftronFlutterPlugin PT_idAsNSNumber:annotationMap[PTAnnotPageNumberKey]] intValue];
+    
+    NSError* error;
+    
+    PTAnnot *annot = [PdftronFlutterPlugin findAnnotWithUniqueID:annotId onPageNumber:pageNumber documentController:documentController error:&error];
+    
+    if (error) {
+        NSLog(@"Error: Failed to find annotation with unique id. %@", error.localizedDescription);
+        
+        flutterResult([FlutterError errorWithCode:@"set_properties_for_annotation" message:@"Failed to set properties for annotation" details:@"Error: Failed to find annotation with unique id."]);
+        return;
+    } else if (![annot IsValid]) {
+        NSLog(@"Error: Failed to find annotation with unique id. The requested annotation does not exist");
+        
+        flutterResult([FlutterError errorWithCode:@"set_properties_for_annotation" message:@"Failed to set properties for annotation" details:@"Error: Failed to find annotation with unique id."]);
+        return;
+    }
+    
+    // Update the properties
+    
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        
+        NSDictionary *propertyMap = [PdftronFlutterPlugin PT_idAsNSDict:[PdftronFlutterPlugin PT_JSONStringToId:properties]];
+        
+        if (!propertyMap) {
+            return;
+        }
+        
+        [documentController.toolManager willModifyAnnotation:annot onPageNumber:pageNumber];
+        
+        // contents
+        NSString* annotContents = [PdftronFlutterPlugin PT_idAsNSString:propertyMap[PTContentsAnnotationPropertyKey]];
+        if (annotContents) {
+            [annot SetContents:annotContents];
+        }
+        
+        // rect
+        NSDictionary *annotRect = [PdftronFlutterPlugin PT_idAsNSDict:[PdftronFlutterPlugin PT_JSONStringToId:propertyMap[PTRectAnnotationPropertyKey]]];
+        if (annotRect) {
+            NSNumber *rectX1 = [PdftronFlutterPlugin PT_idAsNSNumber:annotRect[PTX1Key]];
+            NSNumber *rectY1 = [PdftronFlutterPlugin PT_idAsNSNumber:annotRect[PTY1Key]];
+            NSNumber *rectX2 = [PdftronFlutterPlugin PT_idAsNSNumber:annotRect[PTX2Key]];
+            NSNumber *rectY2 = [PdftronFlutterPlugin PT_idAsNSNumber:annotRect[PTY2Key]];
+            if (rectX1 && rectY1 && rectX2 && rectY2) {
+                PTPDFRect *rect = [[PTPDFRect alloc] initWithX1:[rectX1 doubleValue] y1:[rectY1 doubleValue] x2:[rectX2 doubleValue] y2:[rectY2 doubleValue]];
+                [annot SetRect:rect];
+            }
+        }
+        
+        
+        if ([annot IsMarkup]) {
+            PTMarkup *markupAnnot = [[PTMarkup alloc] initWithAnn:annot];
+            
+            // subject
+            NSString *annotSubject = [PdftronFlutterPlugin PT_idAsNSString:propertyMap[PTSubjectAnnotationPropertyKey]];
+            if (annotSubject) {
+                [markupAnnot SetSubject:annotSubject];
+            }
+            
+            // title
+            NSString *annotTitle = [PdftronFlutterPlugin PT_idAsNSString:propertyMap[PTTitleAnnotationPropertyKey]];
+            if (annotTitle) {
+                [markupAnnot SetTitle:annotTitle];
+            }
+            
+            // contentRect
+            NSDictionary *annotContentRect = [PdftronFlutterPlugin PT_idAsNSDict:[PdftronFlutterPlugin PT_JSONStringToId:propertyMap[PTContentRectAnnotationPropertyKey]]];
+            if (annotRect) {
+                NSNumber *rectX1 = [PdftronFlutterPlugin PT_idAsNSNumber:annotContentRect[PTX1Key]];
+                NSNumber *rectY1 = [PdftronFlutterPlugin PT_idAsNSNumber:annotContentRect[PTY1Key]];
+                NSNumber *rectX2 = [PdftronFlutterPlugin PT_idAsNSNumber:annotContentRect[PTX2Key]];
+                NSNumber *rectY2 = [PdftronFlutterPlugin PT_idAsNSNumber:annotContentRect[PTY2Key]];
+                if (rectX1 && rectY1 && rectX2 && rectY2) {
+                    PTPDFRect *contentRect = [[PTPDFRect alloc] initWithX1:[rectX1 doubleValue] y1:[rectY1 doubleValue] x2:[rectX2 doubleValue] y2:[rectY2 doubleValue]];
+                    [markupAnnot SetContentRect:contentRect];
+                }
+            }
+        }
+        
+        [documentController.pdfViewCtrl UpdateWithAnnot:annot page_num:(int)pageNumber];
+        
+        [documentController.toolManager annotationModified:annot onPageNumber:(int)pageNumber];
+    } error:&error];
+    
+    if (error) {
+        NSLog(@"Error: Failed to set properties for annotation from doc. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"set_properties_for_annotation" message:@"Failed to set properties for annotation" details:@"Error: Failed to set properties for annotation from doc."]);
+    } else {
+        flutterResult(nil);
+    }
 }
 
 - (void)importAnnotationCommand:(NSString *)xfdfCommand resultToken:(FlutterResult)flutterResult

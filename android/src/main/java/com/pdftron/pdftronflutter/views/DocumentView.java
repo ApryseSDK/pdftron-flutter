@@ -51,6 +51,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private boolean mIsBase64;
     private ArrayList<File> mTempFiles = new ArrayList<>();
 
+    private ArrayList<String> mActionOverrideItems;
     private ArrayList<String> mLongPressMenuItems;
     private ArrayList<String> mLongPressMenuOverrideItems;
     private ArrayList<String> mHideAnnotationMenuTools;
@@ -67,6 +68,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private EventChannel.EventSink sAnnotationChangedEventEmitter;
     private EventChannel.EventSink sAnnotationsSelectedEventEmitter;
     private EventChannel.EventSink sFormFieldValueChangedEventEmitter;
+    private EventChannel.EventSink sBehaviorActivatedEventEmitter;
     private EventChannel.EventSink sLongPressMenuPressedEventEmitter;
     private EventChannel.EventSink sAnnotationMenuPressedEventEmitter;
     private EventChannel.EventSink sLeadingNavButtonPressedEventEmitter;
@@ -127,9 +129,12 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         setViewerConfig(getConfig());
         setFlutterLoadResult(result);
 
+        mActionOverrideItems = configInfo.getActionOverrideItems();
+
         mAutoSaveEnabled = configInfo.isAutoSaveEnabled();
         mUseStylusAsPen = configInfo.isUseStylusAsPen();
         mSignSignatureFieldWithStamps = configInfo.isSignSignatureFieldWithStamps();
+
         mTabTitle = configInfo.getTabTitle();
 
         mFromAttach = false;
@@ -321,6 +326,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         sFormFieldValueChangedEventEmitter = emitter;
     }
 
+    public void setBehaviorActivatedEventEmitter(EventChannel.EventSink emitter) {
+        sBehaviorActivatedEventEmitter = emitter;
+    }
+
     public void setLongPressMenuPressedEventEmitter(EventChannel.EventSink emitter) {
         sLongPressMenuPressedEventEmitter = emitter;
     }
@@ -385,6 +394,11 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     }
 
     @Override
+    public EventChannel.EventSink getBehaviorActivatedEventEmitter() {
+        return sBehaviorActivatedEventEmitter;
+    }
+
+    @Override
     public EventChannel.EventSink getLongPressMenuPressedEventEmitter() {
         return sLongPressMenuPressedEventEmitter;
     }
@@ -418,6 +432,11 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     @Override
     public HashMap<Annot, Integer> getSelectedAnnots() {
         return mSelectedAnnots;
+    }
+
+    @Override
+    public ArrayList<String> getActionOverrideItems() {
+        return mActionOverrideItems;
     }
 
     @Override

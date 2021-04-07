@@ -49,6 +49,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     private static boolean mUseStylusAsPen;
     private static boolean mSignSignatureFieldWithStamps;
     private static boolean mShowLeadingNavButton;
+    private static ArrayList<String> mActionOverrideItems;
 
     private static FlutterDocumentActivity sCurrentActivity;
 
@@ -66,6 +67,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     private static AtomicReference<EventSink> sAnnotationChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sAnnotationsSelectionEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sFormFieldChangedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sBehaviorActivatedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sLongPressMenuPressedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sAnnotationMenuPressedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sLeadingNavButtonPressedEventEmitter = new AtomicReference<>();
@@ -97,6 +99,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         mSignSignatureFieldWithStamps = configInfo.isSignSignatureFieldWithStamps();
 
         mShowLeadingNavButton = configInfo.isShowLeadingNavButton();
+        mActionOverrideItems = configInfo.getActionOverrideItems();
 
         if (mShowLeadingNavButton) {
             openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build());
@@ -195,6 +198,10 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sFormFieldChangedEventEmitter.set(emitter);
     }
 
+    public static void setBehaviorActivatedEventEmitter(EventSink emitter) {
+        sBehaviorActivatedEventEmitter.set(emitter);
+    }
+
     public static void setLongPressMenuPressedEventEmitter(EventSink emitter) {
         sLongPressMenuPressedEventEmitter.set(emitter);
     }
@@ -243,6 +250,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         return sDocumentErrorEventEmitter.get();
     }
 
+    @Override
     public EventSink getAnnotationChangedEventEmitter() {
         return sAnnotationChangedEventEmitter.get();
     }
@@ -255,6 +263,11 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     @Override
     public EventSink getFormFieldValueChangedEventEmitter() {
         return sFormFieldChangedEventEmitter.get();
+    }
+
+    @Override
+    public EventSink getBehaviorActivatedEventEmitter() {
+        return sBehaviorActivatedEventEmitter.get();
     }
 
     @Override
@@ -289,6 +302,11 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     @Override
     public HashMap<Annot, Integer> getSelectedAnnots() {
         return mSelectedAnnots;
+    }
+
+    @Override
+    public ArrayList<String> getActionOverrideItems() {
+        return mActionOverrideItems;
     }
 
     @Override

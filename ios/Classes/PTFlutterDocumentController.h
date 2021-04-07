@@ -54,6 +54,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, nullable) NSString* annotationAuthor;
 
+@property (nonatomic, assign, getter=isAnnotationPermissionCheckEnabled) BOOL annotationPermissionCheckEnabled;
+
+@property (nonatomic, copy, nullable) NSArray<NSString *> *overrideBehavior;
+
 @property (nonatomic, copy, nullable) NSString* leadingNavButtonIcon;
 
 @property (nonatomic, copy, nullable) NSString* tabTitle;
