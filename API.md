@@ -6,7 +6,7 @@
 - [Viewer Configurations](#Viewer-Configurations)
 
 ## Utility Functions
-This section is for some static methods for global library initialization, configuration, and utility. They could only be callable as a plugin. Below is an example for [initialize](#initialize):
+This section is for some static methods for global library initialization, configuration, and utility. They could only be callable as a plugin. Below is an example for [`initialize`](#initialize):
 
 ```dart
 PdftronFlutter.initialize('your_license_key');
@@ -47,7 +47,7 @@ PdftronFlutter.initialize('your_licensey_key');
 
 
 ## Viewer Functions
-This section is for viewer related non-static methods. They would be callable in both plugin and widger versions. For example, [openDocument](#openDocument) is accessible in 2 ways:
+This section is for viewer related non-static methods. They would be callable in both plugin and widger versions. For example, [`openDocument`](#openDocument) is accessible in 2 ways:
 
 Plugin:
 ```dart
@@ -118,10 +118,25 @@ path | String | the location of the saved document
 var path = await PdftronFlutter.saveDocument();
 ```
 
+#### getDocumentPath
+Returns the path of the current document.
+
+Returns a Future.
+
+Future Parameters:
+
+Name | Type | Description
+--- | ---| ---
+path | String | the document path
+
+```dart
+var path = await PdftronFlutter.getDocumentPath();
+```
+
 ### Viewer UI Configuration
 
 #### setLeadingNavButtonIcon
-Sets the file name of the icon to be used for the leading navigation button. The button will use the specified icon if [showLeadingNavButton](#showLeadingNavButton) (which by default is true) is true in the config.
+Sets the file name of the icon to be used for the leading navigation button. The button will use the specified icon if [`showLeadingNavButton`](#showLeadingNavButton) (which by default is true) is true in the config.
 
 Parameters:
 
@@ -140,7 +155,7 @@ PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png
 ##### Android
 1. Add the image resource to the [example/android/app/src/main/res/drawable](./example/android/app/src/main/res/drawable) directory. For details about supported file types and potential compression, check out [here](https://developer.android.com/guide/topics/graphics/drawables#drawables-from-images).
 
-<img alt='demo-android' src='android_add_resources.png'/>
+<img alt='demo-android' src='https://pdftron.s3.amazonaws.com/custom/websitefiles/flutter/android_add_resources.png'/>
 
 2. Now you can use the image in the viewer. For example, if you add `button_close.png` to drawable, you could use `'button_close'` in leadingNavButtonIcon.
 
@@ -152,7 +167,7 @@ PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png
 - "Copy Bundle Resources"
 - "+".
 
-<img alt='demo-ios' src='ios_add_resources.png'/>
+<img alt='demo-ios' src='https://pdftron.s3.amazonaws.com/custom/websitefiles/flutter/ios_add_resources.png'/>
 
 2. Now you can use the image in the viewer. For example, if you add `button_open.png` to the bundle, you could use `'button_open.png'` in leadingNavButtonIcon.
 
@@ -190,6 +205,23 @@ print("Tool committed: $committed");
 ```
 
 ### Page
+
+#### setCurrentPage
+
+Sets current page of the document. Page numbers are 1-indexed.
+
+Returns a Future.
+
+Future Parameters:
+
+Name | Type | Description
+-- | -- | --
+success | bool | whether the setting process is successful.
+
+```dart
+var setResult = await controller.setCurrentPage(5);
+print('Page set ' + setResult ? 'successfully' : 'unsuccessfully');
+```
 
 #### getPageCount
 Gets the total number of pages in the currently displayed document.
@@ -400,6 +432,35 @@ list.add(new AnnotWithFlags('Pdftron', 10, AnnotationFlags.no_zoom, true));
 PdftronFlutter.setFlagsForAnnotations(annotsWithFlags);
 ```
 
+#### setPropertiesForAnnotation
+Sets properties for specified annotation in the current document.
+
+Params:
+Name | Type | Description
+--- | --- | ---
+annotation | [`Annot`](./lib/src/options.dart) | the annotation to be modified
+property | [`AnnotProperty`](./lib/src/options.dart) | the properties to be set for the target annotation
+
+For settable properties:
+
+Name | Type | Markup exclusive
+--- | --- | ---
+rect | Rect | no
+contents | String | no
+subject | String | yes
+title | String | yes
+contentRect | Rect | yes
+
+```dart
+Annot pdf = new Annot('pdf', 1);
+AnnotProperty property = new AnnotProperty();
+property.rect = new Rect.fromCoordinates(1, 1.5, 100.2, 100);
+property.contents = 'Hello World';
+property.subject = 'sample';
+property.title = 'set-props-for-annot';
+PdftronFlutter.setPropertiesForAnnotation(pdf, property);
+```
+
 #### setFlagForFields
 Sets a field flag value on one or more form fields.
 
@@ -477,7 +538,7 @@ PdftronFlutter.importBookmarkJson("{\"0\": \"Page 1\", \"3\": \"Page 4\"}");
 ### Multi-tab
 
 #### closeAllTabs
-Closes all documents that are currently opened in a multiTab environment (that is, [multiTabEnabled](#multiTabEnabled) is true in the config).
+Closes all documents that are currently opened in a multiTab environment (that is, [`multiTabEnabled`](#multiTabEnabled) is true in the config).
 
 Returns a Future.
 
@@ -632,14 +693,14 @@ var fieldChangedCancel = startFormFieldValueChangedListener((fields)
 ### Annotation Menu
 
 #### startAnnotationMenuPressedListener
-Event is raised on annotation menu pressed if it is passed into [overrideAnnotationMenuBehavior](#overrideAnnotationMenuBehavior).
+Event is raised on annotation menu pressed if it is passed into [`overrideAnnotationMenuBehavior`](#overrideAnnotationMenuBehavior).
 
 Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationMenuItem | one of the [AnnotationMenuItems] constants | The menu item that has been pressed
-annotations | List<[`Annot`](./lib/options.dart)> | The annotations associated with the menu
+annotationMenuItem | one of the [AnnotationMenuItems](./lib/src/options.dart) constants | The menu item that has been pressed
+annotations | List of [Annot](./lib/src/options.dart) | The annotations associated with the menu
 
 ```dart
 var annotationMenuPressedCancel = startAnnotationMenuPressedListener((annotationMenuItem, annotations) 
@@ -655,13 +716,13 @@ var annotationMenuPressedCancel = startAnnotationMenuPressedListener((annotation
 ### Long Press Menu
 
 #### startLongPressMenuPressedListener
-Event is raised on long press menu pressed if it is passed into [overrideLongPressMenuBehavior](#overrideLongPressMenuBehavior).
+Event is raised on long press menu pressed if it is passed into [`overrideLongPressMenuBehavior`](#overrideLongPressMenuBehavior).
 
 Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-longPressMenuItem | one of the [LongPressMenuItems] constants | The menu item that has been pressed
+longPressMenuItem | one of the [LongPressMenuItems](./lib/src/constants.dart) constants | The menu item that has been pressed
 longPressText | string | The selected text if pressed on text, empty otherwise
 
 ```dart
@@ -672,6 +733,20 @@ var longPressMenuPressedCancel = startLongPressMenuPressedListener((longPressMen
     print("The selected text is: " + longPressText);
   }
 });
+```
+
+### Custom Behavior
+
+#### startBehaviorActivatedListener
+Event is raised on certain behaviors, if any is passed into [overrideBehavior](#overrideBehavior).
+
+action | String, one of the [Behaviors](#Behaviors) constants | The behavior which has been activated
+data | map | detailed information regarding the behavior
+
+```dart
+var behaviorActivatedCancel = startBehaviorActivatedListener((action, data) {
+  print('action is ' + action);
+  print('url is ' + data['url']);
 ```
 
 ### Bookmarks
@@ -733,6 +808,22 @@ Defines whether the viewer is read-only. If true, the UI will not allow the user
 config.readOnly = true;
 ```
 
+#### isBase64String
+bool, defaults to false.
+
+If true, document in [openDocument](#openDocument) will be treated as a base64 string.
+
+When viewing a document initialized with a base64 string (i.e. a memory buffer), a temporary file is created on Android, but not on iOS. (If you need access to a file-backed PDF on iOS, save the base64 string to disk, and open the file located at that path.)
+
+```dart
+config.isBase64String = true;
+```
+
+#### base64FileExtension
+String, defaults to `.pdf`, required if using base64 string of a non-pdf file.
+
+Defines the file extension for the base64 string in document, if [isBase64String](#isBase64String) is true.
+
 ### UI Customization
 
 #### disabledElements
@@ -780,7 +871,7 @@ var annotationToolbars = [DefaultToolbars.annotate, customToolbar];
 #### hideDefaultAnnotationToolbars
 array of [`DefaultToolbars`](./lib/src/constants.dart) constants, defaults to none.
 
-Defines which default annotation toolbars should be hidden. Note that this should be used when [annotationToolbars](#annotationToolbars) is not defined.
+Defines which default annotation toolbars should be hidden. Note that this should be used when [`annotationToolbars`](#annotationToolbars) is not defined.
 
 ```dart
 // Viewer will use all the default toolbars except annotate or draw in this case
@@ -824,6 +915,37 @@ Defines whether to hide the bottom toolbar for the current viewer.
 config.hideBottomToolbar = true;
 ```
 
+### Layout
+
+#### fitMode
+one of the [FitModes](./lib/src/constants.dart) constants, default value is 'FitWidth'.
+
+Defines the fit mode (default zoom level) of the viewer.
+
+```dart
+config.fitMode = FitModes.fitHeight;
+```
+
+#### layoutMode
+one of the [LayoutModes](./lib/src/constants.dart) constants, default value is 'Continuous'.
+
+Defines the layout mode of the viewer.
+
+```dart
+config.layoutMode = LayoutModes.facingCover;
+```
+
+### Page
+
+#### initialPageNumber
+number, optional
+
+Defines the initial page number that viewer displays when the document is opened. Note that page numbers are 1-indexed.
+
+```dart
+config.initialPageNumber = 5;
+```
+
 ### Page
 
 #### pageChangeOnTap
@@ -845,6 +967,15 @@ config.pageIndicatorEnabled = true;
 ```
 
 ### Annotations
+
+#### annotationPermissionCheckEnabled
+bool, default to false.
+
+Defines whether annotation's flags will be taken into account when it is selected, for example, an annotation with a locked flag can not be resized or moved.
+
+```dart
+config.annotationPermissionCheckEnabled = true;
+```
 
 #### annotationAuthor
 String.
@@ -876,7 +1007,7 @@ config.selectAnnotationAfterCreation = true;
 ### Annotation Menu
 
 #### hideAnnotationMenu
-array of [Tools](./lib/constants.dart) constants, defaults to none
+array of [Tools](./lib/src/constants.dart) constants, defaults to none
 
 Defines annotation types that will not show the default annotation menu.
 
@@ -885,7 +1016,7 @@ config.hideAnnotationMenu = [Tools.annotationCreateArrow, Tools.annotationEraser
 ```
 
 #### annotationMenuItems
-array of [AnnotationMenuItems](./lib/constants/dart) constants, default contains all items
+array of [AnnotationMenuItems](./lib/src/constants.dart) constants, default contains all items
 
 Defines the menu items that can show when an annotation is selected. 
 
@@ -894,9 +1025,9 @@ config.annotationMenuItems = [AnnotationMenuItems.search, AnnotationMenuItems.sh
 ```
 
 #### overrideAnnotationMenuBehavior
-array of [AnnotationMenuItems](./lib/constants/dart) constants, defaults to none
+array of [AnnotationMenuItems](./lib/src/constants.dart) constants, defaults to none
 
-Defines the menu items that will skip default behavior when pressed. They will still be displayed in the annotation menu, and the event handler [startAnnotationMenuPressedListener](#startAnnotationMenuPressedListener) will be called where custom behavior can be implemented.
+Defines the menu items that will skip default behavior when pressed. They will still be displayed in the annotation menu, and the event handler [`startAnnotationMenuPressedListener`](#startAnnotationMenuPressedListener) will be called where custom behavior can be implemented.
 
 ```dart
 config.overrideAnnotationMenuBehavior = [AnnotationMenuItems.copy];
@@ -914,7 +1045,7 @@ config.longPressMenuEnabled = false;
 ```
 
 #### longPressMenuItems
-array of [LongPressMenuItems](./lib/constants.dart) constants, optional, default contains all the items
+array of [LongPressMenuItems](./lib/src/constants.dart) constants, optional, default contains all the items
 
 Defines menu items that can show when long press on text or blank space.
 
@@ -923,12 +1054,23 @@ config.longPressMenuItems = [LongPressMenuItems.search, LongPressMenuItems.share
 ```
 
 #### overrideLongPressMenuBehavior
-array of [LongPressMenuItems](./lib/constants.dart) constants, optional, defaults to none
+array of [LongPressMenuItems](./lib/src/constants.dart) constants, optional, defaults to none
 
-Defines the menu items on long press that will skip default behavior when pressed. They will still be displayed in the long press menu, and the event handler [startLongPressMenuPressedListener](#startLongPressMenuPressedListener) will be called where custom behavior can be implemented.
+Defines the menu items on long press that will skip default behavior when pressed. They will still be displayed in the long press menu, and the event handler [`startLongPressMenuPressedListener`](#startLongPressMenuPressedListener) will be called where custom behavior can be implemented.
 
 ```dart
 config.overrideLongPressMenuBehavior = [LongPressMenuItems.copy];
+```
+
+### Custom Behavior
+
+#### overrideBehavior
+array of [Behaviors](./lib/src/constants.dart) constants, defaults to false.
+
+Defines actions that should skip default behavior, such as external link click. The event handler [startBehaviorActivatedListener](#startBehaviorActivatedListener) will be called when the behavior is activated, where custom behavior can be implemented.
+
+```dart
+config.overrideBehavior = [Behaviors.linkPress];
 ```
 
 ### Multi-tab
@@ -936,7 +1078,7 @@ config.overrideLongPressMenuBehavior = [LongPressMenuItems.copy];
 #### multiTabEnabled
 bool, defaults to false.
 
-Defines whether viewer will use tabs in order to have more than one document open simultaneously (like a web browser). Calling [openDocument](#openDocument) with this value being true will cause a new tab to be opened with the associated document.
+Defines whether viewer will use tabs in order to have more than one document open simultaneously (like a web browser). Calling [`openDocument`](#openDocument) with this value being true will cause a new tab to be opened with the associated document.
 
 ```dart
 config.multiTabEnabled = true;
@@ -945,7 +1087,7 @@ config.multiTabEnabled = true;
 #### tabTitle
 String, default is the file name.
 
-Sets the tab title if [multiTabEnabled](#multiTabEnabled) is true. (For Android, tabTitle is only supported on the widget viewer)
+Sets the tab title if [`multiTabEnabled`](#multiTabEnabled) is true. (For Android, tabTitle is only supported on the widget viewer)
 
 ```dart
 config.tabTitle = 'tab1';
@@ -983,7 +1125,7 @@ config.thumbnailViewEditingEnabled = false;
 ```
 
 #### hideThumbnailFilterModes
-array of [ThumbnailFilterModes](./lib/constants.dart) constants, defaults to none.
+array of [ThumbnailFilterModes](./lib/src/constants.dart) constants, defaults to none.
 
 Defines filter Modes that should be hidden in the thumbnails browser.
 

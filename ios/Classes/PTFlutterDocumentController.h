@@ -16,6 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL documentLoaded;
 
 // viewer options
+@property (nonatomic, copy, nullable) NSString* layoutMode;
+@property (nonatomic, copy, nullable) NSString* fitMode;
+@property (nonatomic, assign) int initialPageNumber;
+@property (nonatomic, assign, getter=isBase64) BOOL base64;
 @property (nonatomic, copy, nullable) NSArray <NSString *> *hideThumbnailFilterModes;
 
 // long-press menu customization
@@ -50,6 +54,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, nullable) NSString* annotationAuthor;
 
+@property (nonatomic, assign, getter=isAnnotationPermissionCheckEnabled) BOOL annotationPermissionCheckEnabled;
+
+@property (nonatomic, copy, nullable) NSArray<NSString *> *overrideBehavior;
+
 @property (nonatomic, copy, nullable) NSString* leadingNavButtonIcon;
 
 @property (nonatomic, copy, nullable) NSString* tabTitle;
@@ -66,6 +74,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FLThumbnailsViewController : PTThumbnailsViewController
 
+@end
+
+@interface PTFlutterTabbedDocumentController: PTTabbedDocumentViewController
+
+@property (nonatomic, retain) NSMutableArray *tempFiles;
 @end
 
 NS_ASSUME_NONNULL_END

@@ -15,6 +15,8 @@ const _annotationsSelectedChannel =
     const EventChannel('annotations_selected_event');
 const _formFieldValueChangedChannel =
     const EventChannel('form_field_value_changed_event');
+const _behaviorActivatedChannel =
+    const EventChannel('behavior_activated_event');
 const _longPressMenuPressedChannel =
     const EventChannel('long_press_menu_pressed_event');
 const _annotationMenuPressedChannel =
@@ -31,6 +33,7 @@ typedef void DocumentErrorListener();
 typedef void AnnotationChangedListener(dynamic action, dynamic annotations);
 typedef void AnnotationsSelectedListener(dynamic annotationWithRects);
 typedef void FormFieldValueChangedListener(dynamic fields);
+typedef void BehaviorActivatedListener(dynamic action, dynamic data);
 typedef void LongPressMenuPressedChannelListener(
     dynamic longPressMenuItem, dynamic longPressText);
 typedef void AnnotationMenuPressedChannelListener(
@@ -49,6 +52,7 @@ enum eventSinkId {
   annotationChangedId,
   annotationsSelectedId,
   formFieldValueChangedId,
+  behaviorActivatedId,
   longPressMenuPressedId,
   annotationMenuPressedId,
   leadingNavButtonPressedId,
@@ -149,6 +153,22 @@ CancelListener startFormFieldValueChangedListener(
       fieldList.add(new Field.fromJson(field));
     }
     listener(fieldList);
+  }, cancelOnError: true);
+
+  return () {
+    subscription.cancel();
+  };
+}
+
+CancelListener startBehaviorActivatedListener(
+    BehaviorActivatedListener listener) {
+  var subscription = _behaviorActivatedChannel
+      .receiveBroadcastStream(eventSinkId.behaviorActivatedId.index)
+      .listen((behaviorString) {
+    dynamic behaviorObject = jsonDecode(behaviorString);
+    dynamic action = behaviorObject[EventParameters.action];
+    dynamic data = behaviorObject[EventParameters.data];
+    listener(action, data);
   }, cancelOnError: true);
 
   return () {

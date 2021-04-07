@@ -54,8 +54,18 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         self.needsRemoteDocumentLoaded = NO;
         self.documentLoaded = YES;
 
-        NSString *filePath = self.coordinatedDocument.fileURL.path;
-        [self.plugin documentController:self documentLoadedFromFilePath:filePath];
+        if (self.initialPageNumber > 0) {
+            [self.pdfViewCtrl SetCurrentPage:self.initialPageNumber];
+        }
+        
+        [self applyLayoutMode];
+        
+        if (self.base64) {
+            NSString *filePath = self.coordinatedDocument.fileURL.path;
+            [self.plugin documentController:self documentLoadedFromFilePath:filePath];
+        } else {
+            [self.plugin documentController:self documentLoadedFromFilePath:nil];
+        }
     }
     
     if (![self.toolManager isReadonly] && self.readOnly) {
@@ -666,6 +676,64 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 
 }
 
+- (BOOL)toolManager:(PTToolManager *)toolManager shouldHandleLinkAnnotation:(PTAnnot *)annotation orLinkInfo:(PTLinkInfo *)linkInfo onPageNumber:(unsigned long)pageNumber
+{
+    if (![self.overrideBehavior containsObject:PTLinkPressLinkAnnotationKey]) {
+        return YES;
+    }
+
+    PTPDFViewCtrl *pdfViewCtrl = self.pdfViewCtrl;
+
+    __block NSString *url = nil;
+
+    NSError *error = nil;
+    [pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+        // Check for a valid link annotation.
+        if (![annotation IsValid] ||
+            annotation.extendedAnnotType != PTExtendedAnnotTypeLink) {
+            return;
+        }
+
+        PTLink *linkAnnot = [[PTLink alloc] initWithAnn:annotation];
+
+        // Check for a valid URI action.
+        PTAction *action = [linkAnnot GetAction];
+        if (![action IsValid] ||
+            [action GetType] != e_ptURI) {
+            return;
+        }
+
+        PTObj *actionObj = [action GetSDFObj];
+        if (![actionObj IsValid]) {
+            return;
+        }
+
+        // Get the action's URI.
+        PTObj *uriObj = [actionObj FindObj:PTURILinkAnnotationKey];
+        if ([uriObj IsValid] && [uriObj IsString]) {
+            url = [uriObj GetAsPDFText];
+        }
+    } error:&error];
+    if (error) {
+        NSLog(@"%@", error);
+    }
+    if (url) {
+
+        NSDictionary* behaviorDict = @{
+            PTActionLinkAnnotationKey: PTLinkPressLinkAnnotationKey,
+            PTDataLinkAnnotationKey: @{
+                PTURLLinkAnnotationKey: url,
+            },
+        };
+
+        [self.plugin documentController:self behaviorActivated:[PdftronFlutterPlugin PT_idToJSONString: behaviorDict]];
+        // Link handled.
+        return NO;
+    }
+
+    return YES;
+}
+
 #pragma mark - <PTPDFViewCtrlDelegate>
 
 - (void)pdfViewCtrl:(PTPDFViewCtrl *)pdfViewCtrl onSetDoc:(PTPDFDoc *)doc
@@ -710,6 +778,10 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 
 - (void)initViewerSettings
 {
+    _base64 = NO;
+    _readOnly = NO;
+    
+    _showNavButton = YES;
     _longPressMenuEnabled = true;
     
     _annotationToolbarSwitcherHidden = NO;
@@ -724,6 +796,9 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 
 - (void)applyViewerSettings
 {
+    // Fit mode.
+    [self applyFitMode];
+    
     // nav icon
     [self applyNavIcon];
     
@@ -754,6 +829,52 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     self.pageFitsBetweenBars = !hidesToolbarsOnTap; // Tools default is enabled.
     
     [self applyToolGroupSettings];
+}
+
+- (void)applyFitMode
+{
+    if (!self.fitMode) {
+        return;
+    }
+    
+    if ([self.fitMode isEqualToString:PTFitPageKey]) {
+        [self.pdfViewCtrl SetPageViewMode:e_trn_fit_page];
+        [self.pdfViewCtrl SetPageRefViewMode:e_trn_fit_page];
+    }
+    else if ([self.fitMode isEqualToString:PTFitWidthKey]) {
+        [self.pdfViewCtrl SetPageViewMode:e_trn_fit_width];
+        [self.pdfViewCtrl SetPageRefViewMode:e_trn_fit_width];
+    }
+    else if ([self.fitMode isEqualToString:PTFitHeightKey]) {
+        [self.pdfViewCtrl SetPageViewMode:e_trn_fit_height];
+        [self.pdfViewCtrl SetPageRefViewMode:e_trn_fit_height];
+    }
+    else if ([self.fitMode isEqualToString:PTZoomKey]) {
+        [self.pdfViewCtrl SetPageViewMode:e_trn_zoom];
+        [self.pdfViewCtrl SetPageRefViewMode:e_trn_zoom];
+    }
+}
+
+- (void)applyLayoutMode
+{
+    if ([self.layoutMode isEqualToString:PTSingleKey]) {
+        [self.pdfViewCtrl SetPagePresentationMode:e_trn_single_page];
+    }
+    else if ([self.layoutMode isEqualToString:PTContinuousKey]) {
+        [self.pdfViewCtrl SetPagePresentationMode:e_trn_single_continuous];
+    }
+    else if ([self.layoutMode isEqualToString:PTFacingKey]) {
+        [self.pdfViewCtrl SetPagePresentationMode:e_trn_facing];
+    }
+    else if ([self.layoutMode isEqualToString:PTFacingContinuousKey]) {
+        [self.pdfViewCtrl SetPagePresentationMode:e_trn_facing_continuous];
+    }
+    else if ([self.layoutMode isEqualToString:PTFacingCoverKey]) {
+        [self.pdfViewCtrl SetPagePresentationMode:e_trn_facing_cover];
+    }
+    else if ([self.layoutMode isEqualToString:PTFacingCoverContinuousKey]) {
+        [self.pdfViewCtrl SetPagePresentationMode:e_trn_facing_continuous_cover];
+    }
 }
 
 - (void)applyNavIcon
@@ -1030,6 +1151,16 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     self.toolManager.annotationAuthor = annotationAuthor;
 }
 
+- (void)setAnnotationPermissionCheckEnabled:(BOOL)annotationPermissionCheckEnabled
+{
+    self.toolManager.annotationPermissionCheckEnabled = annotationPermissionCheckEnabled;
+}
+
+- (BOOL)isAnnotationPermissionCheckEnabled
+{
+    return self.toolManager.isAnnotationPermissionCheckEnabled;
+}
+
 - (NSString *)tabTitle
 {
     return self.documentTabItem.displayName;
@@ -1122,6 +1253,28 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 {
     [super viewWillAppear:animated];
     self.navigationController.toolbarHidden = !self.editingEnabled;
+}
+
+@end
+
+#pragma mark - PTFlutterTabbedDocumentController
+@implementation PTFlutterTabbedDocumentController
+
+// For base64 temp file deletion
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    if (self.tempFiles) {
+        for (NSString* path in self.tempFiles) {
+            NSError* error;
+            [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
+
+            if (error) {
+                NSLog(@"Error: There was an error while deleting the temporary file for base64. %@", error.localizedDescription);
+            }
+        }
+        [self.tempFiles removeAllObjects];
+    }
 }
 
 @end

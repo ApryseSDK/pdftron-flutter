@@ -4,11 +4,8 @@ import android.content.Context;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFNet;
-import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdftronflutter.factories.DocumentViewFactory;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
-
-import java.util.ArrayList;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
@@ -19,6 +16,7 @@ import io.flutter.plugin.common.PluginRegistry.Registrar;
 
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATIONS_SELECTED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATION_CHANGED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_BEHAVIOR_ACTIVATED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATION_MENU_PRESSED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_DOCUMENT_ERROR;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_DOCUMENT_LOADED;
@@ -46,8 +44,6 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PASSWORD;
 public class PdftronFlutterPlugin implements MethodCallHandler {
 
     private final Context mContext;
-
-    private ArrayList<ToolManager.ToolMode> mDisabledTools = new ArrayList<>();
 
     public PdftronFlutterPlugin(Context context) {
         mContext = context;
@@ -148,6 +144,19 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             @Override
             public void onCancel(Object arguments) {
                 FlutterDocumentActivity.setFormFieldValueChangedEventEmitter(null);
+            }
+        });
+
+        final EventChannel behaviorActivatedEventChannel = new EventChannel(registrar.messenger(), EVENT_BEHAVIOR_ACTIVATED);
+        behaviorActivatedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setBehaviorActivatedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setBehaviorActivatedEventEmitter(null);
             }
         });
 

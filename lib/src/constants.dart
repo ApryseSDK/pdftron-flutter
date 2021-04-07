@@ -11,6 +11,7 @@ class Functions {
   static const selectAnnotation = "selectAnnotation";
   static const setFlagsForAnnotations = "setFlagsForAnnotations";
   static const addAnnotations = "addAnnotations";
+  static const setPropertiesForAnnotation = "setPropertiesForAnnotation";
   static const importAnnotationCommand = "importAnnotationCommand";
   static const importBookmarkJson = "importBookmarkJson";
   static const saveDocument = "saveDocument";
@@ -18,6 +19,8 @@ class Functions {
   static const getPageCount = "getPageCount";
   static const handleBackButton = "handleBackButton";
   static const getPageCropBox = "getPageCropBox";
+  static const setCurrentPage = "setCurrentPage";
+  static const getDocumentPath = "getDocumentPath";
   static const setToolMode = "setToolMode";
   static const setValuesForFields = "setValuesForFields";
   static const setFlagForFields = "setFlagForFields";
@@ -44,6 +47,7 @@ class Parameters {
   static const annotations = "annotations";
   static const annotation = "annotation";
   static const annotationsWithFlags = "annotationsWithFlags";
+  static const annotationProperties = "annotationProperties";
   static const leadingNavButtonIcon = "leadingNavButtonIcon";
 }
 
@@ -52,6 +56,7 @@ class EventParameters {
   static const action = "action";
   static const annotations = "annotations";
   static const xfdfCommand = "xfdfCommand";
+  static const data = "data";
   static const longPressMenuItem = "longPressMenuItem";
   static const longPressText = "longPressText";
   static const annotationMenuItem = "annotationMenuItem";
@@ -152,6 +157,24 @@ class Tools {
   static const pencilKitDrawing = 'PencilKitDrawing';
 }
 
+// FitModes define all fit modes in the viewer
+class FitModes {
+  static const fitPage = 'FitPage';
+  static const fitWidth = 'FitWidth';
+  static const fitHeight = 'FitHeight';
+  static const zoom = 'Zoom';
+}
+
+// LayoutModes define all layout modes in the viewer
+class LayoutModes {
+  static const single = 'Single';
+  static const continuous = 'Continuous';
+  static const facing = 'Facing';
+  static const facingContinuous = 'FacingContinuous';
+  static const facingCover = 'FacingCover';
+  static const facingCoverContinuous = 'FacingCoverContinuous';
+}
+
 // FieldFlags define the property flags for a form field
 class FieldFlags {
   static const ReadOnly = 0;
@@ -176,6 +199,22 @@ class AnnotationFlags {
   static const print = "print";
   static const readOnly = "readOnly";
   static const toggleNoView = "toggleNoView";
+}
+
+// AnnotationProperties define all possible annotation properties
+class AnnotationProperties {
+  // not markup exclusive
+  static const rect = "rect";
+  static const contents = "contents";
+  // markup exclusive
+  static const subject = "subject";
+  static const title = "title";
+  static const contentRect = "contentRect";
+}
+
+// Behaviors define all user behaviors in the viewer
+class Behaviors {
+  static const linkPress = "linkPress";
 }
 
 // LongPressMenuItems define all menu items that could show up on long press of text or empty area
