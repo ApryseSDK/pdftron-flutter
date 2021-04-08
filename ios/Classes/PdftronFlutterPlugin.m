@@ -1186,9 +1186,9 @@
     return annots;
 }
 
-+(NSArray<PTAnnot *> *)findAnnotsWithUniqueIDs:(NSArray <NSDictionary *>*)idPageNumberPairs documentController:(PTDocumentController *)documentController error:(NSError **)error
++(NSDictionary<PTAnnot *, NSNumber *> *)findAnnotsWithUniqueIDs:(NSArray <NSDictionary *>*)idPageNumberPairs documentController:(PTDocumentController *)documentController error:(NSError **)error
 {
-    NSMutableArray<PTAnnot *> *resultAnnots = [[NSMutableArray alloc] init];
+    NSMutableDictionary<PTAnnot *, NSNumber *> *resultAnnots = [[NSMutableDictionary alloc] init];
     
     NSMutableDictionary <NSNumber *, NSMutableArray <NSString *> *> *pageNumberAnnotDict = [[NSMutableDictionary alloc] init];
     
@@ -1236,7 +1236,7 @@
                 
                 for (NSString *annotIdFromDict in pageNumberAnnotDict[pageNumber]) {
                     if ([annotIdFromDict isEqualToString:annotUniqueId]) {
-                        [resultAnnots addObject:annotFromDoc];
+                        [resultAnnots setObject:pageNumber forKey:[annotFromDoc copy]];
                         break;
                     }
                 }
@@ -1413,7 +1413,7 @@
     
     NSArray *annotArray = [PdftronFlutterPlugin PT_idAsArray:[PdftronFlutterPlugin PT_JSONStringToId:annotationList]];
     
-    NSArray <PTAnnot *> *matchingAnnots = [PdftronFlutterPlugin findAnnotsWithUniqueIDs:annotArray documentController:documentController error:&error];
+    NSDictionary <PTAnnot *, NSNumber *> *matchingAnnots = [PdftronFlutterPlugin findAnnotsWithUniqueIDs:annotArray documentController:documentController error:&error];
     
     if (error) {
         NSLog(@"Error: Failed to get annotations from doc. %@", error.localizedDescription);
@@ -1494,7 +1494,7 @@
     
     NSArray *annotArray = [PdftronFlutterPlugin PT_idAsArray:[PdftronFlutterPlugin PT_JSONStringToId:annotationList]];
     
-    NSArray* matchingAnnots = [PdftronFlutterPlugin findAnnotsWithUniqueIDs:annotArray documentController:documentController error:&error];
+    NSDictionary <PTAnnot *, NSNumber *> *matchingAnnots = [PdftronFlutterPlugin findAnnotsWithUniqueIDs:annotArray documentController:documentController error:&error];
     
     if (error) {
         NSLog(@"Error: Failed to get annotations from doc. %@", error.localizedDescription);
@@ -1505,9 +1505,10 @@
     
     [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
         for (PTAnnot *annot in matchingAnnots) {
-            PTPage *page = [annot GetPage];
+            int pageNumber = [matchingAnnots[annot] intValue];
+            PTPage *page = [doc GetPage:pageNumber];
             if (page && [page IsValid]) {
-                int pageNumber = [page GetIndex];
+                
                 [documentController.toolManager willRemoveAnnotation:annot onPageNumber:pageNumber];
                 
                 [page AnnotRemoveWithAnnot:annot];
@@ -1807,13 +1808,13 @@
     
     NSArray *annotationJSONArray = [PdftronFlutterPlugin PT_idAsArray:[PdftronFlutterPlugin PT_JSONStringToId:annotations]];
     
-    NSMutableArray <PTAnnot *>* validAnnotations = [[NSMutableArray alloc] init];
+    NSMutableDictionary <PTAnnot *, NSNumber *>* validAnnotations = [[NSMutableDictionary alloc] init];
     
     for (NSDictionary* annotationDict in annotationJSONArray) {
         PTAnnot* annot = [PTAnnotationUtils getAnnotFromDict:annotationDict document:documentController.document];
         
         if (annot && [annot IsValid]) {
-            [validAnnotations addObject:annot];
+            [validAnnotations setObject:[PdftronFlutterPlugin PT_idAsNSNumber:annotationDict[PTAnnotPageNumberKey]] forKey:[annot copy]];
         }
     }
     
@@ -1821,12 +1822,12 @@
     
     [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
         for (PTAnnot *annot in validAnnotations) {
-            PTPage *page = [annot GetPage];
+            int pageNumber = [validAnnotations[annot] intValue];
+            PTPage *page = [doc GetPage:pageNumber];
             if (page && [page IsValid]) {
-                int pageNumber = [page GetIndex];
                 
                 [page AnnotPushBack:annot];
-                [documentController.toolManager annotationAdded:annot onPageNumber:pageNumber];
+                [documentController.toolManager annotationAdded:annot onPageNumber:[validAnnotations[annot] intValue]];
             }
         }
         [documentController.pdfViewCtrl Update:YES];

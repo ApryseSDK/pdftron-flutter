@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'constants.dart';
 
 class Annot {
   /*  
@@ -72,8 +73,6 @@ class Rect {
         getDouble(json['width']),
         getDouble(json['height']));
   }
-
-  Map<String, dynamic> toJson() => {'x1': x1, 'y1': y1, 'x2': x2, 'y2': y2};
 
   // a helper for JSON number decoding
   static getDouble(dynamic value) {

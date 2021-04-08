@@ -2117,7 +2117,7 @@ public class PluginUtils {
             Annot annot = JSONUtils.getAnnotationFromJSONObject(currAnnotJSONObject, pdfDoc);
 
             if (annot != null && annot.isValid()) {
-                validAnnotMap.put(annot, annot.getPage().getIndex());
+                validAnnotMap.put(annot, currAnnotJSONObject.getInt(KEY_ANNOTATION_PAGE_NUMBER));
             }
         }
 
@@ -2130,10 +2130,11 @@ public class PluginUtils {
             pdfViewCtrl.docLock(true);
             shouldUnlock = true;
 
-            for (Annot annot : validAnnotMap.keySet()) {
-
-                annot.getPage().annotPushBack(annot);
-                pdfViewCtrl.update(annot, annot.getPage().getIndex());
+            for (Map.Entry<Annot, Integer> mapEntry : validAnnotMap.entrySet()) {
+                Annot currAnnot = mapEntry.getKey();
+                int currPageNumber = mapEntry.getValue();
+                pdfDoc.getPage(currPageNumber).annotPushBack(currAnnot);
+                pdfViewCtrl.update(currAnnot, currPageNumber);
             }
 
             toolManager.raiseAnnotationsAddedEvent(validAnnotMap);
