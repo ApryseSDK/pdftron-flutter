@@ -826,7 +826,6 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     // Always allow toggling toolbars on tap.
     BOOL hidesToolbarsOnTap = YES;
     self.hidesControlsOnTap = hidesToolbarsOnTap;
-    self.pageFitsBetweenBars = !hidesToolbarsOnTap; // Tools default is enabled.
     
     [self applyToolGroupSettings];
 }
