@@ -1409,6 +1409,8 @@ public class PluginUtils {
             buttonId = DefaultToolbars.ButtonId.UNDO.value();
         } else if (BUTTON_REDO.equals(item)) {
             buttonId = DefaultToolbars.ButtonId.REDO.value();
+        } else if (TOOL_ANNOTATION_CREATE_FREE_HIGHLIGHTER.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.FREE_HIGHLIGHT.value();
         }
         return buttonId;
     }
@@ -1490,6 +1492,8 @@ public class PluginUtils {
             buttonType = ToolbarButtonType.UNDO;
         } else if (BUTTON_REDO.equals(item)) {
             buttonType = ToolbarButtonType.REDO;
+        } else if (TOOL_ANNOTATION_CREATE_FREE_HIGHLIGHTER.equals(item)) {
+            buttonType = ToolbarButtonType.FREE_HIGHLIGHT;
         }
         return buttonType;
     }
