@@ -107,6 +107,9 @@ class Buttons {
   static const eraserButton = 'eraserButton';
   static const undo = 'undo';
   static const redo = 'redo';
+
+  // Android only
+  static const editAnnotationToolbarButton = 'editAnnotationToolButton';
 }
 
 // Tools define the various kinds of tools for the viewer
@@ -156,6 +159,10 @@ class Tools {
 
   // iOS only.
   static const pencilKitDrawing = 'PencilKitDrawing';
+
+  // Android only.
+  static const annotationSmartPen = 'AnnotationSmartPen';
+  static const annotationLasso = 'AnnotationLasso';
 }
 
 // FitModes define all fit modes in the viewer
