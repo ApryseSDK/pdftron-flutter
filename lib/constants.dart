@@ -107,6 +107,9 @@ class Buttons {
   static const eraserButton = 'eraserButton';
   static const undo = 'undo';
   static const redo = 'redo';
+
+  // Android only
+  static const editAnnotationToolbarButton = 'editAnnotationToolButton';
 }
 
 // Tools define the various kinds of tools for the viewer

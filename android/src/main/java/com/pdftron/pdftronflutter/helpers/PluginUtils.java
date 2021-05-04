@@ -221,6 +221,7 @@ public class PluginUtils {
     public static final String BUTTON_MORE_ITEMS = "moreItemsButton";
     public static final String BUTTON_UNDO = "undo";
     public static final String BUTTON_REDO = "redo";
+    public static final String BUTTON_EDIT_ANNOTATION_TOOLBAR = "editAnnotationToolButton";
 
     public static final String TOOL_BUTTON_FREE_HAND = "freeHandToolButton";
     public static final String TOOL_BUTTON_HIGHLIGHT = "highlightToolButton";
@@ -1417,6 +1418,8 @@ public class PluginUtils {
             buttonId = DefaultToolbars.ButtonId.FREE_HIGHLIGHT.value();
         } else if (TOOL_ANNOTATION_SMART_PEN.equals(item)) {
             buttonId = DefaultToolbars.ButtonId.SMART_PEN.value();
+        } else if (BUTTON_EDIT_ANNOTATION_TOOLBAR.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.CUSTOMIZE.value();
         }
         return buttonId;
     }
@@ -1502,6 +1505,8 @@ public class PluginUtils {
             buttonType = ToolbarButtonType.FREE_HIGHLIGHT;
         } else if (TOOL_ANNOTATION_SMART_PEN.equals(item)) {
             buttonType = ToolbarButtonType.SMART_PEN;
+        } else if (BUTTON_EDIT_ANNOTATION_TOOLBAR.equals(item)) {
+            buttonType = ToolbarButtonType.EDIT_TOOLBAR;
         }
         return buttonType;
     }
