@@ -28,6 +28,7 @@ import com.pdftron.pdf.controls.ThumbnailsViewFragment;
 import com.pdftron.pdf.dialog.ViewModePickerDialogFragment;
 import com.pdftron.pdf.model.AnnotStyle;
 import com.pdftron.pdf.tools.AdvancedShapeCreate;
+import com.pdftron.pdf.tools.AnnotEditRectGroup;
 import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.Tool;
@@ -280,7 +281,7 @@ public class PluginUtils {
     public static final String TOOL_FORM_CREATE_TOOL_BOX_FIELD = "FormCreateToolBoxField";
     public static final String TOOL_FORM_CREATE_LIST_BOX_FIELD = "FormCreateListBoxField";
     public static final String TOOL_ANNOTATION_SMART_PEN = "AnnotationSmartPen";
-
+    public static final String TOOL_ANNOTATION_LASSO = "AnnotationLasso";
 
     public static final String ANNOTATION_FLAG_HIDDEN = "hidden";
     public static final String ANNOTATION_FLAG_INVISIBLE = "invisible";
@@ -1063,6 +1064,8 @@ public class PluginUtils {
             mode = ToolManager.ToolMode.FORM_LIST_BOX_CREATE;
         } else if (TOOL_ANNOTATION_SMART_PEN.equals(item)) {
             mode = ToolManager.ToolMode.SMART_PEN_INK;
+        } else if (TOOL_ANNOTATION_LASSO.equals(item)) {
+            mode = ToolManager.ToolMode.ANNOT_EDIT_RECT_GROUP;
         }
         return mode;
     }
@@ -1420,6 +1423,8 @@ public class PluginUtils {
             buttonId = DefaultToolbars.ButtonId.SMART_PEN.value();
         } else if (BUTTON_EDIT_ANNOTATION_TOOLBAR.equals(item)) {
             buttonId = DefaultToolbars.ButtonId.CUSTOMIZE.value();
+        } else if (TOOL_ANNOTATION_LASSO.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.LASSO_SELECT.value();
         }
         return buttonId;
     }
@@ -1507,6 +1512,8 @@ public class PluginUtils {
             buttonType = ToolbarButtonType.SMART_PEN;
         } else if (BUTTON_EDIT_ANNOTATION_TOOLBAR.equals(item)) {
             buttonType = ToolbarButtonType.EDIT_TOOLBAR;
+        } else if (TOOL_ANNOTATION_LASSO.equals(item)) {
+            buttonType = ToolbarButtonType.LASSO_SELECT;
         }
         return buttonType;
     }
@@ -2361,6 +2368,14 @@ public class PluginUtils {
             return;
         }
 
+        // For multi-select rect and lasso tool, we need to set the selection mode on tool manager
+        if (TOOL_ANNOTATION_LASSO.equals(toolModeString)) {
+            toolManager.setMultiSelectMode(AnnotEditRectGroup.SelectionMode.LASSO);
+        } else if (TOOL_ANNOTATION_EDIT.equals(toolModeString)) {
+            toolManager.setMultiSelectMode(AnnotEditRectGroup.SelectionMode.RECTANGULAR);
+        }
+
+        // Create our tool
         ToolManager.ToolMode mode = convStringToToolMode(toolModeString);
         Tool tool = (Tool) toolManager.createTool(mode, null);
         boolean continuousAnnot = PdfViewCtrlSettingsManager.getContinuousAnnotationEdit(context);

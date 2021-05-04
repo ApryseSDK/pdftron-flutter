@@ -162,6 +162,7 @@ class Tools {
 
   // Android only.
   static const annotationSmartPen = 'AnnotationSmartPen';
+  static const annotationLasso = 'AnnotationLasso';
 }
 
 // FitModes define all fit modes in the viewer
