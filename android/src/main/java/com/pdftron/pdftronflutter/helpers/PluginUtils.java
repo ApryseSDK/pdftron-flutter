@@ -278,6 +278,8 @@ public class PluginUtils {
     public static final String TOOL_FORM_CREATE_COMBO_BOX_FIELD = "FormCreateComboBoxField";
     public static final String TOOL_FORM_CREATE_TOOL_BOX_FIELD = "FormCreateToolBoxField";
     public static final String TOOL_FORM_CREATE_LIST_BOX_FIELD = "FormCreateListBoxField";
+    public static final String TOOL_ANNOTATION_SMART_PEN = "AnnotationSmartPen";
+
 
     public static final String ANNOTATION_FLAG_HIDDEN = "hidden";
     public static final String ANNOTATION_FLAG_INVISIBLE = "invisible";
@@ -1058,6 +1060,8 @@ public class PluginUtils {
             mode = ToolManager.ToolMode.FORM_COMBO_BOX_CREATE;
         } else if (TOOL_FORM_CREATE_LIST_BOX_FIELD.equals(item)) {
             mode = ToolManager.ToolMode.FORM_LIST_BOX_CREATE;
+        } else if (TOOL_ANNOTATION_SMART_PEN.equals(item)) {
+            mode = ToolManager.ToolMode.SMART_PEN_INK;
         }
         return mode;
     }
@@ -1411,6 +1415,8 @@ public class PluginUtils {
             buttonId = DefaultToolbars.ButtonId.REDO.value();
         } else if (TOOL_ANNOTATION_CREATE_FREE_HIGHLIGHTER.equals(item)) {
             buttonId = DefaultToolbars.ButtonId.FREE_HIGHLIGHT.value();
+        } else if (TOOL_ANNOTATION_SMART_PEN.equals(item)) {
+            buttonId = DefaultToolbars.ButtonId.SMART_PEN.value();
         }
         return buttonId;
     }
@@ -1494,6 +1500,8 @@ public class PluginUtils {
             buttonType = ToolbarButtonType.REDO;
         } else if (TOOL_ANNOTATION_CREATE_FREE_HIGHLIGHTER.equals(item)) {
             buttonType = ToolbarButtonType.FREE_HIGHLIGHT;
+        } else if (TOOL_ANNOTATION_SMART_PEN.equals(item)) {
+            buttonType = ToolbarButtonType.SMART_PEN;
         }
         return buttonType;
     }

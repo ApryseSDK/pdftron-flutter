@@ -156,6 +156,9 @@ class Tools {
 
   // iOS only.
   static const pencilKitDrawing = 'PencilKitDrawing';
+
+  // Android only.
+  static const annotationSmartPen = 'AnnotationSmartPen';
 }
 
 // FitModes define all fit modes in the viewer
