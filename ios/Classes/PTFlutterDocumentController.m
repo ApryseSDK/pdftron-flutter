@@ -655,7 +655,6 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         PTAnnotationCreatePolygonCloudToolKey : @(PTExtendedAnnotTypeCloudy),
         PTAnnotationCreateDistanceMeasurementToolKey : @(PTExtendedAnnotTypeRuler),
         PTAnnotationCreatePerimeterMeasurementToolKey : @(PTExtendedAnnotTypePerimeter),
-        PTAnnotationCreateRectangleAreaMeasurementToolKey : @(PTExtendedAnnotTypeArea),
         PTAnnotationCreateAreaMeasurementToolKey : @(PTExtendedAnnotTypeArea),
         PTAnnotationCreateFileAttachmentToolKey : @(PTExtendedAnnotTypeFileAttachment),
         PTAnnotationCreateSoundToolKey : @(PTExtendedAnnotTypeSound),

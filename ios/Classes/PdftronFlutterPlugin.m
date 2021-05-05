@@ -1989,8 +1989,6 @@
         toolClass = [PTPerimeterCreate class];
     } else if ([toolMode isEqualToString:PTAnnotationCreateAreaMeasurementToolKey]) {
         toolClass = [PTAreaCreate class];
-    } else if ([toolMode isEqualToString:PTAnnotationCreateRectangleAreaMeasurementToolKey]) {
-              toolClass = [PTRectangleAreaCreate class];
     } else if ([toolMode isEqualToString:PTEraserToolKey]) {
         toolClass = [PTEraser class];
     } else if ([toolMode isEqualToString:PTAnnotationCreateFreeHighlighterToolKey]) {
@@ -2330,9 +2328,6 @@
     }
     else if ([key isEqualToString:PTAnnotationCreateAreaMeasurementToolKey]) {
         return [PTAreaCreate class];
-    }
-    else if ([key isEqualToString:PTAnnotationCreateRectangleAreaMeasurementToolKey]) {
-            return [PTRectangleAreaCreate class];
     }
 
     return Nil;
