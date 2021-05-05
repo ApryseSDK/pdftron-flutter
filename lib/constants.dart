@@ -139,6 +139,8 @@ class Tools {
       'AnnotationCreatePerimeterMeasurement';
   static const annotationCreateAreaMeasurement =
       'AnnotationCreateAreaMeasurement';
+  static const annotationCreateRectangleAreaMeasurement =
+      'AnnotationCreateRectangleAreaMeasurement';
   static const annotationCreateSound = 'AnnotationCreateSound';
   static const annotationCreateFreeHighlighter =
       'AnnotationCreateFreeHighlighter';

@@ -2329,7 +2329,7 @@
     else if ([key isEqualToString:PTAnnotationCreateAreaMeasurementToolKey]) {
         return [PTAreaCreate class];
     }
-    
+
     return Nil;
 }
 
