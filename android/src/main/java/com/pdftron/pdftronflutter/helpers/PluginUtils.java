@@ -261,6 +261,7 @@ public class PluginUtils {
     public static final String TOOL_ANNOTATION_CREATE_STAMP = "AnnotationCreateStamp";
     public static final String TOOL_ANNOTATION_CREATE_DISTANCE_MEASUREMENT = "AnnotationCreateDistanceMeasurement";
     public static final String TOOL_ANNOTATION_CREATE_PERIMETER_MEASUREMENT = "AnnotationCreatePerimeterMeasurement";
+    public static final String TOOL_ANNOTATION_CREATE_RECTANGLE_AREA_MEASUREMENT = "AnnotationCreateRectangleAreaMeasurement";
     public static final String TOOL_ANNOTATION_CREATE_AREA_MEASUREMENT = "AnnotationCreateAreaMeasurement";
     public static final String TOOL_ANNOTATION_CREATE_FILE_ATTACHMENT = "AnnotationCreateFileAttachment";
     public static final String TOOL_TEXT_SELECT = "TextSelect";
@@ -1026,6 +1027,8 @@ public class PluginUtils {
             mode = ToolManager.ToolMode.RULER_CREATE;
         } else if (TOOL_ANNOTATION_CREATE_PERIMETER_MEASUREMENT.equals(item)) {
             mode = ToolManager.ToolMode.PERIMETER_MEASURE_CREATE;
+        } else if(TOOL_ANNOTATION_CREATE_RECTANGLE_AREA_MEASUREMENT.equals(item)){
+            mode = ToolManager.ToolMode.RECT_AREA_MEASURE_CREATE;
         } else if (TOOL_ANNOTATION_CREATE_AREA_MEASUREMENT.equals(item)) {
             mode = ToolManager.ToolMode.AREA_MEASURE_CREATE;
         } else if (TOOL_TEXT_SELECT.equals(item)) {

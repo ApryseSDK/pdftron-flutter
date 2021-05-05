@@ -70,6 +70,7 @@ static NSString * const PTAnnotationCreateRubberStampToolKey = @"AnnotationCreat
 static NSString * const PTAnnotationCreateSoundToolKey = @"AnnotationCreateSound";
 static NSString * const PTAnnotationCreateDistanceMeasurementToolKey = @"AnnotationCreateDistanceMeasurement";
 static NSString * const PTAnnotationCreatePerimeterMeasurementToolKey = @"AnnotationCreatePerimeterMeasurement";
+static NSString * const PTAnnotationCreateRectangleAreaMeasurementToolKey = @"AnnotationCreateRectangleAreaMeasurement";
 static NSString * const PTAnnotationCreateAreaMeasurementToolKey = @"AnnotationCreateAreaMeasurement";
 static NSString * const PTAnnotationCreateFileAttachmentToolKey = @"AnnotationCreateFileAttachment";
 static NSString * const PTAnnotationCreateRedactionToolKey = @"AnnotationCreateRedaction";
