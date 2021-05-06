@@ -951,6 +951,17 @@
     return self.tabbedDocumentViewController.navigationController.view;
 }
 
+#pragma mark - Cleanup
+
+-(void)dealloc
+{
+    if (self.isWidgetView)
+    {
+        [self.tabbedDocumentViewController.navigationController willMoveToParentViewController:nil];
+        [self.tabbedDocumentViewController.navigationController removeFromParentViewController];
+    }
+}
+
 #pragma mark - EventSinks
 
 -(void)documentController:(PTDocumentController*)documentController bookmarksDidChange:(NSString*)bookmarkJson
