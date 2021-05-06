@@ -731,6 +731,7 @@
         PTReflowModeButtonKey:
             ^{
                 documentController.readerModeButtonHidden = YES;
+                documentController.settingsViewController.viewModeReaderHidden = YES;
             },
         PTThumbnailSliderKey:
             ^{
