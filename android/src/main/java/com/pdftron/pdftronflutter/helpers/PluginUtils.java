@@ -155,7 +155,7 @@ public class PluginUtils {
 
     public static final String BEHAVIOR_LINK_PRESS = "linkPress";
     public static final String KEY_LINK_BEHAVIOR_DATA = "url";
-    
+
     public static final String KEY_ANNOTATION_MENU_ITEM = "annotationMenuItem";
 
     public static final String KEY_LONG_PRESS_MENU_ITEM = "longPressMenuItem";
@@ -580,8 +580,8 @@ public class PluginUtils {
     }
 
     public static ConfigInfo handleOpenDocument(@NonNull ViewerConfig.Builder builder, @NonNull ToolManagerBuilder toolManagerBuilder,
-                                                @NonNull PDFViewCtrlConfig pdfViewCtrlConfig, @NonNull String document, @NonNull Context context,
-                                                String configStr) {
+            @NonNull PDFViewCtrlConfig pdfViewCtrlConfig, @NonNull String document, @NonNull Context context,
+            String configStr) {
 
         builder
                 .maximumTabCount(Integer.MAX_VALUE)
@@ -683,7 +683,7 @@ public class PluginUtils {
                     ArrayList<String> annotationMenuOverrideItems = convertJSONArrayToArrayList(array);
                     configInfo.setAnnotationMenuOverrideItems(annotationMenuOverrideItems);
                 }
-                if(!configJson.isNull(KEY_CONFIG_EXPORT_PATH)){
+                if (!configJson.isNull(KEY_CONFIG_EXPORT_PATH)) {
                     cacheDir = configJson.getString(KEY_CONFIG_EXPORT_PATH);
                 }
                 if (!configJson.isNull(KEY_CONFIG_AUTO_SAVE_ENABLED)) {
@@ -913,7 +913,6 @@ public class PluginUtils {
         return null;
     }
 
-
     private static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
 
         ArrayList<ViewModePickerDialogFragment.ViewModePickerItems> viewModePickerItems = new ArrayList<>();
@@ -1031,7 +1030,7 @@ public class PluginUtils {
             mode = ToolManager.ToolMode.RULER_CREATE;
         } else if (TOOL_ANNOTATION_CREATE_PERIMETER_MEASUREMENT.equals(item)) {
             mode = ToolManager.ToolMode.PERIMETER_MEASURE_CREATE;
-        } else if(TOOL_ANNOTATION_CREATE_RECTANGLE_AREA_MEASUREMENT.equals(item)){
+        } else if (TOOL_ANNOTATION_CREATE_RECTANGLE_AREA_MEASUREMENT.equals(item)) {
             mode = ToolManager.ToolMode.RECT_AREA_MEASURE_CREATE;
         } else if (TOOL_ANNOTATION_CREATE_AREA_MEASUREMENT.equals(item)) {
             mode = ToolManager.ToolMode.AREA_MEASURE_CREATE;
@@ -1646,7 +1645,6 @@ public class PluginUtils {
                     result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
                 }
                 break;
-
             }
             case FUNCTION_IMPORT_ANNOTATION_COMMAND: {
                 checkFunctionPrecondition(component);
@@ -2086,7 +2084,6 @@ public class PluginUtils {
                 map.put(annot, annotationPageNumber);
                 toolManager.raiseAnnotationsPreModifyEvent(map);
 
-
                 if (!propertiesJson.isNull(KEY_CONTENTS)) {
                     Object contents = propertiesJson.get(KEY_CONTENTS);
                     if (contents instanceof String) {
@@ -2137,7 +2134,6 @@ public class PluginUtils {
                 pdfViewCtrl.docUnlock();
             }
         }
-
     }
 
     private static void importAnnotationCommand(String xfdfCommand, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
@@ -2336,7 +2332,6 @@ public class PluginUtils {
                     setFieldValue(pdfViewCtrl, field, fieldObject.get(KEY_FIELD_VALUE));
                 }
             }
-
         } finally {
             if (shouldUnlock) {
                 pdfViewCtrl.docUnlock();
