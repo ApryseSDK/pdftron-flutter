@@ -17,6 +17,7 @@ class Config {
   var _hideAnnotationMenu;
   var _annotationMenuItems;
   var _overrideAnnotationMenuBehavior;
+  var _exportPath;
   var _autoSaveEnabled;
   var _pageChangeOnTap;
   var _showSavedSignatures;
@@ -43,51 +44,90 @@ class Config {
   Config();
 
   set disabledElements(List value) => _disabledElements = value;
+
   set disabledTools(List value) => _disabledTools = value;
+
   set multiTabEnabled(bool value) => _multiTabEnabled = value;
+
   set customHeaders(Map<String, String> value) => _customHeaders = value;
+
   set fitMode(String value) => _fitMode = value;
+
   set layoutMode(String value) => _layoutMode = value;
+
   set initialPageNumber(int value) => _initialPageNumber = value;
+
   set isBase64String(bool value) => _isBase64String = value;
+
   set base64FileExtension(String value) => _base64FileExtension = value;
+
   set hideThumbnailFilterModes(List value) => _hideThumbnailFilterModes = value;
+
   set longPressMenuEnabled(bool value) => _longPressMenuEnabled = value;
+
   set longPressMenuItems(List value) => _longPressMenuItems = value;
+
   set overrideLongPressMenuBehavior(List value) =>
       _overrideLongPressMenuBehavior = value;
+
   set hideAnnotationMenu(List value) => _hideAnnotationMenu = value;
+
   set annotationMenuItems(List value) => _annotationMenuItems = value;
+
   set overrideAnnotationMenuBehavior(List value) =>
       _overrideAnnotationMenuBehavior = value;
+
+  set exportPath(String value) => _exportPath = value;
+
   set autoSaveEnabled(bool value) => _autoSaveEnabled = value;
+
   set pageChangeOnTap(bool value) => _pageChangeOnTap = value;
+
   set showSavedSignatures(bool value) => _showSavedSignatures = value;
+
   set useStylusAsPen(bool value) => _useStylusAsPen;
+
   set signSignatureFieldWithStamps(bool value) =>
       _signSignatureFieldWithStamps = value;
+
   set selectAnnotationAfterCreation(bool value) =>
       _selectAnnotationAfterCreation = value;
+
   set pageIndicatorEnabled(bool value) => _pageIndicatorEnabled = value;
+
   set followSystemDarkMode(bool value) => _followSystemDarkMode = value;
+
   set annotationToolbars(List value) => _annotationToolbars = value;
+
   set hideDefaultAnnotationToolbars(List value) =>
       _hideDefaultAnnotationToolbars = value;
+
   set hideAnnotationToolbarSwitcher(bool value) =>
       _hideAnnotationToolbarSwitcher = value;
+
   set hideTopToolbars(bool value) => _hideTopToolbars = value;
+
   set hideTopAppNavBar(bool value) => _hideTopAppNavBar = value;
+
   set hideBottomToolbar(bool value) => _hideBottomToolbar = value;
+
   set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
+
   set readOnly(bool value) => _readOnly = value;
+
   set thumbnailViewEditingEnabled(bool value) =>
       _thumbnailViewEditingEnabled = value;
+
   set annotationAuthor(String value) => _annotationAuthor = value;
+
   set continuousAnnotationEditing(bool value) =>
       _continuousAnnotationEditing = value;
+
   set annotationPermissionCheckEnabled(bool value) =>
       _annotationPermissionCheckEnabled = value;
+
   set overrideBehavior(List<String> value) => _overrideBehavior = value;
+
   set tabTitle(String value) => _tabTitle = value;
 
   Config.fromJson(Map<String, dynamic> json)
@@ -108,6 +148,7 @@ class Config {
         _annotationMenuItems = json['annotationMenuItems'],
         _overrideAnnotationMenuBehavior =
             json['overrideAnnotationMenuBehavior'],
+        _exportPath = json['exportPath'],
         _autoSaveEnabled = json['autoSaveEnabled'],
         _pageChangeOnTap = json['pageChangeOnTap'],
         _showSavedSignatures = json['showSavedSignatures'],
@@ -149,6 +190,7 @@ class Config {
         'hideAnnotationMenu': _hideAnnotationMenu,
         'annotationMenuItems': _annotationMenuItems,
         'overrideAnnotationMenuBehavior': _overrideAnnotationMenuBehavior,
+        'exportPath': _exportPath,
         'autoSaveEnabled': _autoSaveEnabled,
         'pageChangeOnTap': _pageChangeOnTap,
         'showSavedSignatures': _showSavedSignatures,

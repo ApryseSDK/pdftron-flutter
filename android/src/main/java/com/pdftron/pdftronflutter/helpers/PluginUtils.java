@@ -99,6 +99,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_HIDE_ANNOTATION_MENU = "hideAnnotationMenu";
     public static final String KEY_CONFIG_ANNOTATION_MENU_ITEMS = "annotationMenuItems";
     public static final String KEY_CONFIG_OVERRIDE_ANNOTATION_MENU_BEHAVIOR = "overrideAnnotationMenuBehavior";
+    public static final String KEY_CONFIG_EXPORT_PATH = "exportPath";
     public static final String KEY_CONFIG_AUTO_SAVE_ENABLED = "autoSaveEnabled";
     public static final String KEY_CONFIG_PAGE_CHANGE_ON_TAP = "pageChangeOnTap";
     public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
@@ -597,7 +598,6 @@ public class PluginUtils {
         boolean isBase64 = false;
         String base64FileExtension = null;
         String cacheDir = context.getCacheDir().getAbsolutePath();
-        configInfo.setCacheDir(cacheDir);
 
         if (configStr != null && !configStr.equals("null")) {
             try {
@@ -682,6 +682,9 @@ public class PluginUtils {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_OVERRIDE_ANNOTATION_MENU_BEHAVIOR);
                     ArrayList<String> annotationMenuOverrideItems = convertJSONArrayToArrayList(array);
                     configInfo.setAnnotationMenuOverrideItems(annotationMenuOverrideItems);
+                }
+                if(!configJson.isNull(KEY_CONFIG_EXPORT_PATH)){
+                    cacheDir = configJson.getString(KEY_CONFIG_EXPORT_PATH);
                 }
                 if (!configJson.isNull(KEY_CONFIG_AUTO_SAVE_ENABLED)) {
                     boolean autoSaveEnabled = configJson.getBoolean(KEY_CONFIG_AUTO_SAVE_ENABLED);
@@ -789,6 +792,7 @@ public class PluginUtils {
 
         final Uri fileUri = getUri(context, document, isBase64, base64FileExtension);
         configInfo.setFileUri(fileUri);
+        configInfo.setCacheDir(cacheDir);
 
         if (fileUri != null) {
             builder.openUrlCachePath(cacheDir)
