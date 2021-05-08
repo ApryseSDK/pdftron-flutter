@@ -110,7 +110,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
         mInitialPageNumber = configInfo.getInitialPageNumber();
         mIsBase64 = configInfo.isBase64();
-        mCacheDir = configInfo.getCacheDir();
+        mCacheDir = configInfo.getExportPath();
 
         mTempFiles.add(configInfo.getTempFile());
 

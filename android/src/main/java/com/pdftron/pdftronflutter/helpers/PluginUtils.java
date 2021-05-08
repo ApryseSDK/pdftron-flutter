@@ -100,6 +100,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_MENU_ITEMS = "annotationMenuItems";
     public static final String KEY_CONFIG_OVERRIDE_ANNOTATION_MENU_BEHAVIOR = "overrideAnnotationMenuBehavior";
     public static final String KEY_CONFIG_EXPORT_PATH = "exportPath";
+    public static final String KEY_CONFIG_OPEN_URL_PATH = "openUrlPath";
     public static final String KEY_CONFIG_AUTO_SAVE_ENABLED = "autoSaveEnabled";
     public static final String KEY_CONFIG_PAGE_CHANGE_ON_TAP = "pageChangeOnTap";
     public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
@@ -406,7 +407,6 @@ public class PluginUtils {
     public static class ConfigInfo {
         private int initialPageNumber;
         private boolean isBase64;
-        private String cacheDir;
         private File tempFile;
         private JSONObject customHeaderJson;
         private Uri fileUri;
@@ -421,11 +421,12 @@ public class PluginUtils {
         private boolean showLeadingNavButton;
         private ArrayList<String> actionOverrideItems;
         private String tabTitle;
+        private String openUrlPath;
+        private String exportPath;
 
         public ConfigInfo() {
             this.initialPageNumber = -1;
             this.isBase64 = false;
-            this.cacheDir = null;
             this.tempFile = null;
             this.customHeaderJson = null;
             this.fileUri = null;
@@ -440,6 +441,8 @@ public class PluginUtils {
             this.showLeadingNavButton = true;
             this.actionOverrideItems = null;
             this.tabTitle = null;
+            this.openUrlPath = null;
+            this.exportPath = null;
         }
 
         public void setInitialPageNumber(int initialPageNumber) {
@@ -450,8 +453,8 @@ public class PluginUtils {
             this.isBase64 = isBase64;
         }
 
-        public void setCacheDir(String cacheDir) {
-            this.cacheDir = cacheDir;
+        public void setExportPath(String exportPath) {
+            this.exportPath = exportPath;
         }
 
         public void setTempFile(File tempFile) {
@@ -510,6 +513,10 @@ public class PluginUtils {
             this.tabTitle = tabTitle;
         }
 
+        public void setOpenUrlPath(String openUrlPath) {
+            this.openUrlPath = openUrlPath;
+        }
+
         public int getInitialPageNumber() {
             return initialPageNumber;
         }
@@ -518,8 +525,8 @@ public class PluginUtils {
             return isBase64;
         }
 
-        public String getCacheDir() {
-            return cacheDir;
+        public String getExportPath() {
+            return exportPath;
         }
 
         public File getTempFile() {
@@ -577,6 +584,10 @@ public class PluginUtils {
         public String getTabTitle() {
             return tabTitle;
         }
+
+        public String getOpenUrlPath() {
+            return openUrlPath;
+        }
     }
 
     public static ConfigInfo handleOpenDocument(@NonNull ViewerConfig.Builder builder, @NonNull ToolManagerBuilder toolManagerBuilder,
@@ -597,7 +608,6 @@ public class PluginUtils {
 
         boolean isBase64 = false;
         String base64FileExtension = null;
-        String cacheDir = context.getCacheDir().getAbsolutePath();
 
         if (configStr != null && !configStr.equals("null")) {
             try {
@@ -684,7 +694,11 @@ public class PluginUtils {
                     configInfo.setAnnotationMenuOverrideItems(annotationMenuOverrideItems);
                 }
                 if (!configJson.isNull(KEY_CONFIG_EXPORT_PATH)) {
-                    cacheDir = configJson.getString(KEY_CONFIG_EXPORT_PATH);
+                    String exportPath = configJson.getString(KEY_CONFIG_EXPORT_PATH);
+                    configInfo.setExportPath(exportPath);
+                } else {
+                    String cacheDir = context.getCacheDir().getAbsolutePath();
+                    configInfo.setExportPath(cacheDir);
                 }
                 if (!configJson.isNull(KEY_CONFIG_AUTO_SAVE_ENABLED)) {
                     boolean autoSaveEnabled = configJson.getBoolean(KEY_CONFIG_AUTO_SAVE_ENABLED);
@@ -785,6 +799,13 @@ public class PluginUtils {
                     String tabTitle = configJson.getString(KEY_CONFIG_TAB_TITLE);
                     configInfo.setTabTitle(tabTitle);
                 }
+                if (!configJson.isNull(KEY_CONFIG_OPEN_URL_PATH)) {
+                    String openUrlPath = configJson.getString(KEY_CONFIG_OPEN_URL_PATH);
+                    configInfo.setOpenUrlPath(openUrlPath);
+                } else {
+                    String cacheDir = context.getCacheDir().getAbsolutePath();
+                    configInfo.setOpenUrlPath(cacheDir);
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -792,11 +813,10 @@ public class PluginUtils {
 
         final Uri fileUri = getUri(context, document, isBase64, base64FileExtension);
         configInfo.setFileUri(fileUri);
-        configInfo.setCacheDir(cacheDir);
 
         if (fileUri != null) {
-            builder.openUrlCachePath(cacheDir)
-                    .saveCopyExportPath(cacheDir);
+            builder.openUrlCachePath(configInfo.getOpenUrlPath())
+                    .saveCopyExportPath(configInfo.getExportPath());
             if (disabledTools.size() > 0) {
                 ToolManager.ToolMode[] modes = disabledTools.toArray(new ToolManager.ToolMode[0]);
                 if (modes.length > 0) {

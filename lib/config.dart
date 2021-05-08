@@ -18,6 +18,7 @@ class Config {
   var _annotationMenuItems;
   var _overrideAnnotationMenuBehavior;
   var _exportPath;
+  var _openUrlPath;
   var _autoSaveEnabled;
   var _pageChangeOnTap;
   var _showSavedSignatures;
@@ -78,6 +79,8 @@ class Config {
       _overrideAnnotationMenuBehavior = value;
 
   set exportPath(String value) => _exportPath = value;
+
+  set openUrlPath(String value) => _openUrlPath = value;
 
   set autoSaveEnabled(bool value) => _autoSaveEnabled = value;
 
@@ -149,6 +152,7 @@ class Config {
         _overrideAnnotationMenuBehavior =
             json['overrideAnnotationMenuBehavior'],
         _exportPath = json['exportPath'],
+        _openUrlPath = json['openUrlPath'],
         _autoSaveEnabled = json['autoSaveEnabled'],
         _pageChangeOnTap = json['pageChangeOnTap'],
         _showSavedSignatures = json['showSavedSignatures'],
@@ -191,6 +195,7 @@ class Config {
         'annotationMenuItems': _annotationMenuItems,
         'overrideAnnotationMenuBehavior': _overrideAnnotationMenuBehavior,
         'exportPath': _exportPath,
+        'openUrlPath': _openUrlPath,
         'autoSaveEnabled': _autoSaveEnabled,
         'pageChangeOnTap': _pageChangeOnTap,
         'showSavedSignatures': _showSavedSignatures,
