@@ -216,8 +216,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
     private ViewerConfig getConfig() {
         if (mExportDir != null) {
-            mBuilder.openUrlCachePath(mOpenUrlCacheDir)
-                    .saveCopyExportPath(mExportDir);
+            mBuilder.saveCopyExportPath(mExportDir);
+        }
+        if (mOpenUrlCacheDir != null) {
+            mBuilder.openUrlCachePath(mOpenUrlCacheDir);
         }
         return mBuilder
                 .pdfViewCtrlConfig(mPDFViewCtrlConfig)
