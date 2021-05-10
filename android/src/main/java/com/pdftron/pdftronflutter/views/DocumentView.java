@@ -45,6 +45,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private ViewerConfig.Builder mBuilder;
 
     private String mCacheDir;
+    private String mOpenUrlCacheDir;
 
     private int mInitialPageNumber;
 
@@ -111,7 +112,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         mInitialPageNumber = configInfo.getInitialPageNumber();
         mIsBase64 = configInfo.isBase64();
         mCacheDir = configInfo.getExportPath();
-
+        mOpenUrlCacheDir = configInfo.getOpenUrlPath();
         mTempFiles.add(configInfo.getTempFile());
 
         setDocumentUri(configInfo.getFileUri());
@@ -196,6 +197,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         PdfViewCtrlSettingsManager.setFullScreenMode(context, false);
 
         mCacheDir = context.getCacheDir().getAbsolutePath();
+        mOpenUrlCacheDir = context.getCacheDir().getAbsolutePath();
         mToolManagerBuilder = ToolManagerBuilder.from();
         mBuilder = new ViewerConfig.Builder();
         mBuilder.fullscreenModeEnabled(false);
@@ -214,7 +216,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
     private ViewerConfig getConfig() {
         if (mCacheDir != null) {
-            mBuilder.openUrlCachePath(mCacheDir)
+            mBuilder.openUrlCachePath(mOpenUrlCacheDir)
                     .saveCopyExportPath(mCacheDir);
         }
         return mBuilder
