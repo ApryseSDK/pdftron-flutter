@@ -33,7 +33,6 @@ import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
-import com.pdftron.pdf.utils.AnalyticsHandlerAdapter;
 import com.pdftron.pdf.utils.BookmarkManager;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
@@ -2445,7 +2444,7 @@ public class PluginUtils {
             pdfViewCtrl.update(true);
             hasChange = pdfDoc.hasChangesSinceSnapshot();
         } catch (Exception e) {
-            AnalyticsHandlerAdapter.getInstance().sendException(e);
+            e.printStackTrace();
         } finally {
             if (shouldUnlock) {
                 pdfViewCtrl.docUnlock();

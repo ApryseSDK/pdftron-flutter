@@ -363,7 +363,7 @@ PdftronFlutter.deleteAnnotations(annotList);
 ```
 
 #### deleteAllAnnotations
-Deletes all annotations in the current document.
+Deletes all annotations in the current document exclude links and widgets.
 
 Returns a Future.
 
