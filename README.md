@@ -121,6 +121,7 @@ class MainActivity : FlutterFragmentActivity() {
 6. Replace `lib/main.dart` with what is shown [here](#usage)
 7. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
 8. Run the app with the command `flutter run`.
+9. Please note that the widget version (`DocumentView`) contains existing issues such as none of the menu popup will work properly, see issue: https://github.com/flutter/flutter/issues/58273
 
 ### iOS
 
