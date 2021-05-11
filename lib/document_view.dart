@@ -167,7 +167,7 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.closeAllTabs);
   }
 
-  Future<void> safeDeleteAllAnnots() {
-    return _channel.invokeMethod(Functions.safeDeleteAllAnnots);
+  Future<void> deleteAllAnnotations() {
+    return _channel.invokeMethod(Functions.deleteAllAnnotations);
   }
 }

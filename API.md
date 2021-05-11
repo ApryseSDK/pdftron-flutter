@@ -362,6 +362,15 @@ list.add(new Annot('World', 2));
 PdftronFlutter.deleteAnnotations(annotList);
 ```
 
+#### deleteAllAnnotations
+Deletes all annotations in the current document.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.deleteAllAnnotations();
+```
+
 #### selectAnnotation
 Selects the specified annotation in the current document.
 

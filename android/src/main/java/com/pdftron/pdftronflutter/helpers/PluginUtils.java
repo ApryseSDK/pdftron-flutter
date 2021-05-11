@@ -33,6 +33,7 @@ import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.AnalyticsHandlerAdapter;
 import com.pdftron.pdf.utils.BookmarkManager;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
@@ -202,7 +203,7 @@ public class PluginUtils {
     public static final String FUNCTION_SET_PROPERTIES_FOR_ANNOTATION = "setPropertiesForAnnotation";
     public static final String FUNCTION_SET_LEADING_NAV_BUTTON_ICON = "setLeadingNavButtonIcon";
     public static final String FUNCTION_CLOSE_ALL_TABS = "closeAllTabs";
-    public static final String FUNCTION_SAFE_DELETE_ALL_ANNOTS = "safeDeleteAllAnnots";
+    public static final String FUNCTION_DELETE_ALL_ANNOTATIONS = "deleteAllAnnotations";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -1786,9 +1787,9 @@ public class PluginUtils {
                 closeAllTabs(result, component);
                 break;
             }
-            case FUNCTION_SAFE_DELETE_ALL_ANNOTS: {
+            case FUNCTION_DELETE_ALL_ANNOTATIONS: {
                 checkFunctionPrecondition(component);
-                safeDeleteAllAnnots(component);
+                deleteAllAnnotations(result, component);
                 break;
             }
             default:
@@ -2424,8 +2425,38 @@ public class PluginUtils {
         result.success(null);
     }
 
-    private static void safeDeleteAllAnnots(ViewerComponent component) {
-        AnnotUtils.safeDeleteAllAnnots(component.getPdfDoc());
+    private static void deleteAllAnnotations(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        PDFDoc pdfDoc = component.getPdfDoc();
+        if (pdfViewCtrl == null || pdfDoc == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        boolean hasChange = false;
+        boolean shouldUnlock = false;
+
+        try {
+            // Locks the document first as accessing annotation/doc information isn't thread
+            // safe.
+            pdfViewCtrl.docLock(true);
+            shouldUnlock = true;
+
+            AnnotUtils.safeDeleteAllAnnots(pdfDoc);
+            pdfViewCtrl.update(true);
+            hasChange = pdfDoc.hasChangesSinceSnapshot();
+        } catch (Exception e) {
+            AnalyticsHandlerAdapter.getInstance().sendException(e);
+        } finally {
+            if (shouldUnlock) {
+                pdfViewCtrl.docUnlock();
+            }
+        }
+        if (hasChange) {
+            ToolManager toolManager = (ToolManager) pdfViewCtrl.getToolManager();
+            if (toolManager != null) {
+                toolManager.raiseAllAnnotationsRemovedEvent();
+            }
+        }
         result.success(null);
     }
 

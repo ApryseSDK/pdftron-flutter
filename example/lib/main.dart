@@ -132,9 +132,6 @@ class _ViewerState extends State<Viewer> {
     // annotCancel();
     // bookmarkCancel();
 
-    var leadingNavCancel = startLeadingNavButtonPressedListener(() {
-      PdftronFlutter.safeDeleteAllAnnots();
-    });
   }
 
   @override

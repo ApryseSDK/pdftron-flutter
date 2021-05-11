@@ -158,7 +158,7 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.closeAllTabs);
   }
   
-  Future<void> safeDeleteAllAnnots() {
-    return _channel.invokeMethod(Functions.safeDeleteAllAnnots);
+  static Future<void> deleteAllAnnotations() {
+    return _channel.invokeMethod(Functions.deleteAllAnnotations);
   }
 }
