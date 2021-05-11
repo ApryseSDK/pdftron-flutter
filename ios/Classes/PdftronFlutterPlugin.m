@@ -2340,6 +2340,9 @@
     else if ([key isEqualToString:PTAnnotationCreateAreaMeasurementToolKey]) {
         return [PTAreaCreate class];
     }
+    else if ([key isEqualToString:PTAnnotationCreateFreeHighlighterToolKey]) {
+        return [PTFreeHandHighlightCreate class];
+    }
 
     return Nil;
 }

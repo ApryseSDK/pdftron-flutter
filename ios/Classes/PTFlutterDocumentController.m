@@ -658,6 +658,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         PTAnnotationCreateAreaMeasurementToolKey : @(PTExtendedAnnotTypeArea),
         PTAnnotationCreateFileAttachmentToolKey : @(PTExtendedAnnotTypeFileAttachment),
         PTAnnotationCreateSoundToolKey : @(PTExtendedAnnotTypeSound),
+        PTAnnotationCreateFreeHighlighterToolKey : @(PTExtendedAnnotTypeFreehandHighlight),
 //        @"FormCreateTextField" : @(),
 //        @"FormCreateCheckboxField" : @(),
 //        @"FormCreateRadioField" : @(),
