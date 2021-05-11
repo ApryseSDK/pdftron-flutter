@@ -123,6 +123,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED = "annotationPermissionCheckEnabled";
     public static final String KEY_CONFIG_OVERRIDE_BEHAVIOR = "overrideBehavior";
     public static final String KEY_CONFIG_TAB_TITLE = "tabTitle";
+    public static final String KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR = "pageNumberIndicatorAlwaysVisible";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -726,7 +727,7 @@ public class PluginUtils {
                 }
                 if (!configJson.isNull(KEY_CONFIG_PAGE_INDICATOR_ENABLED)) {
                     boolean pageIndicatorEnabled = configJson.getBoolean(KEY_CONFIG_PAGE_INDICATOR_ENABLED);
-                    builder = builder.showPageNumberIndicator(pageIndicatorEnabled);
+                    builder.showPageNumberIndicator(pageIndicatorEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE)) {
                     boolean followSystem = configJson.getBoolean(KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE);
@@ -745,23 +746,23 @@ public class PluginUtils {
                             tagList.add(tag);
                         }
                     }
-                    builder = builder.hideToolbars(tagList.toArray(new String[tagList.size()]));
+                    builder.hideToolbars(tagList.toArray(new String[tagList.size()]));
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER)) {
                     boolean hideAnnotationToolbarSwitcher = configJson.getBoolean(KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER);
-                    builder = builder.showToolbarSwitcher(!hideAnnotationToolbarSwitcher);
+                    builder.showToolbarSwitcher(!hideAnnotationToolbarSwitcher);
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_TOP_TOOLBARS)) {
                     boolean hideTopToolbars = configJson.getBoolean(KEY_CONFIG_HIDE_TOP_TOOLBARS);
-                    builder = builder.showAppBar(!hideTopToolbars);
+                    builder.showAppBar(!hideTopToolbars);
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_TOP_APP_NAV_BAR)) {
                     boolean hideTopAppNavBars = configJson.getBoolean(KEY_CONFIG_HIDE_TOP_APP_NAV_BAR);
-                    builder = builder.showTopToolbar(!hideTopAppNavBars);
+                    builder.showTopToolbar(!hideTopAppNavBars);
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_BOTTOM_TOOLBAR)) {
                     boolean hideBottomToolbar = configJson.getBoolean(KEY_CONFIG_HIDE_BOTTOM_TOOLBAR);
-                    builder = builder.showBottomToolbar(!hideBottomToolbar);
+                    builder.showBottomToolbar(!hideBottomToolbar);
                 }
                 if (!configJson.isNull(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON)) {
                     boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
@@ -798,6 +799,11 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_TAB_TITLE)) {
                     String tabTitle = configJson.getString(KEY_CONFIG_TAB_TITLE);
                     configInfo.setTabTitle(tabTitle);
+                }
+                if (!configJson.isNull(KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR)) {
+                    boolean permanentPageNumberIndicator = configJson.getBoolean(KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR);
+                    PdfViewCtrlSettingsManager.setShowScrollbarOption(context, true);
+                    builder.permanentPageNumberIndicator(permanentPageNumberIndicator);
                 }
                 if (!configJson.isNull(KEY_CONFIG_OPEN_URL_PATH)) {
                     String openUrlPath = configJson.getString(KEY_CONFIG_OPEN_URL_PATH);
