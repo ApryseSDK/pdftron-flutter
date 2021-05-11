@@ -131,6 +131,10 @@ class _ViewerState extends State<Viewer> {
     // to cancel event:
     // annotCancel();
     // bookmarkCancel();
+
+    var leadingNavCancel = startLeadingNavButtonPressedListener(() {
+      PdftronFlutter.safeDeleteAllAnnots();
+    });
   }
 
   @override
@@ -162,6 +166,7 @@ class _ViewerState extends State<Viewer> {
       // });
 
       // Show a dialog when leading navigation button is pressed
+
       _showMyDialog();
     });
 

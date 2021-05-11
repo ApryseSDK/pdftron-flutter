@@ -36,6 +36,7 @@ import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.BookmarkManager;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
+import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.ViewerUtils;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
@@ -201,6 +202,7 @@ public class PluginUtils {
     public static final String FUNCTION_SET_PROPERTIES_FOR_ANNOTATION = "setPropertiesForAnnotation";
     public static final String FUNCTION_SET_LEADING_NAV_BUTTON_ICON = "setLeadingNavButtonIcon";
     public static final String FUNCTION_CLOSE_ALL_TABS = "closeAllTabs";
+    public static final String FUNCTION_SAFE_DELETE_ALL_ANNOTS = "safeDeleteAllAnnots";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -1784,6 +1786,11 @@ public class PluginUtils {
                 closeAllTabs(result, component);
                 break;
             }
+            case FUNCTION_SAFE_DELETE_ALL_ANNOTS: {
+                checkFunctionPrecondition(component);
+                safeDeleteAllAnnots(component);
+                break;
+            }
             default:
                 result.notImplemented();
                 break;
@@ -2414,6 +2421,11 @@ public class PluginUtils {
         }
 
         pdfViewCtrlTabHostFragment.closeAllTabs();
+        result.success(null);
+    }
+
+    private static void safeDeleteAllAnnots(ViewerComponent component) {
+        AnnotUtils.safeDeleteAllAnnots(component.getPdfDoc());
         result.success(null);
     }
 
