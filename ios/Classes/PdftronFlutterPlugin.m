@@ -632,7 +632,7 @@
             }
             else if ([string isEqualToString:PTAnnotationCreateStampToolKey] ||
                      [string isEqualToString:PTStampToolButtonKey]) {
-                toolManager.stampAnnotationOptions.canCreate = value;
+                toolManager.imageStampAnnotationOptions.canCreate = value;
             }
             else if ([string isEqualToString:PTAnnotationCreateRectangleToolKey] ||
                      [string isEqualToString:PTRectangleToolButtonKey]) {
@@ -667,6 +667,18 @@
             }
             else if ([string isEqualToString:PTAnnotationCreateLinkToolKey]) {
                 toolManager.linkAnnotationOptions.canCreate = value;
+            }
+            else if ([string isEqualToString:PTAnnotationCreateDistanceMeasurementToolKey]) {
+                toolManager.rulerAnnotationOptions.canCreate = value;
+            }
+            else if ([string isEqualToString:PTAnnotationCreatePerimeterMeasurementToolKey]) {
+                toolManager.perimeterAnnotationOptions.canCreate = value;
+            }
+            else if ([string isEqualToString:PTAnnotationCreateAreaMeasurementToolKey]) {
+                toolManager.areaAnnotationOptions.canCreate = value;
+            }
+            else if ([string isEqualToString:PTAnnotationCreateRubberStampToolKey]) {
+                toolManager.stampAnnotationOptions.canCreate = value;
             }
             else if ([string isEqualToString:PTAnnotationCreateRedactionTextToolKey]) {
                 // TODO
