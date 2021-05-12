@@ -27,6 +27,7 @@ class Functions {
   static const setFlagForFields = "setFlagForFields";
   static const setLeadingNavButtonIcon = "setLeadingNavButtonIcon";
   static const closeAllTabs = "closeAllTabs";
+  static const deleteAllAnnotations = "deleteAllAnnotations";
 }
 
 // Parameters define the parameters of the functions
