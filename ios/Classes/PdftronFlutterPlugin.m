@@ -1596,14 +1596,15 @@
         }
     } error:&error];
 
+    [documentController.pdfViewCtrl Update:YES];
+    [documentController.toolManager changeTool:[PTPanTool class]];
+
     if (error) {
         NSLog(@"Error: Failed to delete all annotations from doc. %@", error.localizedDescription);
 
         flutterResult([FlutterError errorWithCode:@"delete_all_annotations" message:@"Failed to delete annotations" details:@"Error: Failed to delete annotations from doc."]);
         return;
     }
-    [documentController.pdfViewCtrl Update:YES];
-    [documentController.toolManager changeTool:[PTPanTool class]];
 
     flutterResult(nil);
 }
