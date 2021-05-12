@@ -183,6 +183,7 @@ static NSString * const PTSetFlagForFieldsKey = @"setFlagForFields";
 static NSString * const PTSetValuesForFieldsKey = @"setValuesForFields";
 static NSString * const PTSetLeadingNavButtonIconKey = @"setLeadingNavButtonIcon";
 static NSString * const PTCloseAllTabsKey = @"closeAllTabs";
+static NSString * const PTDeleteAllAnnotationsKey = @"deleteAllAnnotations";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";

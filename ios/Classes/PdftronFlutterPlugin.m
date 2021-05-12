@@ -1149,6 +1149,8 @@
         [self setLeadingNavButtonIcon:leadingNavButtonIcon resultToken:result];
     } else if ([call.method isEqualToString:PTCloseAllTabsKey]) {
         [self closeAllTabs:result];
+    } else if ([call.method isEqualToString:PTDeleteAllAnnotationsKey]) {
+        [self deleteAllAnnotations:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -1545,6 +1547,64 @@
     
     [documentController.toolManager changeTool:[PTPanTool class]];
     
+    flutterResult(nil);
+}
+
+- (void)deleteAllAnnotations:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+
+        flutterResult([FlutterError errorWithCode:@"delete_all_annotations" message:@"Failed to delete all annotations" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+
+    NSError* error;
+
+    if (error) {
+        NSLog(@"Error: Failed to get annotations from doc. %@", error.localizedDescription);
+
+        flutterResult([FlutterError errorWithCode:@"delete_all_annotations" message:@"Failed to delete all annotations" details:@"Error: Failed to delete all annotations from doc."]);
+        return;
+    }
+
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        PTPageIterator *pageIterator = [doc GetPageIterator:1];
+        int pageNumber = 1;
+        while ([pageIterator HasNext]) {
+            PTPage *page = [pageIterator Current];
+            if ([page IsValid]) {
+                int num_annots = [page GetNumAnnots];
+                for (int i = num_annots - 1; i >= 0; i--)
+                {
+                    PTAnnot* annot = [page GetAnnot:i];
+                    if (![annot IsValid] || annot == nil) {
+                        continue;
+                    }
+                    if ([annot GetType] != e_ptLink && [annot GetType] != e_ptWidget) {
+                        [documentController.toolManager willRemoveAnnotation:annot onPageNumber:pageNumber];
+                        [page AnnotRemoveWithAnnot:annot];
+                        [documentController.toolManager annotationRemoved:annot onPageNumber:pageNumber];
+                    }
+                }
+            }
+            [pageIterator Next];
+            pageNumber++;
+        }
+    } error:&error];
+
+    if (error) {
+        NSLog(@"Error: Failed to delete all annotations from doc. %@", error.localizedDescription);
+
+        flutterResult([FlutterError errorWithCode:@"delete_all_annotations" message:@"Failed to delete annotations" details:@"Error: Failed to delete annotations from doc."]);
+        return;
+    }
+    [documentController.pdfViewCtrl Update:YES];
+    [documentController.toolManager changeTool:[PTPanTool class]];
+
     flutterResult(nil);
 }
 
