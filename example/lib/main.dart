@@ -1,8 +1,9 @@
 import 'dart:async';
-import 'dart:io' show Platform;
+import 'dart:io' show Directory, File, Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:pdftron_flutter/pdftron_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -24,8 +25,7 @@ class Viewer extends StatefulWidget {
 
 class _ViewerState extends State<Viewer> {
   String _version = 'Unknown';
-  String _document =
-      "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
+  String _document = "assets/UnableToOpen.pdf";
   bool _showViewer = true;
 
   @override
@@ -58,12 +58,12 @@ class _ViewerState extends State<Viewer> {
   Future<void> initPlatformState() async {
     String version;
     // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      PdftronFlutter.initialize("your_pdftron_license_key");
-      version = await PdftronFlutter.version;
-    } on PlatformException {
-      version = 'Failed to get platform version.';
-    }
+    // try {
+    //   PdftronFlutter.initialize("your_pdftron_license_key");
+    //   version = await PdftronFlutter.version;
+    // } on PlatformException {
+    //   version = 'Failed to get platform version.';
+    // }
 
     // If the widget was removed from the tree while the asynchronous platform
     // message was in flight, we want to discard the reply rather than calling
@@ -92,46 +92,54 @@ class _ViewerState extends State<Viewer> {
       print("document loaded: $filePath");
     });
 
-    await PdftronFlutter.openDocument(_document, config: config);
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    File tempFile = File('$tempPath/UnableToOpen.pdf');
+    ByteData bd = await rootBundle.load('assets/UnableToOpen.pdf');
+    await tempFile.writeAsBytes(bd.buffer.asUint8List(), flush: true);
+    _document = tempFile.absolute.path;
 
-    try {
-      PdftronFlutter.importAnnotationCommand(
-          "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-              "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
-              "      <add>\n" +
-              "        <square style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20200619203211Z\" flags=\"print\" date=\"D:20200619203211Z\" name=\"c684da06-12d2-4ccd-9361-0a1bf2e089e3\" page=\"1\" rect=\"113.312,277.056,235.43,350.173\" title=\"\" />\n" +
-              "      </add>\n" +
-              "      <modify />\n" +
-              "      <delete />\n" +
-              "      <pdf-info import-version=\"3\" version=\"2\" xmlns=\"http://www.pdftron.com/pdfinfo\" />\n" +
-              "    </xfdf>");
-    } on PlatformException catch (e) {
-      print("Failed to importAnnotationCommand '${e.message}'.");
-    }
+    // await PdftronFlutter.openDocument(_document, config: config).catchError((err) {
+    //   print("Error encountered when opening PDF: ${err}");
+    // });
 
-    try {
-      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
-    } on PlatformException catch (e) {
-      print("Failed to importBookmarkJson '${e.message}'.");
-    }
-
-    var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
-      // local annotation changed
-      // upload XFDF command to server here
-      print("flutter xfdfCommand: $xfdfCommand");
-    });
-
-    var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
-      print("flutter bookmark: $bookmarkJson");
-    });
-
-    var path = await PdftronFlutter.saveDocument();
-    print("flutter save: $path");
+    // try {
+    //   PdftronFlutter.importAnnotationCommand(
+    //       "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+    //           "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
+    //           "      <add>\n" +
+    //           "        <square style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20200619203211Z\" flags=\"print\" date=\"D:20200619203211Z\" name=\"c684da06-12d2-4ccd-9361-0a1bf2e089e3\" page=\"1\" rect=\"113.312,277.056,235.43,350.173\" title=\"\" />\n" +
+    //           "      </add>\n" +
+    //           "      <modify />\n" +
+    //           "      <delete />\n" +
+    //           "      <pdf-info import-version=\"3\" version=\"2\" xmlns=\"http://www.pdftron.com/pdfinfo\" />\n" +
+    //           "    </xfdf>");
+    // } on PlatformException catch (e) {
+    //   print("Failed to importAnnotationCommand '${e.message}'.");
+    // }
+    //
+    // try {
+    //   PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
+    // } on PlatformException catch (e) {
+    //   print("Failed to importBookmarkJson '${e.message}'.");
+    // }
+    //
+    // var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
+    //   // local annotation changed
+    //   // upload XFDF command to server here
+    //   print("flutter xfdfCommand: $xfdfCommand");
+    // });
+    //
+    // var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
+    //   print("flutter bookmark: $bookmarkJson");
+    // });
+    //
+    // var path = await PdftronFlutter.saveDocument();
+    // print("flutter save: $path");
 
     // to cancel event:
     // annotCancel();
     // bookmarkCancel();
-
   }
 
   @override
@@ -142,10 +150,10 @@ class _ViewerState extends State<Viewer> {
         height: double.infinity,
         child:
             // Uncomment this to use Widget version of the viewer
-            // _showViewer
-            // ? DocumentView(
-            //     onCreated: _onDocumentViewCreated,
-            //   ):
+            _showViewer
+            ? DocumentView(
+                onCreated: _onDocumentViewCreated,
+              ):
             Container(),
       ),
     );
@@ -158,14 +166,21 @@ class _ViewerState extends State<Viewer> {
 
     var leadingNavCancel = startLeadingNavButtonPressedListener(() {
       // Uncomment this to quit the viewer when leading navigation button is pressed
-      // this.setState(() {
-      //   _showViewer = !_showViewer;
-      // });
+      this.setState(() {
+        _showViewer = !_showViewer;
+      });
 
       // Show a dialog when leading navigation button is pressed
 
       _showMyDialog();
     });
+
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path;
+    File tempFile = File('$tempPath/UnableToOpen.pdf');
+    ByteData bd = await rootBundle.load('assets/UnableToOpen.pdf');
+    await tempFile.writeAsBytes(bd.buffer.asUint8List(), flush: true);
+    _document = tempFile.absolute.path;
 
     controller.openDocument(_document, config: config);
   }
