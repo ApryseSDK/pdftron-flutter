@@ -28,6 +28,7 @@ static NSString * const PTUseStylusAsPenKey = @"useStylusAsPen";
 static NSString * const PTSignSignatureFieldWithStampsKey = @"signSignatureFieldWithStamps";
 static NSString * const PTSelectAnnotationAfterCreationKey = @"selectAnnotationAfterCreation";
 static NSString * const PTPageIndicatorEnabledKey = @"pageIndicatorEnabled";
+static NSString * const PTPageNumberIndicatorAlwaysVisibleKey = @"pageNumberIndicatorAlwaysVisible";
 static NSString * const PTFollowSystemDarkModeKey = @"followSystemDarkModeKey";
 static NSString * const PTAnnotationToolbarsKey = @"annotationToolbars";
 static NSString * const PTHideDefaultAnnotationToolbarsKey = @"hideDefaultAnnotationToolbars";
