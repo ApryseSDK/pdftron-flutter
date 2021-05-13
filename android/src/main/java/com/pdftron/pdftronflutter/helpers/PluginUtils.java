@@ -1830,6 +1830,7 @@ public class PluginUtils {
             FDFDoc fdfDoc = FDFDoc.createFromXFDF(xfdf);
 
             pdfDoc.fdfUpdate(fdfDoc);
+            pdfDoc.refreshAnnotAppearances();
             pdfViewCtrl.update(true);
 
             result.success(null);
@@ -2195,6 +2196,7 @@ public class PluginUtils {
             fdfDoc.mergeAnnots(xfdfCommand);
 
             pdfDoc.fdfUpdate(fdfDoc);
+            pdfDoc.refreshAnnotAppearances();
             pdfViewCtrl.update(true);
             result.success(null);
         } finally {
