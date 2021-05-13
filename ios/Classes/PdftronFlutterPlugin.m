@@ -1392,6 +1392,7 @@
         PTFDFDoc *fdfDoc = [PTFDFDoc CreateFromXFDF:xfdf];
         
         [doc FDFUpdate:fdfDoc];
+        [doc RefreshAnnotAppearances:[[PTRefreshOptions alloc] init]];
         [documentController.pdfViewCtrl Update:YES];
         
     } error:&error];
@@ -1860,6 +1861,7 @@
         PTFDFDoc* fdfDoc = [doc FDFExtract:e_ptboth];
         [fdfDoc MergeAnnots:xfdfCommand permitted_user:@""];
         [doc FDFUpdate:fdfDoc];
+        [doc RefreshAnnotAppearances:[[PTRefreshOptions alloc] init]];
 
         [documentController.pdfViewCtrl Update:YES];
 
