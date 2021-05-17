@@ -47,7 +47,7 @@ PdftronFlutter.initialize('your_license_key');
 
 
 ## Viewer Functions
-This section is for viewer related non-static methods. They would be callable in both plugin and widger versions. For example, [`openDocument`](#openDocument) is accessible in 2 ways:
+This section is for viewer related non-static methods. They would be callable in both plugin and widget versions. For example, [`openDocument`](#openDocument) is accessible in 2 ways:
 
 Plugin:
 ```dart
@@ -65,7 +65,7 @@ void _onDocumentViewCreated(DocumentViewController controller) {
 
 We suggest that you stick with either version for the APIs that are callable in both versions, to avoid unnecessary problems.
 
-There are several custom classes used in these APIs: Annot, AnnotWithRect, Field, Rect, AnnotFlag,AnnotWithFlag and CustomToolbar. These classes are listed [here](./lib/options.dart), and the constants that are used in the examples below are all listed [here](./lib/constants.dart).
+There are several custom classes used in these APIs: Annot, AnnotWithRect, Field, Rect, AnnotFlag, AnnotWithFlag and CustomToolbar. These classes are listed [here](./lib/options.dart), and the constants that are used in the examples below are all listed [here](./lib/constants.dart).
 
 ### Document
 
@@ -298,7 +298,7 @@ PdftronFlutter.importAnnotations(xfdf);
 
 #### exportAnnotations
 
-Extracts XFDF from the current document. If `annotationList` is null, export all annotations from the document; Else export the valid ones specified.
+Extracts XFDF from the current document. If `annotationList` is null, export all annotations from the document; else export the valid ones specified.
 
 Parameters:
 
@@ -467,7 +467,7 @@ Parameters:
 
 Name | Type | Description
 --- | ---| ---
-fields | List of [`Field`](./lib/options.dart) | A list of fields with name and the value that you would like to set to, could be in type number, bool or string
+fields | List of [`Field`](./lib/options.dart) | A list of fields; each field must be set with a name and a value. The value's type can be number, bool or string.
 
 Returns a Future.
 
@@ -784,7 +784,7 @@ config.customHeaders = {'headerName': 'headerValue'};
 #### readOnly
 bool, defaults to false.
 
-Defines whether the viewer is read-only. If true, the UI will not allow the user to change the document.
+Defines whether the viewer is read-only. If true, the UI will not allow the user to edit the document.
 
 ```dart
 config.readOnly = true;
@@ -931,7 +931,7 @@ config.initialPageNumber = 5;
 #### pageChangeOnTap
 bool, defaults to true.
 
-Defines whether the viewer should change pages when the user taps the edge of a page, when the viewer is in a horizontal viewing mode.
+Defines whether the viewer should change pages when the user taps the edge of a page, while the viewer is in a horizontal viewing mode.
 
 ```dart
 config.pageChangeOnTap = true;
@@ -1007,7 +1007,7 @@ config.annotationMenuItems = [AnnotationMenuItems.search, AnnotationMenuItems.sh
 #### overrideAnnotationMenuBehavior
 array of [`AnnotationMenuItems`](./lib/constants.dart) constants, defaults to none
 
-Defines the menu items that will skip default behavior when pressed. They will still be displayed in the annotation menu, and the event handler [`startAnnotationMenuPressedListener`](#startAnnotationMenuPressedListener) will be called where custom behavior can be implemented.
+Defines the menu items that will skip default behavior when pressed. They will still be displayed in the annotation menu, and the event handler [`startAnnotationMenuPressedListener`](#startAnnotationMenuPressedListener) will be called from which custom behavior can be implemented.
 
 ```dart
 config.overrideAnnotationMenuBehavior = [AnnotationMenuItems.copy];
@@ -1018,7 +1018,7 @@ config.overrideAnnotationMenuBehavior = [AnnotationMenuItems.copy];
 #### longPressMenuEnabled
 bool, defaults to true
 
-Defines whether to show the popup menu of options when the user long presses on text or blank space on the document.
+Defines whether to show the popup menu of options after the user long presses on text or blank space on the document.
 
 ```dart
 config.longPressMenuEnabled = false;
@@ -1027,7 +1027,7 @@ config.longPressMenuEnabled = false;
 #### longPressMenuItems
 array of [`LongPressMenuItems`](./lib/constants.dart) constants, optional, default contains all the items
 
-Defines menu items that can show when long press on text or blank space.
+Defines menu items that can be shown when long pressing on text or blank space.
 
 ```dart
 config.longPressMenuItems = [LongPressMenuItems.search, LongPressMenuItems.share];
