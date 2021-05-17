@@ -210,6 +210,12 @@ print("Tool committed: $committed");
 
 Sets current page of the document. Page numbers are 1-indexed.
 
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pageNumber | int | the page number to be set as the current page; 1-indexed
+
 Returns a Future.
 
 Future Parameters:
