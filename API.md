@@ -772,7 +772,7 @@ This section is the configuration part of the [`openDocument`](#openDocument) fu
 
 ### Document
 
-#### customerHeaders
+#### customHeaders
 map<string, string>, defaults to empty.
 
 Defines custom headers to use with HTTP/HTTPS requests.
