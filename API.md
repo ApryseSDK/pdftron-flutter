@@ -1134,7 +1134,7 @@ config.useStylusAsPen = true;
 ```
 
 #### followSystemDarkMode
-bool, Android only, defaults to true
+bool, Android only, defaults to true.
 
 Defines whether the UI will appear in a dark color when the system is dark mode. If false, it will use viewer setting instead.
 
