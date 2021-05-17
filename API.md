@@ -42,7 +42,7 @@ key | String | true | your PDFTron license key
 Returns a Future.
 
 ```dart
-PdftronFlutter.initialize('your_licensey_key');
+PdftronFlutter.initialize('your_license_key');
 ```
 
 
