@@ -768,7 +768,7 @@ var zoomChangedCancel = startZoomChangedListener((zoom)
 
 
 ## Viewer Configurations
-This section is the configuration part of the [`openDocument`](#openDocument) function. You could also refer to [here](./lib/config.dart) for all mutable properties.
+This section is the configuration part of the [`openDocument`](#openDocument) function. You could also refer [here](./lib/config.dart) for all mutable properties.
 
 ### Document
 
