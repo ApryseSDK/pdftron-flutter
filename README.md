@@ -1,3 +1,9 @@
+# Beta Branch Information
+
+This branch is to be used in conjunction with a recent [stable nightly build](https://www.pdftron.com/nightly/#stable/) of the iOS SDK, e.g.
+
+`https://nightly-pdftron.s3-us-west-2.amazonaws.com/stable/2021-05-14/9.0/cocoapods/pdfnet/2021-05-14_stable_rev77729.podspec`
+
 # PDFTron Flutter Wrapper
 
 - [API](#API)
@@ -149,7 +155,7 @@ class MainActivity : FlutterFragmentActivity() {
 	   ...
 	+  # PDFTron Pods
 	+  use_frameworks!
-	+  pod 'PDFNet', podspec: 'https://www.pdftron.com/downloads/ios/cocoapods/pdfnet/latest.podspec'
+	+  pod 'PDFNet', podspec: 'https://nightly-pdftron.s3-us-west-2.amazonaws.com/stable/2021-05-14/9.0/cocoapods/pdfnet/2021-05-14_stable_rev77729.podspec'
 	 end
 	```
 6. Run `flutter build ios --no-codesign` to ensure integration process is sucessful
