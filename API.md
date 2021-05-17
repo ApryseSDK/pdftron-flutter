@@ -1139,5 +1139,5 @@ bool, Android only, defaults to true
 Defines whether the UI will appear in a dark color when the system is dark mode. If false, it will use viewer setting instead.
 
 ```dart
-config.signSignatureFieldsWithStamps = true;
+config.followSystemDarkMode = true;
 ```
