@@ -10,6 +10,8 @@
 ## API
 APIs are available on the [API page](API.md).
 
+You can also add an API by following the instructions on the [Add an API page for Android](https://www.pdftron.com/documentation/android/get-started/flutter/add-an-api/) or [for iOS](https://www.pdftron.com/documentation/ios/get-started/flutter/add-an-api).
+
 ## Prerequisites
 - No license key is requird for trial. However, a valid commercial license key is required after trial.
 - PDFTron SDK >= 6.9.0
