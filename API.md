@@ -928,8 +928,6 @@ Defines the initial page number that viewer displays when the document is opened
 config.initialPageNumber = 5;
 ```
 
-### Page
-
 #### pageChangeOnTap
 bool, defaults to true.
 
