@@ -76,7 +76,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
     PDFTRON_LICENSE_KEY=
     ```
     
-5. In your `myapp\android\app\src\main\AndroidManifest.xml` file, add the following lines to the `<application>` tag:
+5. In your `myapp/android/app/src/main/AndroidManifest.xml` file, add the following lines to the `<application>` tag:
 	```diff
 	...
 	<application
