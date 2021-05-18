@@ -42,12 +42,12 @@ key | String | true | your PDFTron license key
 Returns a Future.
 
 ```dart
-PdftronFlutter.initialize('your_licensey_key');
+PdftronFlutter.initialize('your_license_key');
 ```
 
 
 ## Viewer Functions
-This section is for viewer related non-static methods. They would be callable in both plugin and widger versions. For example, [`openDocument`](#openDocument) is accessible in 2 ways:
+This section is for viewer related non-static methods. They would be callable in both plugin and widget versions. For example, [`openDocument`](#openDocument) is accessible in 2 ways:
 
 Plugin:
 ```dart
@@ -65,7 +65,7 @@ void _onDocumentViewCreated(DocumentViewController controller) {
 
 We suggest that you stick with either version for the APIs that are callable in both versions, to avoid unnecessary problems.
 
-There are several custom classes used in these APIs: Annot, AnnotWithRect, Field, Rect, AnnotFlag,AnnotWithFlag and CustomToolbar. These classes are listed [here](./lib/options.dart), and the constants that are used in the examples below are all listed [here](./lib/constants.dart).
+There are several custom classes used in these APIs: Annot, AnnotWithRect, Field, Rect, AnnotFlag, AnnotWithFlag and CustomToolbar. These classes are listed [here](./lib/options.dart), and the constants that are used in the examples below are all listed [here](./lib/constants.dart).
 
 ### Document
 
@@ -153,14 +153,14 @@ PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png
 **Note**: to add the image file to your application, please follow the steps below:
 
 ##### Android
-1. Add the image resource to the [example/android/app/src/main/res/drawable](./example/android/app/src/main/res/drawable) directory. For details about supported file types and potential compression, check out [here](https://developer.android.com/guide/topics/graphics/drawables#drawables-from-images).
+1. Add the image resource to the [`example/android/app/src/main/res/drawable`](./example/android/app/src/main/res/drawable) directory. For details about supported file types and potential compression, check out [here](https://developer.android.com/guide/topics/graphics/drawables#drawables-from-images).
 
 <img alt='demo-android' src='https://pdftron.s3.amazonaws.com/custom/websitefiles/flutter/android_add_resources.png'/>
 
 2. Now you can use the image in the viewer. For example, if you add `button_close.png` to drawable, you could use `'button_close'` in leadingNavButtonIcon.
 
 ##### iOS
-1. After pods has been installed, open the .xcworkspace file for this application in Xcode (in this case, it's [Runner.xcworkspace](./example/ios/Runner.xcworkspace)), and navigate through the list below. This would allow you to add resources, in this case, an image, to your project.
+1. After pods has been installed, open the .xcworkspace file for this application in Xcode (in this case, it's [`Runner.xcworkspace`](./example/ios/Runner.xcworkspace)), and navigate through the list below. This would allow you to add resources, in this case, an image, to your project.
 - "Project navigator"
 - "Runner" (or the app name)
 - "Build Phases"
@@ -180,7 +180,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-toolMode | String | One of [Tools](./lib/constants.dart) string constants, representing to tool mode to set
+toolMode | String | One of [`Tools`](./lib/constants.dart) string constants, representing to tool mode to set
 
 Returns a Future.
 
@@ -209,6 +209,12 @@ print("Tool committed: $committed");
 #### setCurrentPage
 
 Sets current page of the document. Page numbers are 1-indexed.
+
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pageNumber | int | the page number to be set as the current page; 1-indexed
 
 Returns a Future.
 
@@ -254,7 +260,7 @@ Future Parameters:
 
 Name | Type | Description
 --- | --- | ---
-cropBox | [Rect](./lib/options.dart) | the crop box information map. It contains information for position (bottom-left: `x1`, `y1`; top-right: `x2`, `y2`) and size (`width`, `height`)
+cropBox | [`Rect`](./lib/options.dart) | the crop box information map. It contains information for position (bottom-left: `x1`, `y1`; top-right: `x2`, `y2`) and size (`width`, `height`)
 
 ```dart
 var cropBox = await PdftronFlutter.getPageCropBox(1);
@@ -298,13 +304,13 @@ PdftronFlutter.importAnnotations(xfdf);
 
 #### exportAnnotations
 
-Extracts XFDF from the current document. If `annotationList` is null, export all annotations from the document; Else export the valid ones specified.
+Extracts XFDF from the current document. If `annotationList` is null, export all annotations from the document; else export the valid ones specified.
 
 Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationList | List of [Annot](./lib/options.dart) | If not null, export the XFDF string for the valid annotations; Otherwise, export the XFDF string for all annotations in the current document.
+annotationList | List of [`Annot`](./lib/options.dart) | If not null, export the XFDF string for the valid annotations; Otherwise, export the XFDF string for all annotations in the current document.
 
 Returns a Future.
 
@@ -351,7 +357,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotations | List of [Annot](./lib/options.dart) | the annotations to be deleted
+annotations | List of [`Annot`](./lib/options.dart) | the annotations to be deleted
 
 Returns a Future.
 
@@ -378,7 +384,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotation | [Annot](./lib/options.dart) | the annotation to be selected
+annotation | [`Annot`](./lib/options.dart) | the annotation to be selected
 
 Returns a Future.
 
@@ -393,7 +399,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationWithFlagsList | List of [AnnotWithFlags](./lib/options.dart) | a list of annotations with respective flags to be set
+annotationWithFlagsList | List of [`AnnotWithFlags`](./lib/options.dart) | a list of annotations with respective flags to be set
 
 Returns a Future.
 
@@ -417,7 +423,7 @@ PdftronFlutter.setFlagsForAnnotations(annotsWithFlags);
 #### setPropertiesForAnnotation
 Sets properties for specified annotation in the current document.
 
-Params:
+Parameters:
 Name | Type | Description
 --- | --- | ---
 annotation | [`Annot`](./lib/options.dart) | the annotation to be modified
@@ -451,7 +457,7 @@ Parameters:
 Name | Type | Description
 --- | ---| ---
 fieldNames | List of String | list of field names for which the flag should be set
-flag | int | the flag to be set, one of the constants from [FieldFlags](./lib/config.dart)
+flag | int | the flag to be set, one of the constants from [`FieldFlags`](./lib/config.dart)
 flagValue | bool | value to set for flag
 
 Returns a Future.
@@ -467,7 +473,7 @@ Parameters:
 
 Name | Type | Description
 --- | ---| ---
-fields | List of [Field](./lib/options.dart) | A list of fields with name and the value that you would like to set to, could be in type number, bool or string
+fields | List of [`Field`](./lib/options.dart) | A list of fields; each field must be set with a name and a value. The value's type can be number, bool or string.
 
 Returns a Future.
 
@@ -619,7 +625,7 @@ Event Parameters:
 Name | Type | Description
 --- | --- | ---
 action | String | the action that occurred (add, delete, modify)
-annotations | List of [Annot](./lib/options.dart) | the annotations that have been changed
+annotations | List of [`Annot`](./lib/options.dart) | the annotations that have been changed
 
 ```dart
 var annotChangedCancel = startAnnotationChangedListener((action, annotations) 
@@ -639,7 +645,7 @@ Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationWithRects | List of [AnnotWithRect](./lib/options.dart) | The list of annotations with their respective rects
+annotationWithRects | List of [`AnnotWithRect`](./lib/options.dart) | The list of annotations with their respective rects
 
 ```dart
 var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects) 
@@ -660,7 +666,7 @@ Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-fields | List of [Field](./lib/options.dart) | the fields that are changed
+fields | List of [`Field`](./lib/options.dart) | the fields that are changed
 
 ```dart
 var fieldChangedCancel = startFormFieldValueChangedListener((fields)
@@ -681,8 +687,8 @@ Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-annotationMenuItem | one of the [AnnotationMenuItems](./lib/options.dart) constants | The menu item that has been pressed
-annotations | List of [Annot](./lib/options.dart) | The annotations associated with the menu
+annotationMenuItem | one of the [`AnnotationMenuItems`](./lib/options.dart) constants | The menu item that has been pressed
+annotations | List of [`Annot`](./lib/options.dart) | The annotations associated with the menu
 
 ```dart
 var annotationMenuPressedCancel = startAnnotationMenuPressedListener((annotationMenuItem, annotations) 
@@ -704,7 +710,7 @@ Event Parameters:
 
 Name | Type | Description
 --- | --- | ---
-longPressMenuItem | one of the [LongPressMenuItems](./lib/constants.dart) constants | The menu item that has been pressed
+longPressMenuItem | one of the [`LongPressMenuItems`](./lib/constants.dart) constants | The menu item that has been pressed
 longPressText | string | The selected text if pressed on text, empty otherwise
 
 ```dart
@@ -720,9 +726,9 @@ var longPressMenuPressedCancel = startLongPressMenuPressedListener((longPressMen
 ### Custom Behavior
 
 #### startBehaviorActivatedListener
-Event is raised on certain behaviors, if any is passed into [overrideBehavior](#overrideBehavior).
+Event is raised on certain behaviors, if any is passed into [`overrideBehavior`](#overrideBehavior).
 
-action | String, one of the [Behaviors](#Behaviors) constants | The behavior which has been activated
+action | String, one of the [`Behaviors`](#Behaviors) constants | The behavior which has been activated
 data | map | detailed information regarding the behavior
 
 ```dart
@@ -768,11 +774,11 @@ var zoomChangedCancel = startZoomChangedListener((zoom)
 
 
 ## Viewer Configurations
-This section is the configuration part of the [`openDocument`](#openDocument) function. You could also refer to [here](./lib/config.dart) for all mutable properties.
+This section is the configuration part of the [`openDocument`](#openDocument) function. You could also refer [here](./lib/config.dart) for all mutable properties.
 
 ### Document
 
-#### customerHeaders
+#### customHeaders
 map<string, string>, defaults to empty.
 
 Defines custom headers to use with HTTP/HTTPS requests.
@@ -784,7 +790,7 @@ config.customHeaders = {'headerName': 'headerValue'};
 #### readOnly
 bool, defaults to false.
 
-Defines whether the viewer is read-only. If true, the UI will not allow the user to change the document.
+Defines whether the viewer is read-only. If true, the UI will not allow the user to edit the document.
 
 ```dart
 config.readOnly = true;
@@ -793,7 +799,7 @@ config.readOnly = true;
 #### isBase64String
 bool, defaults to false.
 
-If true, document in [openDocument](#openDocument) will be treated as a base64 string.
+If true, document in [`openDocument`](#openDocument) will be treated as a base64 string.
 
 When viewing a document initialized with a base64 string (i.e. a memory buffer), a temporary file is created on Android, but not on iOS. (If you need access to a file-backed PDF on iOS, save the base64 string to disk, and open the file located at that path.)
 
@@ -804,12 +810,12 @@ config.isBase64String = true;
 #### base64FileExtension
 String, defaults to `.pdf`, required if using base64 string of a non-pdf file.
 
-Defines the file extension for the base64 string in document, if [isBase64String](#isBase64String) is true.
+Defines the file extension for the base64 string in document, if [`isBase64String`](#isBase64String) is true.
 
 ### UI Customization
 
 #### disabledElements
-array of [Buttons](./lib/constants.dart) constants, defaults to none.
+array of [`Buttons`](./lib/constants.dart) constants, defaults to none.
 
 Defines buttons to be disabled for the viewer.
 
@@ -819,7 +825,7 @@ config.disabledElements = disabledElements;
 ```
 
 #### disabledTools
-array of [Tools](./lib/constants.dart) constants, defaults to none.
+array of [`Tools`](./lib/constants.dart) constants, defaults to none.
 
 Defines tools to be disabled for the viewer.
 
@@ -840,7 +846,7 @@ config.showLeadingNavButton = true;
 ### Toolbar Customization
 
 #### annotationToolbars
-array of [CustomToolbar](./lib/options.dart) objects or [DefaultToolbars](./lib/constants.dart) constants.
+array of [`CustomToolbar`](./lib/options.dart) objects or [`DefaultToolbars`](./lib/constants.dart) constants.
 
 Defines custom toolbars. If passed in, the set of default toolbars will no longer appear. It is possible to mix and match with default toolbars. See example below:
 
@@ -851,7 +857,7 @@ var annotationToolbars = [DefaultToolbars.annotate, customToolbar];
 ```
 
 #### hideDefaultAnnotationToolbars
-array of [DefaultToolbars](./lib/constants.dart) constants, defaults to none.
+array of [`DefaultToolbars`](./lib/constants.dart) constants, defaults to none.
 
 Defines which default annotation toolbars should be hidden. Note that this should be used when [`annotationToolbars`](#annotationToolbars) is not defined.
 
@@ -900,7 +906,7 @@ config.hideBottomToolbar = true;
 ### Layout
 
 #### fitMode
-one of the [FitModes](./lib/constants.dart) constants, default value is 'FitWidth'.
+one of the [`FitModes`](./lib/constants.dart) constants, default value is 'FitWidth'.
 
 Defines the fit mode (default zoom level) of the viewer.
 
@@ -909,7 +915,7 @@ config.fitMode = FitModes.fitHeight;
 ```
 
 #### layoutMode
-one of the [LayoutModes](./lib/constants.dart) constants, default value is 'Continuous'.
+one of the [`LayoutModes`](./lib/constants.dart) constants, default value is 'Continuous'.
 
 Defines the layout mode of the viewer.
 
@@ -928,12 +934,10 @@ Defines the initial page number that viewer displays when the document is opened
 config.initialPageNumber = 5;
 ```
 
-### Page
-
 #### pageChangeOnTap
 bool, defaults to true.
 
-Defines whether the viewer should change pages when the user taps the edge of a page, when the viewer is in a horizontal viewing mode.
+Defines whether the viewer should change pages when the user taps the edge of a page, while the viewer is in a horizontal viewing mode.
 
 ```dart
 config.pageChangeOnTap = true;
@@ -989,7 +993,7 @@ config.selectAnnotationAfterCreation = true;
 ### Annotation Menu
 
 #### hideAnnotationMenu
-array of [Tools](./lib/constants.dart) constants, defaults to none
+array of [`Tools`](./lib/constants.dart) constants, defaults to none
 
 Defines annotation types that will not show the default annotation menu.
 
@@ -998,7 +1002,7 @@ config.hideAnnotationMenu = [Tools.annotationCreateArrow, Tools.annotationEraser
 ```
 
 #### annotationMenuItems
-array of [AnnotationMenuItems](./lib/constants.dart) constants, default contains all items
+array of [`AnnotationMenuItems`](./lib/constants.dart) constants, default contains all items
 
 Defines the menu items that can show when an annotation is selected. 
 
@@ -1007,9 +1011,9 @@ config.annotationMenuItems = [AnnotationMenuItems.search, AnnotationMenuItems.sh
 ```
 
 #### overrideAnnotationMenuBehavior
-array of [AnnotationMenuItems](./lib/constants.dart) constants, defaults to none
+array of [`AnnotationMenuItems`](./lib/constants.dart) constants, defaults to none
 
-Defines the menu items that will skip default behavior when pressed. They will still be displayed in the annotation menu, and the event handler [`startAnnotationMenuPressedListener`](#startAnnotationMenuPressedListener) will be called where custom behavior can be implemented.
+Defines the menu items that will skip default behavior when pressed. They will still be displayed in the annotation menu, and the event handler [`startAnnotationMenuPressedListener`](#startAnnotationMenuPressedListener) will be called from which custom behavior can be implemented.
 
 ```dart
 config.overrideAnnotationMenuBehavior = [AnnotationMenuItems.copy];
@@ -1020,23 +1024,23 @@ config.overrideAnnotationMenuBehavior = [AnnotationMenuItems.copy];
 #### longPressMenuEnabled
 bool, defaults to true
 
-Defines whether to show the popup menu of options when the user long presses on text or blank space on the document.
+Defines whether to show the popup menu of options after the user long presses on text or blank space on the document.
 
 ```dart
 config.longPressMenuEnabled = false;
 ```
 
 #### longPressMenuItems
-array of [LongPressMenuItems](./lib/constants.dart) constants, optional, default contains all the items
+array of [`LongPressMenuItems`](./lib/constants.dart) constants, optional, default contains all the items
 
-Defines menu items that can show when long press on text or blank space.
+Defines menu items that can be shown when long pressing on text or blank space.
 
 ```dart
 config.longPressMenuItems = [LongPressMenuItems.search, LongPressMenuItems.share];
 ```
 
 #### overrideLongPressMenuBehavior
-array of [LongPressMenuItems](./lib/constants.dart) constants, optional, defaults to none
+array of [`LongPressMenuItems`](./lib/constants.dart) constants, optional, defaults to none
 
 Defines the menu items on long press that will skip default behavior when pressed. They will still be displayed in the long press menu, and the event handler [`startLongPressMenuPressedListener`](#startLongPressMenuPressedListener) will be called where custom behavior can be implemented.
 
@@ -1047,9 +1051,9 @@ config.overrideLongPressMenuBehavior = [LongPressMenuItems.copy];
 ### Custom Behavior
 
 #### overrideBehavior
-array of [Behaviors](./lib/constants.dart) constants, defaults to false.
+array of [`Behaviors`](./lib/constants.dart) constants, defaults to false.
 
-Defines actions that should skip default behavior, such as external link click. The event handler [startBehaviorActivatedListener](#startBehaviorActivatedListener) will be called when the behavior is activated, where custom behavior can be implemented.
+Defines actions that should skip default behavior, such as external link click. The event handler [`startBehaviorActivatedListener`](#startBehaviorActivatedListener) will be called when the behavior is activated, where custom behavior can be implemented.
 
 ```dart
 config.overrideBehavior = [Behaviors.linkPress];
@@ -1107,7 +1111,7 @@ config.thumbnailViewEditingEnabled = false;
 ```
 
 #### hideThumbnailFilterModes
-array of [ThumbnailFilterModes](./lib/constants.dart) constants, defaults to none.
+array of [`ThumbnailFilterModes`](./lib/constants.dart) constants, defaults to none.
 
 Defines filter Modes that should be hidden in the thumbnails browser.
 
@@ -1136,10 +1140,10 @@ config.useStylusAsPen = true;
 ```
 
 #### followSystemDarkMode
-bool, Android only, defaults to true
+bool, Android only, defaults to true.
 
 Defines whether the UI will appear in a dark color when the system is dark mode. If false, it will use viewer setting instead.
 
 ```dart
-config.signSignatureFieldsWithStamps = true;
+config.followSystemDarkMode = false;
 ```
