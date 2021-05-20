@@ -20,6 +20,7 @@ class Functions {
   static const getPageCount = "getPageCount";
   static const handleBackButton = "handleBackButton";
   static const getPageCropBox = "getPageCropBox";
+  static const getPageRotation = "getPageRotation";
   static const setCurrentPage = "setCurrentPage";
   static const getDocumentPath = "getDocumentPath";
   static const setToolMode = "setToolMode";

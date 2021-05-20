@@ -130,6 +130,12 @@ class DocumentViewController {
     return Rect.fromJson(jsonDecode(cropBoxString));
   }
 
+  Future<int> getPageRotation(int pageNumber) async {
+    int pageRotation = await _channel.invokeMethod(Functions.getPageRotation,
+        <String, dynamic>{Parameters.pageNumber: pageNumber});
+    return pageRotation;
+  }
+
   Future<bool> setCurrentPage(int pageNumber) {
     return _channel.invokeMethod(Functions.setCurrentPage,
         <String, dynamic>{Parameters.pageNumber: pageNumber});
