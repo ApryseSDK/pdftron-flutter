@@ -1796,6 +1796,11 @@
             }
         }
         
+        // rotation
+        NSNumber *annotRotation = [PdftronFlutterPlugin PT_idAsNSNumber:propertyMap[PTRotationAnnotationPropertyKey]];
+        if (annotRotation) {
+            [annot SetRotation:annotRotation.intValue];
+        }
         
         if ([annot IsMarkup]) {
             PTMarkup *markupAnnot = [[PTMarkup alloc] initWithAnn:annot];

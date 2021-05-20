@@ -271,6 +271,7 @@ static NSString * const PTContentsAnnotationPropertyKey = @"contents";
 static NSString * const PTSubjectAnnotationPropertyKey = @"subject";
 static NSString * const PTTitleAnnotationPropertyKey = @"title";
 static NSString * const PTRectAnnotationPropertyKey = @"rect";
+static NSString * const PTRotationAnnotationPropertyKey = @"rotation";
 
 static NSString * const PTLinkPressLinkAnnotationKey = @"linkPress";
 static NSString * const PTURILinkAnnotationKey = @"URI";
