@@ -176,6 +176,7 @@ static NSString * const PTSaveDocumentKey = @"saveDocument";
 static NSString * const PTCommitToolKey = @"commitTool";
 static NSString * const PTGetPageCountKey = @"getPageCount";
 static NSString * const PTGetPageCropBoxKey = @"getPageCropBox";
+static NSString * const PTGetPageRotationKey = @"getPageRotation";
 static NSString * const PTSetCurrentPageKey = @"setCurrentPage";
 static NSString * const PTGetDocumentPathKey = @"getDocumentPath";
 static NSString * const PTSetToolModeKey = @"setToolMode";

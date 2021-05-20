@@ -1128,6 +1128,9 @@
     } else if ([call.method isEqualToString:PTGetPageCropBoxKey]) {
         NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self getPageCropBox:pageNumber resultToken:result];
+    } else if ([call.method isEqualToString:PTGetPageRotationKey]) {
+        NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
+        [self getPageRotation:pageNumber resultToken:result];
     } else if ([call.method isEqualToString:PTSetCurrentPageKey]) {
         NSNumber* pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self setCurrentPage:pageNumber resultToken:result];
@@ -2012,6 +2015,29 @@
         NSLog(@"Error: There was an error while trying to get page crop box. %@", error.localizedDescription);
         flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to get page crop box" details:@"Error: There was an error while trying to get page crop box"]);
     }
+}
+
+- (void)getPageRotation:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"get_page_rotation" message:@"Failed to get page rotation" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+
+    __block NSNumber *pageRotation;
+    NSError* error;
+    [documentController.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+        PTRotate rotation = [[doc GetPage:pageNumber.unsignedIntValue] GetRotation];
+        pageRotation = [NSNumber numberWithInt:(rotation * 90)];
+    } error:&error];
+
+    if (error) {
+        NSLog(@"Error: There was an error while trying to get the page rotation for page number. %@", error.localizedDescription);
+    }
+    flutterResult(pageRotation);
 }
 
 - (void)setCurrentPage:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult {
