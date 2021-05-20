@@ -1800,6 +1800,7 @@
         NSNumber *annotRotation = [PdftronFlutterPlugin PT_idAsNSNumber:propertyMap[PTRotationAnnotationPropertyKey]];
         if (annotRotation) {
             [annot SetRotation:annotRotation.intValue];
+            [annot RefreshAppearance];
         }
         
         if ([annot IsMarkup]) {

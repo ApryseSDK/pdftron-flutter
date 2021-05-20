@@ -135,11 +135,11 @@ class AnnotProperty {
   // not markup exclusive
   Rect rect;
   String contents;
+  int rotation;
   // markup exclusive
   String subject;
   String title;
   Rect contentRect;
-  int rotation;
 
   AnnotProperty();
 
