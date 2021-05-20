@@ -267,6 +267,28 @@ var cropBox = await PdftronFlutter.getPageCropBox(1);
 print('The width of crop box for page 1 is: ' + cropBox.width.toString());
 ```
 
+#### getPageRotation
+Gets the rotation value of the specified page in the current document.
+
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pageNumber | int | the page number for the target page. It is 1-indexed
+
+Returns a Future.
+
+Future Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pageRotation | int | the rotation degree of the page, one of 0, 90, 180 or 270 (clockwise).
+
+```dart
+var pageRotation = await PdftronFlutter.getPageRotation(1);
+print("The rotation value of page 1 is $pageRotation");
+```
+
 ### Import/Export Annotations
 
 #### importAnnotationCommand
@@ -438,6 +460,7 @@ contents | String | no
 subject | String | yes
 title | String | yes
 contentRect | Rect | yes
+rotation | int | no
 
 ```dart
 Annot pdf = new Annot('pdf', 1);
@@ -446,6 +469,7 @@ property.rect = new Rect.fromCoordinates(1, 1.5, 100.2, 100);
 property.contents = 'Hello World';
 property.subject = 'sample';
 property.title = 'set-props-for-annot';
+property.rotation = 90;
 PdftronFlutter.setPropertiesForAnnotation(pdf, property);
 ```
 
