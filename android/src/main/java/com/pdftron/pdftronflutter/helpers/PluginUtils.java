@@ -4,7 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Base64;
-
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -33,10 +33,10 @@ import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.BookmarkManager;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
-import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.ViewerUtils;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
@@ -136,6 +136,7 @@ public class PluginUtils {
     public static final String KEY_TITLE = "title";
     public static final String KEY_CONTENTS = "contents";
     public static final String KEY_CONTENT_RECT = "contentRect";
+    public static final String KEY_ROTATION = "rotation";
 
     public static final String KEY_FIELD_NAME = "fieldName";
     public static final String KEY_FIELD_VALUE = "fieldValue";
@@ -203,6 +204,7 @@ public class PluginUtils {
     public static final String FUNCTION_SET_LEADING_NAV_BUTTON_ICON = "setLeadingNavButtonIcon";
     public static final String FUNCTION_CLOSE_ALL_TABS = "closeAllTabs";
     public static final String FUNCTION_DELETE_ALL_ANNOTATIONS = "deleteAllAnnotations";
+    public static final String FUNCTION_GET_PAGE_ROTATION = "getPageRotation";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -1791,7 +1793,16 @@ public class PluginUtils {
                 deleteAllAnnotations(result, component);
                 break;
             }
+            case FUNCTION_GET_PAGE_ROTATION: {
+                checkFunctionPrecondition(component);
+                Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
+                if (pageNumber != null) {
+                    getPageRotation(pageNumber, result, component);
+                }
+                break;
+            }
             default:
+                Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
                 break;
         }
@@ -2084,6 +2095,17 @@ public class PluginUtils {
         }
     }
 
+    private static boolean isValidJSONValue(JSONObject json, String key) throws JSONException {
+        if (json.isNull(key)) {
+            return false;
+        }
+        Object value = json.get(key);
+        if (value instanceof String) {
+            return !"null".equals((String) value);
+        }
+        return true;
+    }
+
     private static void setPropertiesForAnnotation(String annotation, String properties, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         ToolManager toolManager = component.getToolManager();
@@ -2112,14 +2134,14 @@ public class PluginUtils {
                 map.put(annot, annotationPageNumber);
                 toolManager.raiseAnnotationsPreModifyEvent(map);
 
-                if (!propertiesJson.isNull(KEY_CONTENTS)) {
+                if (isValidJSONValue(propertiesJson, KEY_CONTENTS)) {
                     Object contents = propertiesJson.get(KEY_CONTENTS);
                     if (contents instanceof String) {
                         annot.setContents((String) contents);
                     }
                 }
 
-                if (!propertiesJson.isNull(KEY_RECT)) {
+                if (isValidJSONValue(propertiesJson, KEY_RECT)) {
                     Object object = propertiesJson.get(KEY_RECT);
                     com.pdftron.pdf.Rect pdfRect = getRectFromObject(object);
                     if (pdfRect != null) {
@@ -2127,24 +2149,32 @@ public class PluginUtils {
                     }
                 }
 
+                if (isValidJSONValue(propertiesJson, KEY_ROTATION)) {
+                    Object object = propertiesJson.get(KEY_ROTATION);
+                    if (object instanceof Integer) {
+                        annot.setRotation((Integer) object);
+                        annot.refreshAppearance();
+                    }
+                }
+
                 if (annot.isMarkup()) {
                     Markup markupAnnot = new Markup(annot);
 
-                    if (!propertiesJson.isNull(KEY_SUBJECT)) {
+                    if (isValidJSONValue(propertiesJson, KEY_SUBJECT)) {
                         Object subject = propertiesJson.get(KEY_SUBJECT);
                         if (subject instanceof String) {
                             markupAnnot.setSubject((String) subject);
                         }
                     }
 
-                    if (!propertiesJson.isNull(KEY_TITLE)) {
+                    if (isValidJSONValue(propertiesJson, KEY_TITLE)) {
                         Object title = propertiesJson.get(KEY_TITLE);
                         if (title instanceof String) {
                             markupAnnot.setTitle((String) title);
                         }
                     }
 
-                    if (!propertiesJson.isNull(KEY_CONTENT_RECT)) {
+                    if (isValidJSONValue(propertiesJson, KEY_CONTENT_RECT)) {
                         Object object = propertiesJson.get(KEY_CONTENT_RECT);
                         com.pdftron.pdf.Rect pdfRect = getRectFromObject(object);
                         if (pdfRect != null) {
@@ -2459,6 +2489,32 @@ public class PluginUtils {
             }
         }
         result.success(null);
+    }
+
+    private static void getPageRotation(int pageNumber, MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        PDFDoc pdfDoc = component.getPdfDoc();
+        if (pdfViewCtrl == null || pdfDoc == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        int pageRotation = 0;
+        boolean shouldUnlockRead = false;
+        try {
+            // Locks the document first as accessing annotation/doc information isn't thread
+            // safe.
+            pdfViewCtrl.docLockRead();
+            shouldUnlockRead = true;
+
+            pageRotation = pdfDoc.getPage(pageNumber).getRotation() * 90;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (shouldUnlockRead) {
+                pdfViewCtrl.docUnlockRead();
+            }
+        }
+        result.success(pageRotation);
     }
 
     // Events
