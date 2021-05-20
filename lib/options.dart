@@ -139,6 +139,7 @@ class AnnotProperty {
   String subject;
   String title;
   Rect contentRect;
+  int rotation;
 
   AnnotProperty();
 
@@ -148,6 +149,7 @@ class AnnotProperty {
         AnnotationProperties.subject: subject,
         AnnotationProperties.title: title,
         AnnotationProperties.contentRect: jsonEncode(rect),
+        AnnotationProperties.rotation: rotation,
       };
 }
 

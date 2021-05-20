@@ -222,6 +222,7 @@ class AnnotationProperties {
   static const subject = "subject";
   static const title = "title";
   static const contentRect = "contentRect";
+  static const rotation = "rotation";
 }
 
 // Behaviors define all user behaviors in the viewer

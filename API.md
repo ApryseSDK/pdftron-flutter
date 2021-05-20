@@ -460,6 +460,7 @@ contents | String | no
 subject | String | yes
 title | String | yes
 contentRect | Rect | yes
+rotation | int | no
 
 ```dart
 Annot pdf = new Annot('pdf', 1);
@@ -468,6 +469,7 @@ property.rect = new Rect.fromCoordinates(1, 1.5, 100.2, 100);
 property.contents = 'Hello World';
 property.subject = 'sample';
 property.title = 'set-props-for-annot';
+property.rotation = 90;
 PdftronFlutter.setPropertiesForAnnotation(pdf, property);
 ```
 
