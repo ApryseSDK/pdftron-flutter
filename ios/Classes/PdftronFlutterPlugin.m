@@ -1868,8 +1868,11 @@
         }
 
         PTFDFDoc* fdfDoc = [doc FDFExtract:e_ptboth];
-        [fdfDoc MergeAnnots:xfdfCommand permitted_user:@""];
-        [doc FDFUpdate:fdfDoc];
+        NSString *fdfString = [fdfDoc SaveAsXFDFToString];
+        PTFDFDoc *newFDFDoc = [PTFDFDoc CreateFromXFDF:fdfString];
+        [newFDFDoc MergeAnnots:xfdfCommand permitted_user:@""];
+
+        [doc FDFUpdate:newFDFDoc];
         [doc RefreshAnnotAppearances:[[PTRefreshOptions alloc] init]];
 
         [documentController.pdfViewCtrl Update:YES];
