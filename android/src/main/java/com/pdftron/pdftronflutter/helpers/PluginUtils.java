@@ -2199,9 +2199,11 @@ public class PluginUtils {
             shouldUnlock = true;
 
             FDFDoc fdfDoc = pdfDoc.fdfExtract(PDFDoc.e_both);
-            fdfDoc.mergeAnnots(xfdfCommand);
+            String xfdf = fdfDoc.saveAsXFDF();
+            FDFDoc newFdfDoc = FDFDoc.createFromXFDF(xfdf);
+            newFdfDoc.mergeAnnots(xfdfCommand);
 
-            pdfDoc.fdfUpdate(fdfDoc);
+            pdfDoc.fdfUpdate(newFdfDoc);
             pdfDoc.refreshAnnotAppearances();
             pdfViewCtrl.update(true);
             result.success(null);
