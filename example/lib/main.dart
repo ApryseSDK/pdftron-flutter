@@ -43,15 +43,10 @@ class _ViewerState extends State<Viewer> {
   }
 
   Future<void> launchWithPermission() async {
-    Map<PermissionGroup, PermissionStatus> permissions =
-        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-    if (granted(permissions[PermissionGroup.storage])) {
+    PermissionStatus permission = await Permission.storage.request();
+    if (permission.isGranted) {
       showViewer();
     }
-  }
-
-  bool granted(PermissionStatus status) {
-    return status == PermissionStatus.granted;
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
