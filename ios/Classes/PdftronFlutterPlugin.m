@@ -1999,7 +1999,7 @@
     NSError *error;
     [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
         
-        PTPage *page = [doc GetPage:(int)pageNumber];
+        PTPage *page = [doc GetPage:[pageNumber intValue]];
         if (page) {
             PTPDFRect *rect = [page GetCropBox];
             NSDictionary<NSString *, NSNumber *> *map = @{
