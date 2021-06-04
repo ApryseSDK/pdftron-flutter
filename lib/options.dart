@@ -103,8 +103,8 @@ class AnnotFlag {
       Note: Flag comes from AnnotationFlags constants;
             FlagValue represents toggling on/off
   */
-  String flag;
-  bool flagValue;
+  String? flag;
+  bool? flagValue;
   AnnotFlag(this.flag, this.flagValue);
 
   Map<String, dynamic> toJson() => {
@@ -122,7 +122,7 @@ class AnnotWithFlag {
 
   AnnotWithFlag.fromAnnotAndFlags(this.annotation, this.flags);
 
-  AnnotWithFlag(String annotId, int pageNumber, String flag, bool flagValue) {
+  AnnotWithFlag(String? annotId, int? pageNumber, String? flag, bool? flagValue) {
     annotation = new Annot(annotId, pageNumber);
     flags = new List<AnnotFlag>.empty(growable: true);
     flags.add(new AnnotFlag(flag, flagValue));
@@ -166,9 +166,9 @@ class CustomToolbar {
           icon (optional) should be a ToolbarIcons constant
   */
 
-  String id;
-  String name;
-  List<String> items;
+  String? id;
+  String? name;
+  List<String>? items;
   String? icon;
 
   CustomToolbar(this.id, this.name, this.items, [this.icon]);
