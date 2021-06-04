@@ -349,9 +349,9 @@ var xfdf = await PdftronFlutter.exportAnnotations(null);
 
 Exports specified annotations:
 ```dart
-List<Annot> annotList = new List<Annot>();
-list.add(new Annot('Hello', 1));
-list.add(new Annot('World', 2));
+List<Annot> annotList = new List<Annot>.empty(growable: true);
+annotList.add(new Annot('Hello', 1));
+annotList.add(new Annot('World', 2));
 var xfdf = await PdftronFlutter.exportAnnotations(annotList);
 ```
 
@@ -384,7 +384,7 @@ annotations | List of [`Annot`](./lib/options.dart) | the annotations to be dele
 Returns a Future.
 
 ```dart
-List<Annot> annotList = new List<Annot>();
+List<Annot> annotList = new List<Annot>.empty(growable: true);
 list.add(new Annot('Hello', 1));
 list.add(new Annot('World', 2));
 PdftronFlutter.deleteAnnotations(annotList);
@@ -426,7 +426,7 @@ annotationWithFlagsList | List of [`AnnotWithFlags`](./lib/options.dart) | a lis
 Returns a Future.
 
 ```dart
-List<AnnotWithFlags> annotsWithFlags = new List<AnnotWithFlags>();
+List<AnnotWithFlags> annotsWithFlags = new List<AnnotWithFlags>.empty(growable: true);
 
 Annot hello = new Annot('Hello', 1);
 Annot world = new Annot('World', 3);
