@@ -112,7 +112,7 @@ Future Parameters:
 
 Name | Type | Description
 --- | --- | ---
-path | String | the location of the saved document
+path | String? | the location of the saved document
 
 ```dart
 var path = await PdftronFlutter.saveDocument();
@@ -127,7 +127,7 @@ Future Parameters:
 
 Name | Type | Description
 --- | ---| ---
-path | String | the document path
+path | String? | the document path
 
 ```dart
 var path = await PdftronFlutter.getDocumentPath();
@@ -197,7 +197,7 @@ Future Parameters:
 
 Name | Type | Description
 --- | --- | ---
-committed | bool | true if either ink or poly-shape tool is committed, false otherwise
+committed | bool? | true if either ink or poly-shape tool is committed, false otherwise
 
 ```dart
 var committed = await PdftronFlutter.commitTool();
@@ -222,7 +222,7 @@ Future Parameters:
 
 Name | Type | Description
 -- | -- | --
-success | bool | whether the setting process is successful.
+success | bool? | whether the setting process is successful.
 
 ```dart
 var setResult = await controller.setCurrentPage(5);
@@ -238,7 +238,7 @@ Future Parameters:
 
 Name | Type | Description
 --- | --- | ---
-pageCount | int | the page count of the current document
+pageCount | int? | the page count of the current document
 
 ```dart
 var pageCount = await PdftronFlutter.getPageCount();
@@ -340,7 +340,7 @@ Future Parameters:
 
 Name | Type | Description
 -- | -- | --
-xfdf | String | annotation string in XFDF format
+xfdf | String? | annotation string in XFDF format
 
 Exports all annotations:
 ```dart
@@ -523,7 +523,7 @@ Future Parameters:
 
 Name | Type | Description
 --- | --- | ---
-handled | bool | whether the back button is handled successfully
+handled | bool? | whether the back button is handled successfully
 
 ```dart
 var handled = await PdftronFlutter.handleBackButton();
@@ -719,8 +719,8 @@ var annotationMenuPressedCancel = startAnnotationMenuPressedListener((annotation
 {
   print("Annotation menu item " + annotationMenuItem + " has been pressed");
   for (Annot annotation in annotations) {
-    print("Annotation has id: " + annotation.id);
-    print("Annotation is in page: " + annotation.pageNumber.toString());
+    print("Annotation has id: ${annotation.id}");
+    print("Annotation is in page: ${annotation.pageNumber}");
   }
 });
 ```
