@@ -77,8 +77,8 @@ Parameters:
 Name | Type | Required | Description
 --- | --- | --- | ---
 document | String | true | path to the document
-password | String | false | password to an encrypted document
-config | Config | false | viewer configuration options
+password | String? | false | password to an encrypted document
+config | Config? | false | viewer configuration options
 
 Returns a Future that would resolve when document is loaded.
 
@@ -226,7 +226,7 @@ success | bool | whether the setting process is successful.
 
 ```dart
 var setResult = await controller.setCurrentPage(5);
-print('Page set ' + setResult ? 'successfully' : 'unsuccessfully');
+print('Page set ' + (setResult ? 'successfully' : 'unsuccessfully'));
 ```
 
 #### getPageCount
@@ -455,12 +455,12 @@ For settable properties:
 
 Name | Type | Markup exclusive
 --- | --- | ---
-rect | Rect | no
-contents | String | no
-subject | String | yes
-title | String | yes
-contentRect | Rect | yes
-rotation | int | no
+rect | Rect? | no
+contents | String? | no
+subject | String? | yes
+title | String? | yes
+contentRect | Rect? | yes
+rotation | int? | no
 
 ```dart
 Annot pdf = new Annot('pdf', 1);
@@ -576,7 +576,7 @@ path | String | the path to where the document is saved
 ```dart
 var documentLoadedCancel = startDocumentLoadedListener((path)
 {
-  print("flutter document loaded: ${path}");
+  print("flutter document loaded: $path");
 });
 ```
 
