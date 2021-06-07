@@ -135,6 +135,7 @@ class AnnotProperty {
   // not markup exclusive
   Rect rect;
   String contents;
+  int rotation;
   // markup exclusive
   String subject;
   String title;
@@ -148,6 +149,7 @@ class AnnotProperty {
         AnnotationProperties.subject: subject,
         AnnotationProperties.title: title,
         AnnotationProperties.contentRect: jsonEncode(rect),
+        AnnotationProperties.rotation: rotation,
       };
 }
 

@@ -177,6 +177,7 @@ static NSString * const PTSaveDocumentKey = @"saveDocument";
 static NSString * const PTCommitToolKey = @"commitTool";
 static NSString * const PTGetPageCountKey = @"getPageCount";
 static NSString * const PTGetPageCropBoxKey = @"getPageCropBox";
+static NSString * const PTGetPageRotationKey = @"getPageRotation";
 static NSString * const PTSetCurrentPageKey = @"setCurrentPage";
 static NSString * const PTGetDocumentPathKey = @"getDocumentPath";
 static NSString * const PTSetToolModeKey = @"setToolMode";
@@ -184,6 +185,7 @@ static NSString * const PTSetFlagForFieldsKey = @"setFlagForFields";
 static NSString * const PTSetValuesForFieldsKey = @"setValuesForFields";
 static NSString * const PTSetLeadingNavButtonIconKey = @"setLeadingNavButtonIcon";
 static NSString * const PTCloseAllTabsKey = @"closeAllTabs";
+static NSString * const PTDeleteAllAnnotationsKey = @"deleteAllAnnotations";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
@@ -270,6 +272,7 @@ static NSString * const PTContentsAnnotationPropertyKey = @"contents";
 static NSString * const PTSubjectAnnotationPropertyKey = @"subject";
 static NSString * const PTTitleAnnotationPropertyKey = @"title";
 static NSString * const PTRectAnnotationPropertyKey = @"rect";
+static NSString * const PTRotationAnnotationPropertyKey = @"rotation";
 
 static NSString * const PTLinkPressLinkAnnotationKey = @"linkPress";
 static NSString * const PTURILinkAnnotationKey = @"URI";

@@ -1136,6 +1136,9 @@
     } else if ([call.method isEqualToString:PTGetPageCropBoxKey]) {
         NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self getPageCropBox:pageNumber resultToken:result];
+    } else if ([call.method isEqualToString:PTGetPageRotationKey]) {
+        NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
+        [self getPageRotation:pageNumber resultToken:result];
     } else if ([call.method isEqualToString:PTSetCurrentPageKey]) {
         NSNumber* pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self setCurrentPage:pageNumber resultToken:result];
@@ -1157,6 +1160,8 @@
         [self setLeadingNavButtonIcon:leadingNavButtonIcon resultToken:result];
     } else if ([call.method isEqualToString:PTCloseAllTabsKey]) {
         [self closeAllTabs:result];
+    } else if ([call.method isEqualToString:PTDeleteAllAnnotationsKey]) {
+        [self deleteAllAnnotations:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -1398,6 +1403,7 @@
         PTFDFDoc *fdfDoc = [PTFDFDoc CreateFromXFDF:xfdf];
         
         [doc FDFUpdate:fdfDoc];
+        [doc RefreshAnnotAppearances:[[PTRefreshOptions alloc] init]];
         [documentController.pdfViewCtrl Update:YES];
         
     } error:&error];
@@ -1553,6 +1559,65 @@
     
     [documentController.toolManager changeTool:[PTPanTool class]];
     
+    flutterResult(nil);
+}
+
+- (void)deleteAllAnnotations:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+
+        flutterResult([FlutterError errorWithCode:@"delete_all_annotations" message:@"Failed to delete all annotations" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+
+    NSError* error;
+
+    if (error) {
+        NSLog(@"Error: Failed to get annotations from doc. %@", error.localizedDescription);
+
+        flutterResult([FlutterError errorWithCode:@"delete_all_annotations" message:@"Failed to delete all annotations" details:@"Error: Failed to delete all annotations from doc."]);
+        return;
+    }
+
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        PTPageIterator *pageIterator = [doc GetPageIterator:1];
+        int pageNumber = 1;
+        while ([pageIterator HasNext]) {
+            PTPage *page = [pageIterator Current];
+            if ([page IsValid]) {
+                int num_annots = [page GetNumAnnots];
+                for (int i = num_annots - 1; i >= 0; i--)
+                {
+                    PTAnnot* annot = [page GetAnnot:i];
+                    if (![annot IsValid] || annot == nil) {
+                        continue;
+                    }
+                    if ([annot GetType] != e_ptLink && [annot GetType] != e_ptWidget) {
+                        [documentController.toolManager willRemoveAnnotation:annot onPageNumber:pageNumber];
+                        [page AnnotRemoveWithAnnot:annot];
+                        [documentController.toolManager annotationRemoved:annot onPageNumber:pageNumber];
+                    }
+                }
+            }
+            [pageIterator Next];
+            pageNumber++;
+        }
+    } error:&error];
+
+    [documentController.pdfViewCtrl Update:YES];
+    [documentController.toolManager changeTool:[PTPanTool class]];
+
+    if (error) {
+        NSLog(@"Error: Failed to delete all annotations from doc. %@", error.localizedDescription);
+
+        flutterResult([FlutterError errorWithCode:@"delete_all_annotations" message:@"Failed to delete annotations" details:@"Error: Failed to delete annotations from doc."]);
+        return;
+    }
+
     flutterResult(nil);
 }
 
@@ -1739,6 +1804,12 @@
             }
         }
         
+        // rotation
+        NSNumber *annotRotation = [PdftronFlutterPlugin PT_idAsNSNumber:propertyMap[PTRotationAnnotationPropertyKey]];
+        if (annotRotation) {
+            [annot SetRotation:annotRotation.intValue];
+            [annot RefreshAppearance];
+        }
         
         if ([annot IsMarkup]) {
             PTMarkup *markupAnnot = [[PTMarkup alloc] initWithAnn:annot];
@@ -1805,8 +1876,12 @@
         }
 
         PTFDFDoc* fdfDoc = [doc FDFExtract:e_ptboth];
-        [fdfDoc MergeAnnots:xfdfCommand permitted_user:@""];
-        [doc FDFUpdate:fdfDoc];
+        NSString *fdfString = [fdfDoc SaveAsXFDFToString];
+        PTFDFDoc *newFDFDoc = [PTFDFDoc CreateFromXFDF:fdfString];
+        [newFDFDoc MergeAnnots:xfdfCommand permitted_user:@""];
+
+        [doc FDFUpdate:newFDFDoc];
+        [doc RefreshAnnotAppearances:[[PTRefreshOptions alloc] init]];
 
         [documentController.pdfViewCtrl Update:YES];
 
@@ -1932,7 +2007,7 @@
     NSError *error;
     [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
         
-        PTPage *page = [doc GetPage:(int)pageNumber];
+        PTPage *page = [doc GetPage:[pageNumber intValue]];
         if (page) {
             PTPDFRect *rect = [page GetCropBox];
             NSDictionary<NSString *, NSNumber *> *map = @{
@@ -1957,6 +2032,29 @@
         NSLog(@"Error: There was an error while trying to get page crop box. %@", error.localizedDescription);
         flutterResult([FlutterError errorWithCode:@"save_document" message:@"Failed to get page crop box" details:@"Error: There was an error while trying to get page crop box"]);
     }
+}
+
+- (void)getPageRotation:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"get_page_rotation" message:@"Failed to get page rotation" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+
+    __block NSNumber *pageRotation;
+    NSError* error;
+    [documentController.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+        PTRotate rotation = [[doc GetPage:pageNumber.unsignedIntValue] GetRotation];
+        pageRotation = [NSNumber numberWithInt:(rotation * 90)];
+    } error:&error];
+
+    if (error) {
+        NSLog(@"Error: There was an error while trying to get the page rotation for page number. %@", error.localizedDescription);
+    }
+    flutterResult(pageRotation);
 }
 
 - (void)setCurrentPage:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult {

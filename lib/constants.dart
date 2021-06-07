@@ -20,6 +20,7 @@ class Functions {
   static const getPageCount = "getPageCount";
   static const handleBackButton = "handleBackButton";
   static const getPageCropBox = "getPageCropBox";
+  static const getPageRotation = "getPageRotation";
   static const setCurrentPage = "setCurrentPage";
   static const getDocumentPath = "getDocumentPath";
   static const setToolMode = "setToolMode";
@@ -27,6 +28,7 @@ class Functions {
   static const setFlagForFields = "setFlagForFields";
   static const setLeadingNavButtonIcon = "setLeadingNavButtonIcon";
   static const closeAllTabs = "closeAllTabs";
+  static const deleteAllAnnotations = "deleteAllAnnotations";
 }
 
 // Parameters define the parameters of the functions
@@ -220,6 +222,7 @@ class AnnotationProperties {
   static const subject = "subject";
   static const title = "title";
   static const contentRect = "contentRect";
+  static const rotation = "rotation";
 }
 
 // Behaviors define all user behaviors in the viewer
