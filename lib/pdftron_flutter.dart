@@ -121,6 +121,12 @@ class PdftronFlutter {
     return Rect.fromJson(jsonDecode(cropBoxString));
   }
 
+  static Future<int> getPageRotation(int pageNumber) async {
+    int pageRotation = await _channel.invokeMethod(Functions.getPageRotation,
+        <String, dynamic>{Parameters.pageNumber: pageNumber});
+    return pageRotation;
+  }
+
   static Future<bool> setCurrentPage(int pageNumber) {
     return _channel.invokeMethod(Functions.setCurrentPage,
         <String, dynamic>{Parameters.pageNumber: pageNumber});
@@ -156,5 +162,9 @@ class PdftronFlutter {
 
   static Future<void> closeAllTabs() {
     return _channel.invokeMethod(Functions.closeAllTabs);
+  }
+  
+  static Future<void> deleteAllAnnotations() {
+    return _channel.invokeMethod(Functions.deleteAllAnnotations);
   }
 }

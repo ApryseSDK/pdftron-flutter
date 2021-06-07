@@ -20,6 +20,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="pdftron_flutter_example"
         android:largeHeap="true"
+        android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true">
 
         <!-- Add license key in meta-data tag here. This should be inside the application tag. -->

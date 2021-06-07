@@ -11,7 +11,7 @@
 APIs are available on the [API page](API.md).
 
 ## Prerequisites
-- No license key is requird for trial. However, a valid commercial license key is required after trial.
+- No license key is required for trial. However, a valid commercial license key is required after trial.
 - PDFTron SDK >= 6.9.0
 - Flutter >= 1.0.0
 
@@ -76,7 +76,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
     PDFTRON_LICENSE_KEY=
     ```
     
-5. In your `myapp\android\app\src\main\AndroidManifest.xml` file, add the following lines to the `<application>` tag:
+5. In your `myapp/android/app/src/main/AndroidManifest.xml` file, add the following lines to the `<application>` tag:
 	```diff
 	...
 	<application
@@ -104,7 +104,7 @@ The complete installation and API guides can be found at https://www.pdftron.com
 		...
 	```
 
-5a. (If using `DocumentView` widget) In your `MainActivity` file (either kotlin or java), change the parent class to `FlutterFragmentActivity`:
+5a. If you are using the `DocumentView` widget, change the parent class of your `MainActivity` file (either Kotlin or Java) to `FlutterFragmentActivity`:
 ```
 import androidx.annotation.NonNull
 import io.flutter.embedding.android.FlutterFragmentActivity
@@ -121,6 +121,7 @@ class MainActivity : FlutterFragmentActivity() {
 6. Replace `lib/main.dart` with what is shown [here](#usage)
 7. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
 8. Run the app with the command `flutter run`.
+9. Please note that the widget version (`DocumentView`) contains existing issues such as none of the menu popup will work properly, see issue: https://github.com/flutter/flutter/issues/58273
 
 ### iOS
 
@@ -151,7 +152,7 @@ class MainActivity : FlutterFragmentActivity() {
 	+  pod 'PDFNet', podspec: 'https://www.pdftron.com/downloads/ios/cocoapods/pdfnet/latest.podspec'
 	 end
 	```
-6. Run `flutter build ios --no-codesign` to ensure integration process is sucessful
+6. Run `flutter build ios --no-codesign` to ensure integration process is successful
 7. Replace `lib/main.dart` with what is shown [here](#usage)
 8. Run `flutter emulators --launch apple_ios_simulator`
 9. Run `flutter run`

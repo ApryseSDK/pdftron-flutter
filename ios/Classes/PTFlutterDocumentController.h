@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PTFlutterDocumentController : PTDocumentController
 
 @property (nonatomic, strong) FlutterResult openResult;
-@property (nonatomic, strong) PdftronFlutterPlugin* plugin;
+@property (nonatomic, weak) PdftronFlutterPlugin* plugin;
 
 @property (nonatomic) BOOL local;
 @property (nonatomic) BOOL needsDocumentLoaded;

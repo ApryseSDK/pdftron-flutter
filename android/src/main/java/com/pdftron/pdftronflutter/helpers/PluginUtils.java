@@ -4,7 +4,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Base64;
-
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -33,6 +33,7 @@ import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.BookmarkManager;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
@@ -99,6 +100,8 @@ public class PluginUtils {
     public static final String KEY_CONFIG_HIDE_ANNOTATION_MENU = "hideAnnotationMenu";
     public static final String KEY_CONFIG_ANNOTATION_MENU_ITEMS = "annotationMenuItems";
     public static final String KEY_CONFIG_OVERRIDE_ANNOTATION_MENU_BEHAVIOR = "overrideAnnotationMenuBehavior";
+    public static final String KEY_CONFIG_EXPORT_PATH = "exportPath";
+    public static final String KEY_CONFIG_OPEN_URL_PATH = "openUrlPath";
     public static final String KEY_CONFIG_AUTO_SAVE_ENABLED = "autoSaveEnabled";
     public static final String KEY_CONFIG_PAGE_CHANGE_ON_TAP = "pageChangeOnTap";
     public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
@@ -133,6 +136,7 @@ public class PluginUtils {
     public static final String KEY_TITLE = "title";
     public static final String KEY_CONTENTS = "contents";
     public static final String KEY_CONTENT_RECT = "contentRect";
+    public static final String KEY_ROTATION = "rotation";
 
     public static final String KEY_FIELD_NAME = "fieldName";
     public static final String KEY_FIELD_VALUE = "fieldValue";
@@ -154,7 +158,7 @@ public class PluginUtils {
 
     public static final String BEHAVIOR_LINK_PRESS = "linkPress";
     public static final String KEY_LINK_BEHAVIOR_DATA = "url";
-    
+
     public static final String KEY_ANNOTATION_MENU_ITEM = "annotationMenuItem";
 
     public static final String KEY_LONG_PRESS_MENU_ITEM = "longPressMenuItem";
@@ -199,6 +203,8 @@ public class PluginUtils {
     public static final String FUNCTION_SET_PROPERTIES_FOR_ANNOTATION = "setPropertiesForAnnotation";
     public static final String FUNCTION_SET_LEADING_NAV_BUTTON_ICON = "setLeadingNavButtonIcon";
     public static final String FUNCTION_CLOSE_ALL_TABS = "closeAllTabs";
+    public static final String FUNCTION_DELETE_ALL_ANNOTATIONS = "deleteAllAnnotations";
+    public static final String FUNCTION_GET_PAGE_ROTATION = "getPageRotation";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -405,7 +411,6 @@ public class PluginUtils {
     public static class ConfigInfo {
         private int initialPageNumber;
         private boolean isBase64;
-        private String cacheDir;
         private File tempFile;
         private JSONObject customHeaderJson;
         private Uri fileUri;
@@ -420,11 +425,12 @@ public class PluginUtils {
         private boolean showLeadingNavButton;
         private ArrayList<String> actionOverrideItems;
         private String tabTitle;
+        private String openUrlPath;
+        private String exportPath;
 
         public ConfigInfo() {
             this.initialPageNumber = -1;
             this.isBase64 = false;
-            this.cacheDir = null;
             this.tempFile = null;
             this.customHeaderJson = null;
             this.fileUri = null;
@@ -439,6 +445,8 @@ public class PluginUtils {
             this.showLeadingNavButton = true;
             this.actionOverrideItems = null;
             this.tabTitle = null;
+            this.openUrlPath = null;
+            this.exportPath = null;
         }
 
         public void setInitialPageNumber(int initialPageNumber) {
@@ -449,8 +457,8 @@ public class PluginUtils {
             this.isBase64 = isBase64;
         }
 
-        public void setCacheDir(String cacheDir) {
-            this.cacheDir = cacheDir;
+        public void setExportPath(String exportPath) {
+            this.exportPath = exportPath;
         }
 
         public void setTempFile(File tempFile) {
@@ -509,6 +517,10 @@ public class PluginUtils {
             this.tabTitle = tabTitle;
         }
 
+        public void setOpenUrlPath(String openUrlPath) {
+            this.openUrlPath = openUrlPath;
+        }
+
         public int getInitialPageNumber() {
             return initialPageNumber;
         }
@@ -517,8 +529,8 @@ public class PluginUtils {
             return isBase64;
         }
 
-        public String getCacheDir() {
-            return cacheDir;
+        public String getExportPath() {
+            return exportPath;
         }
 
         public File getTempFile() {
@@ -576,11 +588,15 @@ public class PluginUtils {
         public String getTabTitle() {
             return tabTitle;
         }
+
+        public String getOpenUrlPath() {
+            return openUrlPath;
+        }
     }
 
     public static ConfigInfo handleOpenDocument(@NonNull ViewerConfig.Builder builder, @NonNull ToolManagerBuilder toolManagerBuilder,
-                                                @NonNull PDFViewCtrlConfig pdfViewCtrlConfig, @NonNull String document, @NonNull Context context,
-                                                String configStr) {
+            @NonNull PDFViewCtrlConfig pdfViewCtrlConfig, @NonNull String document, @NonNull Context context,
+            String configStr) {
 
         builder
                 .maximumTabCount(Integer.MAX_VALUE)
@@ -596,8 +612,6 @@ public class PluginUtils {
 
         boolean isBase64 = false;
         String base64FileExtension = null;
-        String cacheDir = context.getCacheDir().getAbsolutePath();
-        configInfo.setCacheDir(cacheDir);
 
         if (configStr != null && !configStr.equals("null")) {
             try {
@@ -682,6 +696,13 @@ public class PluginUtils {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_OVERRIDE_ANNOTATION_MENU_BEHAVIOR);
                     ArrayList<String> annotationMenuOverrideItems = convertJSONArrayToArrayList(array);
                     configInfo.setAnnotationMenuOverrideItems(annotationMenuOverrideItems);
+                }
+                if (!configJson.isNull(KEY_CONFIG_EXPORT_PATH)) {
+                    String exportPath = configJson.getString(KEY_CONFIG_EXPORT_PATH);
+                    configInfo.setExportPath(exportPath);
+                } else {
+                    String cacheDir = context.getCacheDir().getAbsolutePath();
+                    configInfo.setExportPath(cacheDir);
                 }
                 if (!configJson.isNull(KEY_CONFIG_AUTO_SAVE_ENABLED)) {
                     boolean autoSaveEnabled = configJson.getBoolean(KEY_CONFIG_AUTO_SAVE_ENABLED);
@@ -782,6 +803,13 @@ public class PluginUtils {
                     String tabTitle = configJson.getString(KEY_CONFIG_TAB_TITLE);
                     configInfo.setTabTitle(tabTitle);
                 }
+                if (!configJson.isNull(KEY_CONFIG_OPEN_URL_PATH)) {
+                    String openUrlPath = configJson.getString(KEY_CONFIG_OPEN_URL_PATH);
+                    configInfo.setOpenUrlPath(openUrlPath);
+                } else {
+                    String cacheDir = context.getCacheDir().getAbsolutePath();
+                    configInfo.setOpenUrlPath(cacheDir);
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -791,8 +819,8 @@ public class PluginUtils {
         configInfo.setFileUri(fileUri);
 
         if (fileUri != null) {
-            builder.openUrlCachePath(cacheDir)
-                    .saveCopyExportPath(cacheDir);
+            builder.openUrlCachePath(configInfo.getOpenUrlPath())
+                    .saveCopyExportPath(configInfo.getExportPath());
             if (disabledTools.size() > 0) {
                 ToolManager.ToolMode[] modes = disabledTools.toArray(new ToolManager.ToolMode[0]);
                 if (modes.length > 0) {
@@ -908,7 +936,6 @@ public class PluginUtils {
         }
         return null;
     }
-
 
     private static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
 
@@ -1027,7 +1054,7 @@ public class PluginUtils {
             mode = ToolManager.ToolMode.RULER_CREATE;
         } else if (TOOL_ANNOTATION_CREATE_PERIMETER_MEASUREMENT.equals(item)) {
             mode = ToolManager.ToolMode.PERIMETER_MEASURE_CREATE;
-        } else if(TOOL_ANNOTATION_CREATE_RECTANGLE_AREA_MEASUREMENT.equals(item)){
+        } else if (TOOL_ANNOTATION_CREATE_RECTANGLE_AREA_MEASUREMENT.equals(item)) {
             mode = ToolManager.ToolMode.RECT_AREA_MEASURE_CREATE;
         } else if (TOOL_ANNOTATION_CREATE_AREA_MEASUREMENT.equals(item)) {
             mode = ToolManager.ToolMode.AREA_MEASURE_CREATE;
@@ -1642,7 +1669,6 @@ public class PluginUtils {
                     result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
                 }
                 break;
-
             }
             case FUNCTION_IMPORT_ANNOTATION_COMMAND: {
                 checkFunctionPrecondition(component);
@@ -1762,7 +1788,21 @@ public class PluginUtils {
                 closeAllTabs(result, component);
                 break;
             }
+            case FUNCTION_DELETE_ALL_ANNOTATIONS: {
+                checkFunctionPrecondition(component);
+                deleteAllAnnotations(result, component);
+                break;
+            }
+            case FUNCTION_GET_PAGE_ROTATION: {
+                checkFunctionPrecondition(component);
+                Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
+                if (pageNumber != null) {
+                    getPageRotation(pageNumber, result, component);
+                }
+                break;
+            }
             default:
+                Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
                 break;
         }
@@ -1801,6 +1841,7 @@ public class PluginUtils {
             FDFDoc fdfDoc = FDFDoc.createFromXFDF(xfdf);
 
             pdfDoc.fdfUpdate(fdfDoc);
+            pdfDoc.refreshAnnotAppearances();
             pdfViewCtrl.update(true);
 
             result.success(null);
@@ -2054,6 +2095,17 @@ public class PluginUtils {
         }
     }
 
+    private static boolean isValidJSONValue(JSONObject json, String key) throws JSONException {
+        if (json.isNull(key)) {
+            return false;
+        }
+        Object value = json.get(key);
+        if (value instanceof String) {
+            return !"null".equals((String) value);
+        }
+        return true;
+    }
+
     private static void setPropertiesForAnnotation(String annotation, String properties, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         ToolManager toolManager = component.getToolManager();
@@ -2082,15 +2134,14 @@ public class PluginUtils {
                 map.put(annot, annotationPageNumber);
                 toolManager.raiseAnnotationsPreModifyEvent(map);
 
-
-                if (!propertiesJson.isNull(KEY_CONTENTS)) {
+                if (isValidJSONValue(propertiesJson, KEY_CONTENTS)) {
                     Object contents = propertiesJson.get(KEY_CONTENTS);
                     if (contents instanceof String) {
                         annot.setContents((String) contents);
                     }
                 }
 
-                if (!propertiesJson.isNull(KEY_RECT)) {
+                if (isValidJSONValue(propertiesJson, KEY_RECT)) {
                     Object object = propertiesJson.get(KEY_RECT);
                     com.pdftron.pdf.Rect pdfRect = getRectFromObject(object);
                     if (pdfRect != null) {
@@ -2098,24 +2149,32 @@ public class PluginUtils {
                     }
                 }
 
+                if (isValidJSONValue(propertiesJson, KEY_ROTATION)) {
+                    Object object = propertiesJson.get(KEY_ROTATION);
+                    if (object instanceof Integer) {
+                        annot.setRotation((Integer) object);
+                        annot.refreshAppearance();
+                    }
+                }
+
                 if (annot.isMarkup()) {
                     Markup markupAnnot = new Markup(annot);
 
-                    if (!propertiesJson.isNull(KEY_SUBJECT)) {
+                    if (isValidJSONValue(propertiesJson, KEY_SUBJECT)) {
                         Object subject = propertiesJson.get(KEY_SUBJECT);
                         if (subject instanceof String) {
                             markupAnnot.setSubject((String) subject);
                         }
                     }
 
-                    if (!propertiesJson.isNull(KEY_TITLE)) {
+                    if (isValidJSONValue(propertiesJson, KEY_TITLE)) {
                         Object title = propertiesJson.get(KEY_TITLE);
                         if (title instanceof String) {
                             markupAnnot.setTitle((String) title);
                         }
                     }
 
-                    if (!propertiesJson.isNull(KEY_CONTENT_RECT)) {
+                    if (isValidJSONValue(propertiesJson, KEY_CONTENT_RECT)) {
                         Object object = propertiesJson.get(KEY_CONTENT_RECT);
                         com.pdftron.pdf.Rect pdfRect = getRectFromObject(object);
                         if (pdfRect != null) {
@@ -2133,7 +2192,6 @@ public class PluginUtils {
                 pdfViewCtrl.docUnlock();
             }
         }
-
     }
 
     private static void importAnnotationCommand(String xfdfCommand, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
@@ -2165,9 +2223,12 @@ public class PluginUtils {
             shouldUnlock = true;
 
             FDFDoc fdfDoc = pdfDoc.fdfExtract(PDFDoc.e_both);
-            fdfDoc.mergeAnnots(xfdfCommand);
+            String xfdf = fdfDoc.saveAsXFDF();
+            FDFDoc newFdfDoc = FDFDoc.createFromXFDF(xfdf);
+            newFdfDoc.mergeAnnots(xfdfCommand);
 
-            pdfDoc.fdfUpdate(fdfDoc);
+            pdfDoc.fdfUpdate(newFdfDoc);
+            pdfDoc.refreshAnnotAppearances();
             pdfViewCtrl.update(true);
             result.success(null);
         } finally {
@@ -2332,7 +2393,6 @@ public class PluginUtils {
                     setFieldValue(pdfViewCtrl, field, fieldObject.get(KEY_FIELD_VALUE));
                 }
             }
-
         } finally {
             if (shouldUnlock) {
                 pdfViewCtrl.docUnlock();
@@ -2396,6 +2456,67 @@ public class PluginUtils {
 
         pdfViewCtrlTabHostFragment.closeAllTabs();
         result.success(null);
+    }
+
+    private static void deleteAllAnnotations(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        PDFDoc pdfDoc = component.getPdfDoc();
+        if (pdfViewCtrl == null || pdfDoc == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        boolean hasChange = false;
+        boolean shouldUnlock = false;
+
+        try {
+            // Locks the document first as accessing annotation/doc information isn't thread
+            // safe.
+            pdfViewCtrl.docLock(true);
+            shouldUnlock = true;
+
+            AnnotUtils.safeDeleteAllAnnots(pdfDoc);
+            pdfViewCtrl.update(true);
+            hasChange = pdfDoc.hasChangesSinceSnapshot();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (shouldUnlock) {
+                pdfViewCtrl.docUnlock();
+            }
+        }
+        if (hasChange) {
+            ToolManager toolManager = (ToolManager) pdfViewCtrl.getToolManager();
+            if (toolManager != null) {
+                toolManager.raiseAllAnnotationsRemovedEvent();
+            }
+        }
+        result.success(null);
+    }
+
+    private static void getPageRotation(int pageNumber, MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        PDFDoc pdfDoc = component.getPdfDoc();
+        if (pdfViewCtrl == null || pdfDoc == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        int pageRotation = 0;
+        boolean shouldUnlockRead = false;
+        try {
+            // Locks the document first as accessing annotation/doc information isn't thread
+            // safe.
+            pdfViewCtrl.docLockRead();
+            shouldUnlockRead = true;
+
+            pageRotation = pdfDoc.getPage(pageNumber).getRotation() * 90;
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (shouldUnlockRead) {
+                pdfViewCtrl.docUnlockRead();
+            }
+        }
+        result.success(pageRotation);
     }
 
     // Events
