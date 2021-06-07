@@ -149,7 +149,7 @@ class MainActivity : FlutterFragmentActivity() {
 	   ...
 	+  # PDFTron Pods
 	+  use_frameworks!
-	+  pod 'PDFNet', podspec: 'https://www.pdftron.com/downloads/ios/cocoapods/pdfnet/latest.podspec'
+	+  pod 'PDFNet', podspec: 'https://www.pdftron.com/downloads/ios/cocoapods/xcframeworks/pdfnet/latest.podspec'
 	 end
 	```
 6. Run `flutter build ios --no-codesign` to ensure integration process is successful
