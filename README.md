@@ -17,10 +17,16 @@ APIs are available on the [API page](API.md).
 
 ## Preview
 
-
-**Android** |  **iOS**
-:--:|:--:
-<img alt="demo" src="./flutter-pdftron-demo-android.gif" height="800" />|<img alt="demo" src="./flutter-pdftron-demo-ios.gif" height="800" />
+<table style="table-layout:fixed; width:100%;">
+  <tr>
+    <th style="text-align:center; width:50%;">Android</th>
+    <th style="text-align:center; width:50%;">iOS</th>
+  </tr>
+  <tr>
+    <td style="text-align:center;"><img src="./flutter-pdftron-demo-android.gif" alt="demo" style="display:block; width:100%"/></th>
+    <td style="text-align:center;"><img src="./flutter-pdftron-demo-ios.gif" alt="demo" style="display:block; width:95%"/></th>
+  </tr>
+</table>
 
 ## Legacy UI
 
