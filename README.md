@@ -23,8 +23,8 @@ APIs are available on the [API page](API.md).
     <th style="text-align:center; width:50%;">iOS</th>
   </tr>
   <tr>
-    <td><img src="./flutter-pdftron-demo-android.gif" alt="demo" style="display:block; width:100%; margin-left:auto; margin-right:auto;"/></th>
-    <td><img src="./flutter-pdftron-demo-ios.gif" alt="demo" style="display:block; width:95%; margin-left:auto; margin-right:auto;"/></th>
+    <td><img src="./flutter-pdftron-demo-android.gif" alt="demo" style="display:block; margin-left:auto; margin-right:auto;"/></th>
+    <td><img src="./flutter-pdftron-demo-ios.gif" alt="demo" style="display:block; margin-left:auto; margin-right:auto;"/></th>
   </tr>
 </table>
 
