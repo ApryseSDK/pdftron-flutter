@@ -19,7 +19,7 @@ APIs are available on the [API page](API.md).
 
 **Android** |  **iOS**
 :--:|:--:
-<img src="./flutter-pdftron-demo-android.gif" alt="demo" height="1080px"> | <img src="./flutter-pdftron-demo-ios.gif" alt="demo" height="1080px">
+<img src="./flutter-pdftron-demo-android.gif" alt="demo" width="57%"> | <img src="./flutter-pdftron-demo-ios.gif" alt="demo" width="100%">
 
 ## Legacy UI
 
