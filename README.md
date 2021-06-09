@@ -12,7 +12,7 @@ More information can be found at https://www.pdftron.com/documentation/guides/fl
 
 **Android**|**iOS**
 :--:|:--:
-<img src="https://github.com/PDFTron/pdftron-flutter/doc/flutter-pdftron-demo-android.gif" alt="A gif showcasing the UI and some features on Android"/>|<img src="https://github.com/PDFTron/pdftron-flutter/doc/flutter-pdftron-demo-ios.gif" alt="A gif showcasing the UI and some features on iOS"/>
+<img src="https://github.com/PDFTron/pdftron-flutter/blob/publish-prep/doc/flutter-pdftron-demo-android.gif" alt="A gif showcasing the UI and some features on Android"/>|<img src="https://github.com/PDFTron/pdftron-flutter/blob/publish-prep/doc/flutter-pdftron-demo-ios.gif" alt="A gif showcasing the UI and some features on iOS"/>
 
 ## Contents
 
