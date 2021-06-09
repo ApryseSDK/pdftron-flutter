@@ -976,6 +976,15 @@ Defines whether to show the page indicator for the viewer.
 config.pageIndicatorEnabled = true;
 ```
 
+#### pageNumberIndicatorAlwaysVisible
+bool, defaults to false.
+
+Defines whether the page indicator will always be visible.
+
+```dart
+config.pageNumberIndicatorAlwaysVisible = true;
+```
+
 ### Annotations
 
 #### annotationPermissionCheckEnabled

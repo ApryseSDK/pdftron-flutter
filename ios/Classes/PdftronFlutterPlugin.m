@@ -405,6 +405,14 @@
                         [documentController setPageIndicatorEnabled:[pageIndicatorEnabledNumber boolValue]];
                     }
                 }
+                else if ([key isEqualToString:PTPageNumberIndicatorAlwaysVisibleKey]) {
+
+                    NSNumber* pageIndicatorAlwaysVisibleNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTPageNumberIndicatorAlwaysVisibleKey class:[NSNumber class] error:&error];
+
+                    if (!error && pageIndicatorAlwaysVisibleNumber) {
+                        [documentController setPageIndicatorAlwaysVisible:[pageIndicatorAlwaysVisibleNumber boolValue]];
+                    }
+                }
                 else if ([key isEqualToString:PTFollowSystemDarkModeKey]) {
                     // Android only.
                 }
@@ -743,6 +751,7 @@
         PTReflowModeButtonKey:
             ^{
                 documentController.readerModeButtonHidden = YES;
+                documentController.settingsViewController.viewModeReaderHidden = YES;
             },
         PTThumbnailSliderKey:
             ^{
