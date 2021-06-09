@@ -1,8 +1,24 @@
-# PDFTron Flutter Wrapper
+## About PDFTron Flutter
+PDFTron's Flutter PDF library brings smooth, flexible and stand-alone document viewing and editing solutions using Flutter codebases for iOS and Android applications.
+
+- Direct MS Office document viewing and conversion
+- Fully customizable open source UI to improve app engagement
+- Document reflow to increase readability and accessibility on mobile
+- File streaming to view remote and complex documents faster
+- Night mode to improve viewing in low-light environments
+- And much more...
+
+More information can be found at https://www.pdftron.com/documentation/guides/flutter
+
+**Android**|**iOS**
+:--:|:--:
+<img src="./flutter-pdftron-demo-android.gif" alt="A gif showcasing the UI and some features on Android"/>|<img src="./flutter-pdftron-demo-ios.gif" alt="A gif showcasing the UI and some features on iOS"/>
+
+## Contents
 
 - [API](#API)
 - [Prerequisites](#Prerequisites)
-- [Preview](#Preview)
+- [Legacy UI](#legacy-ui)
 - [Installation](#Installation)
 - [Usage](#Usage)
 - [License](#License)
@@ -15,12 +31,6 @@ APIs are available on the [API page](API.md).
 - PDFTron SDK >= 6.9.0
 - Flutter >= 1.0.0
 
-## Preview
-
-**Android**|**iOS**
-:--:|:--:
-<img src="./flutter-pdftron-demo-android.gif" alt="demo"/>|<img src="./flutter-pdftron-demo-ios.gif" alt="demo"/>
-
 ## Legacy UI
 
 Version `0.0.6` is the last stable release for the legacy UI.
@@ -28,9 +38,6 @@ Version `0.0.6` is the last stable release for the legacy UI.
 The release can be found here: https://github.com/PDFTron/pdftron-flutter/releases/tag/legacy-ui.
 
 ## Installation
-
-The complete installation and API guides can be found at https://www.pdftron.com/documentation/android/flutter
-
 ### Android
 1. First follow the Flutter getting started guides to [install](https://flutter.io/docs/get-started/install), [set up an editor](https://flutter.io/docs/get-started/editor), and [create a Flutter Project](https://flutter.io/docs/get-started/test-drive?tab=terminal#create-app). The rest of this guide assumes your project is created by running `flutter create myapp`.
 2. Add the following dependency to your Flutter project in `myapp/pubspec.yaml`:

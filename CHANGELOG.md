@@ -2,6 +2,6 @@
 
 * Initial release on pub.dev
 
-## Unreleased Versions
+## Previous Versions
 
-`pdftron-flutter` was started on January 25, 2019. To see previous versions of and more information on the package, please look at our [GitHub repository](https://github.com/PDFTron/pdftron-flutter).
+Development of `pdftron-flutter` has been ongoing since January 25, 2019. To see previous versions of and more information on the package, please look at our [GitHub repository](https://github.com/PDFTron/pdftron-flutter).
