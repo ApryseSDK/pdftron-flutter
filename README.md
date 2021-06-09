@@ -1,5 +1,5 @@
 ## About PDFTron Flutter
-PDFTron's Flutter PDF library brings smooth, flexible and stand-alone document viewing and editing solutions using Flutter codebases for iOS and Android applications.
+PDFTron's Flutter PDF library brings smooth, flexible, and stand-alone document viewing and editing solutions using Flutter codebases for iOS and Android applications.
 
 - Direct MS Office document viewing and conversion
 - Fully customizable open source UI to improve app engagement
@@ -159,7 +159,7 @@ class MainActivity : FlutterFragmentActivity() {
 	+  pod 'PDFNet', podspec: 'https://www.pdftron.com/downloads/ios/cocoapods/xcframeworks/pdfnet/latest.podspec'
 	 end
 	```
-6. Run `flutter build ios --no-codesign` to ensure integration process is successful
+6. To ensure integration process is successful, run `flutter build ios --no-codesign` 
 7. Replace the contents of `lib/main.dart` file with what is shown [here](#usage)
 8. Run `flutter emulators --launch apple_ios_simulator`
 9. Run `flutter run`
@@ -208,7 +208,7 @@ class _ViewerState extends State<Viewer> {
       // Open the document for iOS, no need for permission
       showViewer();
     } else {
-      // Request for permissions for android before opening document
+      // Request permission for Android before opening document
       launchWithPermission();
     }
   }
