@@ -180,7 +180,8 @@ class Config {
             json['annotationPermissionCheckEnabled'],
         _overrideBehavior = json['overrideBehavior'],
         _tabTitle = json['tabTitle'],
-        _pageNumberIndicatorAlwaysVisible = json['pageNumberIndicatorAlwaysVisible'];
+        _pageNumberIndicatorAlwaysVisible =
+            json['pageNumberIndicatorAlwaysVisible'];
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,

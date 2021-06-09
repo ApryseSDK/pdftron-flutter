@@ -131,7 +131,6 @@ class _ViewerState extends State<Viewer> {
     // to cancel event:
     // annotCancel();
     // bookmarkCancel();
-
   }
 
   @override
