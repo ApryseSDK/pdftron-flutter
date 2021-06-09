@@ -12,7 +12,7 @@ More information can be found at https://www.pdftron.com/documentation/guides/fl
 
 **Android**|**iOS**
 :--:|:--:
-<img src="./doc/flutter-pdftron-demo-android.gif" alt="A gif showcasing the UI and some features on Android"/>|<img src="./doc/flutter-pdftron-demo-ios.gif" alt="A gif showcasing the UI and some features on iOS"/>
+<img src="https://github.com/PDFTron/pdftron-flutter/doc/flutter-pdftron-demo-android.gif" alt="A gif showcasing the UI and some features on Android"/>|<img src="https://github.com/PDFTron/pdftron-flutter/doc/flutter-pdftron-demo-ios.gif" alt="A gif showcasing the UI and some features on iOS"/>
 
 ## Contents
 
@@ -24,7 +24,7 @@ More information can be found at https://www.pdftron.com/documentation/guides/fl
 - [License](#License)
 
 ## API
-APIs are available on the [API page](API.md).
+APIs are available on the [API page](/doc/api/API.md).
 
 ## Prerequisites
 - No license key is required for trial. However, a valid commercial license key is required after trial.
@@ -250,14 +250,14 @@ class _ViewerState extends State<Viewer> {
     // opening without a config file will have all functionality enabled.
     // await PdftronFlutter.openDocument(_document);
 
-    // shows how to disale functionality
-//      var disabledElements = [Buttons.shareButton, Buttons.searchButton];
-//      var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
+    // shows how to disable functionality
+    // var disabledElements = [Buttons.shareButton, Buttons.searchButton];
+    // var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
     var config = Config();
-//      config.disabledElements = disabledElements;
-//      config.disabledTools = disabledTools;
-//      config.multiTabEnabled = true;
-//      config.customHeaders = {'headerName': 'headerValue'};
+    // config.disabledElements = disabledElements;
+    // config.disabledTools = disabledTools;
+    // config.multiTabEnabled = true;
+    // config.customHeaders = {'headerName': 'headerValue'};
 
     var documentLoadedCancel = startDocumentLoadedListener((filePath) {
       print("document loaded: $filePath");
@@ -364,8 +364,8 @@ class _ViewerState extends State<Viewer> {
 ```
 
 ## Contributing
-See [Contributing](./CONTRIBUTING.md)
+See [Contributing](/CONTRIBUTING.md)
 
 ## License
-See [License](./LICENSE)
+See [License](/LICENSE)
 ![](https://onepixel.pdftron.com/pdftron-flutter)
