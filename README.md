@@ -40,7 +40,7 @@ The release can be found here: https://github.com/PDFTron/pdftron-flutter/releas
 ## Installation
 ### Android
 1. First follow the Flutter getting started guides to [install](https://flutter.io/docs/get-started/install), [set up an editor](https://flutter.io/docs/get-started/editor), and [create a Flutter Project](https://flutter.io/docs/get-started/test-drive?tab=terminal#create-app). The rest of this guide assumes your project is created by running `flutter create myapp`.
-2. Add the following dependency to your Flutter project in `myapp/pubspec.yaml`:
+2. Add the following dependency to your Flutter project in `myapp/pubspec.yaml` file:
 	```diff
 	dependencies:
 	   flutter:
@@ -75,7 +75,7 @@ The release can be found here: https://github.com/PDFTron/pdftron-flutter/releas
 	}
 	```
 
-4. In your `myapp/android/gradle.properties` file. Add the following line to it:
+4. In your `myapp/android/gradle.properties` file, add the following line:
     ``` diff
     # Add the PDFTRON_LICENSE_KEY variable here. 
     # For trial purposes leave it blank.
@@ -125,16 +125,16 @@ class MainActivity : FlutterFragmentActivity() {
 }
 ```
 
-6. Replace `lib/main.dart` with what is shown [here](#usage)
+6. Replace the contents of `lib/main.dart` file with what is shown [here](#usage)
 7. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
 8. Run the app with the command `flutter run`.
-9. Please note that the widget version (`DocumentView`) contains existing issues such as none of the menu popup will work properly, see issue: https://github.com/flutter/flutter/issues/58273
+9. Note that the widget version (`DocumentView`) contains existing issues such as menu popups not opening, see issue: https://github.com/flutter/flutter/issues/58273
 
 ### iOS
 
-1. First, follow the official getting started guide on [installation](https://flutter.io/docs/get-started/install/macos), [setting up an editor](https://flutter.io/docs/get-started/editor), and [create a Flutter project](https://flutter.io/docs/get-started/test-drive?tab=terminal#create-app), the following steps will assume your app is created through `flutter create myapp`
+1. First, follow the official getting started guide to [install](https://flutter.io/docs/get-started/install/macos), [set up an editor](https://flutter.io/docs/get-started/editor), and [create a Flutter project](https://flutter.io/docs/get-started/test-drive?tab=terminal#create-app). The following steps will assume your app is created through `flutter create myapp`.
 
-2. Open `myapp` folder in a text editor. Then open `myapp/pubspec.yaml` file, add:
+2. Open `myapp` folder in a text editor. Then open `myapp/pubspec.yaml` file and add:
 	```diff
 	dependencies:
 	   flutter:
@@ -146,7 +146,7 @@ class MainActivity : FlutterFragmentActivity() {
 	```
 
 3. Run `flutter packages get`
-4. Open `myapp/ios/Podfile`, add:
+4. Open `myapp/ios/Podfile` file and add:
 	```diff
 	 # Uncomment this line to define a global platform for your project
 	-# platform :ios, '9.0'
@@ -160,7 +160,7 @@ class MainActivity : FlutterFragmentActivity() {
 	 end
 	```
 6. Run `flutter build ios --no-codesign` to ensure integration process is successful
-7. Replace `lib/main.dart` with what is shown [here](#usage)
+7. Replace the contents of `lib/main.dart` file with what is shown [here](#usage)
 8. Run `flutter emulators --launch apple_ios_simulator`
 9. Run `flutter run`
 
@@ -225,10 +225,10 @@ class _ViewerState extends State<Viewer> {
     return status == PermissionStatus.granted;
   }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
+  // Platform messages are asynchronous, so initialize in an async method.
   Future<void> initPlatformState() async {
     String version;
-    // Platform messages may fail, so we use a try/catch PlatformException.
+    // Platform messages may fail, so use a try/catch PlatformException.
     try {
       PdftronFlutter.initialize("your_pdftron_license_key");
       version = await PdftronFlutter.version;
@@ -237,7 +237,7 @@ class _ViewerState extends State<Viewer> {
     }
 
     // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
+    // message was in flight, you want to discard the reply rather than calling
     // setState to update our non-existent appearance.
     if (!mounted) return;
 
