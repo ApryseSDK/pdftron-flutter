@@ -41,6 +41,7 @@ class Config {
   var _annotationPermissionCheckEnabled;
   var _overrideBehavior;
   var _tabTitle;
+  var _pageNumberIndicatorAlwaysVisible;
 
   Config();
 
@@ -133,6 +134,9 @@ class Config {
 
   set tabTitle(String value) => _tabTitle = value;
 
+  set pageNumberIndicatorAlwaysVisible(bool value) =>
+      _pageNumberIndicatorAlwaysVisible = value;
+
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
         _disabledTools = json['disabledTools'],
@@ -175,7 +179,8 @@ class Config {
         _annotationPermissionCheckEnabled =
             json['annotationPermissionCheckEnabled'],
         _overrideBehavior = json['overrideBehavior'],
-        _tabTitle = json['tabTitle'];
+        _tabTitle = json['tabTitle'],
+        _pageNumberIndicatorAlwaysVisible = json['pageNumberIndicatorAlwaysVisible'];
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -218,5 +223,6 @@ class Config {
         'annotationPermissionCheckEnabled': _annotationPermissionCheckEnabled,
         'overrideBehavior': _overrideBehavior,
         'tabTitle': _tabTitle,
+        'pageNumberIndicatorAlwaysVisible': _pageNumberIndicatorAlwaysVisible,
       };
 }
