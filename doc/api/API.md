@@ -52,14 +52,14 @@ This section is for viewer related non-static methods. They would be callable in
 Plugin:
 ```dart
 void showViewer() async {
-  PdftronFlutter.openDocument('https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_about.pdf');
+  await PdftronFlutter.openDocument('https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_about.pdf');
 }
 ```
 
 Widget (DocumentViewController):
 ```dart
 void _onDocumentViewCreated(DocumentViewController controller) {
-    controller.openDocument('https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_about.pdf');
+  await controller.openDocument('https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_about.pdf');
 }
 ```
 
@@ -623,7 +623,7 @@ var pageChangedCancel = startPageChangedListener((previousPageNumber, pageNumber
 ### Import/Export Annotations
 
 #### startExportAnnotationCommandListener
-Event is raised when local annotation changes committed to the document.
+Event is raised when local annotation changes are committed to the document.
 
 Event Parameters:
 
@@ -764,7 +764,7 @@ var behaviorActivatedCancel = startBehaviorActivatedListener((action, data) {
 ### Bookmarks
 
 #### startExportBookmarkListener
-Event is raised when user bookmark changes committed to the document.
+Event is raised when user bookmark changes are committed to the document.
 
 Event Parameters:
 

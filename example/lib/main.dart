@@ -59,7 +59,9 @@ class _ViewerState extends State<Viewer> {
     String version;
     // Platform messages may fail, so we use a try/catch PlatformException.
     try {
+      // Initializes the PDFTron SDK, it must be called before you can use any functionality.
       PdftronFlutter.initialize("your_pdftron_license_key");
+
       version = await PdftronFlutter.version;
     } on PlatformException {
       version = 'Failed to get platform version.';
@@ -76,18 +78,17 @@ class _ViewerState extends State<Viewer> {
   }
 
   void showViewer() async {
-    // opening without a config file will have all functionality enabled.
+    // Opening without a config file will have all functionality enabled.
     // await PdftronFlutter.openDocument(_document);
 
-    // shows how to disale functionality
-//      var disabledElements = [Buttons.shareButton, Buttons.searchButton];
-//      var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
     var config = Config();
-//      config.disabledElements = disabledElements;
-//      config.disabledTools = disabledTools;
-//      config.multiTabEnabled = true;
-//      config.customHeaders = {'headerName': 'headerValue'};
+    // How to disable functionality:
+    //      config.disabledElements = [Buttons.shareButton, Buttons.searchButton];
+    //      config.disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
+    //      config.multiTabEnabled = true;
+    //      config.customHeaders = {'headerName': 'headerValue'};
 
+    // An event listener for document loading
     var documentLoadedCancel = startDocumentLoadedListener((filePath) {
       print("document loaded: $filePath");
     });
@@ -95,6 +96,7 @@ class _ViewerState extends State<Viewer> {
     await PdftronFlutter.openDocument(_document, config: config);
 
     try {
+      // The imported command is in XFDF format and tells whether to add, modify or delete annotations in the current document
       PdftronFlutter.importAnnotationCommand(
           "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
               "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
@@ -110,17 +112,35 @@ class _ViewerState extends State<Viewer> {
     }
 
     try {
+      // Adds a bookmark into the document
       PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
     } on PlatformException catch (e) {
       print("Failed to importBookmarkJson '${e.message}'.");
     }
 
+    // An event listener for when local annotation changes are committed to the document
+    // xfdfCommand is the XFDF Command of the annotation that was last changed
     var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
-      // local annotation changed
-      // upload XFDF command to server here
-      print("flutter xfdfCommand: $xfdfCommand");
+      String command = xfdfCommand;
+      print("flutter xfdfCommand:\n");
+      // Dart limits how many characters are printed onto the console. 
+      // The code below ensures that all of the XFDF command is printed.
+      if (command.length > 1024) {
+        int start = 0;
+        int end = 1023;
+        while (end < command.length) {
+          print(command.substring(start, end) + "\n");
+          start += 1024;
+          end += 1024;
+        }
+        print(command.substring(start));
+      } else {
+        print("flutter xfdfCommand:\n $command");
+      }
     });
 
+    // An event listener for when local bookmark changes are committed to the document
+    // bookmarkJson is JSON string containing all the bookmarks that exist when the change was made
     var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
       print("flutter bookmark: $bookmarkJson");
     });
@@ -128,9 +148,10 @@ class _ViewerState extends State<Viewer> {
     var path = await PdftronFlutter.saveDocument();
     print("flutter save: $path");
 
-    // to cancel event:
+    // To cancel event:
     // annotCancel();
     // bookmarkCancel();
+    // documentLoadedCancel();
   }
 
   @override
@@ -162,7 +183,6 @@ class _ViewerState extends State<Viewer> {
       // });
 
       // Show a dialog when leading navigation button is pressed
-
       _showMyDialog();
     });
 
