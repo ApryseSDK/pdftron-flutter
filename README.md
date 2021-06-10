@@ -341,6 +341,8 @@ class _ViewerState extends State<Viewer> {
     );
   }
 
+  // This function is used to control the DocumentView widget after it has been created.
+  // The widget will not work without a void Function(DocumentViewController controller) being passed to it.
   void _onDocumentViewCreated(DocumentViewController controller) async {
     Config config = new Config();
 
