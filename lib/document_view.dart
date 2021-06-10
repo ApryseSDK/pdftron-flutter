@@ -3,9 +3,9 @@ part of pdftron;
 typedef void DocumentViewCreatedCallback(DocumentViewController controller);
 
 class DocumentView extends StatefulWidget {
-  const DocumentView({Key? key, this.onCreated}) : super(key: key);
+  const DocumentView({Key? key, required this.onCreated}) : super(key: key);
 
-  final DocumentViewCreatedCallback? onCreated;
+  final DocumentViewCreatedCallback onCreated;
 
   @override
   State<StatefulWidget> createState() => _DocumentViewState();
@@ -29,10 +29,7 @@ class _DocumentViewState extends State<DocumentView> {
   }
 
   void _onPlatformViewCreated(int id) {
-    if (widget.onCreated == null) {
-      return;
-    }
-    (widget.onCreated as Function(DocumentViewController))(new DocumentViewController._(id));
+    widget.onCreated(new DocumentViewController._(id));
   }
 }
 
