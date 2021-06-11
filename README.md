@@ -38,19 +38,33 @@ Version `0.0.6` is the last stable release for the legacy UI.
 The release can be found here: https://github.com/PDFTron/pdftron-flutter/releases/tag/legacy-ui.
 
 ## Installation
-### Android
-1. First follow the Flutter getting started guides to [install](https://flutter.io/docs/get-started/install), [set up an editor](https://flutter.io/docs/get-started/editor), and [create a Flutter Project](https://flutter.io/docs/get-started/test-drive?tab=terminal#create-app). The rest of this guide assumes your project is created by running `flutter create myapp`.
-2. Add the following dependency to your Flutter project in `myapp/pubspec.yaml` file:
-	```diff
-	dependencies:
-	   flutter:
-	     sdk: flutter
-	+  pdftron_flutter:
-	+    git:
-	+      url: git://github.com/PDFTron/pdftron-flutter.git
-	+  permission_handler: '3.0.1'
 
-	```
+1. First follow the Flutter getting started guides to [install](https://flutter.io/docs/get-started/install), [set up an editor](https://flutter.io/docs/get-started/editor), and [create a Flutter Project](https://flutter.io/docs/get-started/test-drive?tab=terminal#create-app). The rest of this guide assumes your project is created by running `flutter create myapp`.
+
+2. Add the following dependency to your Flutter project in `myapp/pubspec.yaml` file:
+  - If you want to use specific releases from pub.dev: 
+    ```diff
+    dependencies:
+        flutter:
+          sdk: flutter
+    +   pdftron_flutter: ^1.0.0-beta.1 # To use a specific version from pub.dev, replace ^1.0.0-beta.1
+    +   permission_handler: '3.0.1'
+    ```
+  - If you want to use the latest features from GitHub:
+    ```diff
+    dependencies:
+        flutter:
+          sdk: flutter
+    +   pdftron_flutter:
+    +     git:
+    +       url: git://github.com/PDFTron/pdftron-flutter.git
+    +   permission_handler: '3.0.1'
+    ```
+
+### Android
+
+The following instructions are only applicable to Android development; to see the iOS counterpart, click [here](#iOS).
+
 3. Now add the following items in your `myapp/android/app/build.gradle` file:
 	```diff
 	android {
@@ -111,39 +125,27 @@ The release can be found here: https://github.com/PDFTron/pdftron-flutter/releas
 		...
 	```
 
-5a. If you are using the `DocumentView` widget, change the parent class of your `MainActivity` file (either Kotlin or Java) to `FlutterFragmentActivity`:
-```
-import androidx.annotation.NonNull
-import io.flutter.embedding.android.FlutterFragmentActivity
-import io.flutter.embedding.engine.FlutterEngine
-import io.flutter.plugins.GeneratedPluginRegistrant
+    If you are using the `DocumentView` widget, change the parent class of your `MainActivity` file (either Kotlin or Java) to `FlutterFragmentActivity`:
+    ```kotlin
+    import androidx.annotation.NonNull
+    import io.flutter.embedding.android.FlutterFragmentActivity
+    import io.flutter.embedding.engine.FlutterEngine
+    import io.flutter.plugins.GeneratedPluginRegistrant
 
-class MainActivity : FlutterFragmentActivity() {
-    override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
-        GeneratedPluginRegistrant.registerWith(flutterEngine);
+    class MainActivity : FlutterFragmentActivity() {
+        override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
+            GeneratedPluginRegistrant.registerWith(flutterEngine);
+        }
     }
-}
-```
+    ```
 
 6. Replace the contents of `lib/main.dart` file with what is shown [here](#usage)
 7. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
 8. Run the app with the command `flutter run`.
-9. Note that the widget version (`DocumentView`) contains existing issues such as menu popups not opening, see issue: https://github.com/flutter/flutter/issues/58273
 
 ### iOS
 
-1. First, follow the official getting started guide to [install](https://flutter.io/docs/get-started/install/macos), [set up an editor](https://flutter.io/docs/get-started/editor), and [create a Flutter project](https://flutter.io/docs/get-started/test-drive?tab=terminal#create-app). The following steps will assume your app is created through `flutter create myapp`.
-
-2. Open `myapp` folder in a text editor. Then open `myapp/pubspec.yaml` file and add:
-	```diff
-	dependencies:
-	   flutter:
-	     sdk: flutter
-	+  pdftron_flutter:
-	+    git:
-	+      url: git://github.com/PDFTron/pdftron-flutter.git
-	+  permission_handler: '3.0.1'
-	```
+The following instructions are only applicable to iOS development; to see the Android counterpart, click [here](#Android).
 
 3. Run `flutter packages get`
 4. Open `myapp/ios/Podfile` file and add:
@@ -159,10 +161,14 @@ class MainActivity : FlutterFragmentActivity() {
 	+  pod 'PDFNet', podspec: 'https://www.pdftron.com/downloads/ios/cocoapods/xcframeworks/pdfnet/latest.podspec'
 	 end
 	```
-6. To ensure integration process is successful, run `flutter build ios --no-codesign` 
-7. Replace the contents of `lib/main.dart` file with what is shown [here](#usage)
-8. Run `flutter emulators --launch apple_ios_simulator`
-9. Run `flutter run`
+5. To ensure integration process is successful, run `flutter build ios --no-codesign` 
+6. Replace the contents of `lib/main.dart` file with what is shown [here](#usage)
+7. Run `flutter emulators --launch apple_ios_simulator`
+8. Run `flutter run`
+
+#### Note
+
+The widget version (`DocumentView`) contains existing issues such as menu popups not opening, see issue: https://github.com/flutter/flutter/issues/58273
 
 ## Usage
 
