@@ -39,7 +39,8 @@ class DocumentViewController {
 
   final MethodChannel _channel;
 
-  Future<void> openDocument(String document, {String? password, Config? config}) {
+  Future<void> openDocument(String document,
+      {String? password, Config? config}) {
     return _channel.invokeMethod(Functions.openDocument, <String, dynamic>{
       Parameters.document: document,
       Parameters.password: password,

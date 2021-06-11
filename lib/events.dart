@@ -126,7 +126,8 @@ CancelListener startAnnotationsSelectedListener(
       .receiveBroadcastStream(eventSinkId.annotationsSelectedId.index)
       .listen((annotationWithRectsString) {
     List<dynamic> annotationWithRects = jsonDecode(annotationWithRectsString);
-    List<AnnotWithRect> annotWithRectList = new List<AnnotWithRect>.empty(growable: true);
+    List<AnnotWithRect> annotWithRectList =
+        new List<AnnotWithRect>.empty(growable: true);
     for (dynamic annotationWithRect in annotationWithRects) {
       annotWithRectList.add(new AnnotWithRect.fromJson(annotationWithRect));
     }

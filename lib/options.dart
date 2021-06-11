@@ -58,11 +58,11 @@ class Rect {
   double? x1, y1, x2, y2, width, height;
   Rect(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
 
-  Rect.fromCoordinates(this.x1, this.y1, this.x2, this.y2) { 
+  Rect.fromCoordinates(this.x1, this.y1, this.x2, this.y2) {
     if (x1 != null && x2 != null) {
       width = (x2 as double) - (x1 as double);
     }
-    
+
     if (y1 != null && y2 != null) {
       height = (y2 as double) - (y1 as double);
     }
@@ -122,7 +122,8 @@ class AnnotWithFlag {
 
   AnnotWithFlag.fromAnnotAndFlags(this.annotation, this.flags);
 
-  AnnotWithFlag(String? annotId, int? pageNumber, String? flag, bool? flagValue) {
+  AnnotWithFlag(
+      String? annotId, int? pageNumber, String? flag, bool? flagValue) {
     annotation = new Annot(annotId, pageNumber);
     flags = new List<AnnotFlag>.empty(growable: true);
     flags.add(new AnnotFlag(flag, flagValue));
