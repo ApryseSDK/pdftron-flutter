@@ -29,7 +29,7 @@ APIs are available on the [API page](/doc/api/API.md).
 ## Prerequisites
 - No license key is required for trial. However, a valid commercial license key is required after trial.
 - PDFTron SDK >= 6.9.0
-- Flutter >= 1.0.0
+- Flutter >= 1.12.0
 
 ## Legacy UI
 

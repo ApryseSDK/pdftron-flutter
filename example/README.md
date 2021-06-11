@@ -4,7 +4,7 @@ Demonstrates how to use the `pdftron_flutter` plugin.
 
 ## Prerequisites
 - PDFTron SDK >= 6.9.0
-- Flutter >= 1.0.0
+- Flutter >= 1.12.0
 
 ## Run
 
