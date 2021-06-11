@@ -1,6 +1,6 @@
-# 1.0.0 - June 7, 2021
+# 1.0.0-beta.1 - June 11, 2021
 
-* Initial release on pub.dev
+* Initial prerelease on pub.dev
 
 ## Previous Versions
 
