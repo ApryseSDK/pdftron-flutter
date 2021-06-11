@@ -48,7 +48,7 @@ The release can be found here: https://github.com/PDFTron/pdftron-flutter/releas
         flutter:
           sdk: flutter
     +   pdftron_flutter: ^1.0.0-beta.1 # To use a specific version from pub.dev, replace ^1.0.0-beta.1
-    +   permission_handler: '3.0.1'
+    +   permission_handler: '8.0.0+2'
     ```
   - If you want to use the latest features from GitHub:
     ```diff
@@ -58,7 +58,7 @@ The release can be found here: https://github.com/PDFTron/pdftron-flutter/releas
     +   pdftron_flutter:
     +     git:
     +       url: git://github.com/PDFTron/pdftron-flutter.git
-    +   permission_handler: '3.0.1'
+    +   permission_handler: '8.0.0+2'
     ```
 
 ### Android
@@ -220,15 +220,10 @@ class _ViewerState extends State<Viewer> {
   }
 
   Future<void> launchWithPermission() async {
-    Map<PermissionGroup, PermissionStatus> permissions =
-        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-    if (granted(permissions[PermissionGroup.storage])) {
+    PermissionStatus permission = await Permission.storage.request();
+    if (permission.isGranted) {
       showViewer();
     }
-  }
-
-  bool granted(PermissionStatus status) {
-    return status == PermissionStatus.granted;
   }
 
   // Platform messages are asynchronous, so initialize in an async method.

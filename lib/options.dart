@@ -6,8 +6,8 @@ class Annot {
       Note: an annotation has its id in xfdf as name;
             page numbers are 1-indexed here, but 0-indexed in xfdf strings
   */
-  String id;
-  int pageNumber;
+  String? id;
+  int? pageNumber;
   Annot(this.id, this.pageNumber);
 
   factory Annot.fromJson(dynamic json) {
@@ -23,9 +23,9 @@ class AnnotWithRect {
   /*  
       Description: The annotation associated with its rectangle
   */
-  String id;
-  int pageNumber;
-  Rect rect;
+  String? id;
+  int? pageNumber;
+  Rect? rect;
 
   AnnotWithRect(this.id, this.pageNumber, this.rect);
 
@@ -39,7 +39,7 @@ class Field {
   /*  
       Description: The field object for the viewer
   */
-  String fieldName;
+  String? fieldName;
   dynamic fieldValue;
   Field(this.fieldName, this.fieldValue);
 
@@ -55,12 +55,17 @@ class Rect {
   /*  
       Description: The rect object for the viewer
   */
-  double x1, y1, x2, y2, width, height;
+  double? x1, y1, x2, y2, width, height;
   Rect(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
 
-  Rect.fromCoordinates(this.x1, this.y1, this.x2, this.y2) {
-    this.width = this.x2 - this.x1;
-    this.height = this.y2 - this.y1;
+  Rect.fromCoordinates(this.x1, this.y1, this.x2, this.y2) { 
+    if (x1 != null && x2 != null) {
+      width = (x2 as double) - (x1 as double);
+    }
+    
+    if (y1 != null && y2 != null) {
+      height = (y2 as double) - (y1 as double);
+    }
   }
 
   factory Rect.fromJson(dynamic json) {
@@ -98,8 +103,8 @@ class AnnotFlag {
       Note: Flag comes from AnnotationFlags constants;
             FlagValue represents toggling on/off
   */
-  String flag;
-  bool flagValue;
+  String? flag;
+  bool? flagValue;
   AnnotFlag(this.flag, this.flagValue);
 
   Map<String, dynamic> toJson() => {
@@ -112,14 +117,14 @@ class AnnotWithFlag {
   /*
       Description: The annotation object associated with its flags
   */
-  Annot annotation;
-  List<AnnotFlag> flags;
+  late Annot annotation;
+  late List<AnnotFlag> flags;
 
   AnnotWithFlag.fromAnnotAndFlags(this.annotation, this.flags);
 
-  AnnotWithFlag(String annotId, int pageNumber, String flag, bool flagValue) {
+  AnnotWithFlag(String? annotId, int? pageNumber, String? flag, bool? flagValue) {
     annotation = new Annot(annotId, pageNumber);
-    flags = new List<AnnotFlag>();
+    flags = new List<AnnotFlag>.empty(growable: true);
     flags.add(new AnnotFlag(flag, flagValue));
   }
 
@@ -133,13 +138,13 @@ class AnnotProperty {
       Note: some of the properties are markup annotation exclusive, some are not
   */
   // not markup exclusive
-  Rect rect;
-  String contents;
-  int rotation;
+  Rect? rect;
+  String? contents;
+  int? rotation;
   // markup exclusive
-  String subject;
-  String title;
-  Rect contentRect;
+  String? subject;
+  String? title;
+  Rect? contentRect;
 
   AnnotProperty();
 
@@ -161,10 +166,10 @@ class CustomToolbar {
           icon (optional) should be a ToolbarIcons constant
   */
 
-  String id;
-  String name;
-  List<String> items;
-  String icon;
+  String? id;
+  String? name;
+  List<String>? items;
+  String? icon;
 
   CustomToolbar(this.id, this.name, this.items, [this.icon]);
 
