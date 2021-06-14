@@ -88,7 +88,7 @@ class Config {
   /// Page numbers are 1-indexed.
   set initialPageNumber(int value) => _initialPageNumber = value;
 
-  /// Whether to treat the document in [openDocument()] as a base64 string.
+  /// Whether to treat the document in [PdftronFlutter.openDocument(document)] as a base64 string.
   /// 
   /// Defaults to false.
   set isBase64String(bool value) => _isBase64String = value;
@@ -265,7 +265,7 @@ class Config {
 
   /// A list of [Behaviors] that can skip their default behaviour e.g. external link clicking.
   /// 
-  /// The new behaviour will be defined in [startBehaviourActivatedListener()].
+  /// The new behaviour will be defined in [startBehaviorActivatedListener()].
   /// Defaults to empty.
   set overrideBehavior(List<String> value) => _overrideBehavior = value;
 

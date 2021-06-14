@@ -2,9 +2,13 @@ part of pdftron;
 
 typedef void DocumentViewCreatedCallback(DocumentViewController controller);
 
+/// A widget used to view documents and access features of the PDFTron SDK.
 class DocumentView extends StatefulWidget {
   const DocumentView({Key? key, required this.onCreated}) : super(key: key);
 
+  /// This function initialises the [DocumentView] widget after its creation. 
+  /// 
+  /// Within this function, the features of the PDFTron SDK are accessed.
   final DocumentViewCreatedCallback onCreated;
 
   @override
@@ -33,6 +37,7 @@ class _DocumentViewState extends State<DocumentView> {
   }
 }
 
+/// Used to initialize and control the [DocumentView] widget.
 class DocumentViewController {
   DocumentViewController._(int id)
       : _channel = new MethodChannel('pdftron_flutter/documentview_$id');
@@ -138,7 +143,8 @@ class DocumentViewController {
 
   /// Commits the current tool.
   /// 
-  /// Only available for multi-stroke ink and poly-shape.
+  /// Returns true for multi-stroke ink ([Tools.annotationCreateFreeHand]) and 
+  /// poly-shape ([Tools.annotationCreatePolygon]).
   Future<bool?> commitTool() {
     return _channel.invokeMethod(Functions.commitTool);
   }
@@ -217,9 +223,11 @@ class DocumentViewController {
 
   /// Sets the file name of the icon to be used for the leading navigation button. 
   /// 
-  /// The button will use the specified icon if [showLeadingNavButton](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md#showleadingnavbutton) (which by 
+  /// The button will use the specified icon if 
+  /// [showLeadingNavButton](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md#showleadingnavbutton) (which by 
   /// default is true) is true in the config. To add the image file to your 
-  /// application, please follow the steps in the [API page](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md#viewer-ui-configuration).
+  /// application, please follow the steps in the 
+  /// [API page](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md#viewer-ui-configuration).
   Future<void> setLeadingNavButtonIcon(String path) {
     return _channel.invokeMethod(Functions.setLeadingNavButtonIcon,
         <String, dynamic>{Parameters.leadingNavButtonIcon: path});
@@ -227,7 +235,9 @@ class DocumentViewController {
 
   /// Closes all documents that are currently opened in a multiTab environment.
   /// 
-  /// A multiTab environment exists when [multiTabEnabled](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md#multitabenabled) is true in the config.
+  /// A multiTab environment exists when [multiTabEnabled]
+  /// (https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md#multitabenabled) 
+  /// is true in the config.
   Future<void> closeAllTabs() {
     return _channel.invokeMethod(Functions.closeAllTabs);
   }
