@@ -1,3 +1,4 @@
+/// A convenience wrapper for building Flutter apps with PDFTron mobile SDK. 
 library pdftron;
 
 import 'dart:async';
