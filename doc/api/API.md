@@ -1084,7 +1084,7 @@ config.overrideLongPressMenuBehavior = [LongPressMenuItems.copy];
 ### Custom Behavior
 
 #### overrideBehavior
-array of [`Behaviors`](/lib/constants.dart) constants, defaults to false.
+array of [`Behaviors`](/lib/constants.dart) constants, defaults to none.
 
 Defines actions that should skip default behavior, such as external link click. The event handler [`startBehaviorActivatedListener`](#startBehaviorActivatedListener) will be called when the behavior is activated, where custom behavior can be implemented.
 
@@ -1155,7 +1155,7 @@ config.hideThumbnailFilterModes = [ThumbnailFilterModes.annotated];
 ### Others
 
 #### autoSaveEnabled
-bool, dafaults to true.
+bool, defaults to true.
 
 Defines whether document is automatically saved by the viewer.
 
@@ -1179,4 +1179,22 @@ Defines whether the UI will appear in a dark color when the system is dark mode.
 
 ```dart
 config.followSystemDarkMode = false;
+```
+
+#### exportPath
+String, Android only.
+
+Defines the folder path for all save a copy options e.g. "save a password copy" or "save a flattened copy".
+
+```dart
+config.exportPath = "/storage/emulated/0/Download";
+```
+
+#### openUrlPath
+String, Android only.
+
+Defines the cache folder path for open URL files.
+
+```dart
+config.openUrlPath = "/storage/emulated/0/Download";
 ```
