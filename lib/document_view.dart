@@ -235,8 +235,7 @@ class DocumentViewController {
 
   /// Closes all documents that are currently opened in a multiTab environment.
   /// 
-  /// A multiTab environment exists when [multiTabEnabled]
-  /// (https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md#multitabenabled) 
+  /// A multiTab environment exists when [multiTabEnabled](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md#multitabenabled) 
   /// is true in the config.
   Future<void> closeAllTabs() {
     return _channel.invokeMethod(Functions.closeAllTabs);

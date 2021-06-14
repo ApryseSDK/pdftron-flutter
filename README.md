@@ -16,15 +16,17 @@ More information can be found at https://www.pdftron.com/documentation/guides/fl
 
 ## Contents
 
-- [API](#API)
-- [Prerequisites](#Prerequisites)
+- [API](#api)
+- [Prerequisites](#prerequisites)
 - [Legacy UI](#legacy-ui)
-- [Installation](#Installation)
-- [Usage](#Usage)
-- [License](#License)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Changelog](#changelog)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## API
-APIs are available on the [API page](/doc/api/API.md).
+APIs are available on the [API page](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md).
 
 ## Prerequisites
 - No license key is required for trial. However, a valid commercial license key is required after trial.
@@ -63,7 +65,7 @@ The release can be found here: https://github.com/PDFTron/pdftron-flutter/releas
 
 ### Android
 
-The following instructions are only applicable to Android development; to see the iOS counterpart, click [here](#iOS).
+The following instructions are only applicable to Android development; click here for the [iOS counterpart](#ios).
 
 3. Now add the following items in your `myapp/android/app/build.gradle` file:
 	```diff
@@ -139,13 +141,13 @@ The following instructions are only applicable to Android development; to see th
     }
     ```
 
-6. Replace the contents of `lib/main.dart` file with what is shown [here](#usage)
+6. Replace the contents of `lib/main.dart` file with what is shown [in the Usage section](#usage).
 7. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
 8. Run the app with the command `flutter run`.
 
 ### iOS
 
-The following instructions are only applicable to iOS development; to see the Android counterpart, click [here](#Android).
+The following instructions are only applicable to iOS development; click here for the [Android counterpart](#android).
 
 3. Run `flutter packages get`
 4. Open `myapp/ios/Podfile` file and add:
@@ -162,7 +164,7 @@ The following instructions are only applicable to iOS development; to see the An
 	 end
 	```
 5. To ensure integration process is successful, run `flutter build ios --no-codesign` 
-6. Replace the contents of `lib/main.dart` file with what is shown [here](#usage)
+6. Replace the contents of `lib/main.dart` file with what is shown [in the Usage section](#usage).
 7. Run `flutter emulators --launch apple_ios_simulator`
 8. Run `flutter run`
 
@@ -386,9 +388,12 @@ class _ViewerState extends State<Viewer> {
 }
 ```
 
+## Changelog
+See [Changelog](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/CHANGELOG.md)
+
 ## Contributing
-See [Contributing](/CONTRIBUTING.md)
+See [Contributing](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/CONTRIBUTING.md)
 
 ## License
-See [License](/LICENSE)
+See [License](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/LICENSE)
 ![](https://onepixel.pdftron.com/pdftron-flutter)
