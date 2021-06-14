@@ -104,7 +104,7 @@ await PdftronFlutter.openDocument(_document, password: password, config: config)
 ```
 
 #### saveDocument
-Saves the currently opened document in the viewer and get the absolute path to the document. Must only be called when the document is opened in the viewer.
+Saves the currently opened document in the viewer and gets the absolute path to the document. Must only be called when the document is opened in the viewer.
 
 Returns a Future.
 
@@ -180,7 +180,7 @@ Parameters:
 
 Name | Type | Description
 --- | --- | ---
-toolMode | String | One of [`Tools`](/lib/constants.dart) string constants, representing to tool mode to set
+toolMode | String | One of [`Tools`](/lib/constants.dart) string constants, representing the tool mode to set
 
 Returns a Future.
 
@@ -189,7 +189,7 @@ Returns a Future.
 ```
 
 #### commitTool
-Commits the current tool, only available for multi-stroke ink and poly-shape.
+Commits the current tool. Only available for multi-stroke ink and poly-shape.
 
 Returns a Future.
 
@@ -246,7 +246,7 @@ print("The current doc has $pageCount pages");
 ```
 
 #### getPageCropBox
-Gets a map object of the crop box for specified page.
+Gets a map object of the crop box for the specified page.
 
 Parameters:
 
@@ -391,7 +391,7 @@ PdftronFlutter.deleteAnnotations(annotList);
 ```
 
 #### deleteAllAnnotations
-Deletes all annotations in the current document exclude links and widgets.
+Deletes all annotations in the current document, excluding links and widgets.
 
 Returns a Future.
 
@@ -533,7 +533,7 @@ print("Back button handled: $handled");
 ### Bookmarks
 
 #### importBookmarkJson
-Imports user bookmarks into the document. The input needs to be a valid bookmark JSON format.
+Imports user bookmarks into the document. The input needs to be in valid bookmark JSON format.
 
 Parameters:
 

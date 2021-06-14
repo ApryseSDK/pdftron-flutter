@@ -2,9 +2,9 @@ part of pdftron;
 
 /// The annotation object.
 class Annot {
-  /// An annotation has its id in xfdf as name.
+  /// An annotation has its id in XFDF as name.
   String? id;
-  /// Page numbers are 1-indexed here, but 0-indexed in xfdf strings.
+  /// Page numbers are 1-indexed here, but 0-indexed in XFDF strings.
   int? pageNumber;
   
   Annot(this.id, this.pageNumber);
