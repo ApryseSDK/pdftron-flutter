@@ -1,4 +1,4 @@
-/// A convenience wrapper for building Flutter apps with PDFTron mobile SDK. 
+/// A convenience wrapper for building Flutter apps with PDFTron mobile SDK.
 library pdftron;
 
 import 'dart:async';
@@ -32,7 +32,7 @@ class PdftronFlutter {
   }
 
   /// Initializes the PDFTron SDK using a license key.
-  /// 
+  ///
   /// To run in demo mode, pass an empty string to [licenseKey]. This function must
   /// be called before opening any document, whether using [PdftronFlutter] or [DocumentView].
   static Future<void> initialize(String licenseKey) {
@@ -41,8 +41,8 @@ class PdftronFlutter {
   }
 
   /// Opens a document in the viewer with configurations.
-  /// 
-  /// Uses the path specified by [document]. Takes a [password] for 
+  ///
+  /// Uses the path specified by [document]. Takes a [password] for
   /// encrypted documents, and viewer configuration options for customization.
   static Future<void> openDocument(String document,
       {String? password, Config? config}) {
@@ -59,9 +59,9 @@ class PdftronFlutter {
         Functions.importAnnotations, <String, dynamic>{Parameters.xfdf: xfdf});
   }
 
-  /// Extracts XFDF annotation string from the current document. 
-  /// 
-  /// If [annotationList] is null, export all annotations from 
+  /// Extracts XFDF annotation string from the current document.
+  ///
+  /// If [annotationList] is null, export all annotations from
   /// the document; else export the valid ones specified.
   static Future<String?> exportAnnotations(List<Annot>? annotationList) async {
     if (annotationList == null) {
@@ -111,18 +111,18 @@ class PdftronFlutter {
     });
   }
 
-  /// Imports remote annotation command to local document. 
-  /// 
-  /// The XFDF needs to be in a valid command format with `<add>` 
+  /// Imports remote annotation command to local document.
+  ///
+  /// The XFDF needs to be in a valid command format with `<add>`
   /// `<modify>` `<delete>` tags.
   static Future<void> importAnnotationCommand(String xfdfCommand) {
     return _channel.invokeMethod(Functions.importAnnotationCommand,
         <String, dynamic>{Parameters.xfdfCommand: xfdfCommand});
   }
 
-  /// Imports user bookmarks into the document. 
-  /// 
-  /// The input needs to be in valid bookmark JSON format, for 
+  /// Imports user bookmarks into the document.
+  ///
+  /// The input needs to be in valid bookmark JSON format, for
   /// example {"0": "Page 1"}. Page numbers are 1-indexed.
   static Future<void> importBookmarkJson(String bookmarkJson) {
     return _channel.invokeMethod(Functions.importBookmarkJson,
@@ -130,16 +130,16 @@ class PdftronFlutter {
   }
 
   /// Saves the currently opened document in the viewer.
-  /// 
-  /// Also gets the absolute path to the document. Must only 
+  ///
+  /// Also gets the absolute path to the document. Must only
   /// be called when the document is opened in the viewer.
   static Future<String?> saveDocument() {
     return _channel.invokeMethod(Functions.saveDocument);
   }
 
   /// Commits the current tool.
-  /// 
-  /// Returns true for multi-stroke ink ([Tools.annotationCreateFreeHand]) and 
+  ///
+  /// Returns true for multi-stroke ink ([Tools.annotationCreateFreeHand]) and
   /// poly-shape ([Tools.annotationCreatePolygon]).
   static Future<bool?> commitTool() {
     return _channel.invokeMethod(Functions.commitTool);
@@ -150,15 +150,15 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.getPageCount);
   }
 
-  /// Handles the back button in search mode. 
-  /// 
+  /// Handles the back button in search mode.
+  ///
   /// Android only.
   static Future<bool?> handleBackButton() {
     return _channel.invokeMethod(Functions.handleBackButton);
   }
 
   /// Gets a map object of the crop box for the specified page.
-  /// 
+  ///
   /// The specified page number is 1-indexed.
   static Future<Rect> getPageCropBox(int pageNumber) async {
     String cropBoxString = await _channel.invokeMethod(Functions.getPageCropBox,
@@ -167,7 +167,7 @@ class PdftronFlutter {
   }
 
   /// Gets the rotation value of the specified page in the current document.
-  /// 
+  ///
   /// The specified page number is 1-indexed.
   static Future<int> getPageRotation(int pageNumber) async {
     int pageRotation = await _channel.invokeMethod(Functions.getPageRotation,
@@ -176,7 +176,7 @@ class PdftronFlutter {
   }
 
   /// Sets current page of the document.
-  /// 
+  ///
   /// The specified page number is 1-indexed.
   static Future<bool?> setCurrentPage(int pageNumber) {
     return _channel.invokeMethod(Functions.setCurrentPage,
@@ -189,7 +189,7 @@ class PdftronFlutter {
   }
 
   /// Sets the current tool mode.
-  /// 
+  ///
   /// Takes a [Tools] string constant representing the tool mode to set.
   static Future<void> setToolMode(String toolMode) {
     return _channel.invokeMethod(Functions.setToolMode,
@@ -197,7 +197,7 @@ class PdftronFlutter {
   }
 
   /// Sets a field flag value on one or more form fields.
-  /// 
+  ///
   /// The [flag] is one of the constants from [FieldFlags].
   static Future<void> setFlagForFields(
       List<String> fieldNames, int flag, bool flagValue) {
@@ -209,19 +209,19 @@ class PdftronFlutter {
   }
 
   /// Sets field values on one or more form fields of different types.
-  /// 
-  /// Each field in [fields] list must be set with a name and a value. 
+  ///
+  /// Each field in [fields] list must be set with a name and a value.
   /// The value's type can be number, bool or string.
   static Future<void> setValuesForFields(List<Field> fields) {
     return _channel.invokeMethod(Functions.setValuesForFields,
         <String, dynamic>{Parameters.fields: jsonEncode(fields)});
   }
 
-  /// Sets the file name of the icon to be used for the leading navigation button. 
-  /// 
-  /// The button will use the specified icon if [showLeadingNavButton](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md#showleadingnavbutton) (which by 
-  /// default is true) is true in the config. To add the image file to your 
-  /// application, please follow the steps in the 
+  /// Sets the file name of the icon to be used for the leading navigation button.
+  ///
+  /// The button will use the specified icon if [showLeadingNavButton](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md#showleadingnavbutton) (which by
+  /// default is true) is true in the config. To add the image file to your
+  /// application, please follow the steps in the
   /// [API page](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md#viewer-ui-configuration).
   static Future<void> setLeadingNavButtonIcon(String path) {
     return _channel.invokeMethod(Functions.setLeadingNavButtonIcon,
@@ -229,8 +229,8 @@ class PdftronFlutter {
   }
 
   /// Closes all documents that are currently opened in a multiTab environment.
-  /// 
-  /// A multiTab environment exists when [multiTabEnabled](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md#multitabenabled) 
+  ///
+  /// A multiTab environment exists when [multiTabEnabled](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md#multitabenabled)
   /// is true in the config.
   static Future<void> closeAllTabs() {
     return _channel.invokeMethod(Functions.closeAllTabs);

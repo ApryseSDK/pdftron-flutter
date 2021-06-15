@@ -4,9 +4,10 @@ part of pdftron;
 class Annot {
   /// An annotation has its id in XFDF as name.
   String? id;
+
   /// Page numbers are 1-indexed here, but 0-indexed in XFDF strings.
   int? pageNumber;
-  
+
   Annot(this.id, this.pageNumber);
 
   factory Annot.fromJson(dynamic json) {
@@ -94,6 +95,7 @@ class Rect {
 class AnnotFlag {
   /// flag comes from [AnnotationFlags] constants.
   String? flag;
+
   /// flagValue represents toggling on/off.
   bool? flagValue;
   AnnotFlag(this.flag, this.flagValue);
@@ -123,19 +125,24 @@ class AnnotWithFlag {
 }
 
 /// The annotation property object.
-/// 
+///
 /// Note: some of this object's properties are markup annotation exclusive, some are not.
-class AnnotProperty {  
+class AnnotProperty {
   /// Not markup exclusive.
   Rect? rect;
+
   /// Not markup exclusive.
   String? contents;
+
   /// Not markup exclusive.
   int? rotation;
+
   /// Markup exclusive.
   String? subject;
+
   /// Markup exclusive.
   String? title;
+
   /// Markup exclusive.
   Rect? contentRect;
 
@@ -152,12 +159,14 @@ class AnnotProperty {
 }
 
 /// The custom toolbar object.
-class CustomToolbar {          
+class CustomToolbar {
   /// id should be unique.
   String? id;
   String? name;
+
   /// items should be array of [Buttons] / [Tools] constants.
   List<String>? items;
+
   /// icon (optional) should be a [ToolbarIcons] constant.
   String? icon;
 

@@ -166,7 +166,7 @@ class Tools {
 
   /// Android only.
   static const annotationSmartPen = 'AnnotationSmartPen';
-  
+
   /// Android only.
   static const annotationLasso = 'AnnotationLasso';
 }
@@ -219,16 +219,21 @@ class AnnotationFlags {
 class AnnotationProperties {
   /// Not markup exclusive.
   static const rect = "rect";
+
   /// Not markup exclusive.
   static const contents = "contents";
+
   /// Not markup exclusive.
   static const rotation = "rotation";
+
   /// Markup exclusive.
   static const subject = "subject";
+
   /// Markup exclusive.
   static const title = "title";
+
   /// Markup exclusive.
-  static const contentRect = "contentRect";  
+  static const contentRect = "contentRect";
 }
 
 /// Defines all user behaviors in the viewer.

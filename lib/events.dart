@@ -5,7 +5,6 @@
 /// native implementations.
 part of pdftron;
 
-
 const _exportAnnotationCommandChannel =
     const EventChannel('export_annotation_command_event');
 const _exportBookmarkChannel = const EventChannel('export_bookmark_event');
@@ -64,7 +63,7 @@ enum eventSinkId {
 }
 
 /// Listens for when a local annotation changes have been committed to the document.
-/// 
+///
 /// Returns a function that can cancel the listener.
 CancelListener startExportAnnotationCommandListener(
     ExportAnnotationCommandListener listener) {
@@ -78,7 +77,7 @@ CancelListener startExportAnnotationCommandListener(
 }
 
 /// Listens for when user bookmarks are committed to the document
-/// 
+///
 /// Returns a function that can cancel the listener.
 CancelListener startExportBookmarkListener(ExportBookmarkListener listener) {
   var subscription = _exportBookmarkChannel
@@ -91,7 +90,7 @@ CancelListener startExportBookmarkListener(ExportBookmarkListener listener) {
 }
 
 /// Listens for when [PdftronFlutter.openDocument(document)] has loaded the file.
-/// 
+///
 /// Returns a function that can cancel the listener.
 CancelListener startDocumentLoadedListener(DocumentLoadedListener listener) {
   var subscription = _documentLoadedChannel
@@ -104,7 +103,7 @@ CancelListener startDocumentLoadedListener(DocumentLoadedListener listener) {
 }
 
 /// Listens for errors that could occur when [PdftronFlutter.openDocument(document)] is called.
-/// 
+///
 /// Returns a function that can cancel the listener.
 CancelListener startDocumentErrorListener(DocumentErrorListener listener) {
   var subscription = _documentErrorChannel
@@ -119,7 +118,7 @@ CancelListener startDocumentErrorListener(DocumentErrorListener listener) {
 }
 
 /// Listens for annotation changes and gets the associated action.
-/// 
+///
 /// Returns a function that can cancel the listener.
 CancelListener startAnnotationChangedListener(
     AnnotationChangedListener listener) {
@@ -143,7 +142,7 @@ CancelListener startAnnotationChangedListener(
 }
 
 /// Listens for when an annotation is selected.
-/// 
+///
 /// Returns a function that can cancel the listener.
 CancelListener startAnnotationsSelectedListener(
     AnnotationsSelectedListener listener) {
@@ -165,7 +164,7 @@ CancelListener startAnnotationsSelectedListener(
 }
 
 /// Listens for changes to the value of form fields.
-/// 
+///
 /// Returns a function that can cancel the listener.
 CancelListener startFormFieldValueChangedListener(
     FormFieldValueChangedListener listener) {
@@ -186,7 +185,7 @@ CancelListener startFormFieldValueChangedListener(
 }
 
 /// Listens for start of certain behaviours, if [Config.overrideBehavior] is not null.
-/// 
+///
 /// Returns a function that can cancel the listener.
 CancelListener startBehaviorActivatedListener(
     BehaviorActivatedListener listener) {
@@ -204,9 +203,9 @@ CancelListener startBehaviorActivatedListener(
   };
 }
 
-/// Listens for presses on the long press menu, 
+/// Listens for presses on the long press menu,
 /// if [Config.overrideLongPressMenuBehavior] is not null.
-/// 
+///
 /// Returns a function that can cancel the listener.
 CancelListener startLongPressMenuPressedListener(
     LongPressMenuPressedChannelListener listener) {
@@ -224,9 +223,9 @@ CancelListener startLongPressMenuPressedListener(
   };
 }
 
-/// Listens for presses on the annotation menu, 
+/// Listens for presses on the annotation menu,
 /// if [Config.overrideAnnotationMenuBehavior] is not null.
-/// 
+///
 /// Returns a function that can cancel the listener.
 CancelListener startAnnotationMenuPressedListener(
     AnnotationMenuPressedChannelListener listener) {
@@ -249,8 +248,8 @@ CancelListener startAnnotationMenuPressedListener(
   };
 }
 
-/// Listens for when the leading navigation button is pressed. 
-/// 
+/// Listens for when the leading navigation button is pressed.
+///
 /// Returns a function that can cancel the listener.
 CancelListener startLeadingNavButtonPressedListener(
     LeadingNavbuttonPressedlistener listener) {
@@ -266,7 +265,7 @@ CancelListener startLeadingNavButtonPressedListener(
 }
 
 /// Listens for when a page is changed in the viewer.
-/// 
+///
 /// Returns a function that can cancel the listener.
 CancelListener startPageChangedListener(PageChangedListener listener) {
   var subscription = _pageChangedChannel
@@ -285,7 +284,7 @@ CancelListener startPageChangedListener(PageChangedListener listener) {
 }
 
 /// Listens for if the document's zoom ratio is changed.
-/// 
+///
 /// Returns a function that can cancel the listener.
 CancelListener startZoomChangedListener(ZoomChangedListener listener) {
   var subscription = _zoomChangedChannel
