@@ -77,8 +77,8 @@ Parameters:
 Name | Type | Required | Description
 --- | --- | --- | ---
 document | String | true | path to the document
-password | String | false | password to an encrypted document
-config | Config | false | viewer configuration options
+password | String? | false | password to an encrypted document
+config | Config? | false | viewer configuration options
 
 Returns a Future that would resolve when document is loaded.
 
@@ -112,7 +112,7 @@ Future Parameters:
 
 Name | Type | Description
 --- | --- | ---
-path | String | the location of the saved document
+path | String? | the location of the saved document
 
 ```dart
 var path = await PdftronFlutter.saveDocument();
@@ -127,7 +127,7 @@ Future Parameters:
 
 Name | Type | Description
 --- | ---| ---
-path | String | the document path
+path | String? | the document path
 
 ```dart
 var path = await PdftronFlutter.getDocumentPath();
@@ -197,7 +197,7 @@ Future Parameters:
 
 Name | Type | Description
 --- | --- | ---
-committed | bool | true if either ink or poly-shape tool is committed, false otherwise
+committed | bool? | true if either ink or poly-shape tool is committed, false otherwise
 
 ```dart
 var committed = await PdftronFlutter.commitTool();
@@ -222,11 +222,11 @@ Future Parameters:
 
 Name | Type | Description
 -- | -- | --
-success | bool | whether the setting process is successful.
+success | bool? | whether the setting process is successful.
 
 ```dart
 var setResult = await controller.setCurrentPage(5);
-print('Page set ' + setResult ? 'successfully' : 'unsuccessfully');
+print('Page set ' + (setResult ? 'successfully' : 'unsuccessfully'));
 ```
 
 #### getPageCount
@@ -238,7 +238,7 @@ Future Parameters:
 
 Name | Type | Description
 --- | --- | ---
-pageCount | int | the page count of the current document
+pageCount | int? | the page count of the current document
 
 ```dart
 var pageCount = await PdftronFlutter.getPageCount();
@@ -340,7 +340,7 @@ Future Parameters:
 
 Name | Type | Description
 -- | -- | --
-xfdf | String | annotation string in XFDF format
+xfdf | String? | annotation string in XFDF format
 
 Exports all annotations:
 ```dart
@@ -349,9 +349,9 @@ var xfdf = await PdftronFlutter.exportAnnotations(null);
 
 Exports specified annotations:
 ```dart
-List<Annot> annotList = new List<Annot>();
-list.add(new Annot('Hello', 1));
-list.add(new Annot('World', 2));
+List<Annot> annotList = new List<Annot>.empty(growable: true);
+annotList.add(new Annot('Hello', 1));
+annotList.add(new Annot('World', 2));
 var xfdf = await PdftronFlutter.exportAnnotations(annotList);
 ```
 
@@ -384,9 +384,9 @@ annotations | List of [`Annot`](./lib/options.dart) | the annotations to be dele
 Returns a Future.
 
 ```dart
-List<Annot> annotList = new List<Annot>();
-list.add(new Annot('Hello', 1));
-list.add(new Annot('World', 2));
+List<Annot> annotList = new List<Annot>.empty(growable: true);
+annotList.add(new Annot('Hello', 1));
+annotList.add(new Annot('World', 2));
 PdftronFlutter.deleteAnnotations(annotList);
 ```
 
@@ -426,7 +426,7 @@ annotationWithFlagsList | List of [`AnnotWithFlags`](./lib/options.dart) | a lis
 Returns a Future.
 
 ```dart
-List<AnnotWithFlags> annotsWithFlags = new List<AnnotWithFlags>();
+List<AnnotWithFlags> annotsWithFlags = new List<AnnotWithFlags>.empty(growable: true);
 
 Annot hello = new Annot('Hello', 1);
 Annot world = new Annot('World', 3);
@@ -455,12 +455,12 @@ For settable properties:
 
 Name | Type | Markup exclusive
 --- | --- | ---
-rect | Rect | no
-contents | String | no
-subject | String | yes
-title | String | yes
-contentRect | Rect | yes
-rotation | int | no
+rect | Rect? | no
+contents | String? | no
+subject | String? | yes
+title | String? | yes
+contentRect | Rect? | yes
+rotation | int? | no
 
 ```dart
 Annot pdf = new Annot('pdf', 1);
@@ -523,7 +523,7 @@ Future Parameters:
 
 Name | Type | Description
 --- | --- | ---
-handled | bool | whether the back button is handled successfully
+handled | bool? | whether the back button is handled successfully
 
 ```dart
 var handled = await PdftronFlutter.handleBackButton();
@@ -576,7 +576,7 @@ path | String | the path to where the document is saved
 ```dart
 var documentLoadedCancel = startDocumentLoadedListener((path)
 {
-  print("flutter document loaded: ${path}");
+  print("flutter document loaded: $path");
 });
 ```
 
@@ -719,8 +719,8 @@ var annotationMenuPressedCancel = startAnnotationMenuPressedListener((annotation
 {
   print("Annotation menu item " + annotationMenuItem + " has been pressed");
   for (Annot annotation in annotations) {
-    print("Annotation has id: " + annotation.id);
-    print("Annotation is in page: " + annotation.pageNumber.toString());
+    print("Annotation has id: ${annotation.id}");
+    print("Annotation is in page: ${annotation.pageNumber}");
   }
 });
 ```
