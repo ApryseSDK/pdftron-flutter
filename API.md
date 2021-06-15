@@ -385,8 +385,8 @@ Returns a Future.
 
 ```dart
 List<Annot> annotList = new List<Annot>.empty(growable: true);
-list.add(new Annot('Hello', 1));
-list.add(new Annot('World', 2));
+annotList.add(new Annot('Hello', 1));
+annotList.add(new Annot('World', 2));
 PdftronFlutter.deleteAnnotations(annotList);
 ```
 
