@@ -4,7 +4,7 @@ part of pdftron;
 ///
 /// The class properties represent all possible viewer configuration options.
 /// These options are not required and have default values. For more information on
-/// these configurations, look at the API documentation.
+/// these configurations, look at the [GitHub API documentation](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md).
 class Config {
   var _disabledElements;
   var _disabledTools;

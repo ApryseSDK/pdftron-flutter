@@ -26,7 +26,9 @@ More information can be found at https://www.pdftron.com/documentation/guides/fl
 - [License](#license)
 
 ## API
-APIs are available on the [API page](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md).
+API documentation is available on:
+- [GitHub](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md)
+- [pub.dev](https://pub.dev/documentation/pdftron_flutter/latest/pdftron/pdftron-library.html)
 
 ## Prerequisites
 - No license key is required for trial. However, a valid commercial license key is required after trial.
@@ -295,6 +297,7 @@ class _ViewerState extends State<Viewer> {
     // An event listener for when local annotation changes are committed to the document
     // xfdfCommand is the XFDF Command of the annotation that was last changed
     var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
+      String command = xfdfCommand;
       print("flutter xfdfCommand:\n");
       // Dart limits how many characters are printed onto the console. 
       // The code below ensures that all of the XFDF command is printed.
