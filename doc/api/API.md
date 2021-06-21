@@ -434,11 +434,11 @@ AnnotFlag printOn = new AnnotFlag(AnnotationFlags.print, true);
 AnnotFlag unlock = new AnnotFlag(AnnotationFlags.locked, false);
 
 // you can add an AnnotWithFlags object flexibly like this:
-list.add(new AnnotWithFlags.fromAnnotAndFlags(hello, [printOn, unlock]));
-list.add(new AnnotWithFlags.fromAnnotAndFlags(world, [unlock]));
+annotWithFlags.add(new AnnotWithFlags.fromAnnotAndFlags(hello, [printOn, unlock]));
+annotWithFlags.add(new AnnotWithFlags.fromAnnotAndFlags(world, [unlock]));
 
 // Or simply use the constructor like this:
-list.add(new AnnotWithFlags('Pdftron', 10, AnnotationFlags.no_zoom, true));
+annotsWithFlags.add(new AnnotWithFlags('Pdftron', 10, AnnotationFlags.no_zoom, true));
 PdftronFlutter.setFlagsForAnnotations(annotsWithFlags);
 ```
 
