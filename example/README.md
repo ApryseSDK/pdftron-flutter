@@ -6,6 +6,15 @@ Demonstrates how to use the `pdftron_flutter` plugin.
 - PDFTron SDK >= 6.9.0
 - Flutter >= 1.12.0
 
+## Installation
+
+If you want to use local files, add the following dependency to `example/pubspec.yaml`:
+
+  ```yaml
+    permission_handler: ^8.1.1
+  ```
+There will be sections of code that must then be uncommented. These areas have alrady been indicated within `example/lib/main.dart`
+
 ## Run
 
 ### Android
