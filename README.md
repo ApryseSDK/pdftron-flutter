@@ -175,7 +175,7 @@ The widget version (`DocumentView`) contains existing issues such as menu popups
 
 ## Usage
 
-1. If you want to use local files, add the following dependency to `myapp/pubspec.yaml`:
+1. If you want to use local files on Android, add the following dependency to `myapp/pubspec.yaml`:
 
   ```yaml
     permission_handler: ^8.1.1
@@ -234,11 +234,11 @@ The widget version (`DocumentView`) contains existing issues such as menu popups
       }
 
       // Future<void> launchWithPermission() async {
-        PermissionStatus permission = await Permission.storage.request();
-        if (permission.isGranted) {
-          showViewer();
-        }
-      }
+      //  PermissionStatus permission = await Permission.storage.request();
+      //  if (permission.isGranted) {
+      //    showViewer();
+      //  }
+      // }
 
       // Platform messages are asynchronous, so initialize in an async method.
       Future<void> initPlatformState() async {
