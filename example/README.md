@@ -8,7 +8,7 @@ Demonstrates how to use the `pdftron_flutter` plugin.
 
 ## Installation
 
-If you want to use local files on Android, add the following dependency to `example/pubspec.yaml`:
+If you want to use local files, add the following dependency to `example/pubspec.yaml`:
 
   ```yaml
     permission_handler: ^8.1.1

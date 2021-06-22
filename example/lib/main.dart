@@ -4,8 +4,8 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdftron_flutter/pdftron_flutter.dart';
-// If you are using local files, add the dependency to pubspec.yaml
-// and then uncomment the line below.
+// If you are using local files, add the permission_handler
+// dependency to pubspec.yaml and uncomment the line below.
 // import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
@@ -37,31 +37,32 @@ class _ViewerState extends State<Viewer> {
 
     showViewer();
 
-    // If you are using local files delete the line above, change the _document field
-    // appropriately and uncomment the section below.
+    // If you are using local files:
+    // * Remove the above line `showViewer();`.
+    // * Change the _document field to your local filepath.
+    // * Uncomment the section below, including launchWithPermission().
     // if (Platform.isIOS) {
-      // // Open the document for iOS, no need for permission.
-      // showViewer();
+      // showViewer(); // Permission not required for iOS.
     // } else {
-      // // Request permission for Android before opening document.
-      // launchWithPermission();
+      // launchWithPermission(); // Permission required for Android.
     // }
   }
 
-  // Uncomment this if you are using local files
+  // Uncomment this if you are using local files:
   // Future<void> launchWithPermission() async {
-  //   PermissionStatus permission = await Permission.storage.request();
-  //   if (permission.isGranted) {
-  //     showViewer();
-  //   }
+  //  PermissionStatus permission = await Permission.storage.request();
+  //  if (permission.isGranted) {
+  //    showViewer();
+  //  }
   // }
 
-  // Platform messages are asynchronous, so we initialize in an async method.
+  // Platform messages are asynchronous, so initialize in an async method.
   Future<void> initPlatformState() async {
     String version;
-    // Platform messages may fail, so we use a try/catch PlatformException.
+    // Platform messages may fail, so use a try/catch PlatformException.
     try {
-      // Initializes the PDFTron SDK, it must be called before you can use any functionality.
+      // Initializes the PDFTron SDK, it must be called before you can use 
+      // any functionality.
       PdftronFlutter.initialize("your_pdftron_license_key");
 
       version = await PdftronFlutter.version;
@@ -83,14 +84,16 @@ class _ViewerState extends State<Viewer> {
     // Opening without a config file will have all functionality enabled.
     // await PdftronFlutter.openDocument(_document);
 
+    // Shows how to disable functionality.
+    // var disabledElements = [Buttons.shareButton, Buttons.searchButton];
+    // var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
     var config = Config();
-    // How to disable functionality:
-    //      config.disabledElements = [Buttons.shareButton, Buttons.searchButton];
-    //      config.disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
-    //      config.multiTabEnabled = true;
-    //      config.customHeaders = {'headerName': 'headerValue'};
+    // config.disabledElements = disabledElements;
+    // config.disabledTools = disabledTools;
+    // config.multiTabEnabled = true;
+    // config.customHeaders = {'headerName': 'headerValue'};
 
-    // An event listener for document loading
+    // An event listener for document loading.
     var documentLoadedCancel = startDocumentLoadedListener((filePath) {
       print("document loaded: $filePath");
     });
@@ -98,7 +101,8 @@ class _ViewerState extends State<Viewer> {
     await PdftronFlutter.openDocument(_document, config: config);
 
     try {
-      // The imported command is in XFDF format and tells whether to add, modify or delete annotations in the current document
+      // The imported command is in XFDF format and tells whether to add, 
+      // modify or delete annotations in the current document.
       PdftronFlutter.importAnnotationCommand(
           "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
               "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
@@ -114,20 +118,22 @@ class _ViewerState extends State<Viewer> {
     }
 
     try {
-      // Adds a bookmark into the document
-      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
+      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
     } on PlatformException catch (e) {
       print("Failed to importBookmarkJson '${e.message}'.");
     }
 
-    // An event listener for when local annotation changes are committed to the document
-    // xfdfCommand is the XFDF Command of the annotation that was last changed
+    // An event listener for when local annotation changes are committed 
+    // to the document. xfdfCommand is the XFDF Command of the annotation 
+    // that was last changed.
     var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
+      // Local annotation changed.
+      // Upload XFDF command to server here.
       String command = xfdfCommand;
-      print("flutter xfdfCommand:\n");
       // Dart limits how many characters are printed onto the console. 
       // The code below ensures that all of the XFDF command is printed.
       if (command.length > 1024) {
+        print("flutter xfdfCommand:\n");
         int start = 0;
         int end = 1023;
         while (end < command.length) {
@@ -141,8 +147,9 @@ class _ViewerState extends State<Viewer> {
       }
     });
 
-    // An event listener for when local bookmark changes are committed to the document
-    // bookmarkJson is JSON string containing all the bookmarks that exist when the change was made
+    // An event listener for when local bookmark changes are committed to
+    // the document. bookmarkJson is the JSON string containing all the 
+    // bookmarks that exist when the change was made.
     var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
       print("flutter bookmark: $bookmarkJson");
     });
@@ -163,7 +170,7 @@ class _ViewerState extends State<Viewer> {
         width: double.infinity,
         height: double.infinity,
         child:
-            // Uncomment this to use Widget version of the viewer
+            // Uncomment this to use Widget version of the viewer:
             // _showViewer
             // ? DocumentView(
             //     onCreated: _onDocumentViewCreated,
@@ -173,20 +180,21 @@ class _ViewerState extends State<Viewer> {
     );
   }
 
-  // This function is used to control the DocumentView widget after it has been created.
-  // The widget will not work without a void Function(DocumentViewController controller) being passed to it.
+  // This function is used to control the DocumentView widget after it
+  // has been created. The widget will not work without a void 
+  // Function(DocumentViewController controller) being passed to it.
   void _onDocumentViewCreated(DocumentViewController controller) async {
     Config config = new Config();
 
     config.disabledElements = [Buttons.arrowToolButton];
 
     var leadingNavCancel = startLeadingNavButtonPressedListener(() {
-      // Uncomment this to quit the viewer when leading navigation button is pressed
+      // Uncomment this to quit viewer when leading navigation button is pressed:
       // this.setState(() {
       //   _showViewer = !_showViewer;
       // });
 
-      // Show a dialog when leading navigation button is pressed
+      // Show a dialog when leading navigation button is pressed.
       _showMyDialog();
     });
 
@@ -197,7 +205,7 @@ class _ViewerState extends State<Viewer> {
     print('hello');
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: false, // User must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('AlertDialog'),
