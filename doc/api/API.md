@@ -58,7 +58,7 @@ void showViewer() async {
 
 Widget (DocumentViewController):
 ```dart
-void _onDocumentViewCreated(DocumentViewController controller) {
+void _onDocumentViewCreated(DocumentViewController controller) async {
   await controller.openDocument('https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_about.pdf');
 }
 ```
