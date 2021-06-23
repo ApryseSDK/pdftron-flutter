@@ -45,7 +45,7 @@ typedef void PageChangedListener(
 typedef void ZoomChangedListener(dynamic zoom);
 typedef void CancelListener();
 
-/// Used to identify listeners for the EventChannel
+/// Used to identify listeners for the EventChannel.
 enum eventSinkId {
   exportAnnotationId,
   exportBookmarkId,
@@ -76,7 +76,7 @@ CancelListener startExportAnnotationCommandListener(
   };
 }
 
-/// Listens for when user bookmarks are committed to the document
+/// Listens for when user bookmarks are committed to the document.
 ///
 /// Returns a function that can cancel the listener.
 CancelListener startExportBookmarkListener(ExportBookmarkListener listener) {

@@ -52,7 +52,7 @@ class Config {
 
   /// A list of [Buttons] that will be disabled in the viewer.
   ///
-  /// Defaults to empty;
+  /// Defaults to empty.
   set disabledElements(List value) => _disabledElements = value;
 
   /// A list of [Tools] that will be disabled in the viewer.
@@ -60,10 +60,10 @@ class Config {
   /// Defaults to empty.
   set disabledTools(List value) => _disabledTools = value;
 
-  /// Whether tabs will be used to facilitate the viweing of multiple documents
+  /// Whether tabs will be used to facilitate the viewing of multiple documents
   /// simultaneously.
   ///
-  /// If this value is true and [PdftronFlutter.openDocument(document)] is called it
+  /// If this value is true and [PdftronFlutter.openDocument(document)] is called, it
   /// will open a new tab with the associated document. Defaults to false.
   set multiTabEnabled(bool value) => _multiTabEnabled = value;
 
@@ -129,7 +129,7 @@ class Config {
 
   /// A list of [AnnotationMenuItems] that will show when an annotation is selected.
   ///
-  /// Defaults to all of [AnnotationMenuItems]
+  /// Defaults to all of [AnnotationMenuItems].
   set annotationMenuItems(List value) => _annotationMenuItems = value;
 
   /// A list of [AnnotationMenuItems] that will skip default behaviour when pressed.
@@ -269,9 +269,9 @@ class Config {
   /// Defaults to empty.
   set overrideBehavior(List<String> value) => _overrideBehavior = value;
 
-  /// If _multiTabEnabled is true, sets the tab title.
+  /// If [multiTabEnabled] is true, sets the tab title.
   ///
-  /// For Android it is only supported on the [DocumentView] widget.
+  /// For Android, it is only supported on the [DocumentView] widget.
   /// Defaults to the file name.
   set tabTitle(String value) => _tabTitle = value;
 

@@ -224,7 +224,7 @@ class DocumentViewController {
   /// Sets the file name of the icon to be used for the leading navigation button.
   ///
   /// The button will use the specified icon if
-  /// [showLeadingNavButton](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md#showleadingnavbutton) (which by
+  /// [Config.showLeadingNavButton] (which by
   /// default is true) is true in the config. To add the image file to your
   /// application, please follow the steps in the
   /// [API page](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md#viewer-ui-configuration).
@@ -235,7 +235,7 @@ class DocumentViewController {
 
   /// Closes all documents that are currently opened in a multiTab environment.
   ///
-  /// A multiTab environment exists when [multiTabEnabled](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md#multitabenabled)
+  /// A multiTab environment exists when [Config.multiTabEnabled]
   /// is true in the config.
   Future<void> closeAllTabs() {
     return _channel.invokeMethod(Functions.closeAllTabs);
