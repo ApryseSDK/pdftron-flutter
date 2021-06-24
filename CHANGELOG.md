@@ -1,3 +1,11 @@
+# 1.0.0 - June 24, 2021
+
+* Initial major release on pub.dev.
+* Made minor updates to `API.md`, `README.md`, and `dartdoc` comments.
+* Edited example app:
+    * Updated its Podfile.
+    * Commented out code related to permission handling and added instructions for use.
+
 # 1.0.0-beta.2 - June 14, 2021
 
 * Added support for sound null safety:
