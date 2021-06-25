@@ -63,7 +63,7 @@ void _onDocumentViewCreated(DocumentViewController controller) async {
 }
 ```
 
-We suggest that you pick either widget or plugin and stick with that choice for all APIs, excluding APIs that are only available in one version. 
+You must choose either the widget or plugin, and use it for all APIs. Mixing widget and plugin APIs will not function correctly.
 
 There are several custom classes used in these APIs: Annot, AnnotWithRect, Field, Rect, AnnotFlag, AnnotWithFlag and CustomToolbar. These classes are listed [here](/lib/options.dart), and the constants that are used in the examples below are all listed [here](/lib/constants.dart).
 
