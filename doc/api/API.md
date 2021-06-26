@@ -63,7 +63,7 @@ void _onDocumentViewCreated(DocumentViewController controller) async {
 }
 ```
 
-You must choose either the widget or plugin, and use it for all APIs. Mixing widget and plugin APIs will not function correctly.
+You must choose either the widget or plugin, and use it for all APIs. Mixing widget and plugin APIs will not function correctly. For more information, see [Widget or Plugin](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep/README.md#widget-or-plugin).
 
 There are several custom classes used in these APIs: Annot, AnnotWithRect, Field, Rect, AnnotFlag, AnnotWithFlag and CustomToolbar. These classes are listed [here](/lib/options.dart), and the constants that are used in the examples below are all listed [here](/lib/constants.dart).
 

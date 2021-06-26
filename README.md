@@ -20,6 +20,7 @@ More information can be found at https://www.pdftron.com/documentation/guides/fl
 - [Prerequisites](#prerequisites)
 - [Legacy UI](#legacy-ui)
 - [Installation](#installation)
+- [Widget or Plugin](#widget-or-plugin)
 - [Usage](#usage)
 - [Changelog](#changelog)
 - [Contributing](#contributing)
@@ -169,9 +170,18 @@ The following instructions are only applicable to iOS development; click here fo
 7. Run `flutter emulators --launch apple_ios_simulator`
 8. Run `flutter run`
 
-#### Note
+## Widget or Plugin
 
-The widget version (`DocumentView`) contains existing issues such as menu popups not opening, see issue: https://github.com/flutter/flutter/issues/58273
+There are 2 different ways to use PDFTron Flutter API:  
+* Present a document via a plugin. 
+* Show a PDFTron document view via a Widget.
+
+You must choose either the widget or plugin, and use it for all APIs. Mixing widget and plugin APIs will not function correctly. 
+
+For iOS, whether you choose widget or plugin is personal preference.
+
+For Android, the plugin version is strongly recommended. The widget version (`DocumentView`) contains existing issues such as menu popups not opening, see issue: https://github.com/flutter/flutter/issues/58273
+
 
 ## Usage
 
