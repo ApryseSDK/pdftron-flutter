@@ -1,4 +1,4 @@
-/// A convenience wrapper for building Flutter apps with PDFTron mobile SDK.
+/// A convenience wrapper to build Flutter apps that use the PDFTron mobile SDK for smooth, flexible, and stand-alone document viewing.
 library pdftron;
 
 import 'dart:async';
