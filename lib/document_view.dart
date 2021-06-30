@@ -3,7 +3,7 @@ part of pdftron;
 typedef void DocumentViewCreatedCallback(DocumentViewController controller);
 
 class DocumentView extends StatefulWidget {
-  const DocumentView({Key? key, required this.onCreated}) : super(key: key);
+  const DocumentView({Key key, this.onCreated}) : super(key: key);
 
   final DocumentViewCreatedCallback onCreated;
 
@@ -29,6 +29,9 @@ class _DocumentViewState extends State<DocumentView> {
   }
 
   void _onPlatformViewCreated(int id) {
+    if (widget.onCreated == null) {
+      return;
+    }
     widget.onCreated(new DocumentViewController._(id));
   }
 }
@@ -39,7 +42,7 @@ class DocumentViewController {
 
   final MethodChannel _channel;
 
-  Future<void> openDocument(String document, {String? password, Config? config}) {
+  Future<void> openDocument(String document, {String password, Config config}) {
     return _channel.invokeMethod(Functions.openDocument, <String, dynamic>{
       Parameters.document: document,
       Parameters.password: password,
@@ -52,7 +55,7 @@ class DocumentViewController {
         Functions.importAnnotations, <String, dynamic>{Parameters.xfdf: xfdf});
   }
 
-  Future<String?> exportAnnotations(List<Annot>? annotationList) async {
+  Future<String> exportAnnotations(List<Annot> annotationList) async {
     if (annotationList == null) {
       return _channel.invokeMethod(Functions.exportAnnotations);
     } else {
@@ -105,19 +108,19 @@ class DocumentViewController {
         <String, dynamic>{Parameters.bookmarkJson: bookmarkJson});
   }
 
-  Future<String?> saveDocument() {
+  Future<String> saveDocument() {
     return _channel.invokeMethod(Functions.saveDocument);
   }
 
-  Future<bool?> commitTool() {
+  Future<bool> commitTool() {
     return _channel.invokeMethod(Functions.commitTool);
   }
 
-  Future<int?> getPageCount() {
+  Future<int> getPageCount() {
     return _channel.invokeMethod(Functions.getPageCount);
   }
 
-  Future<bool?> handleBackButton() {
+  Future<bool> handleBackButton() {
     return _channel.invokeMethod(Functions.handleBackButton);
   }
 
@@ -133,12 +136,12 @@ class DocumentViewController {
     return pageRotation;
   }
 
-  Future<bool?> setCurrentPage(int pageNumber) {
+  Future<bool> setCurrentPage(int pageNumber) {
     return _channel.invokeMethod(Functions.setCurrentPage,
         <String, dynamic>{Parameters.pageNumber: pageNumber});
   }
 
-  Future<String?> getDocumentPath() {
+  Future<String> getDocumentPath() {
     return _channel.invokeMethod(Functions.getDocumentPath);
   }
 
