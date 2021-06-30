@@ -18,6 +18,7 @@ More information can be found at https://www.pdftron.com/documentation/guides/fl
 
 - [API](#api)
 - [Prerequisites](#prerequisites)
+- [Null Safety](#Null-safety)
 - [Legacy UI](#legacy-ui)
 - [Installation](#installation)
 - [Widget or Plugin](#widget-or-plugin)
@@ -34,7 +35,16 @@ API documentation is available on:
 ## Prerequisites
 - No license key is required for trial. However, a valid commercial license key is required after trial.
 - PDFTron SDK >= 6.9.0
-- Flutter >= 1.12.0
+- Flutter >= 2.0.0
+
+## Null Safety
+Dart now supports [sound null safety](https://dart.dev/null-safety), which is available starting from Dart 2.12.0 and Flutter 2.0.0.  Upgrading may cause breaking changes, so if you are not ready to change versions, refer to our [master branch](https://github.com/PDFTron/pdftron-flutter).
+
+If you would like to use our null safe SDK, it is available in the following places:
+- [GitHub](https://github.com/PDFTron/pdftron-flutter/tree/publish-prep) (You are currently on this branch)
+- [pub.dev](https://pub.dev/packages/pdftron_flutter)
+
+The rest of this README.md contains documentation, installation instructions, and information for the null safe version of our SDK.
 
 ## Legacy UI
 
@@ -47,15 +57,17 @@ The release can be found here: https://github.com/PDFTron/pdftron-flutter/releas
 1. First follow the Flutter getting started guides to [install](https://flutter.io/docs/get-started/install), [set up an editor](https://flutter.io/docs/get-started/editor), and [create a Flutter Project](https://flutter.io/docs/get-started/test-drive?tab=terminal#create-app). The rest of this guide assumes your project is created by running `flutter create myapp`.
 
 2. Add the following dependency to your Flutter project in `myapp/pubspec.yaml` file:
-  - If you want to use specific releases from pub.dev: 
+
+  - If you want to use our null safe prerelease from pub.dev: 
     ```diff
     dependencies:
         flutter:
           sdk: flutter
-    +   pdftron_flutter: ^1.0.0-beta.1 
-    # To use a specific version from pub.dev, replace ^1.0.0-beta.1
+    +   pdftron_flutter: 1.0.0-beta.2
+    # To use a specific version from pub.dev, replace 1.0.0-beta.2
+    # To retain null safety, the minimum version must be 1.0.0-beta.2
     ```
-  - If you want to use the latest features from GitHub:
+  - If you want to use our null safe branch from GitHub:
     ```diff
     dependencies:
         flutter:
@@ -63,6 +75,7 @@ The release can be found here: https://github.com/PDFTron/pdftron-flutter/releas
     +   pdftron_flutter:
     +     git:
     +       url: git://github.com/PDFTron/pdftron-flutter.git
+    +       ref: publish-prep
     ```
 
 ### Android
