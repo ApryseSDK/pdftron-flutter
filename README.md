@@ -2,6 +2,7 @@
 
 - [API](#API)
 - [Prerequisites](#Prerequisites)
+- [Null Safety](#Null-safety)
 - [Preview](#Preview)
 - [Installation](#Installation)
 - [Usage](#Usage)
@@ -14,6 +15,15 @@ APIs are available on the [API page](API.md).
 - No license key is required for trial. However, a valid commercial license key is required after trial.
 - PDFTron SDK >= 6.9.0
 - Flutter >= 1.0.0
+
+## Null Safety
+Dart now supports [sound null safety](https://dart.dev/null-safety), which is available starting from Dart 2.12.0 and Flutter 2.0.0. 
+
+Upgrading may cause breaking changes, so if you are not ready to change versions, continue using PDFTron Flutter SDK as you have been. 
+
+If you would like to use our null safe SDK, it is available in the following places:
+- [GitHub](https://github.com/PDFTron/pdftron-flutter/tree/publish-prep)
+- [pub.dev](https://pub.dev/packages/pdftron_flutter)
 
 ## Preview
 
@@ -29,7 +39,11 @@ The release can be found here: https://github.com/PDFTron/pdftron-flutter/releas
 
 ## Installation
 
-The complete installation and API guides can be found at https://www.pdftron.com/documentation/android/flutter
+If you want to use the null safe version of our SDK (see [Null Safety](#Null-safety)), please follow the [installation instructions for our null safe SDK](https://github.com/PDFTron/pdftron-flutter/tree/publish-prep). 
+
+If you have not migrated to null safety yet, continue below. 
+
+The complete installation and API guides can be found at https://www.pdftron.com/documentation/android/flutter.
 
 ### Android
 1. First follow the Flutter getting started guides to [install](https://flutter.io/docs/get-started/install), [set up an editor](https://flutter.io/docs/get-started/editor), and [create a Flutter Project](https://flutter.io/docs/get-started/test-drive?tab=terminal#create-app). The rest of this guide assumes your project is created by running `flutter create myapp`.
