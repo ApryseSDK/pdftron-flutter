@@ -1244,6 +1244,30 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     return YES;
 }
 
+-(NSString*)exportAsImage:(NSNumber*)pageNumber dpi:(NSNumber*)dpi exportFormat:(NSString *)exportFormat resultToken:(FlutterResult)flutterResult
+{
+    PTPDFViewCtrl *pdfViewCtrl = self.pdfViewCtrl;
+    NSError *error;
+    __block NSString * resultImagePath;
+    
+    [pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+        NSString* imagePath;
+        PTPDFDraw *draw = [[PTPDFDraw alloc] initWithDpi:[dpi doubleValue]];
+        NSString* tempDir = NSTemporaryDirectory();
+        NSString* fileName = [NSUUID UUID].UUIDString;
+        imagePath = [tempDir stringByAppendingPathComponent:fileName];
+        imagePath = [imagePath stringByAppendingPathExtension:exportFormat];
+        [draw Export:[[doc GetPageIterator:[pageNumber doubleValue]] Current] filename:imagePath format:exportFormat];
+        resultImagePath = [imagePath copy];
+    } error:&error];
+    
+    if (error) {
+        NSLog(@"Error: Failed to export image from file. %@", error.localizedDescription);
+    }
+    
+    return resultImagePath;
+}
+
 @end
 
 #pragma mark - FLThumbnailsViewController

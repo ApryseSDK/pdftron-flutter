@@ -35,7 +35,8 @@ class _ViewerState extends State<Viewer> {
 
     if (Platform.isIOS) {
       // Open the document for iOS, no need for permission
-      showViewer();
+      // showViewer();
+      build(context);
     } else {
       // Request for permissions for android before opening document
       launchWithPermission();
@@ -125,6 +126,9 @@ class _ViewerState extends State<Viewer> {
       print("flutter bookmark: $bookmarkJson");
     });
 
+    String imagePath = await PdftronFlutter.exportAsImage(1, 96, ExportFormat.JPEG);
+    print("Image path is $imagePath");
+
     var path = await PdftronFlutter.saveDocument();
     print("flutter save: $path");
 
@@ -142,10 +146,10 @@ class _ViewerState extends State<Viewer> {
         height: double.infinity,
         child:
             // Uncomment this to use Widget version of the viewer
-            // _showViewer
-            // ? DocumentView(
-            //     onCreated: _onDocumentViewCreated,
-            //   ):
+            _showViewer
+            ? DocumentView(
+                onCreated: _onDocumentViewCreated,
+              ):
             Container(),
       ),
     );
@@ -168,6 +172,9 @@ class _ViewerState extends State<Viewer> {
     });
 
     controller.openDocument(_document, config: config);
+
+    String path = await controller.exportAsImage(1, 96, ExportFormat.JPEG);
+    print("Image path is $path");
   }
 
   Future<void> _showMyDialog() async {

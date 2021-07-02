@@ -1163,6 +1163,11 @@
         [self closeAllTabs:result];
     } else if ([call.method isEqualToString:PTDeleteAllAnnotationsKey]) {
         [self deleteAllAnnotations:result];
+    } else if ([call.method isEqualToString:PTExportAsImageKey]) {
+        NSNumber* pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
+        NSNumber* dpi = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTDpiArgumentKey]];
+        NSString* exportFormat = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTExportFormatArgumentKey]];
+        [self exportAsImage:pageNumber dpi:dpi exportFormat:exportFormat resultToken:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -2301,6 +2306,42 @@
     }
     
     flutterResult(nil);
+}
+
+-(void)exportAsImage:(NSNumber*)pageNumber dpi:(NSNumber*)dpi exportFormat:(NSString *)exportFormat resultToken:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"export_as_image" message:@"Failed to export image from file" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+    
+    PTPDFViewCtrl *pdfViewCtrl = documentController.pdfViewCtrl;
+    NSError *error;
+    __block NSString * resultImagePath;
+    
+    
+    [pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        NSString* imagePath;
+        PTPDFDraw *draw = [[PTPDFDraw alloc] initWithDpi:[dpi doubleValue]];
+        NSString* tempDir = NSTemporaryDirectory();
+        NSString* fileName = [NSUUID UUID].UUIDString;
+        imagePath = [tempDir stringByAppendingPathComponent:fileName];
+        imagePath = [imagePath stringByAppendingPathExtension:exportFormat];
+        [draw Export:[[doc GetPageIterator:[pageNumber doubleValue]] Current] filename:imagePath format:exportFormat];
+        resultImagePath = [imagePath copy];
+    } error:&error];
+    
+    if (error) {
+        NSLog(@"Error: Failed to export image from file. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"export_as_image" message:@"Failed to export image from file" details:@"Error: Failed to export image from file"]);
+    } else {
+        flutterResult(resultImagePath);
+    }
+ 
 }
 
 #pragma mark - Helper
