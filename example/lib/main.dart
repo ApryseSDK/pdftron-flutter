@@ -36,8 +36,7 @@ class _ViewerState extends State<Viewer> {
 
     if (Platform.isIOS) {
       // Open the document for iOS, no need for permission
-      // showViewer();
-      // build(context);
+      showViewer();
     } else {
       // Request for permissions for android before opening document
       launchWithPermission();
@@ -94,8 +93,8 @@ class _ViewerState extends State<Viewer> {
       print("document loaded: $filePath");
     });
 
-    String imagePath; //= await PdftronFlutter.exportAsImageFromFilePath(1, 96, ExportFormat.PNG, _localPath);
-    // print("Image path with static method is $imagePath");
+    String imagePath = await PdftronFlutter.exportAsImageFromFilePath(1, 96, ExportFormat.PNG, _localPath);
+    print("Image path with static method is $imagePath");
 
     await PdftronFlutter.openDocument(_document, config: config);
 
@@ -150,10 +149,10 @@ class _ViewerState extends State<Viewer> {
         height: double.infinity,
         child:
             // Uncomment this to use Widget version of the viewer
-            // _showViewer
-            // ? DocumentView(
-            //     onCreated: _onDocumentViewCreated,
-            //   ):
+            _showViewer
+            ? DocumentView(
+                onCreated: _onDocumentViewCreated,
+              ):
             Container(),
       ),
     );
