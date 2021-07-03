@@ -87,7 +87,7 @@ public class PluginUtils {
     public static final String KEY_DPI = "dpi";
     public static final String KEY_EXPORT_FORMAT = "exportFormat";
     public static final String KEY_EXPORT_FORMAT_BMP = "BMP";
-    public static final String KEY_EXPORT_FORMAT_JPG = "JPG";
+    public static final String KEY_EXPORT_FORMAT_JPEG = "JPEG";
     public static final String KEY_EXPORT_FORMAT_PNG = "PNG";
 
 
@@ -172,6 +172,8 @@ public class PluginUtils {
     public static final String KEY_LONG_PRESS_MENU_ITEM = "longPressMenuItem";
     public static final String KEY_LONG_PRESS_TEXT = "longPressText";
 
+    public static final String KEY_PATH = "path";
+
     public static final String EVENT_EXPORT_ANNOTATION_COMMAND = "export_annotation_command_event";
     public static final String EVENT_EXPORT_BOOKMARK = "export_bookmark_event";
     public static final String EVENT_DOCUMENT_LOADED = "document_loaded_event";
@@ -214,6 +216,7 @@ public class PluginUtils {
     public static final String FUNCTION_DELETE_ALL_ANNOTATIONS = "deleteAllAnnotations";
     public static final String FUNCTION_GET_PAGE_ROTATION = "getPageRotation";
     public static final String FUNCTION_EXPORT_AS_IMAGE = "exportAsImage";
+    public static final String FUNCTION_EXPORT_AS_IMAGE_WITH_FILE_PATH = "exportAsImageFromFilePath";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -1825,6 +1828,17 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_EXPORT_AS_IMAGE_WITH_FILE_PATH: {
+                checkFunctionPrecondition(component);
+                Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
+                Integer dpi = call.argument(KEY_DPI);
+                String exportFormat = call.argument(KEY_EXPORT_FORMAT);
+                String path = call.argument(KEY_PATH);
+                if (pageNumber != null && dpi != null && exportFormat != null && path != null) {
+                    exportAsImageFromFilePath(pageNumber, dpi, exportFormat, path, result, component);
+                }
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -2564,6 +2578,16 @@ public class PluginUtils {
         }
     }
 
+    private static void exportAsImageFromFilePath(int pageNumber, int dpi, String exportFormat, String path, MethodChannel.Result result, ViewerComponent component) {
+        try {
+            PDFDoc pdfDoc = new PDFDoc(path);
+            String imagePath = exportAsImageHelper(pdfDoc, pageNumber, dpi, exportFormat);
+            result.success(imagePath);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private static String exportAsImageHelper(PDFDoc doc, int pageNumber, int dpi, String exportFormat) {
         PDFDraw draw = null;
         try {
@@ -2573,8 +2597,8 @@ public class PluginUtils {
             String ext = "png";
             if (KEY_EXPORT_FORMAT_BMP.equals(exportFormat)) {
                 ext = "bmp";
-            } else if (KEY_EXPORT_FORMAT_JPG.equals(exportFormat)) {
-                ext = "jpg";
+            } else if (KEY_EXPORT_FORMAT_JPEG.equals(exportFormat)) {
+                ext = "jpeg";
             }
             File tempFile = File.createTempFile("tmp", "." + ext);
             draw.export(pg, tempFile.getAbsolutePath(), exportFormat);

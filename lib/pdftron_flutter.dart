@@ -175,4 +175,13 @@ class PdftronFlutter {
       Parameters.exportFormat: exportFormat
     });
   }
+
+  static Future<String> exportAsImageFromFilePath(int pageNumber, int dpi, String exportFormat, String filePath) {
+    return _channel.invokeMethod(Functions.exportAsImageFromFilePath, <String, dynamic>{
+      Parameters.pageNumber: pageNumber,
+      Parameters.dpi: dpi,
+      Parameters.exportFormat: exportFormat,
+      Parameters.path: filePath
+    });
+  }
 }

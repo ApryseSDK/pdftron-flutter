@@ -30,6 +30,7 @@ class Functions {
   static const closeAllTabs = "closeAllTabs";
   static const deleteAllAnnotations = "deleteAllAnnotations";
   static const exportAsImage = "exportAsImage";
+  static const exportAsImageFromFilePath = "exportAsImageFromFilePath";
 }
 
 // Parameters define the parameters of the functions
