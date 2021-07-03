@@ -26,6 +26,7 @@ class _ViewerState extends State<Viewer> {
   String _version = 'Unknown';
   String _document =
       "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
+  String _localPath = "/Users/dominiccupidon/Documents/PDFTron/Development/pdftron-react-native/example/ios/example/PDFTRON_about (3).pdf";
   bool _showViewer = true;
 
   @override
@@ -36,7 +37,7 @@ class _ViewerState extends State<Viewer> {
     if (Platform.isIOS) {
       // Open the document for iOS, no need for permission
       // showViewer();
-      build(context);
+      // build(context);
     } else {
       // Request for permissions for android before opening document
       launchWithPermission();
@@ -93,6 +94,9 @@ class _ViewerState extends State<Viewer> {
       print("document loaded: $filePath");
     });
 
+    String imagePath; //= await PdftronFlutter.exportAsImageFromFilePath(1, 96, ExportFormat.PNG, _localPath);
+    // print("Image path with static method is $imagePath");
+
     await PdftronFlutter.openDocument(_document, config: config);
 
     try {
@@ -126,8 +130,8 @@ class _ViewerState extends State<Viewer> {
       print("flutter bookmark: $bookmarkJson");
     });
 
-    String imagePath = await PdftronFlutter.exportAsImage(1, 96, ExportFormat.JPEG);
-    print("Image path is $imagePath");
+    imagePath = await PdftronFlutter.exportAsImage(1, 96, ExportFormat.PNG);
+    print("Image path with class instance method is $imagePath");
 
     var path = await PdftronFlutter.saveDocument();
     print("flutter save: $path");
@@ -146,10 +150,10 @@ class _ViewerState extends State<Viewer> {
         height: double.infinity,
         child:
             // Uncomment this to use Widget version of the viewer
-            _showViewer
-            ? DocumentView(
-                onCreated: _onDocumentViewCreated,
-              ):
+            // _showViewer
+            // ? DocumentView(
+            //     onCreated: _onDocumentViewCreated,
+            //   ):
             Container(),
       ),
     );
@@ -171,9 +175,9 @@ class _ViewerState extends State<Viewer> {
       _showMyDialog();
     });
 
-    controller.openDocument(_document, config: config);
+    await controller.openDocument(_document, config: config);
 
-    String path = await controller.exportAsImage(1, 96, ExportFormat.JPEG);
+    String path = await controller.exportAsImage(1, 96, ExportFormat.BMP);
     print("Image path is $path");
   }
 

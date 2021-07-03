@@ -1167,7 +1167,8 @@
         NSNumber* pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         NSNumber* dpi = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTDpiArgumentKey]];
         NSString* exportFormat = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTExportFormatArgumentKey]];
-        [self exportAsImage:pageNumber dpi:dpi exportFormat:exportFormat resultToken:result];
+        NSString* filePath = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTPathArgumentKey]];
+        [self exportAsImage:pageNumber dpi:dpi exportFormat:exportFormat filePath:filePath resultToken:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -2308,7 +2309,7 @@
     flutterResult(nil);
 }
 
--(void)exportAsImage:(NSNumber*)pageNumber dpi:(NSNumber*)dpi exportFormat:(NSString *)exportFormat resultToken:(FlutterResult)flutterResult
+-(void)exportAsImage:(NSNumber*)pageNumber dpi:(NSNumber*)dpi exportFormat:(NSString *)exportFormat filePath:(NSString*)filePath resultToken:(FlutterResult)flutterResult
 {
     PTDocumentController *documentController = [self getDocumentController];
     if(documentController == Nil)
@@ -2320,29 +2321,37 @@
     }
     
     PTPDFViewCtrl *pdfViewCtrl = documentController.pdfViewCtrl;
+    
+    if (filePath == Nil) {
+        [self exportAsImageHelper:[pdfViewCtrl GetDoc] pageNumber:pageNumber dpi:dpi exportFormat:exportFormat resultToken:flutterResult];
+    } else {
+        [self exportAsImageHelper:[[PTPDFDoc alloc] initWithFilepath:filePath] pageNumber:pageNumber dpi:dpi exportFormat:exportFormat resultToken:flutterResult];
+    }
+}
+
+-(void)exportAsImageHelper:(PTPDFDoc*)doc pageNumber:(NSNumber*)pageNumber dpi:(NSNumber*)dpi exportFormat:(NSString *)exportFormat resultToken:(FlutterResult)flutterResult
+{
+    __block NSString* imagePath;
     NSError *error;
-    __block NSString * resultImagePath;
     
-    
-    [pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        NSString* imagePath;
+    [doc LockReadWithBlock:^() {
         PTPDFDraw *draw = [[PTPDFDraw alloc] initWithDpi:[dpi doubleValue]];
         NSString* tempDir = NSTemporaryDirectory();
         NSString* fileName = [NSUUID UUID].UUIDString;
         imagePath = [tempDir stringByAppendingPathComponent:fileName];
         imagePath = [imagePath stringByAppendingPathExtension:exportFormat];
         [draw Export:[[doc GetPageIterator:[pageNumber doubleValue]] Current] filename:imagePath format:exportFormat];
-        resultImagePath = [imagePath copy];
-    } error:&error];
+    }
+    error:&error];
     
     if (error) {
         NSLog(@"Error: Failed to export image from file. %@", error.localizedDescription);
         flutterResult([FlutterError errorWithCode:@"export_as_image" message:@"Failed to export image from file" details:@"Error: Failed to export image from file"]);
     } else {
-        flutterResult(resultImagePath);
+        flutterResult(imagePath);
     }
- 
 }
+    
 
 #pragma mark - Helper
 
