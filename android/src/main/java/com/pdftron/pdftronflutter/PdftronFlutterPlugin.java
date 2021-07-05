@@ -32,11 +32,16 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_GET_VERSIO
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_INITIALIZE;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_OPEN_DOCUMENT;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SET_LEADING_NAV_BUTTON_ICON;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_EXPORT_AS_IMAGE_FROM_FILE_PATH;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_CONFIG;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_DOCUMENT;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LEADING_NAV_BUTTON_ICON;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LICENSE_KEY;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PASSWORD;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PAGE_NUMBER;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_DPI;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_EXPORT_FORMAT;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PATH;
 
 /**
  * PdftronFlutterPlugin
@@ -263,6 +268,14 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             case FUNCTION_SET_LEADING_NAV_BUTTON_ICON: {
                 String leadingNavButtonIcon = call.argument(KEY_LEADING_NAV_BUTTON_ICON);
                 FlutterDocumentActivity.setLeadingNavButtonIcon(leadingNavButtonIcon);
+                break;
+            }
+            case FUNCTION_EXPORT_AS_IMAGE_FROM_FILE_PATH: {
+                Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
+                Integer dpi = call.argument(KEY_DPI);
+                String exportFormat = call.argument(KEY_EXPORT_FORMAT);
+                String path = call.argument(KEY_PATH);
+                FlutterDocumentActivity.exportAsImageFromFilePath(pageNumber, dpi, exportFormat, path, result);
                 break;
             }
             default:
