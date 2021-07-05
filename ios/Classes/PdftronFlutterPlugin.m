@@ -1167,7 +1167,7 @@
         NSNumber* pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         NSNumber* dpi = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTDpiArgumentKey]];
         NSString* exportFormat = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTExportFormatArgumentKey]];
-        [self exportAsImage:pageNumber dpi:dpi exportFormat:exportFormat filePath:nil resultToken:result];
+        [self exportAsImage:pageNumber dpi:dpi exportFormat:exportFormat filePath:Nil resultToken:result];
     } else if ([call.method isEqualToString:PTExportAsImageFromFilePathKey]) {
         NSNumber* pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         NSNumber* dpi = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTDpiArgumentKey]];
