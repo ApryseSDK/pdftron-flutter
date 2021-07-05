@@ -187,6 +187,7 @@ static NSString * const PTSetLeadingNavButtonIconKey = @"setLeadingNavButtonIcon
 static NSString * const PTCloseAllTabsKey = @"closeAllTabs";
 static NSString * const PTDeleteAllAnnotationsKey = @"deleteAllAnnotations";
 static NSString * const PTExportAsImageKey = @"exportAsImage";
+static NSString * const PTExportAsImageFromFilePathKey = @"exportAsImageFromFilePath";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
