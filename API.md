@@ -55,7 +55,7 @@ Name | Type | Description
 pageNumber | int | the page to be converted
 dpi | double | the output image resolution
 exportFormat | string | one of [`ExportFormat`](./lib/constants.dart) constants
-filePath | string | file path to pdf
+filePath | string | local file path to pdf
 
 Returns a Promise.
 
