@@ -216,7 +216,7 @@ public class PluginUtils {
     public static final String FUNCTION_DELETE_ALL_ANNOTATIONS = "deleteAllAnnotations";
     public static final String FUNCTION_GET_PAGE_ROTATION = "getPageRotation";
     public static final String FUNCTION_EXPORT_AS_IMAGE = "exportAsImage";
-    public static final String FUNCTION_EXPORT_AS_IMAGE_FROM_FILE_PATH = "exportAsImageFromFilePath";
+    public static final String FUNCTION_EXPORT_AS_IMAGE_WITH_FILE_PATH = "exportAsImageFromFilePath";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -1828,6 +1828,17 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_EXPORT_AS_IMAGE_WITH_FILE_PATH: {
+                checkFunctionPrecondition(component);
+                Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
+                Integer dpi = call.argument(KEY_DPI);
+                String exportFormat = call.argument(KEY_EXPORT_FORMAT);
+                String path = call.argument(KEY_PATH);
+                if (pageNumber != null && dpi != null && exportFormat != null && path != null) {
+                    exportAsImageFromFilePath(pageNumber, dpi, exportFormat, path, result, component);
+                }
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -2567,7 +2578,17 @@ public class PluginUtils {
         }
     }
 
-    public static String exportAsImageHelper(PDFDoc doc, int pageNumber, int dpi, String exportFormat) {
+    private static void exportAsImageFromFilePath(int pageNumber, int dpi, String exportFormat, String path, MethodChannel.Result result, ViewerComponent component) {
+        try {
+            PDFDoc pdfDoc = new PDFDoc(path);
+            String imagePath = exportAsImageHelper(pdfDoc, pageNumber, dpi, exportFormat);
+            result.success(imagePath);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static String exportAsImageHelper(PDFDoc doc, int pageNumber, int dpi, String exportFormat) {
         PDFDraw draw = null;
         try {
             draw = new PDFDraw();

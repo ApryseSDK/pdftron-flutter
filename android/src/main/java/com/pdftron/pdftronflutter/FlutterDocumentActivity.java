@@ -452,14 +452,4 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     public ViewerImpl getImpl() {
         return mImpl;
     }
-
-    public static void exportAsImageFromFilePath(int pageNumber, int dpi, String exportFormat, String path, Result result) {
-        try {
-            PDFDoc pdfDoc = new PDFDoc(path);
-            String imagePath = PluginUtils.exportAsImageHelper(pdfDoc, pageNumber, dpi, exportFormat);
-            result.success(imagePath);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
