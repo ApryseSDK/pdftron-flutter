@@ -1829,7 +1829,7 @@ public class PluginUtils {
                 break;
             }
             case FUNCTION_EXPORT_AS_IMAGE_WITH_FILE_PATH: {
-                checkFunctionPrecondition(component);
+                // Static, doesn't require viewer.
                 Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
                 Integer dpi = call.argument(KEY_DPI);
                 String exportFormat = call.argument(KEY_EXPORT_FORMAT);
