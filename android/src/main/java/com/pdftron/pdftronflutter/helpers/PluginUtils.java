@@ -216,7 +216,7 @@ public class PluginUtils {
     public static final String FUNCTION_DELETE_ALL_ANNOTATIONS = "deleteAllAnnotations";
     public static final String FUNCTION_GET_PAGE_ROTATION = "getPageRotation";
     public static final String FUNCTION_EXPORT_AS_IMAGE = "exportAsImage";
-    public static final String FUNCTION_EXPORT_AS_IMAGE_WITH_FILE_PATH = "exportAsImageFromFilePath";
+    public static final String FUNCTION_EXPORT_AS_IMAGE_FROM_FILE_PATH = "exportAsImageFromFilePath";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -1828,7 +1828,7 @@ public class PluginUtils {
                 }
                 break;
             }
-            case FUNCTION_EXPORT_AS_IMAGE_WITH_FILE_PATH: {
+            case FUNCTION_EXPORT_AS_IMAGE_FROM_FILE_PATH: {
                 // Static, doesn't require viewer.
                 Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
                 Integer dpi = call.argument(KEY_DPI);
