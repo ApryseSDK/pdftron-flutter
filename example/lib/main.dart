@@ -26,7 +26,7 @@ class _ViewerState extends State<Viewer> {
   String _version = 'Unknown';
   String _document =
       "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
-  String _localPath = "/Users/dominiccupidon/Documents/PDFTron/Development/pdftron-react-native/example/ios/example/PDFTRON_about (3).pdf";
+  String _localPath = "/storage/emulated/0/Download/document.pdf";
   bool _showViewer = true;
 
   @override
@@ -47,7 +47,8 @@ class _ViewerState extends State<Viewer> {
     Map<PermissionGroup, PermissionStatus> permissions =
         await PermissionHandler().requestPermissions([PermissionGroup.storage]);
     if (granted(permissions[PermissionGroup.storage])) {
-      showViewer();
+      //showViewer();
+      build(context);
     }
   }
 
@@ -93,8 +94,14 @@ class _ViewerState extends State<Viewer> {
       print("document loaded: $filePath");
     });
 
-    String imagePath = await PdftronFlutter.exportAsImageFromFilePath(1, 96, ExportFormat.PNG, _document);
-    print("Image path with static method is $imagePath");
+    String filePath = _document;
+
+    String staticB = await PdftronFlutter.exportAsImageFromFilePath(1, 96, ExportFormat.BMP, filePath);
+    print("Image path with static method is $staticB");
+    String staticP = await PdftronFlutter.exportAsImageFromFilePath(1, 96, ExportFormat.PNG, filePath);
+    print("Image path with static method is $staticP");
+    String staticJ = await PdftronFlutter.exportAsImageFromFilePath(1, 96, ExportFormat.JPEG, filePath);
+    print("Image path with static method is $staticJ");
 
     await PdftronFlutter.openDocument(_document, config: config);
 
@@ -129,15 +136,19 @@ class _ViewerState extends State<Viewer> {
       print("flutter bookmark: $bookmarkJson");
     });
 
-    imagePath = await PdftronFlutter.exportAsImage(1, 96, ExportFormat.PNG);
-    print("Image path with class instance method is $imagePath");
-
     var path = await PdftronFlutter.saveDocument();
     print("flutter save: $path");
 
     // to cancel event:
     // annotCancel();
     // bookmarkCancel();
+
+    String pluginB = await PdftronFlutter.exportAsImage(1, 96, ExportFormat.BMP);
+    print("Image path with plugin method is $pluginB");
+    String pluginP = await PdftronFlutter.exportAsImage(1, 96, ExportFormat.PNG);
+    print("Image path with plugin method is $pluginP");
+    String pluginJ = await PdftronFlutter.exportAsImage(1, 96, ExportFormat.JPEG);
+    print("Image path with plugin method is $pluginJ");
 
   }
 
@@ -149,10 +160,10 @@ class _ViewerState extends State<Viewer> {
         height: double.infinity,
         child:
             // Uncomment this to use Widget version of the viewer
-            // _showViewer
-            // ? DocumentView(
-            //     onCreated: _onDocumentViewCreated,
-            //   ):
+             _showViewer
+             ? DocumentView(
+                 onCreated: _onDocumentViewCreated,
+               ):
             Container(),
       ),
     );
@@ -176,8 +187,13 @@ class _ViewerState extends State<Viewer> {
 
     await controller.openDocument(_document, config: config);
 
-    String path = await controller.exportAsImage(1, 96, ExportFormat.BMP);
-    print("Image path is $path");
+    // Widget version of exportAsImage.
+    String widgetB = await controller.exportAsImage(1, 96, ExportFormat.BMP);
+    print("Image path with widget method is $widgetB");
+    //String widgetP = await controller.exportAsImage(1, 96, ExportFormat.PNG);
+    //print("Image path with widget method is $widgetP");
+    //String widgetJ = await controller.exportAsImage(1, 96, ExportFormat.JPEG);
+    //print("Image path with widget method is $widgetJ");
   }
 
   Future<void> _showMyDialog() async {
