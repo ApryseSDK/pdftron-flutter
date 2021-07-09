@@ -2345,7 +2345,7 @@
         NSString* fileName = [NSUUID UUID].UUIDString;
         imagePath = [tempDir stringByAppendingPathComponent:fileName];
         imagePath = [imagePath stringByAppendingPathExtension:exportFormat];
-        [draw Export:[[doc GetPageIterator:[pageNumber doubleValue]] Current] filename:imagePath format:exportFormat];
+        [draw Export:[doc GetPage:[pageNumber doubleValue]] filename:imagePath format:exportFormat];
     }
     error:&error];
     
