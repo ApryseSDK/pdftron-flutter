@@ -266,7 +266,11 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 break;
             }
             default:
-                PluginUtils.onMethodCall(call, result, FlutterDocumentActivity.getCurrentActivity());
+                try {
+                    PluginUtils.onMethodCall(call, result, FlutterDocumentActivity.getCurrentActivity());
+                } catch (PDFNetException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
     }

@@ -53,6 +53,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1590,7 +1591,7 @@ public class PluginUtils {
         return 0;
     }
 
-    public static void onMethodCall(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
+    public static void onMethodCall(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
         switch (call.method) {
             case FUNCTION_IMPORT_ANNOTATIONS: {
                 checkFunctionPrecondition(component);
@@ -2563,34 +2564,39 @@ public class PluginUtils {
         if (pdfViewCtrl == null || pdfDoc == null) {
             result.error("InvalidState", "PDFViewCtrl not found", null);
         }
-        boolean shouldUnlockRead = false;
+        //boolean shouldUnlockRead = false;
         try {
-            pdfViewCtrl.docLockRead();
-            shouldUnlockRead = true;
+            //pdfViewCtrl.docLockRead();
+            //shouldUnlockRead = true;
             String imagePath = exportAsImageHelper(pdfDoc, pageNumber, dpi, exportFormat);
             result.success(imagePath);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally {
-            if (shouldUnlockRead) {
-                pdfViewCtrl.docUnlockRead();
-            }
-        }
+        } //finally {
+            //if (shouldUnlockRead) {
+                //pdfViewCtrl.docUnlockRead();
+            //}
+        //}
     }
 
-    private static void exportAsImageFromFilePath(int pageNumber, int dpi, String exportFormat, String path, MethodChannel.Result result, ViewerComponent component) {
+    private static void exportAsImageFromFilePath(int pageNumber, int dpi, String exportFormat, String path, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
         try {
             PDFDoc pdfDoc = new PDFDoc(path);
             String imagePath = exportAsImageHelper(pdfDoc, pageNumber, dpi, exportFormat);
             result.success(imagePath);
+            pdfDoc.close();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static String exportAsImageHelper(PDFDoc doc, int pageNumber, int dpi, String exportFormat) {
+    private static String exportAsImageHelper(PDFDoc doc, int pageNumber, int dpi, String exportFormat) throws PDFNetException {
         PDFDraw draw = null;
+        boolean shouldUnlockRead = false;
         try {
+            doc.lockRead();
+            shouldUnlockRead = true;
+
             draw = new PDFDraw();
             draw.setDPI(dpi);
             Page pg = doc.getPage(pageNumber);
@@ -2611,6 +2617,9 @@ public class PluginUtils {
                     draw.destroy();
                 } catch (Exception ignored) {
                 }
+            }
+            if (shouldUnlockRead) {
+                doc.unlockRead();
             }
         }
     }

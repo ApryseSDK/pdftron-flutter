@@ -96,12 +96,12 @@ class _ViewerState extends State<Viewer> {
 
     String filePath = _document;
 
-    String staticB = await PdftronFlutter.exportAsImageFromFilePath(1, 96, ExportFormat.BMP, filePath);
-    print("Image path with static method is $staticB");
-    String staticP = await PdftronFlutter.exportAsImageFromFilePath(1, 96, ExportFormat.PNG, filePath);
-    print("Image path with static method is $staticP");
-    String staticJ = await PdftronFlutter.exportAsImageFromFilePath(1, 96, ExportFormat.JPEG, filePath);
-    print("Image path with static method is $staticJ");
+    //String staticB = await PdftronFlutter.exportAsImageFromFilePath(1, 96, ExportFormat.BMP, filePath);
+    //print("Image path with static method is $staticB");
+    //String staticP = await PdftronFlutter.exportAsImageFromFilePath(1, 96, ExportFormat.PNG, filePath);
+    //print("Image path with static method is $staticP");
+    //String staticJ = await PdftronFlutter.exportAsImageFromFilePath(1, 96, ExportFormat.JPEG, filePath);
+    //print("Image path with static method is $staticJ");
 
     await PdftronFlutter.openDocument(_document, config: config);
 
@@ -186,6 +186,10 @@ class _ViewerState extends State<Viewer> {
     });
 
     await controller.openDocument(_document, config: config);
+    //await controller.openDocument(_localPath, config: config);
+
+
+    controller.getPageCount().then((count) => {print("page count: $count")});
 
     // Widget version of exportAsImage.
     String widgetB = await controller.exportAsImage(1, 96, ExportFormat.BMP);

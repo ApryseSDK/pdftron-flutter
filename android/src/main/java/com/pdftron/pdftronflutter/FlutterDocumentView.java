@@ -6,6 +6,7 @@ import android.view.View;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
+import com.pdftron.common.PDFNetException;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.views.DocumentView;
 
@@ -241,7 +242,11 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
                 break;
             }
             default:
-                PluginUtils.onMethodCall(call, result, documentView);
+                try {
+                    PluginUtils.onMethodCall(call, result, documentView);
+                } catch (PDFNetException e) {
+                    e.printStackTrace();
+                }
                 break;
         }
     }
