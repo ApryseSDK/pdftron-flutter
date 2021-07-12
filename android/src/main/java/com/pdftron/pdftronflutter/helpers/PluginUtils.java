@@ -1591,7 +1591,7 @@ public class PluginUtils {
         return 0;
     }
 
-    public static void onMethodCall(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+    public static void onMethodCall(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
         switch (call.method) {
             case FUNCTION_IMPORT_ANNOTATIONS: {
                 checkFunctionPrecondition(component);
@@ -2568,18 +2568,18 @@ public class PluginUtils {
             String imagePath = exportAsImageHelper(pdfDoc, pageNumber, dpi, exportFormat);
             result.success(imagePath);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            result.error(Long.toString(e.hashCode()), "Exception Error: " + e, null);
         }
     }
 
-    private static void exportAsImageFromFilePath(int pageNumber, int dpi, String exportFormat, String path, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+    private static void exportAsImageFromFilePath(int pageNumber, int dpi, String exportFormat, String path, MethodChannel.Result result, ViewerComponent component) {
         try {
             PDFDoc pdfDoc = new PDFDoc(path);
             String imagePath = exportAsImageHelper(pdfDoc, pageNumber, dpi, exportFormat);
             pdfDoc.close();
             result.success(imagePath);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            result.error(Long.toString(e.hashCode()), "Exception Error: " + e, null);
         }
     }
 

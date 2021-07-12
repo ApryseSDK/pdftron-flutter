@@ -242,11 +242,7 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
                 break;
             }
             default:
-                try {
-                    PluginUtils.onMethodCall(call, result, documentView);
-                } catch (PDFNetException e) {
-                    e.printStackTrace();
-                }
+                PluginUtils.onMethodCall(call, result, documentView);
                 break;
         }
     }
