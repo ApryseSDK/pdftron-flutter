@@ -2564,10 +2564,7 @@ public class PluginUtils {
         if (pdfViewCtrl == null || pdfDoc == null) {
             result.error("InvalidState", "PDFViewCtrl not found", null);
         }
-        //boolean shouldUnlockRead = false;
         try {
-            //pdfViewCtrl.docLockRead();
-            //shouldUnlockRead = true;
             String imagePath = exportAsImageHelper(pdfDoc, pageNumber, dpi, exportFormat);
             result.success(imagePath);
         } catch (Exception e) {
