@@ -2572,19 +2572,15 @@ public class PluginUtils {
             result.success(imagePath);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } //finally {
-            //if (shouldUnlockRead) {
-                //pdfViewCtrl.docUnlockRead();
-            //}
-        //}
+        }
     }
 
     private static void exportAsImageFromFilePath(int pageNumber, int dpi, String exportFormat, String path, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
         try {
             PDFDoc pdfDoc = new PDFDoc(path);
             String imagePath = exportAsImageHelper(pdfDoc, pageNumber, dpi, exportFormat);
-            result.success(imagePath);
             pdfDoc.close();
+            result.success(imagePath);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
