@@ -253,7 +253,7 @@ CancelListener startZoomChangedListener(ZoomChangedListener listener) {
 
 CancelListener startPageMovedListener(PageMovedListener listener) {
   var subscription = _pageMovedChannel
-    .receiveBroadcastStream(eventSinkId.pageChangedId.index)
+    .receiveBroadcastStream(eventSinkId.pageMovedId.index)
     .listen((pagesString) {
       dynamic pagesObject = jsonDecode(pagesString);
       dynamic previousPageNumber = pagesObject[EventParameters.previousPageNumber];

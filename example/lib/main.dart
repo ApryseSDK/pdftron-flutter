@@ -125,6 +125,10 @@ class _ViewerState extends State<Viewer> {
       print("flutter bookmark: $bookmarkJson");
     });
 
+    var pageMoveCancel = startPageMovedListener((previousPageNumber, pageNumber) {
+      print("from $previousPageNumber to $pageNumber");
+    });
+
     var path = await PdftronFlutter.saveDocument();
     print("flutter save: $path");
 
