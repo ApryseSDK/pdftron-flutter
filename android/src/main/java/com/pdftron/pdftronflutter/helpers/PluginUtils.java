@@ -410,7 +410,9 @@ public class PluginUtils {
     public static final String TOOLBAR_KEY_ICON = "icon";
     public static final String TOOLBAR_KEY_ITEMS = "items";
 
-    public static boolean[] listsVisible = {true, true, true};
+    public static boolean isBookmarkListVisible = true;
+    public static boolean isOutlineListVisible = true;
+    public static boolean isAnnotationListVisible = true;
 
     public static class ConfigInfo {
         private int initialPageNumber;
@@ -967,9 +969,9 @@ public class PluginUtils {
                         .showAnnotationsList(false)
                         .showOutlineList(false)
                         .showUserBookmarksList(false);
-                listsVisible[0] = false;
-                listsVisible[1] = false;
-                listsVisible[2] = false;
+                isBookmarkListVisible = false;
+                isOutlineListVisible = false;
+                isAnnotationListVisible = false;
             } else if (BUTTON_THUMBNAIL_SLIDER.equals(item)) {
                 builder = builder.showBottomNavBar(false);
             } else if (BUTTON_SAVE_COPY.equals(item)) {
@@ -989,13 +991,13 @@ public class PluginUtils {
                 builder = builder.showCloseTabOption(false);
             } else if (BUTTON_OUTLINE_LIST.equals(item)) {
                 builder = builder.showOutlineList(false);
-                listsVisible[1] = false;
+                isOutlineListVisible = false;
             } else if (BUTTON_ANNOTATION_LIST.equals(item)) {
                 builder = builder.showAnnotationsList(false);
-                listsVisible[2] = false;
+                isAnnotationListVisible = false;
             } else if (BUTTON_USER_BOOKMARK_LIST.equals(item)) {
                 builder = builder.showUserBookmarksList(false);
-                listsVisible[0] = false;
+                isBookmarkListVisible = false;
             } else if (BUTTON_EDIT_MENU.equals(item)) {
                 builder = builder.showEditMenuOption(false);
             } else if (BUTTON_CROP_PAGE.equals(item)) {
@@ -2018,23 +2020,23 @@ public class PluginUtils {
     }
 
     private static void openAnnotationList(ViewerComponent component) {
-        if (listsVisible[0]) {
-            if (listsVisible[1]) {
-                if (listsVisible[2]) {
+        if (isBookmarkListVisible) {
+            if (isOutlineListVisible) {
+                if (isAnnotationListVisible) {
                     component.getPdfViewCtrlTabHostFragment().onOutlineOptionSelected(2);
                 }
             } else {
-                if (listsVisible[2]) {
+                if (isAnnotationListVisible) {
                     component.getPdfViewCtrlTabHostFragment().onOutlineOptionSelected(1);
                 }
             }
         } else {
-            if (listsVisible[1]) {
-                if (listsVisible[2]) {
+            if (isOutlineListVisible) {
+                if (isAnnotationListVisible) {
                     component.getPdfViewCtrlTabHostFragment().onOutlineOptionSelected(1);
                 }
             } else {
-                if (listsVisible[2]) {
+                if (isAnnotationListVisible) {
                     component.getPdfViewCtrlTabHostFragment().onOutlineOptionSelected(0);
                 }
             }
