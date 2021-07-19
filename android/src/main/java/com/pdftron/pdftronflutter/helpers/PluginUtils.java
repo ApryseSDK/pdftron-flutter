@@ -1426,11 +1426,11 @@ public class PluginUtils {
         } else if (TOOL_ANNOTATION_CREATE_SOUND.equals(item)) {
             buttonId = DefaultToolbars.ButtonId.SOUND.value();
         } else if (TOOL_ANNOTATION_CREATE_REDACTION.equals(item)) {
-            // TODO
+            buttonId = DefaultToolbars.ButtonId.RECT_REDACTION.value();
         } else if (TOOL_ANNOTATION_CREATE_LINK.equals(item)) {
             buttonId = DefaultToolbars.ButtonId.LINK.value();
         } else if (TOOL_ANNOTATION_CREATE_REDACTION_TEXT.equals(item)) {
-            // TODO
+            buttonId = DefaultToolbars.ButtonId.TEXT_REDACTION.value();
         } else if (TOOL_ANNOTATION_CREATE_LINK_TEXT.equals(item)) {
             // TODO
         } else if (TOOL_ANNOTATION_EDIT.equals(item)) {
@@ -2107,7 +2107,7 @@ public class PluginUtils {
         }
         Object value = json.get(key);
         if (value instanceof String) {
-            return !"null".equals((String) value);
+            return !"null".equals(value);
         }
         return true;
     }

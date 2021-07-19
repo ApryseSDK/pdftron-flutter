@@ -48,7 +48,7 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.getAnnotationsData;
 
 public class ViewerImpl {
 
-    private ViewerComponent mViewerComponent;
+    private final ViewerComponent mViewerComponent;
 
     public ViewerImpl(@NonNull ViewerComponent component) {
         mViewerComponent = component;
@@ -89,7 +89,7 @@ public class ViewerImpl {
     }
 
 
-    private ToolManager.AnnotationModificationListener mAnnotationModificationListener = new ToolManager.AnnotationModificationListener() {
+    private final ToolManager.AnnotationModificationListener mAnnotationModificationListener = new ToolManager.AnnotationModificationListener() {
         @Override
         public void onAnnotationsAdded(Map<Annot, Integer> map) {
             PluginUtils.emitAnnotationChangedEvent(PluginUtils.KEY_ACTION_ADD, map, mViewerComponent);
@@ -163,14 +163,14 @@ public class ViewerImpl {
         }
     };
 
-    private ToolManager.AnnotationsSelectionListener mAnnotationsSelectionListener = new ToolManager.AnnotationsSelectionListener() {
+    private final ToolManager.AnnotationsSelectionListener mAnnotationsSelectionListener = new ToolManager.AnnotationsSelectionListener() {
         @Override
         public void onAnnotationsSelectionChanged(HashMap<Annot, Integer> hashMap) {
             PluginUtils.emitAnnotationsSelectedEvent(hashMap, mViewerComponent);
         }
     };
 
-    private ToolManager.PdfDocModificationListener mPdfDocModificationListener = new ToolManager.PdfDocModificationListener() {
+    private final ToolManager.PdfDocModificationListener mPdfDocModificationListener = new ToolManager.PdfDocModificationListener() {
         @Override
         public void onBookmarkModified() {
             String bookmarkJson = null;
@@ -227,7 +227,7 @@ public class ViewerImpl {
         }
     };
 
-    private ActionUtils.ActionInterceptCallback mActionInterceptCallback = new ActionUtils.ActionInterceptCallback() {
+    private final ActionUtils.ActionInterceptCallback mActionInterceptCallback = new ActionUtils.ActionInterceptCallback() {
         @Override
         public boolean onInterceptExecuteAction(ActionParameter actionParameter, PDFViewCtrl pdfViewCtrl) {
             ArrayList<String> actionOverrideItems = mViewerComponent.getActionOverrideItems();
@@ -281,7 +281,7 @@ public class ViewerImpl {
         }
     };
 
-    private ToolManager.QuickMenuListener mQuickMenuListener = new ToolManager.QuickMenuListener() {
+    private final ToolManager.QuickMenuListener mQuickMenuListener = new ToolManager.QuickMenuListener() {
         @Override
         public boolean onQuickMenuClicked(QuickMenuItem quickMenuItem) {
             String menuStr = PluginUtils.convQuickMenuIdToString(quickMenuItem.getItemId());
@@ -394,7 +394,7 @@ public class ViewerImpl {
         }
     };
 
-    private PDFViewCtrl.OnCanvasSizeChangeListener mOnCanvasSizeChangedListener = new PDFViewCtrl.OnCanvasSizeChangeListener() {
+    private final PDFViewCtrl.OnCanvasSizeChangeListener mOnCanvasSizeChangedListener = new PDFViewCtrl.OnCanvasSizeChangeListener() {
         @Override
         public void onCanvasSizeChanged() {
             EventChannel.EventSink eventSink = mViewerComponent.getZoomChangedEventEmitter();
@@ -404,7 +404,7 @@ public class ViewerImpl {
         }
     };
 
-    private PDFViewCtrl.PageChangeListener mPageChangedListener = new PDFViewCtrl.PageChangeListener() {
+    private final PDFViewCtrl.PageChangeListener mPageChangedListener = new PDFViewCtrl.PageChangeListener() {
         @Override
         public void onPageChange(int old_page, int cur_page, PDFViewCtrl.PageChangeState pageChangeState) {
             EventChannel.EventSink eventSink = mViewerComponent.getPageChangedEventEmitter();
