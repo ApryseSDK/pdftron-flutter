@@ -116,7 +116,7 @@ class AnnotWithFlag {
   AnnotWithFlag(
       String? annotId, int? pageNumber, String? flag, bool? flagValue) {
     annotation = new Annot(annotId, pageNumber);
-    flags = new List<AnnotFlag>();
+    flags = new List<AnnotFlag>.empty(growable: true);
     flags.add(new AnnotFlag(flag, flagValue));
   }
 

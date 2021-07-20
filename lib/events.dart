@@ -132,7 +132,7 @@ CancelListener startAnnotationChangedListener(
     String action = annotationsWithAction[EventParameters.action];
     List<dynamic> annotations =
         annotationsWithAction[EventParameters.annotations];
-    List<Annot> annotList = new List<Annot>();
+    List<Annot> annotList = new List<Annot>.empty(growable: true);
     for (dynamic annotation in annotations) {
       annotList.add(new Annot.fromJson(annotation));
     }
@@ -175,7 +175,7 @@ CancelListener startFormFieldValueChangedListener(
       .receiveBroadcastStream(eventSinkId.formFieldValueChangedId.index)
       .listen((fieldsString) {
     List<dynamic> fields = jsonDecode(fieldsString);
-    List<Field> fieldList = new List<Field>();
+    List<Field> fieldList = new List<Field>.empty(growable: true);
     for (dynamic field in fields) {
       fieldList.add(new Field.fromJson(field));
     }
@@ -239,7 +239,7 @@ CancelListener startAnnotationMenuPressedListener(
     dynamic annotationMenuItem =
         annotationMenuObject[EventParameters.annotationMenuItem];
     dynamic annotations = annotationMenuObject[EventParameters.annotations];
-    List<Annot> annotList = new List<Annot>();
+    List<Annot> annotList = new List<Annot>.empty(growable: true);
     for (dynamic annotation in annotations) {
       annotList.add(Annot.fromJson(annotation));
     }

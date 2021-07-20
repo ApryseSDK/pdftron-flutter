@@ -4,7 +4,7 @@ typedef void DocumentViewCreatedCallback(DocumentViewController controller);
 
 /// A widget used to view documents and access features of the PDFTron SDK.
 class DocumentView extends StatefulWidget {
-  const DocumentView({Key key, this.onCreated}) : super(key: key);
+  const DocumentView({Key? key, required this.onCreated}) : super(key: key);
 
   /// This function initialises the [DocumentView] widget after its creation.
   ///
@@ -33,9 +33,6 @@ class _DocumentViewState extends State<DocumentView> {
   }
 
   void _onPlatformViewCreated(int id) {
-    if (widget.onCreated == null) {
-      return;
-    }
     widget.onCreated(new DocumentViewController._(id));
   }
 }
