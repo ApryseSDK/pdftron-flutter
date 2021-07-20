@@ -47,6 +47,7 @@ class Config {
   var _overrideBehavior;
   var _tabTitle;
   var _pageNumberIndicatorAlwaysVisible;
+  var _disableEditingByAnnotationType;
 
   Config();
 
@@ -281,6 +282,8 @@ class Config {
   set pageNumberIndicatorAlwaysVisible(bool value) =>
       _pageNumberIndicatorAlwaysVisible = value;
 
+  set disableEditingByAnnotationType(List value) => _disableEditingByAnnotationType = value;
+
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
         _disabledTools = json['disabledTools'],
@@ -325,7 +328,8 @@ class Config {
         _overrideBehavior = json['overrideBehavior'],
         _tabTitle = json['tabTitle'],
         _pageNumberIndicatorAlwaysVisible =
-            json['pageNumberIndicatorAlwaysVisible'];
+            json['pageNumberIndicatorAlwaysVisible'],
+        _disableEditingByAnnotationType = json['disableEditingByAnnotationType'];
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -369,5 +373,6 @@ class Config {
         'overrideBehavior': _overrideBehavior,
         'tabTitle': _tabTitle,
         'pageNumberIndicatorAlwaysVisible': _pageNumberIndicatorAlwaysVisible,
+        'disableEditingByAnnotationType': _disableEditingByAnnotationType,
       };
 }

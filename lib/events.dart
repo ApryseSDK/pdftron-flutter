@@ -26,6 +26,7 @@ const _leadingNavButtonPressedChannel =
     const EventChannel('leading_nav_button_pressed_event');
 const _pageChangedChannel = const EventChannel('page_changed_event');
 const _zoomChangedChannel = const EventChannel('zoom_changed_event');
+const _pageMovedChannel = const EventChannel('page_moved_event');
 
 typedef void ExportAnnotationCommandListener(dynamic xfdfCommand);
 typedef void ExportBookmarkListener(dynamic bookmarkJson);
@@ -43,6 +44,7 @@ typedef void LeadingNavbuttonPressedlistener();
 typedef void PageChangedListener(
     dynamic previousPageNumber, dynamic pageNumber);
 typedef void ZoomChangedListener(dynamic zoom);
+typedef void PageMovedListener(dynamic previousPageNumber, dynamic pageNumber);
 typedef void CancelListener();
 
 /// Used to identify listeners for the EventChannel.
@@ -60,6 +62,7 @@ enum eventSinkId {
   leadingNavButtonPressedId,
   pageChangedId,
   zoomChangedId,
+  pageMovedId,
 }
 
 /// Listens for when a local annotation changes have been committed to the document.
@@ -129,7 +132,7 @@ CancelListener startAnnotationChangedListener(
     String action = annotationsWithAction[EventParameters.action];
     List<dynamic> annotations =
         annotationsWithAction[EventParameters.annotations];
-    List<Annot> annotList = new List<Annot>.empty(growable: true);
+    List<Annot> annotList = new List<Annot>();
     for (dynamic annotation in annotations) {
       annotList.add(new Annot.fromJson(annotation));
     }
@@ -172,7 +175,7 @@ CancelListener startFormFieldValueChangedListener(
       .receiveBroadcastStream(eventSinkId.formFieldValueChangedId.index)
       .listen((fieldsString) {
     List<dynamic> fields = jsonDecode(fieldsString);
-    List<Field> fieldList = new List<Field>.empty(growable: true);
+    List<Field> fieldList = new List<Field>();
     for (dynamic field in fields) {
       fieldList.add(new Field.fromJson(field));
     }
@@ -236,7 +239,7 @@ CancelListener startAnnotationMenuPressedListener(
     dynamic annotationMenuItem =
         annotationMenuObject[EventParameters.annotationMenuItem];
     dynamic annotations = annotationMenuObject[EventParameters.annotations];
-    List<Annot> annotList = new List<Annot>.empty(growable: true);
+    List<Annot> annotList = new List<Annot>();
     for (dynamic annotation in annotations) {
       annotList.add(Annot.fromJson(annotation));
     }
@@ -290,6 +293,21 @@ CancelListener startZoomChangedListener(ZoomChangedListener listener) {
   var subscription = _zoomChangedChannel
       .receiveBroadcastStream(eventSinkId.zoomChangedId.index)
       .listen(listener, cancelOnError: true);
+
+  return () {
+    subscription.cancel();
+  };
+}
+
+CancelListener startPageMovedListener(PageMovedListener listener) {
+  var subscription = _pageMovedChannel
+    .receiveBroadcastStream(eventSinkId.pageMovedId.index)
+    .listen((pagesString) {
+      dynamic pagesObject = jsonDecode(pagesString);
+      dynamic previousPageNumber = pagesObject[EventParameters.previousPageNumber];
+      dynamic pageNumber = pagesObject[EventParameters.pageNumber];
+      listener(previousPageNumber, pageNumber);
+  }, cancelOnError: true);
 
   return () {
     subscription.cancel();

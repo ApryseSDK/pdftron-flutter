@@ -45,7 +45,7 @@ class PdftronFlutter {
   /// Uses the path specified by [document]. Takes a [password] for
   /// encrypted documents, and viewer configuration options for customization.
   static Future<void> openDocument(String document,
-      {String? password, Config? config}) {
+      {String password, Config config}) {
     return _channel.invokeMethod(Functions.openDocument, <String, dynamic>{
       Parameters.document: document,
       Parameters.password: password,
