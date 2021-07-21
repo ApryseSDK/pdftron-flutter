@@ -613,7 +613,7 @@ var navPressedCancel = startLeadingNavButtonPressedListener(()
 ### Page
 
 #### startPageChangedListener
-Event is raised when page changes.
+Event is raised when the current page changes.
 
 Event Parameters:
 
@@ -626,6 +626,22 @@ pageNumber | int | the current page number
 var pageChangedCancel = startPageChangedListener((previousPageNumber, pageNumber)
 {
   print("flutter page changed. from $previousPageNumber to $pageNumber");
+});
+```
+
+#### startPageMovedListener
+Event is raised when a page has been moved in the document. 
+
+Event Parameters:
+
+Name | Type | Description
+--- | --- | ---
+previousPageNumber | int | the previous page number
+pageNumber | int | the current page number
+
+```dart
+var pageMovedCancel = startPageMovedListener((previousPageNumber, pageNumber) {
+  print("flutter page moved from $previousPageNumber to $pageNumber");
 });
 ```
 
@@ -1030,6 +1046,15 @@ Defines whether an annotation is selected after it is created. On iOS, this func
 
 ```dart
 config.selectAnnotationAfterCreation = true;
+```
+
+#### disableEditingByAnnotationType
+array of [`Tools`](./lib/constants.dart) constants, defaults to none.
+
+Defines annotation types that cannot be edited after creation.
+
+```dart
+config.disableEditingByAnnotationType = [Tools.annotationCreateTextSquiggly, Tools.annotationCreateTextHighlight, Tools.annotationCreateEllipse];
 ```
 
 ### Annotation Menu

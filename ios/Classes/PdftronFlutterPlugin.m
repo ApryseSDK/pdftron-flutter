@@ -19,6 +19,7 @@
 @property (nonatomic, strong) FlutterEventSink leadingNavButtonPressedEventSink;
 @property (nonatomic, strong) FlutterEventSink pageChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink zoomChangedEventSink;
+@property (nonatomic, strong) FlutterEventSink pageMovedEventSink;
 
 @property (nonatomic, assign, getter=isWidgetView) BOOL widgetView;
 @property (nonatomic, assign, getter=isMultiTabSet) BOOL multiTabSet;
@@ -147,6 +148,8 @@
     FlutterEventChannel* pageChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTPageChangedEventKey binaryMessenger:messenger];
 
     FlutterEventChannel* zoomChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTZoomChangedEventKey binaryMessenger:messenger];
+    
+    FlutterEventChannel* pageMovedEventChannel = [FlutterEventChannel eventChannelWithName:PTPageMovedEventKey binaryMessenger:messenger];
 
     [xfdfEventChannel setStreamHandler:self];
     
@@ -173,6 +176,8 @@
     [pageChangedEventChannel setStreamHandler:self];
     
     [zoomChangedEventChannel setStreamHandler:self];
+    
+    [pageMovedEventChannel setStreamHandler:self];
 }
 
 #pragma mark - Configurations
@@ -527,6 +532,15 @@
                     
                     if (!error && tabTitle) {
                         [documentController setTabTitle:tabTitle];
+                    }
+                }
+                else if ([key isEqualToString:PTDisableEditingByAnnotationTypeKey])
+                {
+                    
+                    NSArray* uneditableAnnotTypes = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDisableEditingByAnnotationTypeKey class:[NSArray class] error:&error];
+                    
+                    if (!error && uneditableAnnotTypes) {
+                        [documentController setUneditableAnnotTypes:uneditableAnnotTypes];
                     }
                 }
                 else
@@ -908,6 +922,9 @@
         case zoomChangedId:
             self.zoomChangedEventSink = events;
             break;
+        case pageMovedId:
+            self.pageMovedEventSink = events;
+            break;
     }
     
     return Nil;
@@ -957,6 +974,9 @@
             break;
         case zoomChangedId:
             self.zoomChangedEventSink = nil;
+            break;
+        case pageMovedId:
+            self.pageMovedEventSink = nil;
             break;
     }
     
@@ -1085,6 +1105,14 @@
     if (self.zoomChangedEventSink != nil)
     {
         self.zoomChangedEventSink(zoom);
+    }
+}
+
+-(void)documentController:(PTDocumentController *)docVC pageMoved:(NSString *)pageNumbersString
+{
+    if (self.pageMovedEventSink != nil)
+    {
+        self.pageMovedEventSink(pageNumbersString);
     }
 }
 
