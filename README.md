@@ -198,7 +198,7 @@ For Android, the plugin version is strongly recommended. The widget version (`Do
 
 ## Usage
 
-1. If you want to use local files on Android, add the following dev dependency to `myapp/pubspec.yaml`:
+1. If you want to use local files on Android, add the following dependency to `myapp/pubspec.yaml`:
 
   ```yaml
     permission_handler: ^8.1.1
