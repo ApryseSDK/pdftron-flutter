@@ -811,10 +811,10 @@
 //            ^{
 //
 //            },
-//        PTCropPageButtonKey:
-//            ^{
-//
-//            },
+        PTCropPageButtonKey:
+            ^{
+                documentController.settingsViewController.cropPagesHidden = YES;
+            },
         PTMoreItemsButtonKey:
             ^{
                 documentController.moreItemsButtonHidden = YES;
