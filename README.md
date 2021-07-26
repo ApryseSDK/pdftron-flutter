@@ -1,12 +1,30 @@
-# PDFTron Flutter Wrapper
+## About PDFTron Flutter
+PDFTron's Flutter PDF library brings smooth, flexible, and stand-alone document viewing and editing solutions using Flutter codebases for iOS and Android applications.
 
-- [API](#API)
-- [Prerequisites](#Prerequisites)
+- Direct MS Office document viewing and conversion
+- Fully customizable open source UI to improve app engagement
+- Document reflow to increase readability and accessibility on mobile
+- File streaming to view remote and complex documents faster
+- Night mode to improve viewing in low-light environments
+- And much more...
+
+More information can be found at https://www.pdftron.com/documentation/guides/flutter
+
+**Android**|**iOS**
+:--:|:--:
+<img src="https://pdftron.s3.amazonaws.com/custom/websitefiles/flutter/flutter-pdftron-demo-android.gif" alt="A gif showcasing the UI and some features on Android"/>|<img src="https://pdftron.s3.amazonaws.com/custom/websitefiles/flutter/flutter-pdftron-demo-ios.gif" alt="A gif showcasing the UI and some features on iOS"/>
+
+## Contents
+
+- [API](API.md)
+- [Prerequisites](#prerequisites)
 - [Null Safety](#Null-safety)
-- [Preview](#Preview)
-- [Installation](#Installation)
-- [Usage](#Usage)
-- [License](#License)
+- [Legacy UI](#legacy-ui)
+- [Installation](#installation)
+- [Widget or Plugin](#widget-or-plugin)
+- [Usage](#usage)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## API
 APIs are available on the [API page](API.md).
@@ -25,12 +43,6 @@ If you would like to use our null safe SDK, it is available in the following pla
 - [GitHub](https://github.com/PDFTron/pdftron-flutter/tree/publish-prep)
 - [pub.dev](https://pub.dev/packages/pdftron_flutter)
 
-## Preview
-
-**Android** |  **iOS**
-:--:|:--:
-![demo](./flutter-pdftron-demo-android.gif) | ![demo](./flutter-pdftron-demo-ios.gif)
-
 ## Legacy UI
 
 Version `0.0.6` is the last stable release for the legacy UI.
@@ -46,6 +58,9 @@ If you have not migrated to null safety yet, continue below.
 The complete installation and API guides can be found at https://www.pdftron.com/documentation/android/flutter.
 
 ### Android
+
+The following instructions are only applicable to Android development; click here for the [iOS counterpart](#ios).
+
 1. First follow the Flutter getting started guides to [install](https://flutter.io/docs/get-started/install), [set up an editor](https://flutter.io/docs/get-started/editor), and [create a Flutter Project](https://flutter.io/docs/get-started/test-drive?tab=terminal#create-app). The rest of this guide assumes your project is created by running `flutter create myapp`.
 2. Add the following dependency to your Flutter project in `myapp/pubspec.yaml`:
 	```diff
@@ -55,8 +70,6 @@ The complete installation and API guides can be found at https://www.pdftron.com
 	+  pdftron_flutter:
 	+    git:
 	+      url: git://github.com/PDFTron/pdftron-flutter.git
-	+  permission_handler: '3.0.1'
-
 	```
 3. Now add the following items in your `myapp/android/app/build.gradle` file:
 	```diff
@@ -132,12 +145,13 @@ class MainActivity : FlutterFragmentActivity() {
 }
 ```
 
-6. Replace `lib/main.dart` with what is shown [here](#usage)
+6. Follow the instructions outlined [in the Usage section](#usage).
 7. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
 8. Run the app with the command `flutter run`.
-9. Please note that the widget version (`DocumentView`) contains existing issues such as none of the menu popup will work properly, see issue: https://github.com/flutter/flutter/issues/58273
 
 ### iOS
+
+The following instructions are only applicable to iOS development; click here for the [Android counterpart](#android).
 
 1. First, follow the official getting started guide on [installation](https://flutter.io/docs/get-started/install/macos), [setting up an editor](https://flutter.io/docs/get-started/editor), and [create a Flutter project](https://flutter.io/docs/get-started/test-drive?tab=terminal#create-app), the following steps will assume your app is created through `flutter create myapp`
 
@@ -149,7 +163,6 @@ class MainActivity : FlutterFragmentActivity() {
 	+  pdftron_flutter:
 	+    git:
 	+      url: git://github.com/PDFTron/pdftron-flutter.git
-	+  permission_handler: '3.0.1'
 	```
 
 3. Run `flutter packages get`
@@ -167,13 +180,31 @@ class MainActivity : FlutterFragmentActivity() {
 	 end
 	```
 6. Run `flutter build ios --no-codesign` to ensure integration process is successful
-7. Replace `lib/main.dart` with what is shown [here](#usage)
+7. Follow the instructions outlined [in the Usage section](#usage).
 8. Run `flutter emulators --launch apple_ios_simulator`
 9. Run `flutter run`
 
+## Widget or Plugin
+
+There are 2 different ways to use PDFTron Flutter API:  
+* Present a document via a plugin. 
+* Show a PDFTron document view via a Widget.
+
+You must choose either the widget or plugin, and use it for all APIs. Mixing widget and plugin APIs will not function correctly. 
+
+For iOS, whether you choose widget or plugin is personal preference.
+
+For Android, the plugin version is strongly recommended. The widget version (`DocumentView`) contains existing issues such as menu popups not opening, see issue: https://github.com/flutter/flutter/issues/58273
+
 ## Usage
 
-Open `lib/main.dart`, replace the entire file with the following:
+1. If you want to use local files on Android, add the following dependency to `myapp/pubspec.yaml`:
+
+  ```yaml
+    permission_handler: ^8.1.1
+  ```
+
+2. Open `lib/main.dart`, replace the entire file with the following:
 
 ```dart
 import 'dart:async';
@@ -182,7 +213,8 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdftron_flutter/pdftron_flutter.dart';
-import 'package:permission_handler/permission_handler.dart';
+// Uncomment this if you are using local files
+// import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
@@ -211,40 +243,41 @@ class _ViewerState extends State<Viewer> {
     super.initState();
     initPlatformState();
 
-    if (Platform.isIOS) {
-      // Open the document for iOS, no need for permission
-      showViewer();
-    } else {
-      // Request for permissions for android before opening document
-      launchWithPermission();
-    }
+    showViewer();
+
+    // If you are using local files delete the line above, change the _document field
+    // appropriately and uncomment the section below.
+    // if (Platform.isIOS) {
+      // // Open the document for iOS, no need for permission.
+      // showViewer();
+    // } else {
+      // // Request permission for Android before opening document.
+      // launchWithPermission();
+    // }
   }
 
-  Future<void> launchWithPermission() async {
-    Map<PermissionGroup, PermissionStatus> permissions =
-        await PermissionHandler().requestPermissions([PermissionGroup.storage]);
-    if (granted(permissions[PermissionGroup.storage])) {
-      showViewer();
-    }
-  }
+  // Future<void> launchWithPermission() async {
+  //  PermissionStatus permission = await Permission.storage.request();
+  //  if (permission.isGranted) {
+  //    showViewer();
+  //  }
+  // }
 
-  bool granted(PermissionStatus status) {
-    return status == PermissionStatus.granted;
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
+  // Platform messages are asynchronous, so initialize in an async method.
   Future<void> initPlatformState() async {
     String version;
-    // Platform messages may fail, so we use a try/catch PlatformException.
+    // Platform messages may fail, so use a try/catch PlatformException.
     try {
+      // Initializes the PDFTron SDK, it must be called before you can use any functionality.
       PdftronFlutter.initialize("your_pdftron_license_key");
+
       version = await PdftronFlutter.version;
     } on PlatformException {
       version = 'Failed to get platform version.';
     }
 
     // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
+    // message was in flight, you want to discard the reply rather than calling
     // setState to update our non-existent appearance.
     if (!mounted) return;
 
@@ -257,15 +290,14 @@ class _ViewerState extends State<Viewer> {
     // opening without a config file will have all functionality enabled.
     // await PdftronFlutter.openDocument(_document);
 
-    // shows how to disale functionality
-//      var disabledElements = [Buttons.shareButton, Buttons.searchButton];
-//      var disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
     var config = Config();
-//      config.disabledElements = disabledElements;
-//      config.disabledTools = disabledTools;
-//      config.multiTabEnabled = true;
-//      config.customHeaders = {'headerName': 'headerValue'};
+    // How to disable functionality:
+    //      config.disabledElements = [Buttons.shareButton, Buttons.searchButton];
+    //      config.disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
+    //      config.multiTabEnabled = true;
+    //      config.customHeaders = {'headerName': 'headerValue'};
 
+    // An event listener for document loading
     var documentLoadedCancel = startDocumentLoadedListener((filePath) {
       print("document loaded: $filePath");
     });
@@ -273,6 +305,7 @@ class _ViewerState extends State<Viewer> {
     await PdftronFlutter.openDocument(_document, config: config);
 
     try {
+      // The imported command is in XFDF format and tells whether to add, modify or delete annotations in the current document.
       PdftronFlutter.importAnnotationCommand(
           "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
               "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
@@ -288,17 +321,35 @@ class _ViewerState extends State<Viewer> {
     }
 
     try {
-      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
+      // Adds a bookmark into the document.
+      PdftronFlutter.importBookmarkJson('{"0":"Page 1"}');
     } on PlatformException catch (e) {
       print("Failed to importBookmarkJson '${e.message}'.");
     }
 
+    // An event listener for when local annotation changes are committed to the document.
+    // xfdfCommand is the XFDF Command of the annotation that was last changed.
     var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
-      // local annotation changed
-      // upload XFDF command to server here
-      print("flutter xfdfCommand: $xfdfCommand");
+      String command = xfdfCommand;
+      print("flutter xfdfCommand:\n");
+      // Dart limits how many characters are printed onto the console. 
+      // The code below ensures that all of the XFDF command is printed.
+      if (command.length > 1024) {
+        int start = 0;
+        int end = 1023;
+        while (end < command.length) {
+          print(command.substring(start, end) + "\n");
+          start += 1024;
+          end += 1024;
+        }
+        print(command.substring(start));
+      } else {
+        print("flutter xfdfCommand:\n $command");
+      }
     });
 
+    // An event listener for when local bookmark changes are committed to the document.
+    // bookmarkJson is JSON string containing all the bookmarks that exist when the change was made.
     var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
       print("flutter bookmark: $bookmarkJson");
     });
@@ -306,9 +357,10 @@ class _ViewerState extends State<Viewer> {
     var path = await PdftronFlutter.saveDocument();
     print("flutter save: $path");
 
-    // to cancel event:
+    // To cancel event:
     // annotCancel();
     // bookmarkCancel();
+    // documentLoadedCancel();
   }
 
   @override
@@ -318,7 +370,7 @@ class _ViewerState extends State<Viewer> {
         width: double.infinity,
         height: double.infinity,
         child:
-            // Uncomment this to use Widget version of the viewer
+            // Uncomment this to use Widget version of the viewer.
             // _showViewer
             // ? DocumentView(
             //     onCreated: _onDocumentViewCreated,
@@ -328,16 +380,18 @@ class _ViewerState extends State<Viewer> {
     );
   }
 
+  // This function is used to control the DocumentView widget after it has been created.
+  // The widget will not work without a void Function(DocumentViewController controller) being passed to it.
   void _onDocumentViewCreated(DocumentViewController controller) async {
     Config config = new Config();
 
     var leadingNavCancel = startLeadingNavButtonPressedListener(() {
-      // Uncomment this to quit the viewer when leading navigation button is pressed
+      // Uncomment this to quit the viewer when leading navigation button is pressed.
       // this.setState(() {
       //   _showViewer = !_showViewer;
       // });
 
-      // Show a dialog when leading navigation button is pressed
+      // Show a dialog when leading navigation button is pressed.
       _showMyDialog();
     });
 
@@ -348,7 +402,7 @@ class _ViewerState extends State<Viewer> {
     print('hello');
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: false, // User must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('AlertDialog'),

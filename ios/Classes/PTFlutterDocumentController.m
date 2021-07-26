@@ -149,6 +149,25 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     }
 }
 
+- (void)setUneditableAnnotTypes:(NSArray<NSString *> *)uneditableAnnotTypes
+{
+    [self setAnnotationEditingPermission:uneditableAnnotTypes toValue:NO];
+}
+
+- (void)setAnnotationEditingPermission:(NSArray *)stringsArray toValue:(BOOL)value
+{
+    PTToolManager *toolManager = self.toolManager;
+
+    for (NSObject *item in stringsArray) {
+        if ([item isKindOfClass:[NSString class]]) {
+            NSString *string = (NSString *)item;
+            PTExtendedAnnotType typeToSetPermission = [self convertAnnotationNameToAnnotType:string];
+
+            [toolManager annotationOptionsForAnnotType:typeToSetPermission].canEdit = value;
+        }
+    }
+}
+
 #pragma mark - <PTBookmarkViewControllerDelegate>
 
 - (void)bookmarkViewController:(PTBookmarkViewController *)bookmarkViewController didAddBookmark:(PTUserBookmark *)bookmark
@@ -332,6 +351,16 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     }
 
     return showMenu;
+}
+
+- (void)toolManager:(nonnull PTToolManager *)toolManager pageMovedFromPageNumber:(int)oldPageNumber toPageNumber:(int)newPageNumber
+{
+    NSDictionary *resultDict = @{
+        PTPreviousPageNumberKey: [NSNumber numberWithInt:oldPageNumber],
+        PTPageNumberKey: [NSNumber numberWithInt:newPageNumber],
+    };
+
+    [self.plugin documentController:self pageMoved:[PdftronFlutterPlugin PT_idToJSONString:resultDict]];
 }
 
 - (BOOL)filterMenuItemsForAnnotationSelectionMenu:(UIMenuController *)menuController forAnnotation:(PTAnnot *)annot

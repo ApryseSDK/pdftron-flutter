@@ -125,6 +125,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_OVERRIDE_BEHAVIOR = "overrideBehavior";
     public static final String KEY_CONFIG_TAB_TITLE = "tabTitle";
     public static final String KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR = "pageNumberIndicatorAlwaysVisible";
+    public static final String KEY_CONFIG_DISABLE_EDITING_BY_ANNOTATION_TYPE = "disableEditingByAnnotationType";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -178,6 +179,7 @@ public class PluginUtils {
     public static final String EVENT_LEADING_NAV_BUTTON_PRESSED = "leading_nav_button_pressed_event";
     public static final String EVENT_PAGE_CHANGED = "page_changed_event";
     public static final String EVENT_ZOOM_CHANGED = "zoom_changed_event";
+    public static final String EVENT_PAGE_MOVED = "page_moved_event";
 
     public static final String FUNCTION_GET_PLATFORM_VERSION = "getPlatformVersion";
     public static final String FUNCTION_GET_VERSION = "getVersion";
@@ -206,6 +208,7 @@ public class PluginUtils {
     public static final String FUNCTION_CLOSE_ALL_TABS = "closeAllTabs";
     public static final String FUNCTION_DELETE_ALL_ANNOTATIONS = "deleteAllAnnotations";
     public static final String FUNCTION_GET_PAGE_ROTATION = "getPageRotation";
+    public static final String FUNCTION_OPEN_ANNOTATION_LIST = "openAnnotationList";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -408,6 +411,10 @@ public class PluginUtils {
     public static final String TOOLBAR_KEY_NAME = "name";
     public static final String TOOLBAR_KEY_ICON = "icon";
     public static final String TOOLBAR_KEY_ITEMS = "items";
+
+    public static boolean isBookmarkListVisible = true;
+    public static boolean isOutlineListVisible = true;
+    public static boolean isAnnotationListVisible = true;
 
     public static class ConfigInfo {
         private int initialPageNumber;
@@ -816,6 +823,15 @@ public class PluginUtils {
                     String cacheDir = context.getCacheDir().getAbsolutePath();
                     configInfo.setOpenUrlPath(cacheDir);
                 }
+                if (!configJson.isNull(KEY_CONFIG_DISABLE_EDITING_BY_ANNOTATION_TYPE)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_DISABLE_EDITING_BY_ANNOTATION_TYPE);
+                    ArrayList<String> items = convertJSONArrayToArrayList(array);
+                    int[] annotTypes = new int[items.size()];
+                    for (int i = 0; i < items.size(); i++) {
+                        annotTypes[i] = convStringToAnnotType(items.get(i));
+                    }
+                    toolManagerBuilder.disableAnnotEditing(annotTypes);
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -964,6 +980,9 @@ public class PluginUtils {
                         .showAnnotationsList(false)
                         .showOutlineList(false)
                         .showUserBookmarksList(false);
+                isBookmarkListVisible = false;
+                isOutlineListVisible = false;
+                isAnnotationListVisible = false;
             } else if (BUTTON_THUMBNAIL_SLIDER.equals(item)) {
                 builder = builder.showBottomNavBar(false);
             } else if (BUTTON_SAVE_COPY.equals(item)) {
@@ -983,10 +1002,13 @@ public class PluginUtils {
                 builder = builder.showCloseTabOption(false);
             } else if (BUTTON_OUTLINE_LIST.equals(item)) {
                 builder = builder.showOutlineList(false);
+                isOutlineListVisible = false;
             } else if (BUTTON_ANNOTATION_LIST.equals(item)) {
                 builder = builder.showAnnotationsList(false);
+                isAnnotationListVisible = false;
             } else if (BUTTON_USER_BOOKMARK_LIST.equals(item)) {
                 builder = builder.showUserBookmarksList(false);
+                isBookmarkListVisible = false;
             } else if (BUTTON_EDIT_MENU.equals(item)) {
                 builder = builder.showEditMenuOption(false);
             } else if (BUTTON_CROP_PAGE.equals(item)) {
@@ -1676,6 +1698,11 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_OPEN_ANNOTATION_LIST: {
+                checkFunctionPrecondition(component);
+                openAnnotationList(component);
+                break;
+            }
             case FUNCTION_IMPORT_ANNOTATION_COMMAND: {
                 checkFunctionPrecondition(component);
                 String xfdfCommand = call.argument(KEY_XFDF_COMMAND);
@@ -2000,6 +2027,30 @@ public class PluginUtils {
 
         if (!Utils.isNullOrEmpty(annotationId)) {
             toolManager.selectAnnot(annotationId, annotationPageNumber);
+        }
+    }
+
+    private static void openAnnotationList(ViewerComponent component) {
+        if (isBookmarkListVisible) {
+            if (isOutlineListVisible) {
+                if (isAnnotationListVisible) {
+                    component.getPdfViewCtrlTabHostFragment().onOutlineOptionSelected(2);
+                }
+            } else {
+                if (isAnnotationListVisible) {
+                    component.getPdfViewCtrlTabHostFragment().onOutlineOptionSelected(1);
+                }
+            }
+        } else {
+            if (isOutlineListVisible) {
+                if (isAnnotationListVisible) {
+                    component.getPdfViewCtrlTabHostFragment().onOutlineOptionSelected(1);
+                }
+            } else {
+                if (isAnnotationListVisible) {
+                    component.getPdfViewCtrlTabHostFragment().onOutlineOptionSelected(0);
+                }
+            }
         }
     }
 
