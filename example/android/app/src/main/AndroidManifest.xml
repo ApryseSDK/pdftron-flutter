@@ -28,6 +28,14 @@
             android:name="pdftron_license_key"
             android:value="${pdftronLicenseKey}" />
 
+        <!-- Document viewer activity declaration-->
+        <activity
+            android:name="com.pdftron.pdftronflutter.FlutterDocumentActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize"
+            android:screenOrientation="portrait"
+            android:theme="@style/PDFTronAppTheme"
+            android:windowSoftInputMode="adjustPan" />
+
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density"
