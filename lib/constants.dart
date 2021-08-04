@@ -30,6 +30,7 @@ class Functions {
   static const closeAllTabs = "closeAllTabs";
   static const deleteAllAnnotations = "deleteAllAnnotations";
   static const openAnnotationList = "openAnnotationList";
+  static const setRequestedOrientation = "setRequestedOrientation";
 }
 
 // Parameters define the parameters of the functions
@@ -53,6 +54,7 @@ class Parameters {
   static const annotationsWithFlags = "annotationsWithFlags";
   static const annotationProperties = "annotationProperties";
   static const leadingNavButtonIcon = "leadingNavButtonIcon";
+  static const requestedOrientation = "requestedOrientation";
 }
 
 // Parameters define the parameters of the events
