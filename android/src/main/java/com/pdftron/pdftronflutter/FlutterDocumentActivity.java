@@ -146,7 +146,9 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     }
 
     public static void setOrientation(int requestedOrientation) {
-        getCurrentActivity().setRequestedOrientation(requestedOrientation);
+        if (getCurrentActivity() != null) {
+            getCurrentActivity().setRequestedOrientation(requestedOrientation);
+        }
     }
 
     public int getInitialPageNumber() {
