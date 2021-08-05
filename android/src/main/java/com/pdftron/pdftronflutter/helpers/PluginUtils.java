@@ -83,6 +83,7 @@ public class PluginUtils {
     public static final String KEY_ANNOTATIONS_WITH_FLAGS = "annotationsWithFlags";
     public static final String KEY_ANNOTATION_PROPERTIES = "annotationProperties";
     public static final String KEY_LEADING_NAV_BUTTON_ICON = "leadingNavButtonIcon";
+    public static final String KEY_REQUESTED_ORIENTATION = "requestedOrientation";
 
     public static final String KEY_CONFIG_DISABLED_ELEMENTS = "disabledElements";
     public static final String KEY_CONFIG_DISABLED_TOOLS = "disabledTools";
@@ -209,6 +210,7 @@ public class PluginUtils {
     public static final String FUNCTION_DELETE_ALL_ANNOTATIONS = "deleteAllAnnotations";
     public static final String FUNCTION_GET_PAGE_ROTATION = "getPageRotation";
     public static final String FUNCTION_OPEN_ANNOTATION_LIST = "openAnnotationList";
+    public static final String FUNCTION_SET_REQUESTED_ORIENTATION = "setRequestedOrientation";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";

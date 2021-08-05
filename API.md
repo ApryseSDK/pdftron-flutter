@@ -45,6 +45,23 @@ Returns a Future.
 PdftronFlutter.initialize('your_license_key');
 ```
 
+### setRequestedOrientation
+
+Changes the orientation of this activity. Android only. 
+
+For more information on the native API and orientation constants, see the [Android API reference](https://developer.android.com/reference/android/app/Activity#setRequestedOrientation(int)).
+
+Parameters:
+
+Name | Type | Required | Description
+--- | --- | --- | ---
+requestedOrientation | int | true | An orientation constant.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.setRequestedOrientation(0);
+```
 
 ## Viewer Functions
 This section is for viewer related non-static methods. They would be callable in both plugin and widget versions. For example, [`openDocument`](#openDocument) is accessible in 2 ways:
