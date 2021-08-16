@@ -288,8 +288,8 @@ class ToolbarIcons {
   static const favorite = "PDFTron_Favorite";
 }
 
-// Orientations define the screen orientations for the viewer. Android only.
-class Orientations {
+// PTOrientation defines the screen orientations for the viewer. Android only.
+class PTOrientation {
   static const unspecified = -1;
   static const landscape = 0;
   static const portrait = 1;

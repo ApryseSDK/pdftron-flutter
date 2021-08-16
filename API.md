@@ -55,7 +55,7 @@ Parameters:
 
 Name | Type | Required | Description
 --- | --- | --- | ---
-requestedOrientation | int | true | An [Orientations](./lib/constants.dart) constant.
+requestedOrientation | int | true | A [PTOrientation](./lib/constants.dart) constant.
 
 Returns a Future.
 
