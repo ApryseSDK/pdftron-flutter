@@ -287,3 +287,23 @@ class ToolbarIcons {
   static const redaction = "PDFTron_Redact";
   static const favorite = "PDFTron_Favorite";
 }
+
+// Orientations define the screen orientations for the viewer. Android only.
+class Orientations {
+  static const unspecified = -1;
+  static const landscape = 0;
+  static const portrait = 1;
+  static const user = 2; 
+  static const behind = 3;
+  static const sensor = 4;
+  static const nosensor = 5;
+  static const sensorLandscape = 6;
+  static const sensorPortrait = 7;
+  static const reverseLandscape = 8;
+  static const reversePortrait = 9;
+  static const fullSensor = 10;
+  static const userLandscape = 11;
+  static const userPortrait = 12;
+  static const fullUser = 13;
+  static const locked = 14;
+}
