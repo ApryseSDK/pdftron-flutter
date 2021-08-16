@@ -49,13 +49,13 @@ PdftronFlutter.initialize('your_license_key');
 
 Changes the orientation of this activity. Android only. 
 
-For more information on the native API and orientation constants, see the [Android API reference](https://developer.android.com/reference/android/app/Activity#setRequestedOrientation(int)).
+For more information on the native API, see the [Android API reference](https://developer.android.com/reference/android/app/Activity#setRequestedOrientation(int)).
 
 Parameters:
 
 Name | Type | Required | Description
 --- | --- | --- | ---
-requestedOrientation | int | true | An orientation constant.
+requestedOrientation | int | true | A [PTOrientation](./lib/constants.dart) constant.
 
 Returns a Future.
 

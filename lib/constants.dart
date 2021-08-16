@@ -287,3 +287,12 @@ class ToolbarIcons {
   static const redaction = "PDFTron_Redact";
   static const favorite = "PDFTron_Favorite";
 }
+
+// PTOrientation defines the screen orientations for the viewer. Android only.
+class PTOrientation {
+  static const unspecified = -1;
+  static const landscape = 0;
+  static const portrait = 1;
+  static const reverseLandscape = 8;
+  static const reversePortrait = 9;
+}
