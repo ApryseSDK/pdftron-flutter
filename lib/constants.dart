@@ -293,6 +293,10 @@ class PTOrientation {
   static const unspecified = -1;
   static const landscape = 0;
   static const portrait = 1;
+  static const sensorLandscape = 6;
+  static const sensorPortrait = 7;
   static const reverseLandscape = 8;
   static const reversePortrait = 9;
+  static const userLandscape = 11; // Only changes direction if user has enabled sensor-based rotation.
+  static const userPortrait = 12; // Only changes direction if user has enabled sensor-based rotation.
 }
