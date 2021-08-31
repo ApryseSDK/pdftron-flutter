@@ -300,3 +300,10 @@ class PTOrientation {
   static const userLandscape = 11; // Only changes direction if user has enabled sensor-based rotation.
   static const userPortrait = 12; // Only changes direction if user has enabled sensor-based rotation.
 }
+
+// ViewModePickerItem defines the items in the view mode dialog.
+class ViewModePickerItem {
+  static const Crop = "viewModeCrop";
+  static const Rotation = "viewModeRotation";
+  static const ColorMode = "viewModeColorMode";
+}
