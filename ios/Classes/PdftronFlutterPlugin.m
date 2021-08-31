@@ -543,6 +543,15 @@
                         [documentController setUneditableAnnotTypes:uneditableAnnotTypes];
                     }
                 }
+                else if ([key isEqualToString:PTHideViewModeItemsKey])
+                {
+                    
+                    NSArray* viewModeItems = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideViewModeItemsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && viewModeItems) {
+                        [documentController hideViewModeItems:viewModeItems];
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);

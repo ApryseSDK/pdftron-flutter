@@ -72,6 +72,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)shouldSetNavigationBarHidden:(BOOL)navigationBarHidden animated:(BOOL)animated;
 - (BOOL)shouldSetToolbarHidden:(BOOL)toolbarHidden animated:(BOOL)animated;
 
+- (void)hideViewModeItems:(NSArray<NSString *> *)viewModeItems;
+
 @end
 
 @interface FLThumbnailsViewController : PTThumbnailsViewController
