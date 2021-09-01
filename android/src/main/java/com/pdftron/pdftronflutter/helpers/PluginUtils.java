@@ -127,6 +127,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_TAB_TITLE = "tabTitle";
     public static final String KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR = "pageNumberIndicatorAlwaysVisible";
     public static final String KEY_CONFIG_DISABLE_EDITING_BY_ANNOTATION_TYPE = "disableEditingByAnnotationType";
+    public static final String KEY_CONFIG_HIDE_VIEW_MODE_ITEMS = "hideViewModeItems";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -414,6 +415,12 @@ public class PluginUtils {
     public static final String TOOLBAR_KEY_ICON = "icon";
     public static final String TOOLBAR_KEY_ITEMS = "items";
 
+    // View Mode
+    public static final String VIEW_MODE_CROP = "viewModeCrop";
+    public static final String VIEW_MODE_ROTATION = "viewModeRotation";
+    public static final String VIEW_MODE_COLOR_MODE = "viewModeColorMode";
+
+    // Navigation List visibility
     public static boolean isBookmarkListVisible = true;
     public static boolean isOutlineListVisible = true;
     public static boolean isAnnotationListVisible = true;
@@ -619,6 +626,7 @@ public class PluginUtils {
 
         toolManagerBuilder.setOpenToolbar(true);
         ArrayList<ToolManager.ToolMode> disabledTools = new ArrayList<>();
+        ArrayList<ViewModePickerDialogFragment.ViewModePickerItems> viewModePickerItems = new ArrayList<>();
 
         boolean isBase64 = false;
         String base64FileExtension = null;
@@ -834,6 +842,20 @@ public class PluginUtils {
                     }
                     toolManagerBuilder.disableAnnotEditing(annotTypes);
                 }
+                if (!configJson.isNull(KEY_CONFIG_HIDE_VIEW_MODE_ITEMS)) {
+                   JSONArray array = configJson.getJSONArray(KEY_CONFIG_HIDE_VIEW_MODE_ITEMS);
+                   for (int i = 0; i < array.length(); i++) {
+                       if (VIEW_MODE_COLOR_MODE.equals(array.getString(i))) {
+                            viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_COLORMODE);
+                       }
+                       if (VIEW_MODE_CROP.equals(array.getString(i))) {
+                            viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_USERCROP);
+                       }
+                       if (VIEW_MODE_ROTATION.equals(array.getString(i))) {
+                           viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_ROTATION);
+                       }
+                   }
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -852,10 +874,9 @@ public class PluginUtils {
                 }
             }
 
-//        TODO: ViewModePickerItems
-//        if (mViewModePickerItems.size() > 0) {
-//            builder = builder.hideViewModeItems(mViewModePickerItems.toArray(new ViewModePickerDialogFragment.ViewModePickerItems[0]));
-//        }
+            if (viewModePickerItems.size() > 0) {
+                builder = builder.hideViewModeItems(viewModePickerItems.toArray(new ViewModePickerDialogFragment.ViewModePickerItems[0]));
+            }
 
             if (isBase64 && fileUri.getPath() != null) {
                 File tempFile = new File(fileUri.getPath());

@@ -744,6 +744,16 @@ var fieldChangedCancel = startFormFieldValueChangedListener((fields)
 });
 ```
 
+### View Mode Dialog
+#### hideViewModeItems
+array of [`ViewModePickerItem`](./lib/constants.dart) constants, optional, defaults to none.
+
+Defines view mode items to be hidden in the view mode dialog.
+
+```dart
+config.hideViewModeItems=[ViewModePickerItem.ColorMode, ViewModePickerItem.Crop];
+```
+
 ### Annotation Menu
 
 #### startAnnotationMenuPressedListener

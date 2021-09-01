@@ -45,6 +45,7 @@ static NSString * const PTAnnotationPermissionCheckEnabledKey = @"annotationPerm
 static NSString * const PTOverrideBehaviorKey = @"overrideBehavior";
 static NSString * const PTTabTitleKey = @"tabTitle";
 static NSString * const PTDisableEditingByAnnotationTypeKey = @"disableEditingByAnnotationType";
+static NSString * const PTHideViewModeItemsKey = @"hideViewModeItems";
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";
@@ -305,6 +306,10 @@ static NSString * const PTAnnotationFlagToggleNoViewKey = @"toggleNoView";
 
 static NSString * const PTAnnotatedFilterModeKey = @"annotated";
 static NSString * const PTBookmarkedFilterModeKey = @"bookmarked";
+
+static NSString * const PTViewModeCropKey = @"viewModeCrop";
+static NSString * const PTViewModeRotationKey = @"viewModeRotation";
+static NSString * const PTViewModeColorModeKey = @"viewModeColorMode";
 
 // Default annotation toolbar names.
 typedef NSString * PTDefaultAnnotationToolbarKey;
