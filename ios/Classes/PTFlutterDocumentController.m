@@ -170,10 +170,10 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 
 - (void)hideViewModeItems:(NSArray<NSString *> *)viewModeItems
 {
-    [self setViewModeItemVisibility:viewModeItems toValue:YES];
+    [self setViewModeItemVisibility:viewModeItems hidden:YES];
 }
 
-- (void)setViewModeItemVisibility:(NSArray *)stringsArray toValue:(BOOL)value
+- (void)setViewModeItemVisibility:(NSArray *)stringsArray hidden:(BOOL)value
 {
     for (NSString * viewModeItemString in stringsArray) {
         if ([viewModeItemString isEqualToString:PTViewModeColorModeKey]) {
