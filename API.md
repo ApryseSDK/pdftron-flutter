@@ -750,7 +750,7 @@ array of [`ViewModePickerItem`](./lib/constants.dart) constants, optional, defau
 
 Defines view mode items to be hidden in the view mode dialog.
 
-```js
+```dart
 config.hideViewModeItems=[ViewModePickerItem.ColorMode, ViewModePickerItem.Crop];
 ```
 
