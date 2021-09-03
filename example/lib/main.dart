@@ -87,6 +87,7 @@ class _ViewerState extends State<Viewer> {
     //      config.disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
     //      config.multiTabEnabled = true;
     //      config.customHeaders = {'headerName': 'headerValue'};
+    config.defaultEraserType = DefaultEraserType.hybrideEraser;
 
     // An event listener for document loading
     var documentLoadedCancel = startDocumentLoadedListener((filePath) {

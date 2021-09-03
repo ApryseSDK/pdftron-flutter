@@ -29,6 +29,7 @@ import com.pdftron.pdf.dialog.ViewModePickerDialogFragment;
 import com.pdftron.pdf.model.AnnotStyle;
 import com.pdftron.pdf.tools.AdvancedShapeCreate;
 import com.pdftron.pdf.tools.AnnotEditRectGroup;
+import com.pdftron.pdf.tools.Eraser;
 import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.Tool;
@@ -128,6 +129,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR = "pageNumberIndicatorAlwaysVisible";
     public static final String KEY_CONFIG_DISABLE_EDITING_BY_ANNOTATION_TYPE = "disableEditingByAnnotationType";
     public static final String KEY_CONFIG_HIDE_VIEW_MODE_ITEMS = "hideViewModeItems";
+    public static final String KEY_CONFIG_DEFAULT_ERASER_TYPE = "defaultEraserType";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -419,6 +421,11 @@ public class PluginUtils {
     public static final String VIEW_MODE_CROP = "viewModeCrop";
     public static final String VIEW_MODE_ROTATION = "viewModeRotation";
     public static final String VIEW_MODE_COLOR_MODE = "viewModeColorMode";
+
+    // Default Eraser Type
+    public static final String DEFAULT_ERASER_TYPE_ANNOTATION = "annotationEraser";
+    public static final String DEFAULT_ERASER_TYPE_HYBRID = "hybrideEraser";
+    public static final String DEFAULT_ERASER_TYPE_INK = "inkEraser";
 
     // Navigation List visibility
     public static boolean isBookmarkListVisible = true;
@@ -855,6 +862,16 @@ public class PluginUtils {
                            viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_ROTATION);
                        }
                    }
+                }
+                if (!configJson.isNull(KEY_CONFIG_DEFAULT_ERASER_TYPE)) {
+                    String eraserType = configJson.getString(KEY_CONFIG_DEFAULT_ERASER_TYPE);
+                    if (DEFAULT_ERASER_TYPE_ANNOTATION.equals(eraserType)) {
+                        toolManagerBuilder = toolManagerBuilder.setEraserType(Eraser.EraserType.ANNOTATION_ERASER);
+                    } else if (DEFAULT_ERASER_TYPE_HYBRID.equals(eraserType)) {
+                        toolManagerBuilder = toolManagerBuilder.setEraserType(Eraser.EraserType.HYBRID_ERASER);
+                    } else if (DEFAULT_ERASER_TYPE_INK.equals(eraserType)) {
+                        toolManagerBuilder = toolManagerBuilder.setEraserType(Eraser.EraserType.INK_ERASER);
+                    }
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
