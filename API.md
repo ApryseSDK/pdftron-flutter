@@ -872,6 +872,15 @@ Defines whether the viewer is read-only. If true, the UI will not allow the user
 config.readOnly = true;
 ```
 
+#### defaultEraserType
+one of the [`DefaultEraserType`](./lib/constants.dart) constants, optional
+
+Sets the default eraser tool type. Value only applied after a clean install. Android only.
+
+```dart
+config.defaultEraserType = DefaultEraserType.inkEraser;
+```
+
 #### isBase64String
 bool, defaults to false.
 

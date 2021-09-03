@@ -307,3 +307,9 @@ class ViewModePickerItem {
   static const Rotation = "viewModeRotation";
   static const ColorMode = "viewModeColorMode";
 }
+
+class DefaultEraserType {
+  static const annotationEraser = "annotationEraser";
+  static const hybrideEraser = "hybrideEraser";
+  static const inkEraser = "inkEraser";
+}
