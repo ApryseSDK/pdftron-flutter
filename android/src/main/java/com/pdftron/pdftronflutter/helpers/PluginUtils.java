@@ -867,11 +867,9 @@ public class PluginUtils {
                     String eraserType = configJson.getString(KEY_CONFIG_DEFAULT_ERASER_TYPE);
                     if (DEFAULT_ERASER_TYPE_ANNOTATION.equals(eraserType)) {
                         toolManagerBuilder = toolManagerBuilder.setEraserType(Eraser.EraserType.ANNOTATION_ERASER);
-                    }
-                    if (DEFAULT_ERASER_TYPE_HYBRID.equals(eraserType)) {
+                    } else if (DEFAULT_ERASER_TYPE_HYBRID.equals(eraserType)) {
                         toolManagerBuilder = toolManagerBuilder.setEraserType(Eraser.EraserType.HYBRID_ERASER);
-                    }
-                    if (DEFAULT_ERASER_TYPE_INK.equals(eraserType)) {
+                    } else if (DEFAULT_ERASER_TYPE_INK.equals(eraserType)) {
                         toolManagerBuilder = toolManagerBuilder.setEraserType(Eraser.EraserType.INK_ERASER);
                     }
                 }
