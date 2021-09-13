@@ -31,6 +31,10 @@ class Functions {
   static const deleteAllAnnotations = "deleteAllAnnotations";
   static const openAnnotationList = "openAnnotationList";
   static const setRequestedOrientation = "setRequestedOrientation";
+  static const gotoPreviousPage = "gotoPreviousPage";
+  static const gotoNextPage = "gotoNextPage";
+  static const gotoFirstPage = "gotoFirstPage";
+  static const gotoLastPage = "gotoLastPage";
 }
 
 // Parameters define the parameters of the functions
