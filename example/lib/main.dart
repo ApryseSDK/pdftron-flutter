@@ -34,7 +34,7 @@ class _ViewerState extends State<Viewer> {
     super.initState();
     initPlatformState();
 
-    // showViewer();
+    showViewer();
 
     // If you are using local files delete the line above, change the _document field
     // appropriately and uncomment the section below.
@@ -87,6 +87,7 @@ class _ViewerState extends State<Viewer> {
     //      config.disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
     //      config.multiTabEnabled = true;
     //      config.customHeaders = {'headerName': 'headerValue'};
+    config.defaultEraserType = DefaultEraserType.hybrideEraser;
 
     // An event listener for document loading
     var documentLoadedCancel = startDocumentLoadedListener((filePath) {
@@ -162,10 +163,10 @@ class _ViewerState extends State<Viewer> {
         height: double.infinity,
         child:
             // Uncomment this to use Widget version of the viewer.
-            _showViewer
-            ? DocumentView(
-                onCreated: _onDocumentViewCreated,
-              ):
+            // _showViewer
+            // ? DocumentView(
+            //     onCreated: _onDocumentViewCreated,
+            //   ):
             Container(),
       ),
     );
