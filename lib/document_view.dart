@@ -180,4 +180,20 @@ class DocumentViewController {
   Future<void> openAnnotationList() {
     return _channel.invokeMethod(Functions.openAnnotationList);
   }
+
+  Future<bool> gotoPreviousPage() {
+    return _channel.invokeMethod(Functions.gotoPreviousPage);
+  }
+
+  Future<bool> gotoNextPage() {
+    return _channel.invokeMethod(Functions.gotoNextPage);
+  }
+
+  Future<bool> gotoFirstPage() {
+    return _channel.invokeMethod(Functions.gotoFirstPage);
+  }
+
+  Future<bool> gotoLastPage() {
+    return _channel.invokeMethod(Functions.gotoLastPage);
+  }
 }
