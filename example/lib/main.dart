@@ -146,6 +146,21 @@ class _ViewerState extends State<Viewer> {
       print("flutter bookmark: $bookmarkJson");
     });
 
+    var annotationsSelectedCancel = startAnnotationsSelectedListener((annotations) {
+      // Uncomment this to quit the viewer when leading navigation button is pressed.
+      // this.setState(() {
+      //   _showViewer = !_showViewer;
+      // });
+
+      // Show a dialog when leading navigation button is pressed.
+      //_showMyDialog();
+      //PdftronFlutter.gotoPreviousPage();
+      //PdftronFlutter.gotoNextPage();
+      //PdftronFlutter.gotoFirstPage();
+      PdftronFlutter.gotoLastPage();
+      
+    });
+
     var path = await PdftronFlutter.saveDocument();
     print("flutter save: $path");
 
@@ -177,14 +192,19 @@ class _ViewerState extends State<Viewer> {
   void _onDocumentViewCreated(DocumentViewController controller) async {
     Config config = new Config();
 
-    var leadingNavCancel = startLeadingNavButtonPressedListener(() {
+    var annotationsSelectedCancel = startAnnotationsSelectedListener((annotations) {
       // Uncomment this to quit the viewer when leading navigation button is pressed.
       // this.setState(() {
       //   _showViewer = !_showViewer;
       // });
 
       // Show a dialog when leading navigation button is pressed.
-      _showMyDialog();
+      //_showMyDialog();
+      controller.gotoPreviousPage();
+      //controller.gotoNextPage();
+      //controller.gotoFirstPage();
+      //controller.gotoLastPage();
+      
     });
 
     controller.openDocument(_document, config: config);

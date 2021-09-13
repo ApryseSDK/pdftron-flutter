@@ -1180,6 +1180,15 @@
     } else if ([call.method isEqualToString:PTSetCurrentPageKey]) {
         NSNumber* pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self setCurrentPage:pageNumber resultToken:result];
+    } else if ([call.method isEqualToString:PTGotoPreviousPageKey]) {
+        [self gotoPreviousPage:result];
+    } else if ([call.method isEqualToString:PTGotoNextPageKey]) {
+        [self gotoNextPage:result];
+    } else if ([call.method isEqualToString:PTGotoFirstPageKey]) {
+        [self gotoFirstPage:result];
+    } else if ([call.method isEqualToString:PTGotoLastPageKey]) {
+        [self gotoLastPage:result];
+
     } else if ([call.method isEqualToString:PTGetDocumentPathKey]) {
         [self getDocumentPath:result];
     } else if ([call.method isEqualToString:PTSetToolModeKey]) {
@@ -2096,6 +2105,26 @@
 - (void)setCurrentPage:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult {
     PTDocumentController *documentController = [self getDocumentController];
     flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl SetCurrentPage:[pageNumber intValue]]]);
+}
+
+- (void)gotoPreviousPage:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl GotoPreviousPage]]);
+}
+
+- (void)gotoNextPage:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl GotoNextPage]]);
+}
+
+- (void)gotoFirstPage:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl GotoFirstPage]]);
+}
+
+- (void)gotoLastPage:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl GotoLastPage]]);
 }
 
 - (void)getDocumentPath:(FlutterResult)flutterResult {
