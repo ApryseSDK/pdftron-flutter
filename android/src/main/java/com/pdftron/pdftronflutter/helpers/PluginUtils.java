@@ -214,6 +214,10 @@ public class PluginUtils {
     public static final String FUNCTION_GET_PAGE_ROTATION = "getPageRotation";
     public static final String FUNCTION_OPEN_ANNOTATION_LIST = "openAnnotationList";
     public static final String FUNCTION_SET_REQUESTED_ORIENTATION = "setRequestedOrientation";
+    public static final String FUNCTION_GO_TO_PREVIOUS_PAGE = "gotoPreviousPage";
+    public static final String FUNCTION_GO_TO_NEXT_PAGE = "gotoNextPage";
+    public static final String FUNCTION_GO_TO_FIRST_PAGE = "gotoFirstPage";
+    public static final String FUNCTION_GO_TO_LAST_PAGE = "gotoLastPage";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -1874,6 +1878,26 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_GO_TO_PREVIOUS_PAGE: {
+                checkFunctionPrecondition(component);
+                gotoPreviousPage(result, component);
+                break;
+            }
+            case FUNCTION_GO_TO_NEXT_PAGE: {
+                checkFunctionPrecondition(component);
+                gotoNextPage(result, component);
+                break;
+            }
+            case FUNCTION_GO_TO_FIRST_PAGE: {
+                checkFunctionPrecondition(component);
+                gotoFirstPage(result, component);
+                break;
+            }
+            case FUNCTION_GO_TO_LAST_PAGE: {
+                checkFunctionPrecondition(component);
+                gotoLastPage(result, component);
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -2614,6 +2638,46 @@ public class PluginUtils {
             }
         }
         result.success(pageRotation);
+    }
+
+    private static void gotoPreviousPage(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        boolean pageChanged = pdfViewCtrl.gotoPreviousPage();
+        result.success(pageChanged);
+    }
+
+    private static void gotoNextPage(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        boolean pageChanged = pdfViewCtrl.gotoNextPage();
+        result.success(pageChanged);
+    }
+
+    private static void gotoFirstPage(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        boolean pageChanged = pdfViewCtrl.gotoFirstPage();
+        result.success(pageChanged);
+    }
+
+    private static void gotoLastPage(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        boolean pageChanged = pdfViewCtrl.gotoLastPage();
+        result.success(pageChanged);
     }
 
     // Events

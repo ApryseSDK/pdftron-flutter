@@ -87,7 +87,6 @@ class _ViewerState extends State<Viewer> {
     //      config.disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
     //      config.multiTabEnabled = true;
     //      config.customHeaders = {'headerName': 'headerValue'};
-    config.defaultEraserType = DefaultEraserType.hybrideEraser;
 
     // An event listener for document loading
     var documentLoadedCancel = startDocumentLoadedListener((filePath) {
@@ -144,21 +143,6 @@ class _ViewerState extends State<Viewer> {
     // bookmarkJson is JSON string containing all the bookmarks that exist when the change was made.
     var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
       print("flutter bookmark: $bookmarkJson");
-    });
-
-    var annotationsSelectedCancel = startAnnotationsSelectedListener((annotations) {
-      // Uncomment this to quit the viewer when leading navigation button is pressed.
-      // this.setState(() {
-      //   _showViewer = !_showViewer;
-      // });
-
-      // Show a dialog when leading navigation button is pressed.
-      //_showMyDialog();
-      //PdftronFlutter.gotoPreviousPage();
-      //PdftronFlutter.gotoNextPage();
-      //PdftronFlutter.gotoFirstPage();
-      PdftronFlutter.gotoLastPage();
-      
     });
 
     var path = await PdftronFlutter.saveDocument();
