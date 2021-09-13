@@ -34,7 +34,7 @@ class _ViewerState extends State<Viewer> {
     super.initState();
     initPlatformState();
 
-    showViewer();
+    // showViewer();
 
     // If you are using local files delete the line above, change the _document field
     // appropriately and uncomment the section below.
@@ -162,10 +162,10 @@ class _ViewerState extends State<Viewer> {
         height: double.infinity,
         child:
             // Uncomment this to use Widget version of the viewer.
-            // _showViewer
-            // ? DocumentView(
-            //     onCreated: _onDocumentViewCreated,
-            //   ):
+            _showViewer
+            ? DocumentView(
+                onCreated: _onDocumentViewCreated,
+              ):
             Container(),
       ),
     );
@@ -176,19 +176,14 @@ class _ViewerState extends State<Viewer> {
   void _onDocumentViewCreated(DocumentViewController controller) async {
     Config config = new Config();
 
-    var annotationsSelectedCancel = startAnnotationsSelectedListener((annotations) {
+    var leadingNavCancel = startLeadingNavButtonPressedListener(() {
       // Uncomment this to quit the viewer when leading navigation button is pressed.
       // this.setState(() {
       //   _showViewer = !_showViewer;
       // });
 
       // Show a dialog when leading navigation button is pressed.
-      //_showMyDialog();
-      controller.gotoPreviousPage();
-      //controller.gotoNextPage();
-      //controller.gotoFirstPage();
-      //controller.gotoLastPage();
-      
+      _showMyDialog();
     });
 
     controller.openDocument(_document, config: config);
