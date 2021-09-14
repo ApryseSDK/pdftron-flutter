@@ -45,6 +45,23 @@ Returns a Future.
 PdftronFlutter.initialize('your_license_key');
 ```
 
+### setRequestedOrientation
+
+Changes the orientation of this activity. Android only. 
+
+For more information on the native API, see the [Android API reference](https://developer.android.com/reference/android/app/Activity#setRequestedOrientation(int)).
+
+Parameters:
+
+Name | Type | Required | Description
+--- | --- | --- | ---
+requestedOrientation | int | true | A [PTOrientation](./lib/constants.dart) constant.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.setRequestedOrientation(0);
+```
 
 ## Viewer Functions
 This section is for viewer related non-static methods. They would be callable in both plugin and widget versions. For example, [`openDocument`](#openDocument) is accessible in 2 ways:
@@ -131,6 +148,15 @@ path | String? | the document path
 
 ```dart
 var path = await PdftronFlutter.getDocumentPath();
+```
+
+#### openAnnotationList
+Displays the annotation tab of the existing list container. If this tab has been disabled, the method does nothing.
+
+Returns a Future that resolves when the view has loaded.
+
+```dart
+await PdftronFlutter.openAnnotationList();
 ```
 
 ### Viewer UI Configuration
@@ -718,6 +744,16 @@ var fieldChangedCancel = startFormFieldValueChangedListener((fields)
 });
 ```
 
+### View Mode Dialog
+#### hideViewModeItems
+array of [`ViewModePickerItem`](./lib/constants.dart) constants, optional, defaults to none.
+
+Defines view mode items to be hidden in the view mode dialog.
+
+```dart
+config.hideViewModeItems=[ViewModePickerItem.ColorMode, ViewModePickerItem.Crop];
+```
+
 ### Annotation Menu
 
 #### startAnnotationMenuPressedListener
@@ -834,6 +870,15 @@ Defines whether the viewer is read-only. If true, the UI will not allow the user
 
 ```dart
 config.readOnly = true;
+```
+
+#### defaultEraserType
+one of the [`DefaultEraserType`](./lib/constants.dart) constants, optional
+
+Sets the default eraser tool type. Value only applied after a clean install. Android only.
+
+```dart
+config.defaultEraserType = DefaultEraserType.inkEraser;
 ```
 
 #### isBase64String

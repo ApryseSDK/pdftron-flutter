@@ -48,6 +48,8 @@ class Config {
   var _tabTitle;
   var _pageNumberIndicatorAlwaysVisible;
   var _disableEditingByAnnotationType;
+  var _hideViewModeItems;
+  var _defaultEraserType;
 
   Config();
 
@@ -284,6 +286,10 @@ class Config {
 
   set disableEditingByAnnotationType(List value) => _disableEditingByAnnotationType = value;
 
+  set hideViewModeItems(List value) => _hideViewModeItems = value;
+
+  set defaultEraserType(String value) => _defaultEraserType = value;
+
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
         _disabledTools = json['disabledTools'],
@@ -329,7 +335,10 @@ class Config {
         _tabTitle = json['tabTitle'],
         _pageNumberIndicatorAlwaysVisible =
             json['pageNumberIndicatorAlwaysVisible'],
-        _disableEditingByAnnotationType = json['disableEditingByAnnotationType'];
+        _disableEditingByAnnotationType = 
+            json['disableEditingByAnnotationType'],
+        _hideViewModeItems = json['hideViewModeItems'],
+        _defaultEraserType = json['defaultEraserType'];
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -374,5 +383,7 @@ class Config {
         'tabTitle': _tabTitle,
         'pageNumberIndicatorAlwaysVisible': _pageNumberIndicatorAlwaysVisible,
         'disableEditingByAnnotationType': _disableEditingByAnnotationType,
+        'hideViewModeItems': _hideViewModeItems,
+        'defaultEraserType' : _defaultEraserType,
       };
 }

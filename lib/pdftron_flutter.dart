@@ -240,4 +240,14 @@ class PdftronFlutter {
   static Future<void> deleteAllAnnotations() {
     return _channel.invokeMethod(Functions.deleteAllAnnotations);
   }
+
+  static Future<void> openAnnotationList() {
+    return _channel.invokeMethod(Functions.openAnnotationList);
+  }
+
+  // Android only.
+  static Future<void> setRequestedOrientation(int requestedOrientation) {
+    return _channel.invokeMethod(Functions.setRequestedOrientation,
+        <String, dynamic>{Parameters.requestedOrientation: requestedOrientation});
+  }
 }

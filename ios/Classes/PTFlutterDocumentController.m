@@ -168,6 +168,26 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     }
 }
 
+- (void)hideViewModeItems:(NSArray<NSString *> *)viewModeItems
+{
+    [self setViewModeItemVisibility:viewModeItems hidden:YES];
+}
+
+- (void)setViewModeItemVisibility:(NSArray *)stringsArray hidden:(BOOL)value
+{
+    for (NSString * viewModeItemString in stringsArray) {
+        if ([viewModeItemString isEqualToString:PTViewModeColorModeKey]) {
+            self.settingsViewController.colorModeLightHidden = value;
+            self.settingsViewController.colorModeDarkHidden = value;
+            self.settingsViewController.colorModeSepiaHidden = value;
+        } else if ([viewModeItemString isEqualToString:PTViewModeRotationKey]) {
+            self.settingsViewController.pageRotationHidden = value;
+        } else if ([viewModeItemString isEqualToString:PTViewModeCropKey]) {
+            self.settingsViewController.cropPagesHidden = value;
+        }
+    }
+}
+
 #pragma mark - <PTBookmarkViewControllerDelegate>
 
 - (void)bookmarkViewController:(PTBookmarkViewController *)bookmarkViewController didAddBookmark:(PTUserBookmark *)bookmark

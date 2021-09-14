@@ -29,6 +29,8 @@ class Functions {
   static const setLeadingNavButtonIcon = "setLeadingNavButtonIcon";
   static const closeAllTabs = "closeAllTabs";
   static const deleteAllAnnotations = "deleteAllAnnotations";
+  static const openAnnotationList = "openAnnotationList";
+  static const setRequestedOrientation = "setRequestedOrientation";
 }
 
 /// Defines the parameters of the functions.
@@ -52,6 +54,7 @@ class Parameters {
   static const annotationsWithFlags = "annotationsWithFlags";
   static const annotationProperties = "annotationProperties";
   static const leadingNavButtonIcon = "leadingNavButtonIcon";
+  static const requestedOrientation = "requestedOrientation";
 }
 
 /// Defines the parameters of the events.
@@ -294,4 +297,30 @@ class ToolbarIcons {
   static const pens = "PDFTron_Pens";
   static const redaction = "PDFTron_Redact";
   static const favorite = "PDFTron_Favorite";
+}
+
+// PTOrientation defines the screen orientations for the viewer. Android only.
+class PTOrientation {
+  static const unspecified = -1;
+  static const landscape = 0;
+  static const portrait = 1;
+  static const sensorLandscape = 6;
+  static const sensorPortrait = 7;
+  static const reverseLandscape = 8;
+  static const reversePortrait = 9;
+  static const userLandscape = 11; // Only changes direction if user has enabled sensor-based rotation.
+  static const userPortrait = 12; // Only changes direction if user has enabled sensor-based rotation.
+}
+
+// ViewModePickerItem defines the items in the view mode dialog.
+class ViewModePickerItem {
+  static const Crop = "viewModeCrop";
+  static const Rotation = "viewModeRotation";
+  static const ColorMode = "viewModeColorMode";
+}
+
+class DefaultEraserType {
+  static const annotationEraser = "annotationEraser";
+  static const hybrideEraser = "hybrideEraser";
+  static const inkEraser = "inkEraser";
 }

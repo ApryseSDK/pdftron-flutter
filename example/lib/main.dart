@@ -71,7 +71,7 @@ class _ViewerState extends State<Viewer> {
     }
 
     // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
+    // message was in flight, you want to discard the reply rather than calling
     // setState to update our non-existent appearance.
     if (!mounted) return;
 
@@ -185,8 +185,6 @@ class _ViewerState extends State<Viewer> {
   // Function(DocumentViewController controller) being passed to it.
   void _onDocumentViewCreated(DocumentViewController controller) async {
     Config config = new Config();
-
-    config.disabledElements = [Buttons.arrowToolButton];
 
     var leadingNavCancel = startLeadingNavButtonPressedListener(() {
       // Uncomment this to quit viewer when leading navigation button is pressed:

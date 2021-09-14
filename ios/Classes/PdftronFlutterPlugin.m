@@ -543,6 +543,15 @@
                         [documentController setUneditableAnnotTypes:uneditableAnnotTypes];
                     }
                 }
+                else if ([key isEqualToString:PTHideViewModeItemsKey])
+                {
+                    
+                    NSArray* viewModeItems = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideViewModeItemsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && viewModeItems) {
+                        [documentController hideViewModeItems:viewModeItems];
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
@@ -811,10 +820,10 @@
 //            ^{
 //
 //            },
-//        PTCropPageButtonKey:
-//            ^{
-//
-//            },
+        PTCropPageButtonKey:
+            ^{
+                documentController.settingsViewController.cropPagesHidden = YES;
+            },
         PTMoreItemsButtonKey:
             ^{
                 documentController.moreItemsButtonHidden = YES;
@@ -1191,6 +1200,8 @@
         [self closeAllTabs:result];
     } else if ([call.method isEqualToString:PTDeleteAllAnnotationsKey]) {
         [self deleteAllAnnotations:result];
+    } else if ([call.method isEqualToString:PTOpenAnnotationListKey]) {
+        [self openAnnotationList:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -1418,29 +1429,29 @@
         return;
     }
     
+    __block BOOL hasDownloader = NO;
+    
     NSError* error;
-    
     [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if([doc HasDownloader])
-        {
-            // too soon
-            NSLog(@"Error: The document is still being downloaded.");
-            flutterResult([FlutterError errorWithCode:@"import_annotations" message:@"Failed to import annotations" details:@"Error: The document is still being downloaded."]);
-            return;
-        }
-        
-        PTFDFDoc *fdfDoc = [PTFDFDoc CreateFromXFDF:xfdf];
-        
-        [doc FDFUpdate:fdfDoc];
-        [doc RefreshAnnotAppearances:[[PTRefreshOptions alloc] init]];
-        [documentController.pdfViewCtrl Update:YES];
-        
+        hasDownloader = [doc HasDownloader];
     } error:&error];
+    if (hasDownloader) {
+        // too soon
+        NSLog(@"Error: The document is still being downloaded.");
+        flutterResult([FlutterError errorWithCode:@"import_annotation_command" message:@"Failed to import annotation command" details:@"Error: The document is still being downloaded."]);
+        return;
+    }
     
-    if(error)
-    {
-        NSLog(@"Error: There was an error while trying to import annotations. %@", error.localizedDescription);
-        flutterResult([FlutterError errorWithCode:@"import_annotations" message:@"Failed to import annotations" details:@"Error: There was an error while trying to import annotations."]);
+    PTAnnotationManager * const annotationManager = documentController.toolManager.annotationManager;
+    
+    NSError *updateError = nil;
+    const BOOL updateSuccess = [annotationManager updateAnnotationsWithXFDFString:xfdf
+                                                                            error:&updateError];
+    if (!updateSuccess) {
+        if (updateError) {
+            NSLog(@"Error: There was an error while trying to import annotation command. %@", updateError.localizedDescription);
+        }
+        flutterResult([FlutterError errorWithCode:@"import_annotation_command" message:@"Failed to import annotation command" details:@"Error: There was an error while trying to import annotation command."]);
     } else {
         flutterResult(nil);
     }
@@ -1893,32 +1904,28 @@
         return;
     }
     
+    __block BOOL hasDownloader = NO;
+    
     NSError* error;
-    
     [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if([doc HasDownloader])
-        {
-            // too soon
-            NSLog(@"Error: The document is still being downloaded.");
-            flutterResult([FlutterError errorWithCode:@"import_annotation_command" message:@"Failed to import annotation command" details:@"Error: The document is still being downloaded."]);
-            return;
-        }
-
-        PTFDFDoc* fdfDoc = [doc FDFExtract:e_ptboth];
-        NSString *fdfString = [fdfDoc SaveAsXFDFToString];
-        PTFDFDoc *newFDFDoc = [PTFDFDoc CreateFromXFDF:fdfString];
-        [newFDFDoc MergeAnnots:xfdfCommand permitted_user:@""];
-
-        [doc FDFUpdate:newFDFDoc];
-        [doc RefreshAnnotAppearances:[[PTRefreshOptions alloc] init]];
-
-        [documentController.pdfViewCtrl Update:YES];
-
+        hasDownloader = [doc HasDownloader];
     } error:&error];
+    if (hasDownloader) {
+        // too soon
+        NSLog(@"Error: The document is still being downloaded.");
+        flutterResult([FlutterError errorWithCode:@"import_annotation_command" message:@"Failed to import annotation command" details:@"Error: The document is still being downloaded."]);
+        return;
+    }
+
+    PTAnnotationManager * const annotationManager = documentController.toolManager.annotationManager;
     
-    if(error)
-    {
-        NSLog(@"Error: There was an error while trying to import annotation command. %@", error.localizedDescription);
+    NSError *updateError = nil;
+    const BOOL updateSuccess = [annotationManager updateAnnotationsWithXFDFCommand:xfdfCommand
+                                                                             error:&updateError];
+    if (!updateSuccess) {
+        if (updateError) {
+            NSLog(@"Error: There was an error while trying to import annotation command. %@", updateError.localizedDescription);
+        }
         flutterResult([FlutterError errorWithCode:@"import_annotation_command" message:@"Failed to import annotation command" details:@"Error: There was an error while trying to import annotation command."]);
     } else {
         flutterResult(nil);
@@ -2326,6 +2333,20 @@
     // Close the selected tab last.
     if (tabManager.selectedItem) {
         [tabManager removeItem:tabManager.selectedItem];
+    }
+    
+    flutterResult(nil);
+}
+
+- (void)openAnnotationList:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    
+    if (!documentController.annotationListHidden) {
+        PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
+        navigationListsViewController.selectedViewController = navigationListsViewController.annotationViewController;
+        
+        [documentController presentViewController:navigationListsViewController animated:YES completion:nil];
     }
     
     flutterResult(nil);

@@ -34,11 +34,13 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_GET_VERSIO
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_INITIALIZE;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_OPEN_DOCUMENT;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SET_LEADING_NAV_BUTTON_ICON;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SET_REQUESTED_ORIENTATION;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_CONFIG;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_DOCUMENT;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LEADING_NAV_BUTTON_ICON;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LICENSE_KEY;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PASSWORD;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_REQUESTED_ORIENTATION;
 
 /**
  * PdftronFlutterPlugin
@@ -278,6 +280,11 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             case FUNCTION_SET_LEADING_NAV_BUTTON_ICON: {
                 String leadingNavButtonIcon = call.argument(KEY_LEADING_NAV_BUTTON_ICON);
                 FlutterDocumentActivity.setLeadingNavButtonIcon(leadingNavButtonIcon);
+                break;
+            }
+            case FUNCTION_SET_REQUESTED_ORIENTATION: {
+                int requestedOrientation = call.argument(KEY_REQUESTED_ORIENTATION);
+                FlutterDocumentActivity.setOrientation(requestedOrientation);
                 break;
             }
             default:
