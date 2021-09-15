@@ -334,7 +334,7 @@ if (pageChanged) {
 ```
 
 #### gotoNextPage
-Go to the next page of the document. If on last page, it would stay on last page.
+Go to the next page of the document. If on last page, it will stay on last page.
 
 Returns a Future.
 
