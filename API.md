@@ -9,7 +9,7 @@
 This section is for some static methods for global library initialization, configuration, and utility. They could only be callable as a plugin. Below is an example for [`initialize`](#initialize):
 
 ```dart
-PdftronFlutter.initialize(''); // You can run PDFTron in demo mode by passing an empty string.
+PdftronFlutter.initialize('your_license_key');
 ```
 ### version
 
@@ -31,7 +31,7 @@ print('App is currently running on: ' + platformVersion);
 
 ### initialize
 
-Initializes PDFTron SDK with your PDFTron commercial license key. You can run PDFTron in demo mode by passing an empty string.
+Initializes PDFTron SDK with your PDFTron commercial license key. You can run PDFTron in demo mode by not passing in a string, or by passing an empty string.
 
 Parameters:
 
@@ -43,7 +43,7 @@ Returns a Future.
 
 Demo mode: 
 ```dart
-PdftronFlutter.initialize(''); // You can run PDFTron in demo mode by passing an empty string.
+PdftronFlutter.initialize();
 ```
 
 Using commercial license key:
