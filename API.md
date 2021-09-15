@@ -316,7 +316,7 @@ print("The rotation value of page 1 is $pageRotation");
 ```
 
 #### gotoPreviousPage
-Go to the previous page of the document. If on first page, it would stay on first page.
+Go to the previous page of the document. If on first page, it will stay on first page.
 
 Returns a Future.
 
