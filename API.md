@@ -321,6 +321,78 @@ var pageRotation = await PdftronFlutter.getPageRotation(1);
 print("The rotation value of page 1 is $pageRotation");
 ```
 
+#### gotoPreviousPage
+Go to the previous page of the document. If on first page, it will stay on first page.
+
+Returns a Future.
+
+Future Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pageChanged | bool | whether the setting process was successful (no change due to staying in first page counts as being successful)
+
+```dart
+var pageChanged = await PdftronFlutter.gotoPreviousPage();
+if (pageChanged) {
+  print("Successfully went to previous page");
+}
+```
+
+#### gotoNextPage
+Go to the next page of the document. If on last page, it will stay on last page.
+
+Returns a Future.
+
+Future Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pageChanged | bool | whether the setting process was successful (no change due to staying in last page counts as being successful)
+
+```dart
+var pageChanged = await PdftronFlutter.gotoNextPage();
+if (pageChanged) {
+  print("Successfully went to next page");
+}
+```
+
+#### gotoFirstPage
+Go to the first page of the document.
+
+Returns a Future.
+
+Future Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pageChanged | bool | whether the setting process was successful
+
+```js
+var pageChanged = await PdftronFlutter.gotoFirstPage();
+if (pageChanged) {
+  print("Successfully went to first page");
+}
+```
+
+#### gotoLastPage
+Go to the last page of the document.
+
+Returns a Future.
+
+Future Parameters:
+
+Name | Type | Description
+--- | --- | ---
+success | bool | whether the setting process was successful
+
+```js
+var pageChanged = await PdftronFlutter.gotoLastPage();
+if (pageChanged) {
+  print("Successfully went to last page");
+}
+```
+
 ### Import/Export Annotations
 
 #### importAnnotationCommand

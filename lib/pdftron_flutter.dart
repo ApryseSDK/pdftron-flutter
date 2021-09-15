@@ -177,4 +177,20 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.setRequestedOrientation,
         <String, dynamic>{Parameters.requestedOrientation: requestedOrientation});
   }
+
+  static Future<bool> gotoPreviousPage() {
+    return _channel.invokeMethod(Functions.gotoPreviousPage);
+  }
+
+  static Future<bool> gotoNextPage() {
+    return _channel.invokeMethod(Functions.gotoNextPage);
+  }
+
+  static Future<bool> gotoFirstPage() {
+    return _channel.invokeMethod(Functions.gotoFirstPage);
+  }
+
+  static Future<bool> gotoLastPage() {
+    return _channel.invokeMethod(Functions.gotoLastPage);
+  }
 }
