@@ -31,7 +31,7 @@ print('App is currently running on: ' + platformVersion);
 
 ### initialize
 
-Initializes PDFTron SDK with your PDFTron commercial license key. You can run PDFTron in demo mode by passing an empty string.
+Initializes PDFTron SDK with your PDFTron commercial license key. You can run PDFTron in demo mode by not passing in a string, or by passing an empty string.
 
 Parameters:
 
@@ -41,6 +41,12 @@ key | String | true | your PDFTron license key
 
 Returns a Future.
 
+Demo mode: 
+```dart
+PdftronFlutter.initialize();
+```
+
+Using commercial license key:
 ```dart
 PdftronFlutter.initialize('your_license_key');
 ```
