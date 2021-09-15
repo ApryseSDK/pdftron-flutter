@@ -9,7 +9,7 @@
 This section is for some static methods for global library initialization, configuration, and utility. They could only be callable as a plugin. Below is an example for [`initialize`](#initialize):
 
 ```dart
-PdftronFlutter.initialize('your_license_key');
+PdftronFlutter.initialize(''); // You can run PDFTron in demo mode by passing an empty string.
 ```
 ### version
 
@@ -41,6 +41,12 @@ key | String | true | your PDFTron license key
 
 Returns a Future.
 
+Demo mode: 
+```dart
+PdftronFlutter.initialize(''); // You can run PDFTron in demo mode by passing an empty string.
+```
+
+Using commercial license key:
 ```dart
 PdftronFlutter.initialize('your_license_key');
 ```
