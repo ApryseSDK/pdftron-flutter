@@ -99,6 +99,10 @@ class PdftronFlutter {
         <String, dynamic>{Parameters.bookmarkJson: bookmarkJson});
   }
 
+  static Future<void> addBookmark(int pageNumber) {
+    return _channel.invokeMethod(Functions.addBookmark);
+  }
+
   static Future<String> saveDocument() {
     return _channel.invokeMethod(Functions.saveDocument);
   }

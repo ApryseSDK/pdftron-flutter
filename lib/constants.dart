@@ -35,6 +35,7 @@ class Functions {
   static const gotoNextPage = "gotoNextPage";
   static const gotoFirstPage = "gotoFirstPage";
   static const gotoLastPage = "gotoLastPage";
+  static const addBookmark = "addBookmark";
 }
 
 // Parameters define the parameters of the functions
