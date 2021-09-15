@@ -109,7 +109,8 @@ class DocumentViewController {
   }
 
   Future<void> addBookmark(int pageNumber) {
-    return _channel.invokeMethod(Functions.addBookmark);
+    return _channel.invokeMethod(Functions.addBookmark,
+        <String, dynamic>{Parameters.pageNumber: pageNumber});
   }
 
   Future<String> saveDocument() {
