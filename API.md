@@ -652,7 +652,7 @@ PdftronFlutter.importBookmarkJson("{\"0\": \"Page 1\", \"3\": \"Page 4\"}");
 ```
 
 #### addBookmark
-Creates a bookmark given the title and page number.
+Creates a new bookmark given a title and page number.
 
 Parameters:
 
