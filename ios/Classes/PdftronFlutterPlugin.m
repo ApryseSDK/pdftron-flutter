@@ -1165,6 +1165,10 @@
     } else if ([call.method isEqualToString:PTImportBookmarksKey]) {
         NSString *bookmarkJson = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTBookmarkJsonArgumentKey]];
         [self importBookmarks:bookmarkJson resultToken:result];
+    } else if ([call.method isEqualToString:PTAddBookmarkKey]) {
+        NSString *title = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTTitleArgumentKey]];
+        NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
+        [self addBookmark:title pageNumber:pageNumber resultToken:result];
     } else if ([call.method isEqualToString:PTSaveDocumentKey]) {
         [self saveDocument:result];
     } else if ([call.method isEqualToString:PTCommitToolKey]) {
@@ -1974,6 +1978,34 @@
     } else {
         flutterResult(nil);
     }
+}
+
+- (void)addBookmark:(NSString *)title pageNumber:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult
+{
+    __block NSString* json;
+    NSError* error;
+    
+    PTDocumentController *documentController = [self getDocumentController];
+    BOOL exceptionOccurred = [documentController.pdfViewCtrl DocLockReadWithBlock:^(PTPDFDoc * _Nullable doc) {
+        json = [PTBookmarkManager.defaultManager exportBookmarksFromDoc:doc];
+    } error:&error];
+    
+    if(exceptionOccurred)
+    {
+        NSLog(@"Error: %@", error.description);
+    }
+
+    PTUserBookmark * bookmark = [[PTUserBookmark alloc] initWithTitle:title pageNumber:[pageNumber intValue]];
+    NSMutableArray<PTUserBookmark *> * bookmarks = [NSMutableArray arrayWithArray:[PTBookmarkManager.defaultManager bookmarksFromJSONString:json]];
+    [bookmarks addObject:bookmark];
+    
+    __block NSString* newJson = [PTBookmarkManager.defaultManager JSONStringFromBookmarks:bookmarks];
+    [self importBookmarks:newJson resultToken:flutterResult];
+    
+    PTBookmarkViewController *bookmarkViewController = documentController.navigationListsViewController.bookmarkViewController;
+    PTFlutterDocumentController *flutterDocumentController = (PTFlutterDocumentController *) documentController;
+    [flutterDocumentController bookmarkViewController:bookmarkViewController didAddBookmark:bookmark];
+    
 }
 
 - (void)saveDocument:(FlutterResult)flutterResult
