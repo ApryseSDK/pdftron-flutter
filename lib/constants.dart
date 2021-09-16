@@ -314,7 +314,7 @@ class ViewModePickerItem {
   static const ColorMode = "viewModeColorMode";
 }
 
-class DefaultEraserType {
+class EraserType {
   static const annotationEraser = "annotationEraser";
   static const hybrideEraser = "hybrideEraser";
   static const inkEraser = "inkEraser";
