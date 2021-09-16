@@ -108,6 +108,14 @@ class DocumentViewController {
         <String, dynamic>{Parameters.bookmarkJson: bookmarkJson});
   }
 
+  Future<void> addBookmark(String title, int pageNumber) {
+    return _channel
+        .invokeMethod(Functions.addBookmark, <String, dynamic>{
+      Parameters.title: title,
+      Parameters.pageNumber: pageNumber
+    });
+  }
+
   Future<String> saveDocument() {
     return _channel.invokeMethod(Functions.saveDocument);
   }

@@ -1165,6 +1165,10 @@
     } else if ([call.method isEqualToString:PTImportBookmarksKey]) {
         NSString *bookmarkJson = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTBookmarkJsonArgumentKey]];
         [self importBookmarks:bookmarkJson resultToken:result];
+    } else if ([call.method isEqualToString:PTAddBookmarkKey]) {
+        NSString *title = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTBookmarkTitleArgumentKey]];
+        NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
+        [self addBookmark:title pageNumber:pageNumber resultToken:result];
     } else if ([call.method isEqualToString:PTSaveDocumentKey]) {
         [self saveDocument:result];
     } else if ([call.method isEqualToString:PTCommitToolKey]) {
@@ -1974,6 +1978,55 @@
     } else {
         flutterResult(nil);
     }
+}
+
+- (void)addBookmark:(NSString *)title pageNumber:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"add_bookmark" message:@"Failed to add bookmark" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+    
+    NSError* error;
+    __block PTUserBookmark * bookmark;
+    
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        if([doc HasDownloader])
+        {
+            // too soon
+            NSLog(@"Error: The document is still being downloaded.");
+            flutterResult([FlutterError errorWithCode:@"add_bookmark" message:@"Failed to add bookmark" details:@"Error: The document is still being downloaded."]);
+            return;
+        }
+        
+        // Export bookmarks to JSON, then to array.
+        NSString* json = [PTBookmarkManager.defaultManager exportBookmarksFromDoc:doc];
+        NSMutableArray<PTUserBookmark *> * bookmarks = [NSMutableArray arrayWithArray:[PTBookmarkManager.defaultManager bookmarksFromJSONString:json]];
+        bookmark = [[PTUserBookmark alloc] initWithTitle:title pageNumber:[pageNumber intValue]];
+        [bookmarks addObject:bookmark];
+        
+        // Convert array back to JSON and import.
+        NSString* newJson = [PTBookmarkManager.defaultManager JSONStringFromBookmarks:bookmarks];
+        [PTBookmarkManager.defaultManager importBookmarksForDoc:doc fromJSONString:newJson];
+
+    } error:&error];
+    
+    if(error)
+    {
+        NSLog(@"Error: There was an error while trying to add bookmark. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"add_bookmark" message:@"Failed to add bookmark" details:@"Error: There was an error while trying to add bookmark."]);
+    } else {
+        flutterResult(nil);
+    }
+    
+    // Raise event.
+    PTBookmarkViewController *bookmarkViewController = documentController.navigationListsViewController.bookmarkViewController;
+    PTFlutterDocumentController *flutterDocumentController = (PTFlutterDocumentController *) documentController;
+    [flutterDocumentController bookmarkViewController:bookmarkViewController didAddBookmark:bookmark];
 }
 
 - (void)saveDocument:(FlutterResult)flutterResult
