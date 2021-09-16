@@ -659,7 +659,7 @@ Parameters:
 Name | Type | Description
 --- | --- | ---
 title | String | Title of the bookmark
-pageNumber | int | The page number of the new bookmark. It is 1-indexed
+pageNumber | int | The page number of the new bookmark. It is 1-indexed.
 
 Returns a Future.
 
