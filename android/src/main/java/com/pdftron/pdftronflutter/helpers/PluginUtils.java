@@ -218,6 +218,7 @@ public class PluginUtils {
     public static final String FUNCTION_GO_TO_NEXT_PAGE = "gotoNextPage";
     public static final String FUNCTION_GO_TO_FIRST_PAGE = "gotoFirstPage";
     public static final String FUNCTION_GO_TO_LAST_PAGE = "gotoLastPage";
+    public static final String FUNCTION_ADD_BOOKMARK = "addBookmark";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -1898,6 +1899,15 @@ public class PluginUtils {
                 gotoLastPage(result, component);
                 break;
             }
+            case FUNCTION_ADD_BOOKMARK: {
+                checkFunctionPrecondition(component);
+                String title = call.argument(KEY_TITLE);
+                Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
+                if (title != null && pageNumber != null) {
+                    addBookmark(title, pageNumber, result, component);
+                }
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -2678,6 +2688,33 @@ public class PluginUtils {
         }
         boolean pageChanged = pdfViewCtrl.gotoLastPage();
         result.success(pageChanged);
+    }
+
+    private static void addBookmark(String title, Integer pageNumber, MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        PDFDoc pdfDoc = component.getPdfDoc();
+        if (pdfViewCtrl == null || pdfDoc == null ) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+
+        boolean shouldUnlock = false;
+        try {
+            pdfViewCtrl.docLock(true);
+            shouldUnlock = true;
+
+            String jsonString = BookmarkManager.exportPdfBookmarks(pdfDoc);
+            JSONObject jsonObject = new JSONObject(jsonString);
+            jsonObject.put(pageNumber.toString(), title);
+            jsonString = jsonObject.toString();
+            importBookmarkJson(jsonString, result, component);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (shouldUnlock) {
+                pdfViewCtrl.docUnlock();
+            }
+        }
     }
 
     // Events

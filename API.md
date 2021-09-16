@@ -651,6 +651,22 @@ Returns a Future.
 PdftronFlutter.importBookmarkJson("{\"0\": \"Page 1\", \"3\": \"Page 4\"}");
 ```
 
+#### addBookmark
+Creates a bookmark given the title and page number.
+
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+title | String | Title of the bookmark
+pageNumber | int | The page number of the new bookmark. It is 1-indexed
+
+Returns a Future.
+
+```dart
+PdftronFlutter.addBookmark("Page 7", 6);
+```
+
 ### Multi-tab
 
 #### closeAllTabs
