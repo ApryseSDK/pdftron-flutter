@@ -1982,6 +1982,7 @@
 
 - (void)addBookmark:(NSString *)title pageNumber:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult
 {
+    // Export bookmarks to JSON.
     __block NSString* json;
     NSError* error;
     
@@ -1995,17 +1996,19 @@
         NSLog(@"Error: %@", error.description);
     }
 
-    PTUserBookmark * bookmark = [[PTUserBookmark alloc] initWithTitle:title pageNumber:[pageNumber intValue]];
+    // Convert JSON to array and add new bookmark.
     NSMutableArray<PTUserBookmark *> * bookmarks = [NSMutableArray arrayWithArray:[PTBookmarkManager.defaultManager bookmarksFromJSONString:json]];
+    PTUserBookmark * bookmark = [[PTUserBookmark alloc] initWithTitle:title pageNumber:[pageNumber intValue]];
     [bookmarks addObject:bookmark];
     
+    // Convert array back to JSON and import.
     __block NSString* newJson = [PTBookmarkManager.defaultManager JSONStringFromBookmarks:bookmarks];
     [self importBookmarks:newJson resultToken:flutterResult];
     
+    // Raise event.
     PTBookmarkViewController *bookmarkViewController = documentController.navigationListsViewController.bookmarkViewController;
     PTFlutterDocumentController *flutterDocumentController = (PTFlutterDocumentController *) documentController;
     [flutterDocumentController bookmarkViewController:bookmarkViewController didAddBookmark:bookmark];
-    
 }
 
 - (void)saveDocument:(FlutterResult)flutterResult
