@@ -1166,7 +1166,7 @@
         NSString *bookmarkJson = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTBookmarkJsonArgumentKey]];
         [self importBookmarks:bookmarkJson resultToken:result];
     } else if ([call.method isEqualToString:PTAddBookmarkKey]) {
-        NSString *title = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTTitleArgumentKey]];
+        NSString *title = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTBookmarkTitleArgumentKey]];
         NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self addBookmark:title pageNumber:pageNumber resultToken:result];
     } else if ([call.method isEqualToString:PTSaveDocumentKey]) {
