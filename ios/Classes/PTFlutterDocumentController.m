@@ -168,6 +168,15 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     }
 }
 
+- (void)setDefaultEraserType:(NSString *)defaultEraserType {
+    PTToolManager *toolManager = self.toolManager;
+    if ([defaultEraserType isEqualToString:PTInkEraserModeAllKey]) {
+        toolManager.eraserMode = PTInkEraserModeAll;
+    } else if ([defaultEraserType isEqualToString:PTInkEraserModePointsKey]) {
+        toolManager.eraserMode = PTInkEraserModePoints;
+    }
+}
+
 - (void)hideViewModeItems:(NSArray<NSString *> *)viewModeItems
 {
     [self setViewModeItemVisibility:viewModeItems hidden:YES];
