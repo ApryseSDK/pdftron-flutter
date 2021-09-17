@@ -2376,6 +2376,10 @@ public class PluginUtils {
             return;
         }
         BookmarkManager.importPdfBookmarks(pdfViewCtrl, bookmarkJson);
+        PdfViewCtrlTabHostFragment2 hostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (hostFragment2 != null) {
+            hostFragment2.reloadUserBookmarks();
+        }
         result.success(null);
     }
 
