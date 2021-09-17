@@ -552,6 +552,15 @@
                         [documentController hideViewModeItems:viewModeItems];
                     }
                 }
+                else if ([key isEqualToString:PTDefaultEraserTypeKey])
+                {
+                    
+                    NSString* defaultEraserType = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDefaultEraserTypeKey class:[NSString class] error:&error];
+                    
+                    if (!error && defaultEraserType) {
+                        [documentController setDefaultEraserType:defaultEraserType];
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
