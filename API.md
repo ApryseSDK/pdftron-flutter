@@ -967,7 +967,7 @@ config.readOnly = true;
 ```
 
 #### defaultEraserType
-one of the [`EraserType`](./lib/constants.dart) constants, optional
+one of the [`DefaultEraserType`](./lib/constants.dart) constants, optional
 
 Sets the default eraser tool type. Value only applied after a clean install.
 
@@ -978,7 +978,7 @@ Eraser Type | Description
 `inkEraser` | Erases ink by pixel only. Android only.
 
 ```dart
-config.defaultEraserType = EraserType.inkEraser;
+config.defaultEraserType = DefaultEraserType.inkEraser;
 ```
 
 #### isBase64String
