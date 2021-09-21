@@ -9,9 +9,6 @@ import com.pdftron.pdf.PDFNet;
 import com.pdftron.pdftronflutter.factories.DocumentViewFactory;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 
-import org.jetbrains.annotations.NotNull;
-
-import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
@@ -312,18 +309,18 @@ public class PdftronFlutterPlugin implements MethodCallHandler, FlutterPlugin, A
     }
 
     @Override
-    public void onAttachedToEngine(@NonNull @org.jetbrains.annotations.NotNull FlutterPlugin.FlutterPluginBinding binding) {
+    public void onAttachedToEngine(@NonNull FlutterPlugin.FlutterPluginBinding binding) {
         registerWithLogic(binding.getBinaryMessenger(), binding.getApplicationContext(), binding.getPlatformViewRegistry());
 
     }
 
     @Override
-    public void onDetachedFromEngine(@NonNull @org.jetbrains.annotations.NotNull FlutterPlugin.FlutterPluginBinding binding) {
+    public void onDetachedFromEngine(@NonNull FlutterPlugin.FlutterPluginBinding binding) {
 
     }
 
     @Override
-    public void onAttachedToActivity(@NonNull @NotNull ActivityPluginBinding binding) {
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
 
     }
 
@@ -333,7 +330,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler, FlutterPlugin, A
     }
 
     @Override
-    public void onReattachedToActivityForConfigChanges(@NonNull @NotNull ActivityPluginBinding binding) {
+    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
 
     }
 
