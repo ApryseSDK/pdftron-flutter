@@ -35,17 +35,19 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ZOOM_CHANGED;
 public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
 
     private MethodChannel mChannel;
-    private BinaryMessenger mBinaryMessenger;
-    private PlatformViewRegistry mViewRegistry;
 
     public PdftronFlutterPlugin() {
     }
 
     @Override
     public void onAttachedToEngine(FlutterPluginBinding binding) {
-        mBinaryMessenger = binding.getBinaryMessenger();
-        mChannel = new MethodChannel(mBinaryMessenger, "pdftron_flutter");
-        mViewRegistry = binding.getPlatformViewRegistry();
+        BinaryMessenger messenger = binding.getBinaryMessenger();
+        Context context = binding.getApplicationContext();
+        mChannel = new MethodChannel(messenger, "pdftron_flutter");
+        mChannel.setMethodCallHandler(new PluginMethodCallHandler(context));
+        registerPlugin(messenger);
+        binding.getPlatformViewRegistry().registerViewFactory("pdftron_flutter/documentview",
+                new DocumentViewFactory(messenger, context));
     }
 
     @Override
@@ -55,10 +57,7 @@ public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
 
     @Override
     public void onAttachedToActivity(ActivityPluginBinding binding) {
-        Context context = binding.getActivity().getApplicationContext();
-        mChannel.setMethodCallHandler(new PluginMethodCallHandler(context));
-        registerPlugin(mBinaryMessenger);
-        mViewRegistry.registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(mBinaryMessenger, context));
+
     }
 
     @Override
@@ -68,7 +67,7 @@ public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
 
     @Override
     public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
-        onAttachedToActivity(binding);
+
     }
 
     @Override
