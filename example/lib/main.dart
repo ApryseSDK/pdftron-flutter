@@ -135,7 +135,7 @@ class _ViewerState extends State<Viewer> {
         }
         print(command.substring(start));
       } else {
-        print("flutter xfdfCommand:\n $command");
+        print(command);
       }
     });
 
