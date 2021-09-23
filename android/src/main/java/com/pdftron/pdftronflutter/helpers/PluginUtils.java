@@ -1750,7 +1750,7 @@ public class PluginUtils {
             }
             case FUNCTION_OPEN_ANNOTATION_LIST: {
                 checkFunctionPrecondition(component);
-                openAnnotationList(component, result);
+                openAnnotationList(result, component);
                 break;
             }
             case FUNCTION_IMPORT_ANNOTATION_COMMAND: {
@@ -1915,22 +1915,22 @@ public class PluginUtils {
             }
             case FUNCTION_OPEN_BOOKMARK_LIST: {
                 checkFunctionPrecondition(component);
-                openBookmarkList(component, result);
+                openBookmarkList(result, component);
                 break;
             }
             case FUNCTION_OPEN_LAYERS_LIST: {
                 checkFunctionPrecondition(component);
-                openLayersList(component, result);
+                openLayersList(result, component);
                 break;
             }
             case FUNCTION_OPEN_OUTLINE_LIST: {
                 checkFunctionPrecondition(component);
-                openOutlineList(component, result);
+                openOutlineList(result, component);
                 break;
             }
             case FUNCTION_OPEN_NAVIGATION_LISTS: {
                 checkFunctionPrecondition(component);
-                openNavigationLists(component, result);
+                openNavigationLists(result, component);
                 break;
             }
             default:
@@ -2129,7 +2129,7 @@ public class PluginUtils {
         }
     }
 
-    private static void openAnnotationList(ViewerComponent component, MethodChannel.Result result) {
+    private static void openAnnotationList(MethodChannel.Result result, ViewerComponent component) {
         PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
         if (pdfViewCtrlTabHostFragment2 == null) {
             result.error("InvalidState", "Activity not attached", null);
@@ -2159,7 +2159,7 @@ public class PluginUtils {
         }
     }
 
-    private static void openBookmarkList(ViewerComponent component, MethodChannel.Result result) {
+    private static void openBookmarkList(MethodChannel.Result result, ViewerComponent component) {
         PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
         if (pdfViewCtrlTabHostFragment2 == null) {
             result.error("InvalidState", "Activity not attached", null);
@@ -2171,7 +2171,7 @@ public class PluginUtils {
         }
     }
 
-    private static void openOutlineList(ViewerComponent component, MethodChannel.Result result) {
+    private static void openOutlineList(MethodChannel.Result result, ViewerComponent component) {
         PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
         if (pdfViewCtrlTabHostFragment2 == null) {
             result.error("InvalidState", "Activity not attached", null);
@@ -2185,7 +2185,7 @@ public class PluginUtils {
         }
     }
 
-    private static void openLayersList(ViewerComponent component, MethodChannel.Result result) {
+    private static void openLayersList(MethodChannel.Result result, ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         if (pdfViewCtrl == null) {
             result.error("InvalidState", "Activity not attached", null);
@@ -2196,7 +2196,7 @@ public class PluginUtils {
         pdfLayerDialog.show();
     }
 
-    private static void openNavigationLists(ViewerComponent component, MethodChannel.Result result) {
+    private static void openNavigationLists(MethodChannel.Result result, ViewerComponent component) {
         PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
         if (pdfViewCtrlTabHostFragment2 == null) {
             result.error("InvalidState", "Activity not attached", null);
