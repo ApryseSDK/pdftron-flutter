@@ -60,9 +60,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler, FlutterPlugin, A
         mContext = context;
     }
 
-    public PdftronFlutterPlugin() {
-        super();
-    }
+    public PdftronFlutterPlugin() { }
 
     /**
      * Plugin registration.
@@ -311,31 +309,20 @@ public class PdftronFlutterPlugin implements MethodCallHandler, FlutterPlugin, A
     @Override
     public void onAttachedToEngine(@NonNull FlutterPlugin.FlutterPluginBinding binding) {
         registerWithLogic(binding.getBinaryMessenger(), binding.getApplicationContext(), binding.getPlatformViewRegistry());
-
     }
 
     @Override
-    public void onDetachedFromEngine(@NonNull FlutterPlugin.FlutterPluginBinding binding) {
-
-    }
+    public void onDetachedFromEngine(@NonNull FlutterPlugin.FlutterPluginBinding binding) { }
 
     @Override
-    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
-
-    }
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) { }
 
     @Override
-    public void onDetachedFromActivityForConfigChanges() {
-
-    }
+    public void onDetachedFromActivityForConfigChanges() { }
 
     @Override
-    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
-
-    }
+    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) { }
 
     @Override
-    public void onDetachedFromActivity() {
-
-    }
+    public void onDetachedFromActivity() { }
 }
