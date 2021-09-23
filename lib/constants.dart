@@ -36,6 +36,10 @@ class Functions {
   static const gotoFirstPage = "gotoFirstPage";
   static const gotoLastPage = "gotoLastPage";
   static const addBookmark = "addBookmark";
+  static const openBookmarkList = "openBookmarkList";
+  static const openOutlineList = "openOutlineList";
+  static const openLayersList = "openLayersList";
+  static const openNavigationLists = "openNavigationLists";
 }
 
 // Parameters define the parameters of the functions

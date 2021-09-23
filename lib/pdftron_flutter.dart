@@ -180,6 +180,22 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.openAnnotationList);
   }
 
+  static Future<void> openBookmarkList() {
+    return _channel.invokeMethod(Functions.openBookmarkList);
+  }
+
+  static Future<void> openOutlineList() {
+    return _channel.invokeMethod(Functions.openOutlineList);
+  }
+
+  static Future<void> openLayersList() {
+    return _channel.invokeMethod(Functions.openLayersList);
+  }
+
+  static Future<void> openNavigationLists() {
+    return _channel.invokeMethod(Functions.openNavigationLists);
+  }
+
   // Android only.
   static Future<void> setRequestedOrientation(int requestedOrientation) {
     return _channel.invokeMethod(Functions.setRequestedOrientation,
