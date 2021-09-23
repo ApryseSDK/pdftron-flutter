@@ -26,6 +26,7 @@ import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.controls.ThumbnailsViewFragment;
 import com.pdftron.pdf.dialog.ViewModePickerDialogFragment;
+import com.pdftron.pdf.dialog.pdflayer.PdfLayerDialog;
 import com.pdftron.pdf.model.AnnotStyle;
 import com.pdftron.pdf.tools.AdvancedShapeCreate;
 import com.pdftron.pdf.tools.AnnotEditRectGroup;
@@ -219,6 +220,10 @@ public class PluginUtils {
     public static final String FUNCTION_GO_TO_FIRST_PAGE = "gotoFirstPage";
     public static final String FUNCTION_GO_TO_LAST_PAGE = "gotoLastPage";
     public static final String FUNCTION_ADD_BOOKMARK = "addBookmark";
+    public static final String FUNCTION_OPEN_BOOKMARK_LIST = "openBookmarkList";
+    public static final String FUNCTION_OPEN_OUTLINE_LIST = "openOutlineList";
+    public static final String FUNCTION_OPEN_LAYERS_LIST = "openLayersList";
+    public static final String FUNCTION_OPEN_NAVIGATION_LISTS = "openNavigationLists";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -1745,7 +1750,7 @@ public class PluginUtils {
             }
             case FUNCTION_OPEN_ANNOTATION_LIST: {
                 checkFunctionPrecondition(component);
-                openAnnotationList(component);
+                openAnnotationList(component, result);
                 break;
             }
             case FUNCTION_IMPORT_ANNOTATION_COMMAND: {
@@ -1906,6 +1911,26 @@ public class PluginUtils {
                 if (title != null && pageNumber != null) {
                     addBookmark(title, pageNumber, result, component);
                 }
+                break;
+            }
+            case FUNCTION_OPEN_BOOKMARK_LIST: {
+                checkFunctionPrecondition(component);
+                openBookmarkList(component, result);
+                break;
+            }
+            case FUNCTION_OPEN_LAYERS_LIST: {
+                checkFunctionPrecondition(component);
+                openLayersList(component, result);
+                break;
+            }
+            case FUNCTION_OPEN_OUTLINE_LIST: {
+                checkFunctionPrecondition(component);
+                openOutlineList(component, result);
+                break;
+            }
+            case FUNCTION_OPEN_NAVIGATION_LISTS: {
+                checkFunctionPrecondition(component);
+                openNavigationLists(component, result);
                 break;
             }
             default:
@@ -2104,28 +2129,81 @@ public class PluginUtils {
         }
     }
 
-    private static void openAnnotationList(ViewerComponent component) {
+    private static void openAnnotationList(ViewerComponent component, MethodChannel.Result result) {
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment2 == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
         if (isBookmarkListVisible) {
             if (isOutlineListVisible) {
                 if (isAnnotationListVisible) {
-                    component.getPdfViewCtrlTabHostFragment().onOutlineOptionSelected(2);
+                    pdfViewCtrlTabHostFragment2.onOutlineOptionSelected(2);
                 }
             } else {
                 if (isAnnotationListVisible) {
-                    component.getPdfViewCtrlTabHostFragment().onOutlineOptionSelected(1);
+                    pdfViewCtrlTabHostFragment2.onOutlineOptionSelected(1);
                 }
             }
         } else {
             if (isOutlineListVisible) {
                 if (isAnnotationListVisible) {
-                    component.getPdfViewCtrlTabHostFragment().onOutlineOptionSelected(1);
+                    pdfViewCtrlTabHostFragment2.onOutlineOptionSelected(1);
                 }
             } else {
                 if (isAnnotationListVisible) {
-                    component.getPdfViewCtrlTabHostFragment().onOutlineOptionSelected(0);
+                    pdfViewCtrlTabHostFragment2.onOutlineOptionSelected(0);
                 }
             }
         }
+    }
+
+    private static void openBookmarkList(ViewerComponent component, MethodChannel.Result result) {
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment2 == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        if (isBookmarkListVisible) {
+            component.getPdfViewCtrlTabHostFragment().onOutlineOptionSelected(0);
+        }
+    }
+
+    private static void openOutlineList(ViewerComponent component, MethodChannel.Result result) {
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment2 == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        if (isBookmarkListVisible) {
+            pdfViewCtrlTabHostFragment2.onOutlineOptionSelected(1);
+        } else {
+            pdfViewCtrlTabHostFragment2.onOutlineOptionSelected(0);
+        }
+    }
+
+    private static void openLayersList(ViewerComponent component, MethodChannel.Result result) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        PdfLayerDialog pdfLayerDialog = new PdfLayerDialog(pdfViewCtrl.getContext(), pdfViewCtrl);
+        pdfLayerDialog.show();
+    }
+
+    private static void openNavigationLists(ViewerComponent component, MethodChannel.Result result) {
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment2 == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        pdfViewCtrlTabHostFragment2.onOutlineOptionSelected();
     }
 
     private static void setFlagsForAnnotations(String annotationsWithFlags, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
