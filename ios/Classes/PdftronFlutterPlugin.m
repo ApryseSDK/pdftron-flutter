@@ -1224,6 +1224,8 @@
         [self deleteAllAnnotations:result];
     } else if ([call.method isEqualToString:PTOpenAnnotationListKey]) {
         [self openAnnotationList:result];
+    } else if ([call.method isEqualToString:PTOpenBookmarkListKey]) {
+        [self openBookmarkList:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -2437,6 +2439,19 @@
         PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
         navigationListsViewController.selectedViewController = navigationListsViewController.annotationViewController;
         
+        [documentController presentViewController:navigationListsViewController animated:YES completion:nil];
+    }
+    
+    flutterResult(nil);
+}
+
+- (void)openBookmarkList:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    
+    if (!documentController.bookmarkListHidden) {
+        PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
+        navigationListsViewController.selectedViewController = navigationListsViewController.bookmarkViewController;
         [documentController presentViewController:navigationListsViewController animated:YES completion:nil];
     }
     

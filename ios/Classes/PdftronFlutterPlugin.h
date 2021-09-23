@@ -195,6 +195,7 @@ static NSString * const PTSetLeadingNavButtonIconKey = @"setLeadingNavButtonIcon
 static NSString * const PTCloseAllTabsKey = @"closeAllTabs";
 static NSString * const PTDeleteAllAnnotationsKey = @"deleteAllAnnotations";
 static NSString * const PTOpenAnnotationListKey = @"openAnnotationList";
+static NSString * const PTOpenBookmarkListKey = @"openBookmarkList";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";

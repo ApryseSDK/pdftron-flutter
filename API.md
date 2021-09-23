@@ -165,6 +165,15 @@ Returns a Future that resolves when the view has loaded.
 await PdftronFlutter.openAnnotationList();
 ```
 
+#### openBookmarkList
+Displays the bookmark tab of the existing list container. If this tab has been disabled, the method does nothing.
+
+Returns a Future that resolves when the view has loaded.
+
+```dart
+await PdftronFlutter.openBookmarkList();
+```
+
 ### Viewer UI Configuration
 
 #### setLeadingNavButtonIcon

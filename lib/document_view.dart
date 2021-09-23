@@ -189,6 +189,10 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.openAnnotationList);
   }
 
+  Future<void> openBookmarkList() {
+    return _channel.invokeMethod(Functions.openBookmarkList);
+  }
+
   Future<bool> gotoPreviousPage() {
     return _channel.invokeMethod(Functions.gotoPreviousPage);
   }
