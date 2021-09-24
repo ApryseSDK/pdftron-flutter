@@ -2,17 +2,22 @@ package com.pdftron.pdftronflutter;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFNet;
 import com.pdftron.pdftronflutter.factories.DocumentViewFactory;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 
+import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 import io.flutter.plugin.common.PluginRegistry.Registrar;
+import io.flutter.plugin.platform.PlatformViewRegistry;
 
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATIONS_SELECTED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATION_CHANGED;
@@ -45,7 +50,7 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_REQUESTED_ORIEN
 /**
  * PdftronFlutterPlugin
  */
-public class PdftronFlutterPlugin implements MethodCallHandler {
+public class PdftronFlutterPlugin implements MethodCallHandler, FlutterPlugin {
 
     private final Context mContext;
 
@@ -57,10 +62,14 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
      * Plugin registration.
      */
     public static void registerWith(Registrar registrar) {
-        final MethodChannel methodChannel = new MethodChannel(registrar.messenger(), "pdftron_flutter");
-        methodChannel.setMethodCallHandler(new PdftronFlutterPlugin(registrar.activeContext()));
+        registerWithLogic(registrar.messenger(), registrar.activeContext(), registrar.platformViewRegistry());
+    }
 
-        final EventChannel annotEventChannel = new EventChannel(registrar.messenger(), EVENT_EXPORT_ANNOTATION_COMMAND);
+    private static void registerWithLogic(BinaryMessenger messenger, Context activeContext, PlatformViewRegistry platformViewRegistry) {
+        final MethodChannel methodChannel = new MethodChannel(messenger, "pdftron_flutter");
+        methodChannel.setMethodCallHandler(new PdftronFlutterPlugin(activeContext));
+
+        final EventChannel annotEventChannel = new EventChannel(messenger, EVENT_EXPORT_ANNOTATION_COMMAND);
         annotEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -73,7 +82,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
-        final EventChannel bookmarkEventChannel = new EventChannel(registrar.messenger(), EVENT_EXPORT_BOOKMARK);
+        final EventChannel bookmarkEventChannel = new EventChannel(messenger, EVENT_EXPORT_BOOKMARK);
         bookmarkEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -86,7 +95,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
-        final EventChannel documentLoadedEventChannel = new EventChannel(registrar.messenger(), EVENT_DOCUMENT_LOADED);
+        final EventChannel documentLoadedEventChannel = new EventChannel(messenger, EVENT_DOCUMENT_LOADED);
         documentLoadedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -99,7 +108,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
-        final EventChannel documentErrorEventChannel = new EventChannel(registrar.messenger(), EVENT_DOCUMENT_ERROR);
+        final EventChannel documentErrorEventChannel = new EventChannel(messenger, EVENT_DOCUMENT_ERROR);
         documentErrorEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -112,7 +121,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
-        final EventChannel annotationChangedEventChannel = new EventChannel(registrar.messenger(), EVENT_ANNOTATION_CHANGED);
+        final EventChannel annotationChangedEventChannel = new EventChannel(messenger, EVENT_ANNOTATION_CHANGED);
         annotationChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -125,7 +134,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
-        final EventChannel annotationSelectedEventChannel = new EventChannel(registrar.messenger(), EVENT_ANNOTATIONS_SELECTED);
+        final EventChannel annotationSelectedEventChannel = new EventChannel(messenger, EVENT_ANNOTATIONS_SELECTED);
         annotationSelectedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -138,7 +147,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
-        final EventChannel formFieldValueChangedEventChannel = new EventChannel(registrar.messenger(), EVENT_FORM_FIELD_VALUE_CHANGED);
+        final EventChannel formFieldValueChangedEventChannel = new EventChannel(messenger, EVENT_FORM_FIELD_VALUE_CHANGED);
         formFieldValueChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -151,7 +160,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
-        final EventChannel behaviorActivatedEventChannel = new EventChannel(registrar.messenger(), EVENT_BEHAVIOR_ACTIVATED);
+        final EventChannel behaviorActivatedEventChannel = new EventChannel(messenger, EVENT_BEHAVIOR_ACTIVATED);
         behaviorActivatedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -164,7 +173,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
-        final EventChannel longPressMenuPressedEventChannel = new EventChannel(registrar.messenger(), EVENT_LONG_PRESS_MENU_PRESSED);
+        final EventChannel longPressMenuPressedEventChannel = new EventChannel(messenger, EVENT_LONG_PRESS_MENU_PRESSED);
         longPressMenuPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -177,7 +186,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
-        final EventChannel leadingNavButtonPressedEventChannel = new EventChannel(registrar.messenger(), EVENT_LEADING_NAV_BUTTON_PRESSED);
+        final EventChannel leadingNavButtonPressedEventChannel = new EventChannel(messenger, EVENT_LEADING_NAV_BUTTON_PRESSED);
         leadingNavButtonPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -190,7 +199,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
-        final EventChannel annotationMenuPressedEventChannel = new EventChannel(registrar.messenger(), EVENT_ANNOTATION_MENU_PRESSED);
+        final EventChannel annotationMenuPressedEventChannel = new EventChannel(messenger, EVENT_ANNOTATION_MENU_PRESSED);
         annotationMenuPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -203,7 +212,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
-        final EventChannel pageChangedEventChannel = new EventChannel(registrar.messenger(), EVENT_PAGE_CHANGED);
+        final EventChannel pageChangedEventChannel = new EventChannel(messenger, EVENT_PAGE_CHANGED);
         pageChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -216,7 +225,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
-        final EventChannel zoomChangedEventChannel = new EventChannel(registrar.messenger(), EVENT_ZOOM_CHANGED);
+        final EventChannel zoomChangedEventChannel = new EventChannel(messenger, EVENT_ZOOM_CHANGED);
         zoomChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -229,7 +238,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
-        final EventChannel pageMovedEventChanel = new EventChannel(registrar.messenger(), EVENT_PAGE_MOVED);
+        final EventChannel pageMovedEventChanel = new EventChannel(messenger, EVENT_PAGE_MOVED);
         pageMovedEventChanel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -242,7 +251,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
             }
         });
 
-        registrar.platformViewRegistry().registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(registrar.messenger(), registrar.activeContext()));
+        platformViewRegistry.registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(messenger, activeContext));
     }
 
     @Override
@@ -292,4 +301,16 @@ public class PdftronFlutterPlugin implements MethodCallHandler {
                 break;
         }
     }
+
+    @Override
+    public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
+        // TODO: your plugin is now attached to a Flutter experience.
+        registerWithLogic(binding.getBinaryMessenger(), binding.getApplicationContext(), binding.getPlatformViewRegistry());
+    }
+
+    @Override
+    public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
+        // TODO: your plugin is no longer attached to a Flutter experience.
+    }
+
 }
