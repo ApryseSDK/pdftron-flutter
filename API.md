@@ -874,16 +874,6 @@ var fieldChangedCancel = startFormFieldValueChangedListener((fields)
 });
 ```
 
-### View Mode Dialog
-#### hideViewModeItems
-array of [`ViewModePickerItem`](./lib/constants.dart) constants, optional, defaults to none.
-
-Defines view mode items to be hidden in the view mode dialog.
-
-```dart
-config.hideViewModeItems=[ViewModePickerItem.ColorMode, ViewModePickerItem.Crop];
-```
-
 ### Annotation Menu
 
 #### startAnnotationMenuPressedListener
@@ -1356,6 +1346,16 @@ Defines filter Modes that should be hidden in the thumbnails browser.
 
 ```dart
 config.hideThumbnailFilterModes = [ThumbnailFilterModes.annotated];
+```
+
+### View Mode Dialog
+#### hideViewModeItems
+array of [`ViewModePickerItem`](./lib/constants.dart) constants, optional, defaults to none.
+
+Defines view mode items to be hidden in the view mode dialog.
+
+```dart
+config.hideViewModeItems=[ViewModePickerItem.ColorMode, ViewModePickerItem.Crop];
 ```
 
 ### Others
