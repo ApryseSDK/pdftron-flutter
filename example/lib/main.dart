@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdftron_flutter/pdftron_flutter.dart';
 // Uncomment this if you are using local files
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,11 +25,8 @@ class Viewer extends StatefulWidget {
 
 class _ViewerState extends State<Viewer> {
   String _version = 'Unknown';
-  String _document = "file:///storage/emulated/0/Download/floorplan.pdf"; 
-  // "content://com.android.providers.downloads.documents/document/downloads"
-  // "content://com.android.providers.downloads.documents/document/raw%3A%2Fstorage%2Femulated%2f0%2FDownload%2Ffloorplan.pdf"
-  //                                                                         "raw:/storage/emulated/0/Download/floorplan.pdf"
-      //"https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
+  String _document =
+      "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
   bool _showViewer = true;
 
   @override
@@ -37,26 +34,25 @@ class _ViewerState extends State<Viewer> {
     super.initState();
     initPlatformState();
 
-    //showViewer();
+    showViewer();
 
     // If you are using local files delete the line above, change the _document field
     // appropriately and uncomment the section below.
-    if (Platform.isIOS) {
-      // Open the document for iOS, no need for permission.
-      showViewer();
-    } else {
-      // Request permission for Android before opening document.
-      launchWithPermission();
-    }
+    // if (Platform.isIOS) {
+      // // Open the document for iOS, no need for permission.
+      // showViewer();
+    // } else {
+      // // Request permission for Android before opening document.
+      // launchWithPermission();
+    // }
   }
 
-  Future<void> launchWithPermission() async {
-   PermissionStatus permission = await Permission.storage.request();
-   if (permission.isGranted) {
-     //showViewer();
-
-   }
-  }
+  // Future<void> launchWithPermission() async {
+  //  PermissionStatus permission = await Permission.storage.request();
+  //  if (permission.isGranted) {
+  //    showViewer();
+  //  }
+  // }
 
   // Platform messages are asynchronous, so initialize in an async method.
   Future<void> initPlatformState() async {
@@ -166,10 +162,10 @@ class _ViewerState extends State<Viewer> {
         height: double.infinity,
         child:
             // Uncomment this to use Widget version of the viewer.
-            _showViewer
-            ? DocumentView(
-                onCreated: _onDocumentViewCreated,
-              ):
+            // _showViewer
+            // ? DocumentView(
+            //     onCreated: _onDocumentViewCreated,
+            //   ):
             Container(),
       ),
     );
@@ -191,8 +187,6 @@ class _ViewerState extends State<Viewer> {
     });
 
     controller.openDocument(_document, config: config);
-
-    controller.getPageCount().then((value) => print("Using widget... page count: $value"));
   }
 
   Future<void> _showMyDialog() async {
