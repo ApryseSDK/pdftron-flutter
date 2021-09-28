@@ -10,6 +10,8 @@ import com.pdftron.pdftronflutter.factories.DocumentViewFactory;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
+import io.flutter.embedding.engine.plugins.activity.ActivityAware;
+import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
@@ -50,13 +52,15 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_REQUESTED_ORIEN
 /**
  * PdftronFlutterPlugin
  */
-public class PdftronFlutterPlugin implements MethodCallHandler, FlutterPlugin {
+public class PdftronFlutterPlugin implements MethodCallHandler, FlutterPlugin, ActivityAware {
 
-    private final Context mContext;
+    private Context mContext;
 
     public PdftronFlutterPlugin(Context context) {
         mContext = context;
     }
+
+    public PdftronFlutterPlugin() { }
 
     /**
      * Plugin registration.
@@ -251,7 +255,7 @@ public class PdftronFlutterPlugin implements MethodCallHandler, FlutterPlugin {
             }
         });
 
-        platformViewRegistry.registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(messenger, activeContext));
+        // platformViewRegistry.registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(messenger, activeContext));
     }
 
     @Override
@@ -304,13 +308,32 @@ public class PdftronFlutterPlugin implements MethodCallHandler, FlutterPlugin {
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-        // TODO: your plugin is now attached to a Flutter experience.
         registerWithLogic(binding.getBinaryMessenger(), binding.getApplicationContext(), binding.getPlatformViewRegistry());
+         mContext = binding.getApplicationContext(); 
     }
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-        // TODO: your plugin is no longer attached to a Flutter experience.
+        mContext = null;
     }
 
+    @Override
+    public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
+        mContext = binding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivityForConfigChanges() {
+        mContext = null;
+    }
+
+    @Override
+    public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
+        mContext = binding.getActivity();
+    }
+
+    @Override
+    public void onDetachedFromActivity() {
+        mContext = null;
+    }
 }

@@ -15,10 +15,33 @@ class _DocumentViewState extends State<DocumentView> {
   @override
   Widget build(BuildContext context) {
     if (Platform.isAndroid) {
-      return AndroidView(
+
+      return PlatformViewLink(
         viewType: 'pdftron_flutter/documentview',
-        onPlatformViewCreated: _onPlatformViewCreated,
+        surfaceFactory:
+            (BuildContext context, PlatformViewController controller) {
+          return AndroidViewSurface(
+            controller: controller as AndroidViewController,
+            gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+            hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+          );
+        },
+        // After a PlatformViewLink is created, the function in 
+        // onCreatePlatformView is called.
+        onCreatePlatformView: (PlatformViewCreationParams params) {
+          return PlatformViewsService.initSurfaceAndroidView(
+            id: params.id,
+            viewType: 'pdftron_flutter/documentview',
+            layoutDirection: TextDirection.ltr,
+          )
+            // Return a controller, which will be passed to surfaceFactory and 
+            // used to create the layer that will be included in Flutter's layer tree
+            ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+            ..addOnPlatformViewCreatedListener(_onPlatformViewCreated) // needs to be the one we made down there, that creates a controller, to work; otherwise will be null
+            ..create();
+        },
       );
+      
     } else if (Platform.isIOS) {
       return UiKitView(
         viewType: 'pdftron_flutter/documentview',
