@@ -25,6 +25,8 @@ public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
     private PlatformViewRegistry mRegistry;
     private MethodChannel mMethodChannel;
 
+    private static final String viewTypeId = "pdftron_flutter/documentview";
+
     public PdftronFlutterPlugin(Context context) {
         mContext = context;
     }
@@ -39,7 +41,7 @@ public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
         methodChannel.setMethodCallHandler(new PluginMethodCallHandler(registrar.messenger(), registrar.activeContext()));
         registrar
                 .platformViewRegistry()
-                .registerViewFactory("pdftron_flutter/documentview",
+                .registerViewFactory(viewTypeId,
                         new DocumentViewFactory(registrar.messenger(), registrar.activeContext()));
     }
 
@@ -64,7 +66,7 @@ public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
     public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
         mContext = binding.getActivity();
         mRegistry
-                .registerViewFactory("pdftron_flutter/documentview",
+                .registerViewFactory(viewTypeId,
                         new DocumentViewFactory(mMessenger, mContext));
     }
 
@@ -77,7 +79,7 @@ public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
     public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
         mContext = binding.getActivity();
         mRegistry
-                .registerViewFactory("pdftron_flutter/documentview",
+                .registerViewFactory(viewTypeId,
                         new DocumentViewFactory(mMessenger, mContext));
     }
 
