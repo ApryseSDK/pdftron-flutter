@@ -14,14 +14,32 @@ class DocumentView extends StatefulWidget {
 class _DocumentViewState extends State<DocumentView> {
   @override
   Widget build(BuildContext context) {
+  final String viewType = 'pdftron_flutter/documentview';
+  //final Map<String, dynamic> creationParams = <String, dynamic>{};
+
     if (Platform.isAndroid) {
-      return AndroidView(
-        viewType: 'pdftron_flutter/documentview',
-        onPlatformViewCreated: _onPlatformViewCreated,
-      );
+      return PlatformViewLink(
+        viewType: viewType,
+        surfaceFactory: (BuildContext context, PlatformViewController controller) {
+          return AndroidViewSurface(
+            controller: controller as AndroidViewController, 
+            hitTestBehavior: PlatformViewHitTestBehavior.opaque, 
+            gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{});
+        }, 
+        onCreatePlatformView: (PlatformViewCreationParams params) {
+          return PlatformViewsService.initSurfaceAndroidView(
+            id: params.id,
+            viewType: viewType,
+            layoutDirection: TextDirection.ltr,
+            creationParamsCodec: StandardMessageCodec(),
+          )
+            ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+            ..addOnPlatformViewCreatedListener(_onPlatformViewCreated)
+            ..create();
+        });
     } else if (Platform.isIOS) {
       return UiKitView(
-        viewType: 'pdftron_flutter/documentview',
+        viewType: viewType,
         onPlatformViewCreated: _onPlatformViewCreated,
       );
     }

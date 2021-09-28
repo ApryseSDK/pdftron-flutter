@@ -1,11 +1,10 @@
 name: pdftron_flutter
 description: A new flutter plugin project.
 version: 0.0.81
-author:
 homepage:
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
   flutter:
