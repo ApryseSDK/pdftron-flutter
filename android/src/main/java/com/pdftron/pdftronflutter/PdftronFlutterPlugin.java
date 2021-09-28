@@ -55,6 +55,8 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_REQUESTED_ORIEN
 public class PdftronFlutterPlugin implements MethodCallHandler, FlutterPlugin, ActivityAware {
 
     private Context mContext;
+    private BinaryMessenger mMessenger;
+    private PlatformViewRegistry mPlatformViewRegistry;
 
     public PdftronFlutterPlugin(Context context) {
         mContext = context;
@@ -67,6 +69,10 @@ public class PdftronFlutterPlugin implements MethodCallHandler, FlutterPlugin, A
      */
     public static void registerWith(Registrar registrar) {
         registerWithLogic(registrar.messenger(), registrar.activeContext(), registrar.platformViewRegistry());
+        registrar
+                .platformViewRegistry()
+                .registerViewFactory("pdftron_flutter/documentview",
+                        new DocumentViewFactory(registrar.messenger(), registrar.activeContext()));
     }
 
     private static void registerWithLogic(BinaryMessenger messenger, Context activeContext, PlatformViewRegistry platformViewRegistry) {
@@ -254,8 +260,6 @@ public class PdftronFlutterPlugin implements MethodCallHandler, FlutterPlugin, A
                 FlutterDocumentActivity.setPageMovedEventEmitter(null);
             }
         });
-
-        // platformViewRegistry.registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(messenger, activeContext));
     }
 
     @Override
@@ -308,8 +312,10 @@ public class PdftronFlutterPlugin implements MethodCallHandler, FlutterPlugin, A
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-        registerWithLogic(binding.getBinaryMessenger(), binding.getApplicationContext(), binding.getPlatformViewRegistry());
-         mContext = binding.getApplicationContext(); 
+        mContext = binding.getApplicationContext(); 
+        mMessenger = binding.getBinaryMessenger();
+        mPlatformViewRegistry = binding.getPlatformViewRegistry();
+        registerWithLogic(mMessenger, mContext, mPlatformViewRegistry);
     }
 
     @Override
@@ -320,6 +326,9 @@ public class PdftronFlutterPlugin implements MethodCallHandler, FlutterPlugin, A
     @Override
     public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
         mContext = binding.getActivity();
+        mPlatformViewRegistry
+                .registerViewFactory("pdftron_flutter/documentview",
+                        new DocumentViewFactory(mMessenger, mContext));
     }
 
     @Override

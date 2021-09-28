@@ -13,11 +13,5 @@ public class MainActivity extends FlutterFragmentActivity {
     @Override
     public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
         GeneratedPluginRegistrant.registerWith(flutterEngine);
-        flutterEngine
-                .getPlatformViewsController()
-                .getRegistry()
-                .registerViewFactory("pdftron_flutter/documentview",
-                        new DocumentViewFactory(flutterEngine.getDartExecutor().getBinaryMessenger(),
-                                this));
     }
 }
