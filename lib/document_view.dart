@@ -15,7 +15,6 @@ class _DocumentViewState extends State<DocumentView> {
   @override
   Widget build(BuildContext context) {
   final String viewType = 'pdftron_flutter/documentview';
-  //final Map<String, dynamic> creationParams = <String, dynamic>{};
 
     if (Platform.isAndroid) {
       return PlatformViewLink(
@@ -24,14 +23,13 @@ class _DocumentViewState extends State<DocumentView> {
           return AndroidViewSurface(
             controller: controller as AndroidViewController, 
             hitTestBehavior: PlatformViewHitTestBehavior.opaque, 
-            gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{});
+            gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>[].toSet());
         }, 
         onCreatePlatformView: (PlatformViewCreationParams params) {
           return PlatformViewsService.initSurfaceAndroidView(
             id: params.id,
             viewType: viewType,
             layoutDirection: TextDirection.ltr,
-            creationParamsCodec: StandardMessageCodec(),
           )
             ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
             ..addOnPlatformViewCreatedListener(_onPlatformViewCreated)
