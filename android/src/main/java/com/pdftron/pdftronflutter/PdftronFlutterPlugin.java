@@ -18,54 +18,54 @@ import io.flutter.plugin.platform.PlatformViewRegistry;
  */
 public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
 
+    private static final String viewTypeId = "pdftron_flutter/documentview";
+
     private PlatformViewRegistry mRegistry;
     private BinaryMessenger mMessenger;
+    private MethodChannel mMethodChannel;
 
-    public PdftronFlutterPlugin() {
-    }
+    public PdftronFlutterPlugin() { }
 
     @Override
     public void onAttachedToEngine(FlutterPluginBinding binding) {
         mMessenger = binding.getBinaryMessenger();
         mRegistry = binding.getPlatformViewRegistry();
-        registerPlugin(mMessenger, binding.getApplicationContext());
+        mMethodChannel = new MethodChannel(mMessenger, "pdftron_flutter");
+        mMethodChannel.setMethodCallHandler(new PluginMethodCallHandler(mMessenger, binding.getApplicationContext()));
     }
 
     @Override
     public void onDetachedFromEngine(FlutterPluginBinding binding) {
         mRegistry = null;
         mMessenger = null;
+        mMethodChannel.setMethodCallHandler(null);
     }
 
     @Override
     public void onAttachedToActivity(ActivityPluginBinding binding) {
-        mRegistry.registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(mMessenger, binding.getActivity()));
+        mRegistry.registerViewFactory(viewTypeId, new DocumentViewFactory(mMessenger, binding.getActivity()));
     }
 
     @Override
-    public void onDetachedFromActivityForConfigChanges() {
-    }
+    public void onDetachedFromActivityForConfigChanges() { }
 
     @Override
     public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
-        mRegistry.registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(mMessenger, binding.getActivity()));
+        mRegistry.registerViewFactory(viewTypeId, new DocumentViewFactory(mMessenger, binding.getActivity()));
     }
 
     @Override
-    public void onDetachedFromActivity() {
-    }
+    public void onDetachedFromActivity() { }
 
     /**
      * Plugin registration using Android embedding v1.
      */
     public static void registerWith(Registrar registrar) {
-        registerPlugin(registrar.messenger(), registrar.activeContext());
-        registrar.platformViewRegistry().registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(
-                registrar.messenger(), registrar.activeContext()));
-    }
-
-    public static void registerPlugin(BinaryMessenger messenger, Context context) {
-        MethodChannel mChannel = new MethodChannel(messenger, "pdftron_flutter");
-        mChannel.setMethodCallHandler(new PluginMethodCallHandler(messenger, context));
+        final MethodChannel methodChannel = new MethodChannel(registrar.messenger(), "pdftron_flutter");
+        methodChannel.setMethodCallHandler(new PluginMethodCallHandler(registrar.messenger(), registrar.activeContext()));
+        registrar
+                .platformViewRegistry()
+                .registerViewFactory(viewTypeId,
+                        new DocumentViewFactory(registrar.messenger(), registrar.activeContext()));
     }
 }
