@@ -20,16 +20,11 @@ import io.flutter.plugin.platform.PlatformViewRegistry;
  */
 public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
 
-    private Context mContext;
     private BinaryMessenger mMessenger;
     private PlatformViewRegistry mRegistry;
     private MethodChannel mMethodChannel;
 
     private static final String viewTypeId = "pdftron_flutter/documentview";
-
-    public PdftronFlutterPlugin(Context context) {
-        mContext = context;
-    }
 
     public PdftronFlutterPlugin() { }
 
@@ -47,16 +42,14 @@ public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
 
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding binding) {
-        mContext = binding.getApplicationContext();
         mMessenger = binding.getBinaryMessenger();
         mRegistry = binding.getPlatformViewRegistry();
         mMethodChannel = new MethodChannel(mMessenger, "pdftron_flutter");
-        mMethodChannel.setMethodCallHandler(new PluginMethodCallHandler(mMessenger, mContext));
+        mMethodChannel.setMethodCallHandler(new PluginMethodCallHandler(mMessenger, binding.getApplicationContext()));
     }
 
     @Override
     public void onDetachedFromEngine(@NonNull FlutterPluginBinding binding) {
-        mContext = null;
         mMessenger = null;
         mRegistry = null;
         mMethodChannel.setMethodCallHandler(null);
@@ -64,27 +57,21 @@ public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
 
     @Override
     public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
-        mContext = binding.getActivity();
         mRegistry
                 .registerViewFactory(viewTypeId,
-                        new DocumentViewFactory(mMessenger, mContext));
+                        new DocumentViewFactory(mMessenger, binding.getActivity()));
     }
 
     @Override
-    public void onDetachedFromActivityForConfigChanges() {
-        mContext = null;
-    }
+    public void onDetachedFromActivityForConfigChanges() { }
 
     @Override
     public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
-        mContext = binding.getActivity();
         mRegistry
                 .registerViewFactory(viewTypeId,
-                        new DocumentViewFactory(mMessenger, mContext));
+                        new DocumentViewFactory(mMessenger, binding.getActivity()));
     }
 
     @Override
-    public void onDetachedFromActivity() {
-        mContext = null;
-    }
+    public void onDetachedFromActivity() { }
 }
