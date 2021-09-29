@@ -58,14 +58,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".EmbeddingV1Activity"
-            android:theme="@style/PDFTronAppTheme"
-            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale"
-            android:hardwareAccelerated="true"
-            android:windowSoftInputMode="adjustPan">
-        </activity>
-
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data

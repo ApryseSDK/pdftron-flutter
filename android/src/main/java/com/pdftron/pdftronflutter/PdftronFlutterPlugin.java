@@ -26,7 +26,6 @@ public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
 
     @Override
     public void onAttachedToEngine(FlutterPluginBinding binding) {
-        System.out.println("Attached to Engine");
         mMessenger = binding.getBinaryMessenger();
         mRegistry = binding.getPlatformViewRegistry();
         registerPlugin(mMessenger, binding.getApplicationContext());
@@ -34,31 +33,26 @@ public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
 
     @Override
     public void onDetachedFromEngine(FlutterPluginBinding binding) {
-        System.out.println("Detached from Engine");
         mRegistry = null;
         mMessenger = null;
     }
 
     @Override
     public void onAttachedToActivity(ActivityPluginBinding binding) {
-        System.out.println("Attached to Activity");
         mRegistry.registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(mMessenger, binding.getActivity()));
     }
 
     @Override
     public void onDetachedFromActivityForConfigChanges() {
-        System.out.println("Detached from activity due to config changes");
     }
 
     @Override
     public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
-        System.out.println("Reattached to Activity");
         mRegistry.registerViewFactory("pdftron_flutter/documentview", new DocumentViewFactory(mMessenger, binding.getActivity()));
     }
 
     @Override
     public void onDetachedFromActivity() {
-        System.out.println("Detached from activity");
     }
 
     /**
