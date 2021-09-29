@@ -165,6 +165,42 @@ Returns a Future that resolves when the view has loaded.
 await PdftronFlutter.openAnnotationList();
 ```
 
+#### openBookmarkList
+Displays the bookmark tab of the existing list container. If this tab has been disabled, the method does nothing.
+
+Returns a Future that resolves when the view has loaded.
+
+```dart
+await PdftronFlutter.openBookmarkList();
+```
+
+#### openOutlineList
+Displays the outline tab of the existing list container. If this tab has been disabled, the method does nothing.
+
+Returns a Future that resolves when the view has loaded.
+
+```dart
+await PdftronFlutter.openOutlineList();
+```
+
+#### openLayersList
+On Android it displays the layers dialog while on iOS it displays the layers tab of the existing list container. If this tab has been disabled or there are no layers in the document, the method does nothing.
+
+Returns a Future that resolves when the view has loaded.
+
+```dart
+await PdftronFlutter.openLayersList();
+```
+
+#### openNavigationLists
+Displays the existing list container. Its current tab will be the one last opened. 
+
+Returns a Future that resolves when the view has loaded.
+
+```dart
+await PdftronFlutter.openNavigationLists();
+```
+
 ### Viewer UI Configuration
 
 #### setLeadingNavButtonIcon
@@ -838,16 +874,6 @@ var fieldChangedCancel = startFormFieldValueChangedListener((fields)
 });
 ```
 
-### View Mode Dialog
-#### hideViewModeItems
-array of [`ViewModePickerItem`](./lib/constants.dart) constants, optional, defaults to none.
-
-Defines view mode items to be hidden in the view mode dialog.
-
-```dart
-config.hideViewModeItems=[ViewModePickerItem.ColorMode, ViewModePickerItem.Crop];
-```
-
 ### Annotation Menu
 
 #### startAnnotationMenuPressedListener
@@ -1320,6 +1346,16 @@ Defines filter Modes that should be hidden in the thumbnails browser.
 
 ```dart
 config.hideThumbnailFilterModes = [ThumbnailFilterModes.annotated];
+```
+
+### View Mode Dialog
+#### hideViewModeItems
+array of [`ViewModePickerItem`](./lib/constants.dart) constants, optional, defaults to none.
+
+Defines view mode items to be hidden in the view mode dialog.
+
+```dart
+config.hideViewModeItems=[ViewModePickerItem.ColorMode, ViewModePickerItem.Crop];
 ```
 
 ### Others

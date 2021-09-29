@@ -1224,6 +1224,14 @@
         [self deleteAllAnnotations:result];
     } else if ([call.method isEqualToString:PTOpenAnnotationListKey]) {
         [self openAnnotationList:result];
+    } else if ([call.method isEqualToString:PTOpenBookmarkListKey]) {
+        [self openBookmarkList:result];
+    } else if ([call.method isEqualToString:PTOpenOutlineListKey]) {
+        [self openOutlineList:result];
+    } else if ([call.method isEqualToString:PTOpenLayersListKey]) {
+        [self openLayersList:result];
+    } else if ([call.method isEqualToString:PTOpenNavigationListsKey]) {
+        [self openNavigationLists:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -2440,6 +2448,56 @@
         [documentController presentViewController:navigationListsViewController animated:YES completion:nil];
     }
     
+    flutterResult(nil);
+}
+
+- (void)openBookmarkList:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    
+    if (!documentController.bookmarkListHidden) {
+        PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
+        navigationListsViewController.selectedViewController = navigationListsViewController.bookmarkViewController;
+        [documentController presentViewController:navigationListsViewController animated:YES completion:nil];
+    }
+    
+    flutterResult(nil);
+}
+
+- (void)openOutlineList:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    
+    if (!documentController.outlineListHidden) {
+        PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
+        navigationListsViewController.selectedViewController = navigationListsViewController.outlineViewController;
+        [documentController presentViewController:navigationListsViewController animated:YES completion:nil];
+    }
+    
+    flutterResult(nil);
+}
+
+- (void)openLayersList:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    
+    if (!documentController.pdfLayerListHidden) {
+        PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
+        navigationListsViewController.selectedViewController = navigationListsViewController.pdfLayerViewController;
+        [documentController presentViewController:navigationListsViewController animated:YES completion:nil];
+    }
+    
+    flutterResult(nil);
+}
+
+-(void)openNavigationLists:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
+    if (navigationListsViewController) {
+        [documentController showNavigationLists];
+    }
+
     flutterResult(nil);
 }
 

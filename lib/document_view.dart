@@ -207,6 +207,22 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.openAnnotationList);
   }
 
+  Future<void> openBookmarkList() {
+    return _channel.invokeMethod(Functions.openBookmarkList);
+  }
+
+  Future<void> openOutlineList() {
+    return _channel.invokeMethod(Functions.openOutlineList);
+  }
+
+  Future<void> openLayersList() {
+    return _channel.invokeMethod(Functions.openLayersList);
+  }
+
+  Future<void> openNavigationLists() {
+    return _channel.invokeMethod(Functions.openNavigationLists);
+  }
+
   Future<bool> gotoPreviousPage() {
     return _channel.invokeMethod(Functions.gotoPreviousPage);
   }
