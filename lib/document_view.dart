@@ -23,7 +23,7 @@ class _DocumentViewState extends State<DocumentView> {
             (BuildContext context, PlatformViewController controller) {
           return AndroidViewSurface(
             controller: controller as AndroidViewController,
-            gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
+            gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>[].toSet(), 
             hitTestBehavior: PlatformViewHitTestBehavior.opaque,
           );
         },
