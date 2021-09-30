@@ -120,7 +120,7 @@ class _ViewerState extends State<Viewer> {
 
     // An event listener for when local annotation changes are committed to the document.
     // xfdfCommand is the XFDF Command of the annotation that was last changed.
-    var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
+    var annotCancel = startExportAnnotationCommandListener((xfdfCommand) async {
       String command = xfdfCommand;
       print("flutter xfdfCommand:\n");
       // Dart limits how many characters are printed onto the console. 
@@ -135,7 +135,7 @@ class _ViewerState extends State<Viewer> {
         }
         print(command.substring(start));
       } else {
-        print("flutter xfdfCommand:\n $command");
+        print(command);
       }
     });
 

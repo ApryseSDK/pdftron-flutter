@@ -1232,6 +1232,8 @@
         [self openLayersList:result];
     } else if ([call.method isEqualToString:PTOpenNavigationListsKey]) {
         [self openNavigationLists:result];
+    } else if ([call.method isEqualToString:PTGetCurrentPageKey]) {
+        [self getCurrentPage:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -2195,6 +2197,11 @@
 - (void)gotoLastPage:(FlutterResult)flutterResult {
     PTDocumentController *documentController = [self getDocumentController];
     flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl GotoLastPage]]);
+}
+
+- (void)getCurrentPage:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    flutterResult([NSNumber numberWithInt:documentController.pdfViewCtrl.currentPage]);
 }
 
 - (void)getDocumentPath:(FlutterResult)flutterResult {

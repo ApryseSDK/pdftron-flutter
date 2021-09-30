@@ -297,6 +297,23 @@ var setResult = await controller.setCurrentPage(5);
 print('Page set ' + setResult ? 'successfully' : 'unsuccessfully');
 ```
 
+#### getCurrentPage
+
+Gets current page of the document. Page numbers are 1-indexed.
+
+Returns a Future.
+
+Future Parameters:
+
+Name | Type | Description
+-- | -- | --
+currentPage | int | the current page of the current document
+
+```dart
+var currentPage = await PdftronFlutter.getCurrentPage();
+print("The current page is $currentPage");
+```
+
 #### getPageCount
 Gets the total number of pages in the currently displayed document.
 
