@@ -2447,12 +2447,12 @@
 - (void)openAnnotationList:(FlutterResult)flutterResult
 {
     PTDocumentController *documentController = [self getDocumentController];
-    
     if (!documentController.annotationListHidden) {
         PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
-        navigationListsViewController.selectedViewController = navigationListsViewController.annotationViewController;
-        
-        [documentController presentViewController:navigationListsViewController animated:YES completion:nil];
+        if (navigationListsViewController) {
+            navigationListsViewController.selectedViewController = navigationListsViewController.annotationViewController;
+            [documentController showNavigationLists];
+        }
     }
     
     flutterResult(nil);
@@ -2461,11 +2461,12 @@
 - (void)openBookmarkList:(FlutterResult)flutterResult
 {
     PTDocumentController *documentController = [self getDocumentController];
-    
     if (!documentController.bookmarkListHidden) {
         PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
-        navigationListsViewController.selectedViewController = navigationListsViewController.bookmarkViewController;
-        [documentController presentViewController:navigationListsViewController animated:YES completion:nil];
+        if (navigationListsViewController) {
+            navigationListsViewController.selectedViewController = navigationListsViewController.bookmarkViewController;
+            [documentController showNavigationLists];
+        }
     }
     
     flutterResult(nil);
@@ -2474,12 +2475,15 @@
 - (void)openOutlineList:(FlutterResult)flutterResult
 {
     PTDocumentController *documentController = [self getDocumentController];
-    
     if (!documentController.outlineListHidden) {
         PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
-        navigationListsViewController.selectedViewController = navigationListsViewController.outlineViewController;
-        [documentController presentViewController:navigationListsViewController animated:YES completion:nil];
+        if (navigationListsViewController) {
+            navigationListsViewController.selectedViewController = navigationListsViewController.outlineViewController;
+            [documentController showNavigationLists];
+        }
     }
+    
+    
     
     flutterResult(nil);
 }
@@ -2487,11 +2491,12 @@
 - (void)openLayersList:(FlutterResult)flutterResult
 {
     PTDocumentController *documentController = [self getDocumentController];
-    
     if (!documentController.pdfLayerListHidden) {
         PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
-        navigationListsViewController.selectedViewController = navigationListsViewController.pdfLayerViewController;
-        [documentController presentViewController:navigationListsViewController animated:YES completion:nil];
+        if (navigationListsViewController) {
+            navigationListsViewController.selectedViewController = navigationListsViewController.pdfLayerViewController;
+            [documentController showNavigationLists];
+        }
     }
     
     flutterResult(nil);
