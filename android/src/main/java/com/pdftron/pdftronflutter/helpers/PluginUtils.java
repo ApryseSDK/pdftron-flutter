@@ -224,6 +224,7 @@ public class PluginUtils {
     public static final String FUNCTION_OPEN_OUTLINE_LIST = "openOutlineList";
     public static final String FUNCTION_OPEN_LAYERS_LIST = "openLayersList";
     public static final String FUNCTION_OPEN_NAVIGATION_LISTS = "openNavigationLists";
+    public static final String FUNCTION_GET_CURRENT_PAGE = "getCurrentPage";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -1933,6 +1934,11 @@ public class PluginUtils {
                 openNavigationLists(result, component);
                 break;
             }
+            case FUNCTION_GET_CURRENT_PAGE: {
+                checkFunctionPrecondition(component);
+                getCurrentPage(result, component);
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -2204,6 +2210,16 @@ public class PluginUtils {
         }
 
         pdfViewCtrlTabHostFragment2.onOutlineOptionSelected();
+    }
+
+    private static void getCurrentPage(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        result.success(pdfViewCtrl.getCurrentPage());
     }
 
     private static void setFlagsForAnnotations(String annotationsWithFlags, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {

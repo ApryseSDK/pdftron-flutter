@@ -217,4 +217,8 @@ class PdftronFlutter {
   static Future<bool> gotoLastPage() {
     return _channel.invokeMethod(Functions.gotoLastPage);
   }
+
+  static Future<int> getCurrentPage() {
+    return _channel.invokeMethod(Functions.getCurrentPage);
+  }
 }
