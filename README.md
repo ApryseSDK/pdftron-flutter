@@ -192,7 +192,7 @@ There are 2 different ways to use PDFTron Flutter API:
 
 You must choose either the widget or plugin, and use it for all APIs. Mixing widget and plugin APIs will not function correctly. Whether you choose the widget or plugin is personal preference.
 
-If you pick the Android widget, set the enabled system UI, and then wrap the widget in a [`SafeArea`](https://api.flutter.dev/flutter/widgets/SafeArea-class.html) or use an [`AppBar`](https://api.flutter.dev/flutter/material/AppBar-class.html):
+If you pick the Android widget, you will need to add padding for operating system intrusions like the status bar at the top of the device. One way is to set the enabled system UI, and then wrap the widget in a [`SafeArea`](https://api.flutter.dev/flutter/widgets/SafeArea-class.html) or use an [`AppBar`](https://api.flutter.dev/flutter/material/AppBar-class.html):
 ```
 // If using Flutter v2.3.0-17.0.pre or earlier.
 SystemChrome.setEnabledSystemUIOverlays(
@@ -211,7 +211,7 @@ return SafeArea (
 
 // If using AppBar:
 return Scaffold(
-  appBar: AppBar( toolbarHeight: 0),
+  appBar: AppBar( toolbarHeight: 0 ),
   body: DocumentView(
     onCreated: _onDocumentViewCreated,
   ));
