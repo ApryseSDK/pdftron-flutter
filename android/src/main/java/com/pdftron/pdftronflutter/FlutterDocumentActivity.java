@@ -141,7 +141,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
             intentBuilder.usingNavIcon(navIconId);
             intentBuilder.usingConfig(config);
             intentBuilder.usingNewUi(true);
-            packageContext.startActivity(intentBuilder.build());
+            packageContext.startActivity(intentBuilder.build().addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }
     }
 
