@@ -17,30 +17,24 @@ class _DocumentViewState extends State<DocumentView> {
   final String viewType = 'pdftron_flutter/documentview';
 
     if (Platform.isAndroid) {
-      SystemChrome.setEnabledSystemUIMode(
-        SystemUiMode.edgeToEdge,
-      );
-
-      return SafeArea(
-          child: PlatformViewLink(
+      return PlatformViewLink(
+          viewType: viewType,
+          surfaceFactory: (BuildContext context, PlatformViewController controller) {
+            return AndroidViewSurface(
+              controller: controller as AndroidViewController, 
+              hitTestBehavior: PlatformViewHitTestBehavior.opaque, 
+              gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>[].toSet());
+          }, 
+          onCreatePlatformView: (PlatformViewCreationParams params) {
+            return PlatformViewsService.initSurfaceAndroidView(
+              id: params.id,
               viewType: viewType,
-              surfaceFactory: (BuildContext context, PlatformViewController controller) {
-                return AndroidViewSurface(
-                  controller: controller as AndroidViewController, 
-                  hitTestBehavior: PlatformViewHitTestBehavior.opaque, 
-                  gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>[].toSet());
-              }, 
-              onCreatePlatformView: (PlatformViewCreationParams params) {
-                return PlatformViewsService.initSurfaceAndroidView(
-                  id: params.id,
-                  viewType: viewType,
-                  layoutDirection: TextDirection.ltr,
-                )
-                  ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
-                  ..addOnPlatformViewCreatedListener(_onPlatformViewCreated)
-                  ..create();
-              }),
-      );
+              layoutDirection: TextDirection.ltr,
+            )
+              ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+              ..addOnPlatformViewCreatedListener(_onPlatformViewCreated)
+              ..create();
+          });
     } else if (Platform.isIOS) {
       return UiKitView(
         viewType: viewType,
