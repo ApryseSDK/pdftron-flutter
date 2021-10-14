@@ -40,6 +40,7 @@ class Functions {
   static const openOutlineList = "openOutlineList";
   static const openLayersList = "openLayersList";
   static const openNavigationLists = "openNavigationLists";
+  static const getCurrentPage = "getCurrentPage";
 }
 
 // Parameters define the parameters of the functions

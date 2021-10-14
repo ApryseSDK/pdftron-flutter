@@ -236,4 +236,8 @@ class DocumentViewController {
   Future<bool> gotoLastPage() {
     return _channel.invokeMethod(Functions.gotoLastPage);
   }
+
+  Future<int> getCurrentPage() {
+    return _channel.invokeMethod(Functions.getCurrentPage);
+  }
 }
