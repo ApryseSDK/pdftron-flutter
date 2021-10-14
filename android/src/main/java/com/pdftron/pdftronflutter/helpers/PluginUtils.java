@@ -841,7 +841,6 @@ public class PluginUtils {
                 }
                 if (!configJson.isNull(KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR)) {
                     boolean permanentPageNumberIndicator = configJson.getBoolean(KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR);
-                    PdfViewCtrlSettingsManager.setShowScrollbarOption(context, true);
                     builder.permanentPageNumberIndicator(permanentPageNumberIndicator);
                 }
                 if (!configJson.isNull(KEY_CONFIG_OPEN_URL_PATH)) {
