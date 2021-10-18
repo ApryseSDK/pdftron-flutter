@@ -861,8 +861,10 @@
     documentController.delegate = self;
     documentController.plugin = self;
     
-    [[self class] configureDocumentController:documentController
-                                       withConfig:self.config];
+    if (!self.isWidgetView) {
+        [[self class] configureDocumentController:documentController
+                                           withConfig:self.config];
+    }
 }
 
 - (BOOL)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController shouldHideTabBarForTraitCollection:(UITraitCollection *)traitCollection
@@ -1447,6 +1449,18 @@
     }
     
     ((PTFlutterDocumentController*)self.tabbedDocumentViewController.childViewControllers.lastObject).openResult = flutterResult;
+    
+    if (self.isWidgetView) {
+        PTFlutterDocumentController *documentController = (PTFlutterDocumentController *) [self getDocumentController];
+        if(documentController.document == Nil)
+        {
+            // something is wrong, no document.
+            NSLog(@"Error: The document view controller has no document.");
+            return;
+        }
+        [[self class] configureDocumentController:documentController
+                                           withConfig:self.config];
+    }
 }
 
 - (void)importAnnotations:(NSString *)xfdf resultToken:(FlutterResult)flutterResult
