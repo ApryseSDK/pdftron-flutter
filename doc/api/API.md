@@ -31,7 +31,7 @@ print('App is currently running on: ' + platformVersion);
 
 ### initialize
 
-Initializes PDFTron SDK with your PDFTron commercial license key. You can run PDFTron in demo mode by passing an empty string.
+Initializes PDFTron SDK with your PDFTron commercial license key. You can run PDFTron in demo mode by not passing in a string, or by passing an empty string.
 
 Parameters:
 
@@ -41,6 +41,12 @@ key | String | true | your PDFTron license key
 
 Returns a Future.
 
+Demo mode: 
+```dart
+PdftronFlutter.initialize();
+```
+
+Using commercial license key:
 ```dart
 PdftronFlutter.initialize('your_license_key');
 ```
@@ -159,6 +165,42 @@ Returns a Future that resolves when the view has loaded.
 await PdftronFlutter.openAnnotationList();
 ```
 
+#### openBookmarkList
+Displays the bookmark tab of the existing list container. If this tab has been disabled, the method does nothing.
+
+Returns a Future that resolves when the view has loaded.
+
+```dart
+await PdftronFlutter.openBookmarkList();
+```
+
+#### openOutlineList
+Displays the outline tab of the existing list container. If this tab has been disabled, the method does nothing.
+
+Returns a Future that resolves when the view has loaded.
+
+```dart
+await PdftronFlutter.openOutlineList();
+```
+
+#### openLayersList
+On Android it displays the layers dialog while on iOS it displays the layers tab of the existing list container. If this tab has been disabled or there are no layers in the document, the method does nothing.
+
+Returns a Future that resolves when the view has loaded.
+
+```dart
+await PdftronFlutter.openLayersList();
+```
+
+#### openNavigationLists
+Displays the existing list container. Its current tab will be the one last opened. 
+
+Returns a Future that resolves when the view has loaded.
+
+```dart
+await PdftronFlutter.openNavigationLists();
+```
+
 ### Viewer UI Configuration
 
 #### setLeadingNavButtonIcon
@@ -255,6 +297,23 @@ var setResult = await controller.setCurrentPage(5);
 print('Page set ' + (setResult ? 'successfully' : 'unsuccessfully'));
 ```
 
+#### getCurrentPage
+
+Gets current page of the document. Page numbers are 1-indexed.
+
+Returns a Future.
+
+Future Parameters:
+
+Name | Type | Description
+-- | -- | --
+currentPage | int | the current page of the current document
+
+```dart
+var currentPage = await PdftronFlutter.getCurrentPage();
+print("The current page is $currentPage");
+```
+
 #### getPageCount
 Gets the total number of pages in the currently displayed document.
 
@@ -313,6 +372,78 @@ pageRotation | int | the rotation degree of the page, one of 0, 90, 180 or 270 (
 ```dart
 var pageRotation = await PdftronFlutter.getPageRotation(1);
 print("The rotation value of page 1 is $pageRotation");
+```
+
+#### gotoPreviousPage
+Go to the previous page of the document. If on first page, it will stay on first page.
+
+Returns a Future.
+
+Future Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pageChanged | bool | whether the setting process was successful (no change due to staying in first page counts as being successful)
+
+```dart
+var pageChanged = await PdftronFlutter.gotoPreviousPage();
+if (pageChanged) {
+  print("Successfully went to previous page");
+}
+```
+
+#### gotoNextPage
+Go to the next page of the document. If on last page, it will stay on last page.
+
+Returns a Future.
+
+Future Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pageChanged | bool | whether the setting process was successful (no change due to staying in last page counts as being successful)
+
+```dart
+var pageChanged = await PdftronFlutter.gotoNextPage();
+if (pageChanged) {
+  print("Successfully went to next page");
+}
+```
+
+#### gotoFirstPage
+Go to the first page of the document.
+
+Returns a Future.
+
+Future Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pageChanged | bool | whether the setting process was successful
+
+```js
+var pageChanged = await PdftronFlutter.gotoFirstPage();
+if (pageChanged) {
+  print("Successfully went to first page");
+}
+```
+
+#### gotoLastPage
+Go to the last page of the document.
+
+Returns a Future.
+
+Future Parameters:
+
+Name | Type | Description
+--- | --- | ---
+success | bool | whether the setting process was successful
+
+```js
+var pageChanged = await PdftronFlutter.gotoLastPage();
+if (pageChanged) {
+  print("Successfully went to last page");
+}
 ```
 
 ### Import/Export Annotations
@@ -573,6 +704,22 @@ Returns a Future.
 PdftronFlutter.importBookmarkJson("{\"0\": \"Page 1\", \"3\": \"Page 4\"}");
 ```
 
+#### addBookmark
+Creates a new bookmark with the given title and page number.
+
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+title | String | Title of the bookmark
+pageNumber | int | The page number of the new bookmark. It is 1-indexed.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.addBookmark("Page 7", 6);
+```
+
 ### Multi-tab
 
 #### closeAllTabs
@@ -744,16 +891,6 @@ var fieldChangedCancel = startFormFieldValueChangedListener((fields)
 });
 ```
 
-### View Mode Dialog
-#### hideViewModeItems
-array of [`ViewModePickerItem`](./lib/constants.dart) constants, optional, defaults to none.
-
-Defines view mode items to be hidden in the view mode dialog.
-
-```dart
-config.hideViewModeItems=[ViewModePickerItem.ColorMode, ViewModePickerItem.Crop];
-```
-
 ### Annotation Menu
 
 #### startAnnotationMenuPressedListener
@@ -875,7 +1012,13 @@ config.readOnly = true;
 #### defaultEraserType
 one of the [`DefaultEraserType`](./lib/constants.dart) constants, optional
 
-Sets the default eraser tool type. Value only applied after a clean install. Android only.
+Sets the default eraser tool type. Value only applied after a clean install.
+
+Eraser Type | Description
+--- | ---
+`annotationEraser` | Erases everything as an object; if you touch ink, the entire object is erased.
+`hybrideEraser` | Erases ink by pixel, but erases other annotation types as objects.
+`inkEraser` | Erases ink by pixel only. Android only.
 
 ```dart
 config.defaultEraserType = DefaultEraserType.inkEraser;
@@ -1220,6 +1363,16 @@ Defines filter Modes that should be hidden in the thumbnails browser.
 
 ```dart
 config.hideThumbnailFilterModes = [ThumbnailFilterModes.annotated];
+```
+
+### View Mode Dialog
+#### hideViewModeItems
+array of [`ViewModePickerItem`](./lib/constants.dart) constants, optional, defaults to none.
+
+Defines view mode items to be hidden in the view mode dialog.
+
+```dart
+config.hideViewModeItems=[ViewModePickerItem.ColorMode, ViewModePickerItem.Crop];
 ```
 
 ### Others

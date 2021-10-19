@@ -18,14 +18,31 @@ class DocumentView extends StatefulWidget {
 class _DocumentViewState extends State<DocumentView> {
   @override
   Widget build(BuildContext context) {
+  final String viewType = 'pdftron_flutter/documentview';
+
     if (Platform.isAndroid) {
-      return AndroidView(
-        viewType: 'pdftron_flutter/documentview',
-        onPlatformViewCreated: _onPlatformViewCreated,
-      );
+      return PlatformViewLink(
+          viewType: viewType,
+          surfaceFactory: (BuildContext context, PlatformViewController controller) {
+            return AndroidViewSurface(
+              controller: controller as AndroidViewController, 
+              hitTestBehavior: PlatformViewHitTestBehavior.opaque, 
+              gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>[].toSet()
+            );
+          }, 
+          onCreatePlatformView: (PlatformViewCreationParams params) {
+            return PlatformViewsService.initSurfaceAndroidView(
+              id: params.id,
+              viewType: viewType,
+              layoutDirection: TextDirection.ltr,
+            )
+              ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+              ..addOnPlatformViewCreatedListener(_onPlatformViewCreated)
+              ..create();
+          });
     } else if (Platform.isIOS) {
       return UiKitView(
-        viewType: 'pdftron_flutter/documentview',
+        viewType: viewType,
         onPlatformViewCreated: _onPlatformViewCreated,
       );
     }
@@ -133,6 +150,17 @@ class DocumentViewController {
         <String, dynamic>{Parameters.bookmarkJson: bookmarkJson});
   }
 
+  /// Creates a new bookmark with the given title and page number.
+  /// 
+  /// [pageNumber] is 1-indexed
+  Future<void> addBookmark(String title, int pageNumber) {
+    return _channel
+        .invokeMethod(Functions.addBookmark, <String, dynamic>{
+      Parameters.title: title,
+      Parameters.pageNumber: pageNumber
+    });
+  }
+
   /// Saves the currently opened document in the viewer.
   ///
   /// Also gets the absolute path to the document. Must only
@@ -163,7 +191,7 @@ class DocumentViewController {
 
   /// Gets a map object of the crop box for the specified page.
   ///
-  /// The specified page number is 1-indexed.
+  /// [pageNumber] is 1-indexed.
   Future<Rect> getPageCropBox(int pageNumber) async {
     String cropBoxString = await _channel.invokeMethod(Functions.getPageCropBox,
         <String, dynamic>{Parameters.pageNumber: pageNumber});
@@ -172,7 +200,7 @@ class DocumentViewController {
 
   /// Gets the rotation value of the specified page in the current document.
   ///
-  /// The specified page number is 1-indexed.
+  /// [pageNumber] is 1-indexed.
   Future<int> getPageRotation(int pageNumber) async {
     int pageRotation = await _channel.invokeMethod(Functions.getPageRotation,
         <String, dynamic>{Parameters.pageNumber: pageNumber});
@@ -181,7 +209,7 @@ class DocumentViewController {
 
   /// Sets current page of the document.
   ///
-  /// The specified page number is 1-indexed.
+  /// [pageNumber] is 1-indexed.
   Future<bool?> setCurrentPage(int pageNumber) {
     return _channel.invokeMethod(Functions.setCurrentPage,
         <String, dynamic>{Parameters.pageNumber: pageNumber});
@@ -246,7 +274,69 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.deleteAllAnnotations);
   }
 
+  /// Displays the annotation tab of the existing list container. 
+  /// 
+  /// If this tab has been disabled, the method does nothing.
   Future<void> openAnnotationList() {
     return _channel.invokeMethod(Functions.openAnnotationList);
+  }
+
+  /// Displays the bookmark tab of the existing list container. 
+  /// 
+  /// If this tab has been disabled, the method does nothing.
+  Future<void> openBookmarkList() {
+    return _channel.invokeMethod(Functions.openBookmarkList);
+  }
+
+  /// Displays the outline tab of the existing list container. 
+  /// 
+  /// If this tab has been disabled, the method does nothing.
+  Future<void> openOutlineList() {
+    return _channel.invokeMethod(Functions.openOutlineList);
+  }
+
+  /// On Android it displays the layers dialog while on iOS it displays the layers tab of the existing list container. 
+  /// 
+  /// If this tab has been disabled or there are no layers in the document, the method does nothing.
+  Future<void> openLayersList() {
+    return _channel.invokeMethod(Functions.openLayersList);
+  }
+
+  /// Displays the existing list container. 
+  /// 
+  /// Its current tab will be the one last opened. 
+  Future<void> openNavigationLists() {
+    return _channel.invokeMethod(Functions.openNavigationLists);
+  }
+
+  /// Go to the previous page of the document. 
+  /// 
+  /// If on first page, it will stay on first page.
+  Future<bool?> gotoPreviousPage() {
+    return _channel.invokeMethod(Functions.gotoPreviousPage);
+  }
+
+  /// Go to the next page of the document.
+  /// 
+  /// If on last page, it will stay on last page.
+  Future<bool?> gotoNextPage() {
+    return _channel.invokeMethod(Functions.gotoNextPage);
+  }
+
+  /// Go to the first page of the document.
+  Future<bool?> gotoFirstPage() {
+    return _channel.invokeMethod(Functions.gotoFirstPage);
+  }
+
+  /// Go to the last page of the document.
+  Future<bool?> gotoLastPage() {
+    return _channel.invokeMethod(Functions.gotoLastPage);
+  }
+
+  /// Gets the current page of the document.
+  /// 
+  /// The page numbers returned are 1-indexed.
+  Future<int?> getCurrentPage() {
+    return _channel.invokeMethod(Functions.getCurrentPage);
   }
 }

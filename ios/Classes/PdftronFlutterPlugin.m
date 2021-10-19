@@ -552,6 +552,15 @@
                         [documentController hideViewModeItems:viewModeItems];
                     }
                 }
+                else if ([key isEqualToString:PTDefaultEraserTypeKey])
+                {
+                    
+                    NSString* defaultEraserType = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDefaultEraserTypeKey class:[NSString class] error:&error];
+                    
+                    if (!error && defaultEraserType) {
+                        [documentController setDefaultEraserType:defaultEraserType];
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
@@ -1165,6 +1174,10 @@
     } else if ([call.method isEqualToString:PTImportBookmarksKey]) {
         NSString *bookmarkJson = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTBookmarkJsonArgumentKey]];
         [self importBookmarks:bookmarkJson resultToken:result];
+    } else if ([call.method isEqualToString:PTAddBookmarkKey]) {
+        NSString *title = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTBookmarkTitleArgumentKey]];
+        NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
+        [self addBookmark:title pageNumber:pageNumber resultToken:result];
     } else if ([call.method isEqualToString:PTSaveDocumentKey]) {
         [self saveDocument:result];
     } else if ([call.method isEqualToString:PTCommitToolKey]) {
@@ -1180,6 +1193,15 @@
     } else if ([call.method isEqualToString:PTSetCurrentPageKey]) {
         NSNumber* pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self setCurrentPage:pageNumber resultToken:result];
+    } else if ([call.method isEqualToString:PTGotoPreviousPageKey]) {
+        [self gotoPreviousPage:result];
+    } else if ([call.method isEqualToString:PTGotoNextPageKey]) {
+        [self gotoNextPage:result];
+    } else if ([call.method isEqualToString:PTGotoFirstPageKey]) {
+        [self gotoFirstPage:result];
+    } else if ([call.method isEqualToString:PTGotoLastPageKey]) {
+        [self gotoLastPage:result];
+
     } else if ([call.method isEqualToString:PTGetDocumentPathKey]) {
         [self getDocumentPath:result];
     } else if ([call.method isEqualToString:PTSetToolModeKey]) {
@@ -1202,6 +1224,16 @@
         [self deleteAllAnnotations:result];
     } else if ([call.method isEqualToString:PTOpenAnnotationListKey]) {
         [self openAnnotationList:result];
+    } else if ([call.method isEqualToString:PTOpenBookmarkListKey]) {
+        [self openBookmarkList:result];
+    } else if ([call.method isEqualToString:PTOpenOutlineListKey]) {
+        [self openOutlineList:result];
+    } else if ([call.method isEqualToString:PTOpenLayersListKey]) {
+        [self openLayersList:result];
+    } else if ([call.method isEqualToString:PTOpenNavigationListsKey]) {
+        [self openNavigationLists:result];
+    } else if ([call.method isEqualToString:PTGetCurrentPageKey]) {
+        [self getCurrentPage:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -1967,6 +1999,55 @@
     }
 }
 
+- (void)addBookmark:(NSString *)title pageNumber:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"add_bookmark" message:@"Failed to add bookmark" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+    
+    NSError* error;
+    __block PTUserBookmark * bookmark;
+    
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        if([doc HasDownloader])
+        {
+            // too soon
+            NSLog(@"Error: The document is still being downloaded.");
+            flutterResult([FlutterError errorWithCode:@"add_bookmark" message:@"Failed to add bookmark" details:@"Error: The document is still being downloaded."]);
+            return;
+        }
+        
+        // Export bookmarks to JSON, then to array.
+        NSString* json = [PTBookmarkManager.defaultManager exportBookmarksFromDoc:doc];
+        NSMutableArray<PTUserBookmark *> * bookmarks = [NSMutableArray arrayWithArray:[PTBookmarkManager.defaultManager bookmarksFromJSONString:json]];
+        bookmark = [[PTUserBookmark alloc] initWithTitle:title pageNumber:[pageNumber intValue]];
+        [bookmarks addObject:bookmark];
+        
+        // Convert array back to JSON and import.
+        NSString* newJson = [PTBookmarkManager.defaultManager JSONStringFromBookmarks:bookmarks];
+        [PTBookmarkManager.defaultManager importBookmarksForDoc:doc fromJSONString:newJson];
+
+    } error:&error];
+    
+    if(error)
+    {
+        NSLog(@"Error: There was an error while trying to add bookmark. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"add_bookmark" message:@"Failed to add bookmark" details:@"Error: There was an error while trying to add bookmark."]);
+    } else {
+        flutterResult(nil);
+    }
+    
+    // Raise event.
+    PTBookmarkViewController *bookmarkViewController = documentController.navigationListsViewController.bookmarkViewController;
+    PTFlutterDocumentController *flutterDocumentController = (PTFlutterDocumentController *) documentController;
+    [flutterDocumentController bookmarkViewController:bookmarkViewController didAddBookmark:bookmark];
+}
+
 - (void)saveDocument:(FlutterResult)flutterResult
 {
     PTFlutterDocumentController *documentController = (PTFlutterDocumentController *)[self getDocumentController];
@@ -2096,6 +2177,31 @@
 - (void)setCurrentPage:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult {
     PTDocumentController *documentController = [self getDocumentController];
     flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl SetCurrentPage:[pageNumber intValue]]]);
+}
+
+- (void)gotoPreviousPage:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl GotoPreviousPage]]);
+}
+
+- (void)gotoNextPage:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl GotoNextPage]]);
+}
+
+- (void)gotoFirstPage:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl GotoFirstPage]]);
+}
+
+- (void)gotoLastPage:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl GotoLastPage]]);
+}
+
+- (void)getCurrentPage:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    flutterResult([NSNumber numberWithInt:documentController.pdfViewCtrl.currentPage]);
 }
 
 - (void)getDocumentPath:(FlutterResult)flutterResult {
@@ -2341,14 +2447,69 @@
 - (void)openAnnotationList:(FlutterResult)flutterResult
 {
     PTDocumentController *documentController = [self getDocumentController];
-    
     if (!documentController.annotationListHidden) {
         PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
-        navigationListsViewController.selectedViewController = navigationListsViewController.annotationViewController;
-        
-        [documentController presentViewController:navigationListsViewController animated:YES completion:nil];
+        if (navigationListsViewController) {
+            navigationListsViewController.selectedViewController = navigationListsViewController.annotationViewController;
+            [documentController showNavigationLists];
+        }
     }
     
+    flutterResult(nil);
+}
+
+- (void)openBookmarkList:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if (!documentController.bookmarkListHidden) {
+        PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
+        if (navigationListsViewController) {
+            navigationListsViewController.selectedViewController = navigationListsViewController.bookmarkViewController;
+            [documentController showNavigationLists];
+        }
+    }
+    
+    flutterResult(nil);
+}
+
+- (void)openOutlineList:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if (!documentController.outlineListHidden) {
+        PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
+        if (navigationListsViewController) {
+            navigationListsViewController.selectedViewController = navigationListsViewController.outlineViewController;
+            [documentController showNavigationLists];
+        }
+    }
+    
+    
+    
+    flutterResult(nil);
+}
+
+- (void)openLayersList:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if (!documentController.pdfLayerListHidden) {
+        PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
+        if (navigationListsViewController) {
+            navigationListsViewController.selectedViewController = navigationListsViewController.pdfLayerViewController;
+            [documentController showNavigationLists];
+        }
+    }
+    
+    flutterResult(nil);
+}
+
+-(void)openNavigationLists:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
+    if (navigationListsViewController) {
+        [documentController showNavigationLists];
+    }
+
     flutterResult(nil);
 }
 
