@@ -23,7 +23,7 @@
 
 @property (nonatomic, assign, getter=isWidgetView) BOOL widgetView;
 @property (nonatomic, assign, getter=isMultiTabSet) BOOL multiTabSet;
-@property (nonatomic, assign, getter=isDocCtrlrConfigured) BOOL docCtrlConfigured;
+@property (nonatomic, assign, getter=isDocCtrlrConfigured) BOOL docCtrlrConfigured;
 
 @end
 
@@ -865,8 +865,7 @@
     if (self.config) {
         [[self class] configureDocumentController:documentController
                                            withConfig:self.config];
-    } else {
-        self.docCtrlConfigured = NO;
+        self.docCtrlrConfigured = YES;
     }
 }
 
