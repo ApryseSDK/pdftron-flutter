@@ -1455,12 +1455,6 @@
     
     if (!self.isDocCtrlrConfigured) {
         PTFlutterDocumentController *documentController = (PTFlutterDocumentController *) [self getDocumentController];
-        if(documentController.document == Nil)
-        {
-            // something is wrong, no document.
-            NSLog(@"Error: The document view controller has no document.");
-            return;
-        }
         [[self class] configureDocumentController:documentController
                                            withConfig:self.config];
     }
