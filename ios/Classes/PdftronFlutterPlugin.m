@@ -1453,7 +1453,7 @@
     
     ((PTFlutterDocumentController*)self.tabbedDocumentViewController.childViewControllers.lastObject).openResult = flutterResult;
     
-    if (self.isDocCtrlrConfigured) {
+    if (!self.isDocCtrlrConfigured) {
         PTFlutterDocumentController *documentController = (PTFlutterDocumentController *) [self getDocumentController];
         if(documentController.document == Nil)
         {
