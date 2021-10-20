@@ -23,6 +23,7 @@
 
 @property (nonatomic, assign, getter=isWidgetView) BOOL widgetView;
 @property (nonatomic, assign, getter=isMultiTabSet) BOOL multiTabSet;
+@property (nonatomic, assign, getter=isDocCtrlrConfigured) BOOL docCtrlConfigured;
 
 @end
 
@@ -861,9 +862,11 @@
     documentController.delegate = self;
     documentController.plugin = self;
     
-    if (!self.isWidgetView) {
+    if (self.config) {
         [[self class] configureDocumentController:documentController
                                            withConfig:self.config];
+    } else {
+        self.docCtrlConfigured = NO;
     }
 }
 
@@ -1450,7 +1453,7 @@
     
     ((PTFlutterDocumentController*)self.tabbedDocumentViewController.childViewControllers.lastObject).openResult = flutterResult;
     
-    if (self.isWidgetView) {
+    if (self.isDocCtrlrConfigured) {
         PTFlutterDocumentController *documentController = (PTFlutterDocumentController *) [self getDocumentController];
         if(documentController.document == Nil)
         {
