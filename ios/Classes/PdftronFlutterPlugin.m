@@ -862,7 +862,7 @@
     documentController.delegate = self;
     documentController.plugin = self;
     
-    if (self.config) {
+    if (self.config && self.isDocCtrlrConfigured == NO) {
         [[self class] configureDocumentController:documentController
                                            withConfig:self.config];
         self.docCtrlrConfigured = YES;
@@ -1456,6 +1456,7 @@
         PTFlutterDocumentController *documentController = (PTFlutterDocumentController *) [self getDocumentController];
         [[self class] configureDocumentController:documentController
                                            withConfig:self.config];
+        self.docCtrlrConfigured = YES;
     }
 }
 
