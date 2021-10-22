@@ -26,9 +26,11 @@ import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.controls.ThumbnailsViewFragment;
 import com.pdftron.pdf.dialog.ViewModePickerDialogFragment;
+import com.pdftron.pdf.dialog.pdflayer.PdfLayerDialog;
 import com.pdftron.pdf.model.AnnotStyle;
 import com.pdftron.pdf.tools.AdvancedShapeCreate;
 import com.pdftron.pdf.tools.AnnotEditRectGroup;
+import com.pdftron.pdf.tools.Eraser;
 import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.Tool;
@@ -91,6 +93,7 @@ public class PluginUtils {
     public static final String KEY_EXPORT_FORMAT_JPEG = "JPEG";
     public static final String KEY_EXPORT_FORMAT_PNG = "PNG";
 
+    public static final String KEY_REQUESTED_ORIENTATION = "requestedOrientation";
 
     public static final String KEY_CONFIG_DISABLED_ELEMENTS = "disabledElements";
     public static final String KEY_CONFIG_DISABLED_TOOLS = "disabledTools";
@@ -133,6 +136,9 @@ public class PluginUtils {
     public static final String KEY_CONFIG_OVERRIDE_BEHAVIOR = "overrideBehavior";
     public static final String KEY_CONFIG_TAB_TITLE = "tabTitle";
     public static final String KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR = "pageNumberIndicatorAlwaysVisible";
+    public static final String KEY_CONFIG_DISABLE_EDITING_BY_ANNOTATION_TYPE = "disableEditingByAnnotationType";
+    public static final String KEY_CONFIG_HIDE_VIEW_MODE_ITEMS = "hideViewModeItems";
+    public static final String KEY_CONFIG_DEFAULT_ERASER_TYPE = "defaultEraserType";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -188,6 +194,7 @@ public class PluginUtils {
     public static final String EVENT_LEADING_NAV_BUTTON_PRESSED = "leading_nav_button_pressed_event";
     public static final String EVENT_PAGE_CHANGED = "page_changed_event";
     public static final String EVENT_ZOOM_CHANGED = "zoom_changed_event";
+    public static final String EVENT_PAGE_MOVED = "page_moved_event";
 
     public static final String FUNCTION_GET_PLATFORM_VERSION = "getPlatformVersion";
     public static final String FUNCTION_GET_VERSION = "getVersion";
@@ -218,6 +225,18 @@ public class PluginUtils {
     public static final String FUNCTION_GET_PAGE_ROTATION = "getPageRotation";
     public static final String FUNCTION_EXPORT_AS_IMAGE = "exportAsImage";
     public static final String FUNCTION_EXPORT_AS_IMAGE_FROM_FILE_PATH = "exportAsImageFromFilePath";
+    public static final String FUNCTION_OPEN_ANNOTATION_LIST = "openAnnotationList";
+    public static final String FUNCTION_SET_REQUESTED_ORIENTATION = "setRequestedOrientation";
+    public static final String FUNCTION_GO_TO_PREVIOUS_PAGE = "gotoPreviousPage";
+    public static final String FUNCTION_GO_TO_NEXT_PAGE = "gotoNextPage";
+    public static final String FUNCTION_GO_TO_FIRST_PAGE = "gotoFirstPage";
+    public static final String FUNCTION_GO_TO_LAST_PAGE = "gotoLastPage";
+    public static final String FUNCTION_ADD_BOOKMARK = "addBookmark";
+    public static final String FUNCTION_OPEN_BOOKMARK_LIST = "openBookmarkList";
+    public static final String FUNCTION_OPEN_OUTLINE_LIST = "openOutlineList";
+    public static final String FUNCTION_OPEN_LAYERS_LIST = "openLayersList";
+    public static final String FUNCTION_OPEN_NAVIGATION_LISTS = "openNavigationLists";
+    public static final String FUNCTION_GET_CURRENT_PAGE = "getCurrentPage";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -421,6 +440,21 @@ public class PluginUtils {
     public static final String TOOLBAR_KEY_ICON = "icon";
     public static final String TOOLBAR_KEY_ITEMS = "items";
 
+    // View Mode
+    public static final String VIEW_MODE_CROP = "viewModeCrop";
+    public static final String VIEW_MODE_ROTATION = "viewModeRotation";
+    public static final String VIEW_MODE_COLOR_MODE = "viewModeColorMode";
+
+    // Default Eraser Type
+    public static final String DEFAULT_ERASER_TYPE_ANNOTATION = "annotationEraser";
+    public static final String DEFAULT_ERASER_TYPE_HYBRID = "hybrideEraser";
+    public static final String DEFAULT_ERASER_TYPE_INK = "inkEraser";
+
+    // Navigation List visibility
+    public static boolean isBookmarkListVisible = true;
+    public static boolean isOutlineListVisible = true;
+    public static boolean isAnnotationListVisible = true;
+
     public static class ConfigInfo {
         private int initialPageNumber;
         private boolean isBase64;
@@ -622,6 +656,7 @@ public class PluginUtils {
 
         toolManagerBuilder.setOpenToolbar(true);
         ArrayList<ToolManager.ToolMode> disabledTools = new ArrayList<>();
+        ArrayList<ViewModePickerDialogFragment.ViewModePickerItems> viewModePickerItems = new ArrayList<>();
 
         boolean isBase64 = false;
         String base64FileExtension = null;
@@ -818,7 +853,6 @@ public class PluginUtils {
                 }
                 if (!configJson.isNull(KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR)) {
                     boolean permanentPageNumberIndicator = configJson.getBoolean(KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR);
-                    PdfViewCtrlSettingsManager.setShowScrollbarOption(context, true);
                     builder.permanentPageNumberIndicator(permanentPageNumberIndicator);
                 }
                 if (!configJson.isNull(KEY_CONFIG_OPEN_URL_PATH)) {
@@ -827,6 +861,39 @@ public class PluginUtils {
                 } else {
                     String cacheDir = context.getCacheDir().getAbsolutePath();
                     configInfo.setOpenUrlPath(cacheDir);
+                }
+                if (!configJson.isNull(KEY_CONFIG_DISABLE_EDITING_BY_ANNOTATION_TYPE)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_DISABLE_EDITING_BY_ANNOTATION_TYPE);
+                    ArrayList<String> items = convertJSONArrayToArrayList(array);
+                    int[] annotTypes = new int[items.size()];
+                    for (int i = 0; i < items.size(); i++) {
+                        annotTypes[i] = convStringToAnnotType(items.get(i));
+                    }
+                    toolManagerBuilder.disableAnnotEditing(annotTypes);
+                }
+                if (!configJson.isNull(KEY_CONFIG_HIDE_VIEW_MODE_ITEMS)) {
+                   JSONArray array = configJson.getJSONArray(KEY_CONFIG_HIDE_VIEW_MODE_ITEMS);
+                   for (int i = 0; i < array.length(); i++) {
+                       if (VIEW_MODE_COLOR_MODE.equals(array.getString(i))) {
+                            viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_COLORMODE);
+                       }
+                       if (VIEW_MODE_CROP.equals(array.getString(i))) {
+                            viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_USERCROP);
+                       }
+                       if (VIEW_MODE_ROTATION.equals(array.getString(i))) {
+                           viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_ROTATION);
+                       }
+                   }
+                }
+                if (!configJson.isNull(KEY_CONFIG_DEFAULT_ERASER_TYPE)) {
+                    String eraserType = configJson.getString(KEY_CONFIG_DEFAULT_ERASER_TYPE);
+                    if (DEFAULT_ERASER_TYPE_ANNOTATION.equals(eraserType)) {
+                        toolManagerBuilder = toolManagerBuilder.setEraserType(Eraser.EraserType.ANNOTATION_ERASER);
+                    } else if (DEFAULT_ERASER_TYPE_HYBRID.equals(eraserType)) {
+                        toolManagerBuilder = toolManagerBuilder.setEraserType(Eraser.EraserType.HYBRID_ERASER);
+                    } else if (DEFAULT_ERASER_TYPE_INK.equals(eraserType)) {
+                        toolManagerBuilder = toolManagerBuilder.setEraserType(Eraser.EraserType.INK_ERASER);
+                    }
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -846,10 +913,9 @@ public class PluginUtils {
                 }
             }
 
-//        TODO: ViewModePickerItems
-//        if (mViewModePickerItems.size() > 0) {
-//            builder = builder.hideViewModeItems(mViewModePickerItems.toArray(new ViewModePickerDialogFragment.ViewModePickerItems[0]));
-//        }
+            if (viewModePickerItems.size() > 0) {
+                builder = builder.hideViewModeItems(viewModePickerItems.toArray(new ViewModePickerDialogFragment.ViewModePickerItems[0]));
+            }
 
             if (isBase64 && fileUri.getPath() != null) {
                 File tempFile = new File(fileUri.getPath());
@@ -976,6 +1042,9 @@ public class PluginUtils {
                         .showAnnotationsList(false)
                         .showOutlineList(false)
                         .showUserBookmarksList(false);
+                isBookmarkListVisible = false;
+                isOutlineListVisible = false;
+                isAnnotationListVisible = false;
             } else if (BUTTON_THUMBNAIL_SLIDER.equals(item)) {
                 builder = builder.showBottomNavBar(false);
             } else if (BUTTON_SAVE_COPY.equals(item)) {
@@ -995,10 +1064,13 @@ public class PluginUtils {
                 builder = builder.showCloseTabOption(false);
             } else if (BUTTON_OUTLINE_LIST.equals(item)) {
                 builder = builder.showOutlineList(false);
+                isOutlineListVisible = false;
             } else if (BUTTON_ANNOTATION_LIST.equals(item)) {
                 builder = builder.showAnnotationsList(false);
+                isAnnotationListVisible = false;
             } else if (BUTTON_USER_BOOKMARK_LIST.equals(item)) {
                 builder = builder.showUserBookmarksList(false);
+                isBookmarkListVisible = false;
             } else if (BUTTON_EDIT_MENU.equals(item)) {
                 builder = builder.showEditMenuOption(false);
             } else if (BUTTON_CROP_PAGE.equals(item)) {
@@ -1688,6 +1760,11 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_OPEN_ANNOTATION_LIST: {
+                checkFunctionPrecondition(component);
+                openAnnotationList(result, component);
+                break;
+            }
             case FUNCTION_IMPORT_ANNOTATION_COMMAND: {
                 checkFunctionPrecondition(component);
                 String xfdfCommand = call.argument(KEY_XFDF_COMMAND);
@@ -1838,6 +1915,60 @@ public class PluginUtils {
                 if (pageNumber != null && dpi != null && exportFormat != null && path != null) {
                     exportAsImageFromFilePath(pageNumber, dpi, exportFormat, path, result, component);
                 }
+                break;
+            }
+            case FUNCTION_GO_TO_PREVIOUS_PAGE: {
+                checkFunctionPrecondition(component);
+                gotoPreviousPage(result, component);
+                break;
+            }
+            case FUNCTION_GO_TO_NEXT_PAGE: {
+                checkFunctionPrecondition(component);
+                gotoNextPage(result, component);
+                break;
+            }
+            case FUNCTION_GO_TO_FIRST_PAGE: {
+                checkFunctionPrecondition(component);
+                gotoFirstPage(result, component);
+                break;
+            }
+            case FUNCTION_GO_TO_LAST_PAGE: {
+                checkFunctionPrecondition(component);
+                gotoLastPage(result, component);
+                break;
+            }
+            case FUNCTION_ADD_BOOKMARK: {
+                checkFunctionPrecondition(component);
+                String title = call.argument(KEY_TITLE);
+                Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
+                if (title != null && pageNumber != null) {
+                    addBookmark(title, pageNumber, result, component);
+                }
+                break;
+            }
+            case FUNCTION_OPEN_BOOKMARK_LIST: {
+                checkFunctionPrecondition(component);
+                openBookmarkList(result, component);
+                break;
+            }
+            case FUNCTION_OPEN_LAYERS_LIST: {
+                checkFunctionPrecondition(component);
+                openLayersList(result, component);
+                break;
+            }
+            case FUNCTION_OPEN_OUTLINE_LIST: {
+                checkFunctionPrecondition(component);
+                openOutlineList(result, component);
+                break;
+            }
+            case FUNCTION_OPEN_NAVIGATION_LISTS: {
+                checkFunctionPrecondition(component);
+                openNavigationLists(result, component);
+                break;
+            }
+            case FUNCTION_GET_CURRENT_PAGE: {
+                checkFunctionPrecondition(component);
+                getCurrentPage(result, component);
                 break;
             }
             default:
@@ -2034,6 +2165,93 @@ public class PluginUtils {
         if (!Utils.isNullOrEmpty(annotationId)) {
             toolManager.selectAnnot(annotationId, annotationPageNumber);
         }
+    }
+
+    private static void openAnnotationList(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment2 == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        if (isBookmarkListVisible) {
+            if (isOutlineListVisible) {
+                if (isAnnotationListVisible) {
+                    pdfViewCtrlTabHostFragment2.onOutlineOptionSelected(2);
+                }
+            } else {
+                if (isAnnotationListVisible) {
+                    pdfViewCtrlTabHostFragment2.onOutlineOptionSelected(1);
+                }
+            }
+        } else {
+            if (isOutlineListVisible) {
+                if (isAnnotationListVisible) {
+                    pdfViewCtrlTabHostFragment2.onOutlineOptionSelected(1);
+                }
+            } else {
+                if (isAnnotationListVisible) {
+                    pdfViewCtrlTabHostFragment2.onOutlineOptionSelected(0);
+                }
+            }
+        }
+    }
+
+    private static void openBookmarkList(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment2 == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        if (isBookmarkListVisible) {
+            component.getPdfViewCtrlTabHostFragment().onOutlineOptionSelected(0);
+        }
+    }
+
+    private static void openOutlineList(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment2 == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        if (isBookmarkListVisible) {
+            pdfViewCtrlTabHostFragment2.onOutlineOptionSelected(1);
+        } else {
+            pdfViewCtrlTabHostFragment2.onOutlineOptionSelected(0);
+        }
+    }
+
+    private static void openLayersList(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        PdfLayerDialog pdfLayerDialog = new PdfLayerDialog(pdfViewCtrl.getContext(), pdfViewCtrl);
+        pdfLayerDialog.show();
+    }
+
+    private static void openNavigationLists(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment2 == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        pdfViewCtrlTabHostFragment2.onOutlineOptionSelected();
+    }
+
+    private static void getCurrentPage(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        result.success(pdfViewCtrl.getCurrentPage());
     }
 
     private static void setFlagsForAnnotations(String annotationsWithFlags, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
@@ -2284,6 +2502,10 @@ public class PluginUtils {
             return;
         }
         BookmarkManager.importPdfBookmarks(pdfViewCtrl, bookmarkJson);
+        PdfViewCtrlTabHostFragment2 hostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (hostFragment2 != null) {
+            hostFragment2.reloadUserBookmarks();
+        }
         result.success(null);
     }
 
@@ -2613,6 +2835,73 @@ public class PluginUtils {
             }
             if (shouldUnlockRead) {
                 doc.unlockRead();
+            }
+        }
+    }
+    
+    private static void gotoPreviousPage(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        boolean pageChanged = pdfViewCtrl.gotoPreviousPage();
+        result.success(pageChanged);
+    }
+
+    private static void gotoNextPage(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        boolean pageChanged = pdfViewCtrl.gotoNextPage();
+        result.success(pageChanged);
+    }
+
+    private static void gotoFirstPage(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        boolean pageChanged = pdfViewCtrl.gotoFirstPage();
+        result.success(pageChanged);
+    }
+
+    private static void gotoLastPage(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        boolean pageChanged = pdfViewCtrl.gotoLastPage();
+        result.success(pageChanged);
+    }
+
+    private static void addBookmark(String title, Integer pageNumber, MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        PDFDoc pdfDoc = component.getPdfDoc();
+        if (pdfViewCtrl == null || pdfDoc == null ) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+
+        boolean shouldUnlock = false;
+        try {
+            pdfViewCtrl.docLock(true);
+            shouldUnlock = true;
+
+            String jsonString = BookmarkManager.exportPdfBookmarks(pdfDoc);
+            JSONObject jsonObject = new JSONObject(jsonString);
+            jsonObject.put(pageNumber.toString(), title);
+            jsonString = jsonObject.toString();
+            importBookmarkJson(jsonString, result, component);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (shouldUnlock) {
+                pdfViewCtrl.docUnlock();
             }
         }
     }

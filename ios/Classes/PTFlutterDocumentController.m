@@ -149,6 +149,54 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     }
 }
 
+- (void)setUneditableAnnotTypes:(NSArray<NSString *> *)uneditableAnnotTypes
+{
+    [self setAnnotationEditingPermission:uneditableAnnotTypes toValue:NO];
+}
+
+- (void)setAnnotationEditingPermission:(NSArray *)stringsArray toValue:(BOOL)value
+{
+    PTToolManager *toolManager = self.toolManager;
+
+    for (NSObject *item in stringsArray) {
+        if ([item isKindOfClass:[NSString class]]) {
+            NSString *string = (NSString *)item;
+            PTExtendedAnnotType typeToSetPermission = [self convertAnnotationNameToAnnotType:string];
+
+            [toolManager annotationOptionsForAnnotType:typeToSetPermission].canEdit = value;
+        }
+    }
+}
+
+- (void)setDefaultEraserType:(NSString *)defaultEraserType {
+    PTToolManager *toolManager = self.toolManager;
+    if ([defaultEraserType isEqualToString:PTInkEraserModeAllKey]) {
+        toolManager.eraserMode = PTInkEraserModeAll;
+    } else if ([defaultEraserType isEqualToString:PTInkEraserModePointsKey]) {
+        toolManager.eraserMode = PTInkEraserModePoints;
+    }
+}
+
+- (void)hideViewModeItems:(NSArray<NSString *> *)viewModeItems
+{
+    [self setViewModeItemVisibility:viewModeItems hidden:YES];
+}
+
+- (void)setViewModeItemVisibility:(NSArray *)stringsArray hidden:(BOOL)value
+{
+    for (NSString * viewModeItemString in stringsArray) {
+        if ([viewModeItemString isEqualToString:PTViewModeColorModeKey]) {
+            self.settingsViewController.colorModeLightHidden = value;
+            self.settingsViewController.colorModeDarkHidden = value;
+            self.settingsViewController.colorModeSepiaHidden = value;
+        } else if ([viewModeItemString isEqualToString:PTViewModeRotationKey]) {
+            self.settingsViewController.pageRotationHidden = value;
+        } else if ([viewModeItemString isEqualToString:PTViewModeCropKey]) {
+            self.settingsViewController.cropPagesHidden = value;
+        }
+    }
+}
+
 #pragma mark - <PTBookmarkViewControllerDelegate>
 
 - (void)bookmarkViewController:(PTBookmarkViewController *)bookmarkViewController didAddBookmark:(PTUserBookmark *)bookmark
@@ -332,6 +380,16 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     }
 
     return showMenu;
+}
+
+- (void)toolManager:(nonnull PTToolManager *)toolManager pageMovedFromPageNumber:(int)oldPageNumber toPageNumber:(int)newPageNumber
+{
+    NSDictionary *resultDict = @{
+        PTPreviousPageNumberKey: [NSNumber numberWithInt:oldPageNumber],
+        PTPageNumberKey: [NSNumber numberWithInt:newPageNumber],
+    };
+
+    [self.plugin documentController:self pageMoved:[PdftronFlutterPlugin PT_idToJSONString:resultDict]];
 }
 
 - (BOOL)filterMenuItemsForAnnotationSelectionMenu:(UIMenuController *)menuController forAnnotation:(PTAnnot *)annot

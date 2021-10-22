@@ -19,6 +19,7 @@
 @property (nonatomic, strong) FlutterEventSink leadingNavButtonPressedEventSink;
 @property (nonatomic, strong) FlutterEventSink pageChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink zoomChangedEventSink;
+@property (nonatomic, strong) FlutterEventSink pageMovedEventSink;
 
 @property (nonatomic, assign, getter=isWidgetView) BOOL widgetView;
 @property (nonatomic, assign, getter=isMultiTabSet) BOOL multiTabSet;
@@ -147,6 +148,8 @@
     FlutterEventChannel* pageChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTPageChangedEventKey binaryMessenger:messenger];
 
     FlutterEventChannel* zoomChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTZoomChangedEventKey binaryMessenger:messenger];
+    
+    FlutterEventChannel* pageMovedEventChannel = [FlutterEventChannel eventChannelWithName:PTPageMovedEventKey binaryMessenger:messenger];
 
     [xfdfEventChannel setStreamHandler:self];
     
@@ -173,6 +176,8 @@
     [pageChangedEventChannel setStreamHandler:self];
     
     [zoomChangedEventChannel setStreamHandler:self];
+    
+    [pageMovedEventChannel setStreamHandler:self];
 }
 
 #pragma mark - Configurations
@@ -529,6 +534,33 @@
                         [documentController setTabTitle:tabTitle];
                     }
                 }
+                else if ([key isEqualToString:PTDisableEditingByAnnotationTypeKey])
+                {
+                    
+                    NSArray* uneditableAnnotTypes = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDisableEditingByAnnotationTypeKey class:[NSArray class] error:&error];
+                    
+                    if (!error && uneditableAnnotTypes) {
+                        [documentController setUneditableAnnotTypes:uneditableAnnotTypes];
+                    }
+                }
+                else if ([key isEqualToString:PTHideViewModeItemsKey])
+                {
+                    
+                    NSArray* viewModeItems = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideViewModeItemsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && viewModeItems) {
+                        [documentController hideViewModeItems:viewModeItems];
+                    }
+                }
+                else if ([key isEqualToString:PTDefaultEraserTypeKey])
+                {
+                    
+                    NSString* defaultEraserType = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDefaultEraserTypeKey class:[NSString class] error:&error];
+                    
+                    if (!error && defaultEraserType) {
+                        [documentController setDefaultEraserType:defaultEraserType];
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
@@ -797,10 +829,10 @@
 //            ^{
 //
 //            },
-//        PTCropPageButtonKey:
-//            ^{
-//
-//            },
+        PTCropPageButtonKey:
+            ^{
+                documentController.settingsViewController.cropPagesHidden = YES;
+            },
         PTMoreItemsButtonKey:
             ^{
                 documentController.moreItemsButtonHidden = YES;
@@ -908,6 +940,9 @@
         case zoomChangedId:
             self.zoomChangedEventSink = events;
             break;
+        case pageMovedId:
+            self.pageMovedEventSink = events;
+            break;
     }
     
     return Nil;
@@ -957,6 +992,9 @@
             break;
         case zoomChangedId:
             self.zoomChangedEventSink = nil;
+            break;
+        case pageMovedId:
+            self.pageMovedEventSink = nil;
             break;
     }
     
@@ -1088,6 +1126,14 @@
     }
 }
 
+-(void)documentController:(PTDocumentController *)docVC pageMoved:(NSString *)pageNumbersString
+{
+    if (self.pageMovedEventSink != nil)
+    {
+        self.pageMovedEventSink(pageNumbersString);
+    }
+}
+
 #pragma mark - Functions
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
@@ -1128,6 +1174,10 @@
     } else if ([call.method isEqualToString:PTImportBookmarksKey]) {
         NSString *bookmarkJson = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTBookmarkJsonArgumentKey]];
         [self importBookmarks:bookmarkJson resultToken:result];
+    } else if ([call.method isEqualToString:PTAddBookmarkKey]) {
+        NSString *title = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTBookmarkTitleArgumentKey]];
+        NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
+        [self addBookmark:title pageNumber:pageNumber resultToken:result];
     } else if ([call.method isEqualToString:PTSaveDocumentKey]) {
         [self saveDocument:result];
     } else if ([call.method isEqualToString:PTCommitToolKey]) {
@@ -1143,6 +1193,15 @@
     } else if ([call.method isEqualToString:PTSetCurrentPageKey]) {
         NSNumber* pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self setCurrentPage:pageNumber resultToken:result];
+    } else if ([call.method isEqualToString:PTGotoPreviousPageKey]) {
+        [self gotoPreviousPage:result];
+    } else if ([call.method isEqualToString:PTGotoNextPageKey]) {
+        [self gotoNextPage:result];
+    } else if ([call.method isEqualToString:PTGotoFirstPageKey]) {
+        [self gotoFirstPage:result];
+    } else if ([call.method isEqualToString:PTGotoLastPageKey]) {
+        [self gotoLastPage:result];
+
     } else if ([call.method isEqualToString:PTGetDocumentPathKey]) {
         [self getDocumentPath:result];
     } else if ([call.method isEqualToString:PTSetToolModeKey]) {
@@ -1175,6 +1234,19 @@
         NSString* filePath = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTPathArgumentKey]];
         [self exportAsImage:pageNumber dpi:dpi exportFormat:exportFormat filePath:filePath resultToken:result];
     }else {
+    } else if ([call.method isEqualToString:PTOpenAnnotationListKey]) {
+        [self openAnnotationList:result];
+    } else if ([call.method isEqualToString:PTOpenBookmarkListKey]) {
+        [self openBookmarkList:result];
+    } else if ([call.method isEqualToString:PTOpenOutlineListKey]) {
+        [self openOutlineList:result];
+    } else if ([call.method isEqualToString:PTOpenLayersListKey]) {
+        [self openLayersList:result];
+    } else if ([call.method isEqualToString:PTOpenNavigationListsKey]) {
+        [self openNavigationLists:result];
+    } else if ([call.method isEqualToString:PTGetCurrentPageKey]) {
+        [self getCurrentPage:result];
+    } else {
         result(FlutterMethodNotImplemented);
     }
 }
@@ -1401,29 +1473,29 @@
         return;
     }
     
+    __block BOOL hasDownloader = NO;
+    
     NSError* error;
-    
     [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if([doc HasDownloader])
-        {
-            // too soon
-            NSLog(@"Error: The document is still being downloaded.");
-            flutterResult([FlutterError errorWithCode:@"import_annotations" message:@"Failed to import annotations" details:@"Error: The document is still being downloaded."]);
-            return;
-        }
-        
-        PTFDFDoc *fdfDoc = [PTFDFDoc CreateFromXFDF:xfdf];
-        
-        [doc FDFUpdate:fdfDoc];
-        [doc RefreshAnnotAppearances:[[PTRefreshOptions alloc] init]];
-        [documentController.pdfViewCtrl Update:YES];
-        
+        hasDownloader = [doc HasDownloader];
     } error:&error];
+    if (hasDownloader) {
+        // too soon
+        NSLog(@"Error: The document is still being downloaded.");
+        flutterResult([FlutterError errorWithCode:@"import_annotation_command" message:@"Failed to import annotation command" details:@"Error: The document is still being downloaded."]);
+        return;
+    }
     
-    if(error)
-    {
-        NSLog(@"Error: There was an error while trying to import annotations. %@", error.localizedDescription);
-        flutterResult([FlutterError errorWithCode:@"import_annotations" message:@"Failed to import annotations" details:@"Error: There was an error while trying to import annotations."]);
+    PTAnnotationManager * const annotationManager = documentController.toolManager.annotationManager;
+    
+    NSError *updateError = nil;
+    const BOOL updateSuccess = [annotationManager updateAnnotationsWithXFDFString:xfdf
+                                                                            error:&updateError];
+    if (!updateSuccess) {
+        if (updateError) {
+            NSLog(@"Error: There was an error while trying to import annotation command. %@", updateError.localizedDescription);
+        }
+        flutterResult([FlutterError errorWithCode:@"import_annotation_command" message:@"Failed to import annotation command" details:@"Error: There was an error while trying to import annotation command."]);
     } else {
         flutterResult(nil);
     }
@@ -1876,32 +1948,28 @@
         return;
     }
     
+    __block BOOL hasDownloader = NO;
+    
     NSError* error;
-    
     [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
-        if([doc HasDownloader])
-        {
-            // too soon
-            NSLog(@"Error: The document is still being downloaded.");
-            flutterResult([FlutterError errorWithCode:@"import_annotation_command" message:@"Failed to import annotation command" details:@"Error: The document is still being downloaded."]);
-            return;
-        }
-
-        PTFDFDoc* fdfDoc = [doc FDFExtract:e_ptboth];
-        NSString *fdfString = [fdfDoc SaveAsXFDFToString];
-        PTFDFDoc *newFDFDoc = [PTFDFDoc CreateFromXFDF:fdfString];
-        [newFDFDoc MergeAnnots:xfdfCommand permitted_user:@""];
-
-        [doc FDFUpdate:newFDFDoc];
-        [doc RefreshAnnotAppearances:[[PTRefreshOptions alloc] init]];
-
-        [documentController.pdfViewCtrl Update:YES];
-
+        hasDownloader = [doc HasDownloader];
     } error:&error];
+    if (hasDownloader) {
+        // too soon
+        NSLog(@"Error: The document is still being downloaded.");
+        flutterResult([FlutterError errorWithCode:@"import_annotation_command" message:@"Failed to import annotation command" details:@"Error: The document is still being downloaded."]);
+        return;
+    }
+
+    PTAnnotationManager * const annotationManager = documentController.toolManager.annotationManager;
     
-    if(error)
-    {
-        NSLog(@"Error: There was an error while trying to import annotation command. %@", error.localizedDescription);
+    NSError *updateError = nil;
+    const BOOL updateSuccess = [annotationManager updateAnnotationsWithXFDFCommand:xfdfCommand
+                                                                             error:&updateError];
+    if (!updateSuccess) {
+        if (updateError) {
+            NSLog(@"Error: There was an error while trying to import annotation command. %@", updateError.localizedDescription);
+        }
         flutterResult([FlutterError errorWithCode:@"import_annotation_command" message:@"Failed to import annotation command" details:@"Error: There was an error while trying to import annotation command."]);
     } else {
         flutterResult(nil);
@@ -1941,6 +2009,55 @@
     } else {
         flutterResult(nil);
     }
+}
+
+- (void)addBookmark:(NSString *)title pageNumber:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"add_bookmark" message:@"Failed to add bookmark" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+    
+    NSError* error;
+    __block PTUserBookmark * bookmark;
+    
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        if([doc HasDownloader])
+        {
+            // too soon
+            NSLog(@"Error: The document is still being downloaded.");
+            flutterResult([FlutterError errorWithCode:@"add_bookmark" message:@"Failed to add bookmark" details:@"Error: The document is still being downloaded."]);
+            return;
+        }
+        
+        // Export bookmarks to JSON, then to array.
+        NSString* json = [PTBookmarkManager.defaultManager exportBookmarksFromDoc:doc];
+        NSMutableArray<PTUserBookmark *> * bookmarks = [NSMutableArray arrayWithArray:[PTBookmarkManager.defaultManager bookmarksFromJSONString:json]];
+        bookmark = [[PTUserBookmark alloc] initWithTitle:title pageNumber:[pageNumber intValue]];
+        [bookmarks addObject:bookmark];
+        
+        // Convert array back to JSON and import.
+        NSString* newJson = [PTBookmarkManager.defaultManager JSONStringFromBookmarks:bookmarks];
+        [PTBookmarkManager.defaultManager importBookmarksForDoc:doc fromJSONString:newJson];
+
+    } error:&error];
+    
+    if(error)
+    {
+        NSLog(@"Error: There was an error while trying to add bookmark. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"add_bookmark" message:@"Failed to add bookmark" details:@"Error: There was an error while trying to add bookmark."]);
+    } else {
+        flutterResult(nil);
+    }
+    
+    // Raise event.
+    PTBookmarkViewController *bookmarkViewController = documentController.navigationListsViewController.bookmarkViewController;
+    PTFlutterDocumentController *flutterDocumentController = (PTFlutterDocumentController *) documentController;
+    [flutterDocumentController bookmarkViewController:bookmarkViewController didAddBookmark:bookmark];
 }
 
 - (void)saveDocument:(FlutterResult)flutterResult
@@ -2072,6 +2189,31 @@
 - (void)setCurrentPage:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult {
     PTDocumentController *documentController = [self getDocumentController];
     flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl SetCurrentPage:[pageNumber intValue]]]);
+}
+
+- (void)gotoPreviousPage:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl GotoPreviousPage]]);
+}
+
+- (void)gotoNextPage:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl GotoNextPage]]);
+}
+
+- (void)gotoFirstPage:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl GotoFirstPage]]);
+}
+
+- (void)gotoLastPage:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    flutterResult([NSNumber numberWithBool:[documentController.pdfViewCtrl GotoLastPage]]);
+}
+
+- (void)getCurrentPage:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    flutterResult([NSNumber numberWithInt:documentController.pdfViewCtrl.currentPage]);
 }
 
 - (void)getDocumentPath:(FlutterResult)flutterResult {
@@ -2358,6 +2500,74 @@
     }
 }
     
+- (void)openAnnotationList:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if (!documentController.annotationListHidden) {
+        PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
+        if (navigationListsViewController) {
+            navigationListsViewController.selectedViewController = navigationListsViewController.annotationViewController;
+            [documentController showNavigationLists];
+        }
+    }
+    
+    flutterResult(nil);
+}
+
+- (void)openBookmarkList:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if (!documentController.bookmarkListHidden) {
+        PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
+        if (navigationListsViewController) {
+            navigationListsViewController.selectedViewController = navigationListsViewController.bookmarkViewController;
+            [documentController showNavigationLists];
+        }
+    }
+    
+    flutterResult(nil);
+}
+
+- (void)openOutlineList:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if (!documentController.outlineListHidden) {
+        PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
+        if (navigationListsViewController) {
+            navigationListsViewController.selectedViewController = navigationListsViewController.outlineViewController;
+            [documentController showNavigationLists];
+        }
+    }
+    
+    
+    
+    flutterResult(nil);
+}
+
+- (void)openLayersList:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if (!documentController.pdfLayerListHidden) {
+        PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
+        if (navigationListsViewController) {
+            navigationListsViewController.selectedViewController = navigationListsViewController.pdfLayerViewController;
+            [documentController showNavigationLists];
+        }
+    }
+    
+    flutterResult(nil);
+}
+
+-(void)openNavigationLists:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    PTNavigationListsViewController *navigationListsViewController = documentController.navigationListsViewController;
+    if (navigationListsViewController) {
+        [documentController showNavigationLists];
+    }
+
+    flutterResult(nil);
+}
 
 #pragma mark - Helper
 

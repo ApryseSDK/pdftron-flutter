@@ -31,6 +31,18 @@ class Functions {
   static const deleteAllAnnotations = "deleteAllAnnotations";
   static const exportAsImage = "exportAsImage";
   static const exportAsImageFromFilePath = "exportAsImageFromFilePath";
+  static const openAnnotationList = "openAnnotationList";
+  static const setRequestedOrientation = "setRequestedOrientation";
+  static const gotoPreviousPage = "gotoPreviousPage";
+  static const gotoNextPage = "gotoNextPage";
+  static const gotoFirstPage = "gotoFirstPage";
+  static const gotoLastPage = "gotoLastPage";
+  static const addBookmark = "addBookmark";
+  static const openBookmarkList = "openBookmarkList";
+  static const openOutlineList = "openOutlineList";
+  static const openLayersList = "openLayersList";
+  static const openNavigationLists = "openNavigationLists";
+  static const getCurrentPage = "getCurrentPage";
 }
 
 // Parameters define the parameters of the functions
@@ -43,6 +55,7 @@ class Parameters {
   static const xfdf = "xfdf";
   static const bookmarkJson = "bookmarkJson";
   static const pageNumber = "pageNumber";
+  static const title = "title";
   static const toolMode = "toolMode";
   static const fieldNames = "fieldNames";
   static const fields = "fields";
@@ -57,6 +70,7 @@ class Parameters {
   static const path = "path";
   static const exportFormat = "exportFormat";
   static const dpi = "dpi";
+  static const requestedOrientation = "requestedOrientation";
 }
 
 // Parameters define the parameters of the events
@@ -295,3 +309,28 @@ class ToolbarIcons {
     static const JPEG =  "JPEG";
     static const PNG = "PNG";
   }
+// PTOrientation defines the screen orientations for the viewer. Android only.
+class PTOrientation {
+  static const unspecified = -1;
+  static const landscape = 0;
+  static const portrait = 1;
+  static const sensorLandscape = 6;
+  static const sensorPortrait = 7;
+  static const reverseLandscape = 8;
+  static const reversePortrait = 9;
+  static const userLandscape = 11; // Only changes direction if user has enabled sensor-based rotation.
+  static const userPortrait = 12; // Only changes direction if user has enabled sensor-based rotation.
+}
+
+// ViewModePickerItem defines the items in the view mode dialog.
+class ViewModePickerItem {
+  static const Crop = "viewModeCrop";
+  static const Rotation = "viewModeRotation";
+  static const ColorMode = "viewModeColorMode";
+}
+
+class DefaultEraserType {
+  static const annotationEraser = "annotationEraser";
+  static const hybrideEraser = "hybrideEraser";
+  static const inkEraser = "inkEraser";
+}

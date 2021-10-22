@@ -14,14 +14,30 @@ class DocumentView extends StatefulWidget {
 class _DocumentViewState extends State<DocumentView> {
   @override
   Widget build(BuildContext context) {
+  final String viewType = 'pdftron_flutter/documentview';
+
     if (Platform.isAndroid) {
-      return AndroidView(
-        viewType: 'pdftron_flutter/documentview',
-        onPlatformViewCreated: _onPlatformViewCreated,
-      );
+      return PlatformViewLink(
+          viewType: viewType,
+          surfaceFactory: (BuildContext context, PlatformViewController controller) {
+            return AndroidViewSurface(
+              controller: controller as AndroidViewController, 
+              hitTestBehavior: PlatformViewHitTestBehavior.opaque, 
+              gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>[].toSet());
+          }, 
+          onCreatePlatformView: (PlatformViewCreationParams params) {
+            return PlatformViewsService.initSurfaceAndroidView(
+              id: params.id,
+              viewType: viewType,
+              layoutDirection: TextDirection.ltr,
+            )
+              ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
+              ..addOnPlatformViewCreatedListener(_onPlatformViewCreated)
+              ..create();
+          });
     } else if (Platform.isIOS) {
       return UiKitView(
-        viewType: 'pdftron_flutter/documentview',
+        viewType: viewType,
         onPlatformViewCreated: _onPlatformViewCreated,
       );
     }
@@ -108,6 +124,14 @@ class DocumentViewController {
         <String, dynamic>{Parameters.bookmarkJson: bookmarkJson});
   }
 
+  Future<void> addBookmark(String title, int pageNumber) {
+    return _channel
+        .invokeMethod(Functions.addBookmark, <String, dynamic>{
+      Parameters.title: title,
+      Parameters.pageNumber: pageNumber
+    });
+  }
+
   Future<String> saveDocument() {
     return _channel.invokeMethod(Functions.saveDocument);
   }
@@ -183,5 +207,45 @@ class DocumentViewController {
       Parameters.dpi: dpi,
       Parameters.exportFormat: exportFormat
     });
+  }
+
+  Future<void> openAnnotationList() {
+    return _channel.invokeMethod(Functions.openAnnotationList);
+  }
+
+  Future<void> openBookmarkList() {
+    return _channel.invokeMethod(Functions.openBookmarkList);
+  }
+
+  Future<void> openOutlineList() {
+    return _channel.invokeMethod(Functions.openOutlineList);
+  }
+
+  Future<void> openLayersList() {
+    return _channel.invokeMethod(Functions.openLayersList);
+  }
+
+  Future<void> openNavigationLists() {
+    return _channel.invokeMethod(Functions.openNavigationLists);
+  }
+
+  Future<bool> gotoPreviousPage() {
+    return _channel.invokeMethod(Functions.gotoPreviousPage);
+  }
+
+  Future<bool> gotoNextPage() {
+    return _channel.invokeMethod(Functions.gotoNextPage);
+  }
+
+  Future<bool> gotoFirstPage() {
+    return _channel.invokeMethod(Functions.gotoFirstPage);
+  }
+
+  Future<bool> gotoLastPage() {
+    return _channel.invokeMethod(Functions.gotoLastPage);
+  }
+
+  Future<int> getCurrentPage() {
+    return _channel.invokeMethod(Functions.getCurrentPage);
   }
 }

@@ -39,6 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL signSignatureFieldsWithStamps;
 @property (nonatomic, assign) BOOL selectAnnotationAfterCreation;
 @property (nonatomic, assign, getter=isBottomToolbarOn) BOOL bottomToolbarOn;
+@property (nonatomic, copy, nullable) NSString* defaultEraserType;
 
 @property (nonatomic, copy, nullable) NSArray<NSString *> * annotationToolbars;
 @property (nonatomic, copy, nullable) NSArray<NSString *> * hideDefaultAnnotationToolbars;
@@ -62,6 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, nullable) NSString* tabTitle;
 
+@property (nonatomic, copy, nullable) NSArray<NSString*>* uneditableAnnotTypes;
+
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
 
@@ -69,6 +72,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)shouldSetNavigationBarHidden:(BOOL)navigationBarHidden animated:(BOOL)animated;
 - (BOOL)shouldSetToolbarHidden:(BOOL)toolbarHidden animated:(BOOL)animated;
+
+- (void)hideViewModeItems:(NSArray<NSString *> *)viewModeItems;
 
 @end
 

@@ -44,6 +44,9 @@ static NSString * const PTContinuousAnnotationEditingKey = @"continuousAnnotatio
 static NSString * const PTAnnotationPermissionCheckEnabledKey = @"annotationPermissionCheckEnabled";
 static NSString * const PTOverrideBehaviorKey = @"overrideBehavior";
 static NSString * const PTTabTitleKey = @"tabTitle";
+static NSString * const PTDisableEditingByAnnotationTypeKey = @"disableEditingByAnnotationType";
+static NSString * const PTHideViewModeItemsKey = @"hideViewModeItems";
+static NSString * const PTDefaultEraserTypeKey = @"defaultEraserType";
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";
@@ -173,12 +176,17 @@ static NSString * const PTSetFlagsForAnnotationsKey = @"setFlagsForAnnotations";
 static NSString * const PTSetPropertiesForAnnotationKey = @"setPropertiesForAnnotation";
 static NSString * const PTImportAnnotationCommandKey = @"importAnnotationCommand";
 static NSString * const PTImportBookmarksKey = @"importBookmarkJson";
+static NSString * const PTAddBookmarkKey = @"addBookmark";
 static NSString * const PTSaveDocumentKey = @"saveDocument";
 static NSString * const PTCommitToolKey = @"commitTool";
 static NSString * const PTGetPageCountKey = @"getPageCount";
 static NSString * const PTGetPageCropBoxKey = @"getPageCropBox";
 static NSString * const PTGetPageRotationKey = @"getPageRotation";
 static NSString * const PTSetCurrentPageKey = @"setCurrentPage";
+static NSString * const PTGotoPreviousPageKey = @"gotoPreviousPage";
+static NSString * const PTGotoNextPageKey = @"gotoNextPage";
+static NSString * const PTGotoFirstPageKey = @"gotoFirstPage";
+static NSString * const PTGotoLastPageKey = @"gotoLastPage";
 static NSString * const PTGetDocumentPathKey = @"getDocumentPath";
 static NSString * const PTSetToolModeKey = @"setToolMode";
 static NSString * const PTSetFlagForFieldsKey = @"setFlagForFields";
@@ -188,6 +196,12 @@ static NSString * const PTCloseAllTabsKey = @"closeAllTabs";
 static NSString * const PTDeleteAllAnnotationsKey = @"deleteAllAnnotations";
 static NSString * const PTExportAsImageKey = @"exportAsImage";
 static NSString * const PTExportAsImageFromFilePathKey = @"exportAsImageFromFilePath";
+static NSString * const PTOpenAnnotationListKey = @"openAnnotationList";
+static NSString * const PTOpenBookmarkListKey = @"openBookmarkList";
+static NSString * const PTOpenOutlineListKey = @"openOutlineList";
+static NSString * const PTOpenLayersListKey = @"openLayersList";
+static NSString * const PTOpenNavigationListsKey = @"openNavigationLists";
+static NSString * const PTGetCurrentPageKey = @"getCurrentPage";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
@@ -197,6 +211,7 @@ static NSString * const PTXfdfCommandArgumentKey = @"xfdfCommand";
 static NSString * const PTXfdfArgumentKey = @"xfdf";
 static NSString * const PTBookmarkJsonArgumentKey = @"bookmarkJson";
 static NSString * const PTPageNumberArgumentKey = @"pageNumber";
+static NSString * const PTBookmarkTitleArgumentKey = @"title";
 static NSString * const PTLicenseArgumentKey = @"licenseKey";
 static NSString * const PTToolModeArgumentKey = @"toolMode";
 static NSString * const PTFieldNamesArgumentKey = @"fieldNames";
@@ -227,6 +242,7 @@ static NSString * const PTAnnotationMenuPressedEventKey = @"annotation_menu_pres
 static NSString * const PTLeadingNavButtonPressedEventKey = @"leading_nav_button_pressed_event";
 static NSString * const PTPageChangedEventKey = @"page_changed_event";
 static NSString * const PTZoomChangedEventKey = @"zoom_changed_event";
+static NSString * const PTPageMovedEventKey = @"page_moved_event";
 
 // fit mode
 static NSString * const PTFitPageKey = @"FitPage";
@@ -308,6 +324,14 @@ static NSString * const PTAnnotationFlagToggleNoViewKey = @"toggleNoView";
 static NSString * const PTAnnotatedFilterModeKey = @"annotated";
 static NSString * const PTBookmarkedFilterModeKey = @"bookmarked";
 
+static NSString * const PTViewModeCropKey = @"viewModeCrop";
+static NSString * const PTViewModeRotationKey = @"viewModeRotation";
+static NSString * const PTViewModeColorModeKey = @"viewModeColorMode";
+
+// DefaultEraserType keys
+static NSString * const PTInkEraserModeAllKey = @"annotationEraser";
+static NSString * const PTInkEraserModePointsKey = @"hybrideEraser";
+
 // Default annotation toolbar names.
 typedef NSString * PTDefaultAnnotationToolbarKey;
 static const PTDefaultAnnotationToolbarKey PTAnnotationToolbarView = @"PDFTron_View";
@@ -342,6 +366,7 @@ typedef enum {
     leadingNavButtonPressedId,
     pageChangedId,
     zoomChangedId,
+    pageMovedId,
 } EventSinkId;
 
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
@@ -365,6 +390,7 @@ typedef enum {
 -(void)documentController:(PTDocumentController *)docVC leadingNavButtonClicked:(nullable NSString *)nav;
 -(void)documentController:(PTDocumentController *)docVC pageChanged:(NSString*)pageNumbersString;
 -(void)documentController:(PTDocumentController *)docVC zoomChanged:(NSNumber*)zoom;
+-(void)documentController:(PTDocumentController *)docVC pageMoved:(NSString*)pageNumbersString;
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 

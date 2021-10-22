@@ -1,19 +1,29 @@
-package com.pdftron.pdftronflutter;
+package com.pdftron.pdftronflutter.helpers;
 
 import android.content.Context;
-import android.view.View;
 
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-
-import com.pdftron.pdftronflutter.helpers.PluginUtils;
-import com.pdftron.pdftronflutter.views.DocumentView;
+import com.pdftron.common.PDFNetException;
+import com.pdftron.pdf.PDFNet;
+import com.pdftron.pdftronflutter.FlutterDocumentActivity;
 
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
-import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.platform.PlatformView;
+import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
+import io.flutter.plugin.common.MethodChannel.Result;
+
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_GET_PLATFORM_VERSION;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_GET_VERSION;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_INITIALIZE;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_OPEN_DOCUMENT;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SET_LEADING_NAV_BUTTON_ICON;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SET_REQUESTED_ORIENTATION;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_CONFIG;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_DOCUMENT;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LEADING_NAV_BUTTON_ICON;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LICENSE_KEY;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PASSWORD;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_REQUESTED_ORIENTATION;
 
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATIONS_SELECTED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATION_CHANGED;
@@ -27,46 +37,26 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_FORM_FIELD_VA
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_LEADING_NAV_BUTTON_PRESSED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_LONG_PRESS_MENU_PRESSED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_PAGE_CHANGED;
-import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ZOOM_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_PAGE_MOVED;
-import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_OPEN_DOCUMENT;
-import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SET_LEADING_NAV_BUTTON_ICON;
-import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LEADING_NAV_BUTTON_ICON;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ZOOM_CHANGED;
 
-public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCallHandler {
+public class PluginMethodCallHandler implements MethodCallHandler {
 
-    private final DocumentView documentView;
+    private final Context mContext;
 
-    private final MethodChannel methodChannel;
-
-    public FlutterDocumentView(Context context, Context activityContext, BinaryMessenger messenger, int id) {
-
-        registerWith(messenger);
-        documentView = new DocumentView(context);
-
-        FragmentManager manager = null;
-        if (activityContext instanceof FragmentActivity) {
-            manager = ((FragmentActivity) activityContext).getSupportFragmentManager();
-        }
-
-        documentView.setSupportFragmentManager(manager);
-
-        methodChannel = new MethodChannel(messenger, "pdftron_flutter/documentview_" + id);
-        methodChannel.setMethodCallHandler(this);
-    }
-
-    public void registerWith(BinaryMessenger messenger) {
+    public PluginMethodCallHandler(BinaryMessenger messenger, Context context) {
+        mContext = context;
 
         final EventChannel annotEventChannel = new EventChannel(messenger, EVENT_EXPORT_ANNOTATION_COMMAND);
         annotEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                documentView.setExportAnnotationCommandEventEmitter(emitter);
+                FlutterDocumentActivity.setExportAnnotationCommandEventEmitter(emitter);
             }
 
             @Override
             public void onCancel(Object arguments) {
-                documentView.setExportAnnotationCommandEventEmitter(null);
+                FlutterDocumentActivity.setExportAnnotationCommandEventEmitter(null);
             }
         });
 
@@ -74,12 +64,12 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         bookmarkEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                documentView.setExportBookmarkEventEmitter(emitter);
+                FlutterDocumentActivity.setExportBookmarkEventEmitter(emitter);
             }
 
             @Override
             public void onCancel(Object arguments) {
-                documentView.setExportBookmarkEventEmitter(null);
+                FlutterDocumentActivity.setExportBookmarkEventEmitter(null);
             }
         });
 
@@ -87,12 +77,12 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         documentLoadedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                documentView.setDocumentLoadedEventEmitter(emitter);
+                FlutterDocumentActivity.setDocumentLoadedEventEmitter(emitter);
             }
 
             @Override
             public void onCancel(Object arguments) {
-                documentView.setDocumentLoadedEventEmitter(null);
+                FlutterDocumentActivity.setDocumentLoadedEventEmitter(null);
             }
         });
 
@@ -100,12 +90,12 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         documentErrorEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                documentView.setDocumentErrorEventEmitter(emitter);
+                FlutterDocumentActivity.setDocumentErrorEventEmitter(emitter);
             }
 
             @Override
             public void onCancel(Object arguments) {
-                documentView.setDocumentErrorEventEmitter(null);
+                FlutterDocumentActivity.setDocumentErrorEventEmitter(null);
             }
         });
 
@@ -113,12 +103,12 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         annotationChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                documentView.setAnnotationChangedEventEmitter(emitter);
+                FlutterDocumentActivity.setAnnotationChangedEventEmitter(emitter);
             }
 
             @Override
             public void onCancel(Object arguments) {
-                documentView.setAnnotationChangedEventEmitter(null);
+                FlutterDocumentActivity.setAnnotationChangedEventEmitter(null);
             }
         });
 
@@ -126,12 +116,12 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         annotationSelectedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                documentView.setAnnotationsSelectedEventEmitter(emitter);
+                FlutterDocumentActivity.setAnnotationsSelectionEventEmitter(emitter);
             }
 
             @Override
             public void onCancel(Object arguments) {
-                documentView.setAnnotationsSelectedEventEmitter(null);
+                FlutterDocumentActivity.setAnnotationsSelectionEventEmitter(null);
             }
         });
 
@@ -139,12 +129,12 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         formFieldValueChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                documentView.setFormFieldValueChangedEventEmitter(emitter);
+                FlutterDocumentActivity.setFormFieldValueChangedEventEmitter(emitter);
             }
 
             @Override
             public void onCancel(Object arguments) {
-                documentView.setFormFieldValueChangedEventEmitter(null);
+                FlutterDocumentActivity.setFormFieldValueChangedEventEmitter(null);
             }
         });
 
@@ -152,12 +142,12 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         behaviorActivatedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                documentView.setBehaviorActivatedEventEmitter(emitter);
+                FlutterDocumentActivity.setBehaviorActivatedEventEmitter(emitter);
             }
 
             @Override
             public void onCancel(Object arguments) {
-                documentView.setBehaviorActivatedEventEmitter(null);
+                FlutterDocumentActivity.setBehaviorActivatedEventEmitter(null);
             }
         });
 
@@ -165,25 +155,12 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         longPressMenuPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                documentView.setLongPressMenuPressedEventEmitter(emitter);
+                FlutterDocumentActivity.setLongPressMenuPressedEventEmitter(emitter);
             }
 
             @Override
             public void onCancel(Object arguments) {
-                documentView.setLongPressMenuPressedEventEmitter(null);
-            }
-        });
-
-        final EventChannel annotationMenuPressedEventChannel = new EventChannel(messenger, EVENT_ANNOTATION_MENU_PRESSED);
-        annotationMenuPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
-            @Override
-            public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                documentView.setAnnotationMenuPressedEventEmitter(emitter);
-            }
-
-            @Override
-            public void onCancel(Object arguments) {
-                documentView.setAnnotationMenuPressedEventEmitter(null);
+                FlutterDocumentActivity.setLongPressMenuPressedEventEmitter(null);
             }
         });
 
@@ -191,12 +168,25 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         leadingNavButtonPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                documentView.setLeadingNavButtonPressedEventEmitter(emitter);
+                FlutterDocumentActivity.setLeadingNavButtonPressedEventEmitter(emitter);
             }
 
             @Override
             public void onCancel(Object arguments) {
-                documentView.setLeadingNavButtonIcon(null);
+                FlutterDocumentActivity.setLeadingNavButtonPressedEventEmitter(null);
+            }
+        });
+
+        final EventChannel annotationMenuPressedEventChannel = new EventChannel(messenger, EVENT_ANNOTATION_MENU_PRESSED);
+        annotationMenuPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setAnnotationMenuPressedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setAnnotationMenuPressedEventEmitter(null);
             }
         });
 
@@ -204,12 +194,12 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         pageChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                documentView.setPageChangedEventEmitter(emitter);
+                FlutterDocumentActivity.setPageChangedEventEmitter(emitter);
             }
 
             @Override
             public void onCancel(Object arguments) {
-                documentView.setPageChangedEventEmitter(null);
+                FlutterDocumentActivity.setPageChangedEventEmitter(null);
             }
         });
 
@@ -217,55 +207,74 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         zoomChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                documentView.setZoomChangedEventEmitter(emitter);
+                FlutterDocumentActivity.setZoomChangedEventEmitter(emitter);
             }
 
             @Override
             public void onCancel(Object arguments) {
-                documentView.setZoomChangedEventEmitter(null);
+                FlutterDocumentActivity.setZoomChangedEventEmitter(null);
             }
         });
 
-        final EventChannel pageMovedEventChannel = new EventChannel(messenger, EVENT_PAGE_MOVED);
-        pageMovedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+        final EventChannel pageMovedEventChanel = new EventChannel(messenger, EVENT_PAGE_MOVED);
+        pageMovedEventChanel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                documentView.setPageMovedEventEmitter(emitter);
+                FlutterDocumentActivity.setPageMovedEventEmitter(emitter);
             }
 
             @Override
             public void onCancel(Object arguments) {
-                documentView.setPageMovedEventEmitter(null);
+                FlutterDocumentActivity.setPageMovedEventEmitter(null);
             }
         });
     }
 
     @Override
-    public void onMethodCall(MethodCall call, MethodChannel.Result result) {
+    public void onMethodCall(MethodCall call, Result result) {
         switch (call.method) {
+            case FUNCTION_GET_PLATFORM_VERSION:
+                result.success("Android " + android.os.Build.VERSION.RELEASE);
+                break;
+            case FUNCTION_GET_VERSION:
+                try {
+                    String pdftronVersion = Double.toString(PDFNet.getVersion());
+                    result.success(pdftronVersion);
+                } catch (PDFNetException e) {
+                    e.printStackTrace();
+                    result.error(Long.toString(e.getErrorCode()), "PDFTronException Error: " + e, null);
+                }
+                break;
+            case FUNCTION_INITIALIZE:
+                try {
+                    String licenseKey = call.argument(KEY_LICENSE_KEY);
+                    com.pdftron.pdf.utils.AppUtils.initializePDFNetApplication(mContext.getApplicationContext(), licenseKey);
+                    result.success(null);
+                } catch (PDFNetException e) {
+                    e.printStackTrace();
+                    result.error(Long.toString(e.getErrorCode()), "PDFTronException Error: " + e, null);
+                }
+                break;
             case FUNCTION_OPEN_DOCUMENT:
-                String document = call.argument("document");
-                String password = call.argument("password");
-                String config = call.argument("config");
-                documentView.openDocument(document, password, config, result);
+                String document = call.argument(KEY_DOCUMENT);
+                String password = call.argument(KEY_PASSWORD);
+                String config = call.argument(KEY_CONFIG);
+                FlutterDocumentActivity.setFlutterLoadResult(result);
+                FlutterDocumentActivity.openDocument(mContext, document, password, config);
                 break;
             case FUNCTION_SET_LEADING_NAV_BUTTON_ICON: {
                 String leadingNavButtonIcon = call.argument(KEY_LEADING_NAV_BUTTON_ICON);
-                documentView.setLeadingNavButtonIcon(leadingNavButtonIcon);
+                FlutterDocumentActivity.setLeadingNavButtonIcon(leadingNavButtonIcon);
+                break;
+            }
+            case FUNCTION_SET_REQUESTED_ORIENTATION: {
+                int requestedOrientation = call.argument(KEY_REQUESTED_ORIENTATION);
+                FlutterDocumentActivity.setOrientation(requestedOrientation);
                 break;
             }
             default:
-                PluginUtils.onMethodCall(call, result, documentView);
+                PluginUtils.onMethodCall(call, result, FlutterDocumentActivity.getCurrentActivity());
                 break;
         }
-    }
-
-    @Override
-    public View getView() {
-        return documentView;
-    }
-
-    @Override
-    public void dispose() {
     }
 }

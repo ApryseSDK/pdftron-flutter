@@ -6,6 +6,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/rendering.dart';
 
 part 'options.dart';
 part 'document_view.dart';
@@ -27,7 +30,7 @@ class PdftronFlutter {
     return version;
   }
 
-  static Future<void> initialize(String licenseKey) {
+  static Future<void> initialize([String licenseKey = ""]) {
     return _channel.invokeMethod(Functions.initialize,
         <String, dynamic>{Parameters.licenseKey: licenseKey});
   }
@@ -97,6 +100,14 @@ class PdftronFlutter {
   static Future<void> importBookmarkJson(String bookmarkJson) {
     return _channel.invokeMethod(Functions.importBookmarkJson,
         <String, dynamic>{Parameters.bookmarkJson: bookmarkJson});
+  }
+
+  static Future<void> addBookmark(String title, int pageNumber) {
+    return _channel
+        .invokeMethod(Functions.addBookmark, <String, dynamic>{
+      Parameters.title: title,
+      Parameters.pageNumber: pageNumber
+    });
   }
 
   static Future<String> saveDocument() {
@@ -183,5 +194,51 @@ class PdftronFlutter {
       Parameters.exportFormat: exportFormat,
       Parameters.path: filePath
     });
+  }
+  
+  static Future<void> openAnnotationList() {
+    return _channel.invokeMethod(Functions.openAnnotationList);
+  }
+
+  static Future<void> openBookmarkList() {
+    return _channel.invokeMethod(Functions.openBookmarkList);
+  }
+
+  static Future<void> openOutlineList() {
+    return _channel.invokeMethod(Functions.openOutlineList);
+  }
+
+  static Future<void> openLayersList() {
+    return _channel.invokeMethod(Functions.openLayersList);
+  }
+
+  static Future<void> openNavigationLists() {
+    return _channel.invokeMethod(Functions.openNavigationLists);
+  }
+
+  // Android only.
+  static Future<void> setRequestedOrientation(int requestedOrientation) {
+    return _channel.invokeMethod(Functions.setRequestedOrientation,
+        <String, dynamic>{Parameters.requestedOrientation: requestedOrientation});
+  }
+
+  static Future<bool> gotoPreviousPage() {
+    return _channel.invokeMethod(Functions.gotoPreviousPage);
+  }
+
+  static Future<bool> gotoNextPage() {
+    return _channel.invokeMethod(Functions.gotoNextPage);
+  }
+
+  static Future<bool> gotoFirstPage() {
+    return _channel.invokeMethod(Functions.gotoFirstPage);
+  }
+
+  static Future<bool> gotoLastPage() {
+    return _channel.invokeMethod(Functions.gotoLastPage);
+  }
+
+  static Future<int> getCurrentPage() {
+    return _channel.invokeMethod(Functions.getCurrentPage);
   }
 }
