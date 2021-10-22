@@ -485,6 +485,8 @@ PdftronFlutter.importAnnotations(xfdf);
 
 Extracts XFDF from the current document. If `annotationList` is null, export all annotations from the document; else export the valid ones specified.
 
+Note: the return value uses 0-indexed page numbers because it is an XFDF string. Meanwhile, the `Annot`s in the parameter use 1-indexed page numbers. 
+
 Parameters:
 
 Name | Type | Description
