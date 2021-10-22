@@ -27,7 +27,6 @@ class _ViewerState extends State<Viewer> {
   String _version = 'Unknown';
   String _document =
       "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf";
-  String _localPath = "/storage/emulated/0/Download/document.pdf";
   bool _showViewer = true;
 
   @override
@@ -93,15 +92,6 @@ class _ViewerState extends State<Viewer> {
     var documentLoadedCancel = startDocumentLoadedListener((filePath) {
       print("document loaded: $filePath");
     });
-
-    String filePath = _document;
-
-    //String staticB = await PdftronFlutter.exportAsImageFromFilePath(1, 96, ExportFormat.BMP, filePath);
-    //print("Image path with static method is $staticB");
-    //String staticP = await PdftronFlutter.exportAsImageFromFilePath(1, 96, ExportFormat.PNG, filePath);
-    //print("Image path with static method is $staticP");
-    //String staticJ = await PdftronFlutter.exportAsImageFromFilePath(1, 96, ExportFormat.JPEG, filePath);
-    //print("Image path with static method is $staticJ");
 
     await PdftronFlutter.openDocument(_document, config: config);
 
@@ -207,19 +197,7 @@ class _ViewerState extends State<Viewer> {
       _showMyDialog();
     });
 
-    await controller.openDocument(_document, config: config);
-    //await controller.openDocument(_localPath, config: config);
-
-
-    controller.getPageCount().then((count) => {print("page count: $count")});
-
-    // Widget version of exportAsImage.
-    String widgetB = await controller.exportAsImage(1, 96, ExportFormat.BMP);
-    print("Image path with widget method is $widgetB");
-    //String widgetP = await controller.exportAsImage(1, 96, ExportFormat.PNG);
-    //print("Image path with widget method is $widgetP");
-    //String widgetJ = await controller.exportAsImage(1, 96, ExportFormat.JPEG);
-    //print("Image path with widget method is $widgetJ");
+    controller.openDocument(_document, config: config);
   }
 
   Future<void> _showMyDialog() async {
