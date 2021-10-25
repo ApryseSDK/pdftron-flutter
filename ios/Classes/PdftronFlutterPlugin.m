@@ -1233,7 +1233,6 @@
         NSString* exportFormat = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTExportFormatArgumentKey]];
         NSString* filePath = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTPathArgumentKey]];
         [self exportAsImage:pageNumber dpi:dpi exportFormat:exportFormat filePath:filePath resultToken:result];
-    }else {
     } else if ([call.method isEqualToString:PTOpenAnnotationListKey]) {
         [self openAnnotationList:result];
     } else if ([call.method isEqualToString:PTOpenBookmarkListKey]) {
