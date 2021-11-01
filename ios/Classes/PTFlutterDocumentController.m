@@ -679,6 +679,10 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
                 return nil;
             }
             
+            if (!uniqueId) {
+                continue;
+            }
+            
             NSDictionary *annotDict = @{
                 PTAnnotationIdKey: uniqueId,
                 PTAnnotationPageNumberKey: [NSNumber numberWithLong:pageNumber],
