@@ -284,10 +284,20 @@ class Config {
   set pageNumberIndicatorAlwaysVisible(bool value) =>
       _pageNumberIndicatorAlwaysVisible = value;
 
+  /// A list of [Tools] that cannot be edited after creation.
+  /// 
+  /// Defaults to
   set disableEditingByAnnotationType(List value) => _disableEditingByAnnotationType = value;
 
+  /// A list of [ViewModePickerItem] constants that defines which view mode items to be 
+  /// hidden in the view mode dialog.
+  /// 
+  /// Defaults to empty
   set hideViewModeItems(List value) => _hideViewModeItems = value;
 
+  /// Sets the default eraser tool type. 
+  /// 
+  /// Value only applied after a clean install.
   set defaultEraserType(String value) => _defaultEraserType = value;
 
   Config.fromJson(Map<String, dynamic> json)

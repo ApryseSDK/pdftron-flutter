@@ -310,7 +310,9 @@ class ToolbarIcons {
   static const favorite = "PDFTron_Favorite";
 }
 
-// PTOrientation defines the screen orientations for the viewer. Android only.
+/// Defines the screen orientations for the viewer. 
+/// 
+/// Android only.
 class PTOrientation {
   static const unspecified = -1;
   static const landscape = 0;
@@ -319,19 +321,23 @@ class PTOrientation {
   static const sensorPortrait = 7;
   static const reverseLandscape = 8;
   static const reversePortrait = 9;
-  static const userLandscape = 11; // Only changes direction if user has enabled sensor-based rotation.
-  static const userPortrait = 12; // Only changes direction if user has enabled sensor-based rotation.
+  /// Only changes direction if user has enabled sensor-based rotation.
+  static const userLandscape = 11; 
+  /// Only changes direction if user has enabled sensor-based rotation.
+  static const userPortrait = 12; 
 }
 
-// ViewModePickerItem defines the items in the view mode dialog.
+/// Defines the items in the view mode dialog.
 class ViewModePickerItem {
   static const Crop = "viewModeCrop";
   static const Rotation = "viewModeRotation";
   static const ColorMode = "viewModeColorMode";
 }
 
+/// Defines the type of eraser used in the viewer.
 class DefaultEraserType {
   static const annotationEraser = "annotationEraser";
   static const hybrideEraser = "hybrideEraser";
+  /// Android only.
   static const inkEraser = "inkEraser";
 }
