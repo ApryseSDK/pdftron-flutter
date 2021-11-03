@@ -286,13 +286,13 @@ class Config {
 
   /// A list of [Tools] that cannot be edited after creation.
   /// 
-  /// Defaults to
+  /// Defaults to empty.
   set disableEditingByAnnotationType(List value) => _disableEditingByAnnotationType = value;
 
   /// A list of [ViewModePickerItem] constants that defines which view mode items to be 
   /// hidden in the view mode dialog.
   /// 
-  /// Defaults to empty
+  /// Defaults to empty.
   set hideViewModeItems(List value) => _hideViewModeItems = value;
 
   /// Sets the default eraser tool type. 
