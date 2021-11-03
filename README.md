@@ -189,19 +189,6 @@ There are 2 different ways to use PDFTron Flutter API:
 * Present a document via a plugin. 
 * Show a PDFTron document view via a Widget.
 
-You must choose either the widget or plugin, and use it for all APIs. Mixing widget and plugin APIs will not function correctly. 
-
-For iOS, whether you choose widget or plugin is personal preference.
-
-For Android, the plugin version is strongly recommended. The widget version (`DocumentView`) contains existing issues such as menu popups not opening, see issue: https://github.com/flutter/flutter/issues/58273
-
-
-## Widget or Plugin
-
-There are 2 different ways to use PDFTron Flutter API:  
-* Present a document via a plugin. 
-* Show a PDFTron document view via a Widget.
-
 You must choose either the widget or plugin, and use it for all APIs. Mixing widget and plugin APIs will not function correctly. Whether you choose the widget or plugin is personal preference.
 
 If you pick the Android widget, you will need to add padding for operating system intrusions like the status bar at the top of the device. One way is to set the enabled system UI, and then wrap the widget in a [`SafeArea`](https://api.flutter.dev/flutter/widgets/SafeArea-class.html) or use an [`AppBar`](https://api.flutter.dev/flutter/material/AppBar-class.html):
@@ -242,7 +229,6 @@ return Scaffold(
   ```dart
     import 'dart:async';
     import 'dart:io' show Platform;
-
     import 'package:flutter/material.dart';
     import 'package:flutter/services.dart';
     import 'package:pdftron_flutter/pdftron_flutter.dart';
@@ -258,7 +244,15 @@ return Scaffold(
           home: Viewer(),
         );
       }
-    }
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, you want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
+    if (!mounted) return;
+
+    setState(() {
+      _version = version;
+    });
+  }
 
     class Viewer extends StatefulWidget {
       @override
@@ -327,6 +321,7 @@ return Scaffold(
         // How to disable functionality:
         //      config.disabledElements = [Buttons.shareButton, Buttons.searchButton];
         //      config.disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
+        // Other viewer configurations:
         //      config.multiTabEnabled = true;
         //      config.customHeaders = {'headerName': 'headerValue'};
 

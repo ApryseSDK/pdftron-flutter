@@ -23,6 +23,7 @@
 
 @property (nonatomic, assign, getter=isWidgetView) BOOL widgetView;
 @property (nonatomic, assign, getter=isMultiTabSet) BOOL multiTabSet;
+@property (nonatomic, assign, getter=isDocCtrlrConfigured) BOOL docCtrlrConfigured;
 
 @end
 
@@ -861,8 +862,11 @@
     documentController.delegate = self;
     documentController.plugin = self;
     
-    [[self class] configureDocumentController:documentController
-                                       withConfig:self.config];
+    if (self.config && self.isDocCtrlrConfigured == NO) {
+        [[self class] configureDocumentController:documentController
+                                           withConfig:self.config];
+        self.docCtrlrConfigured = YES;
+    }
 }
 
 - (BOOL)tabbedDocumentViewController:(PTTabbedDocumentViewController *)tabbedDocumentViewController shouldHideTabBarForTraitCollection:(UITraitCollection *)traitCollection
@@ -1447,6 +1451,13 @@
     }
     
     ((PTFlutterDocumentController*)self.tabbedDocumentViewController.childViewControllers.lastObject).openResult = flutterResult;
+    
+    if (!self.isDocCtrlrConfigured) {
+        PTFlutterDocumentController *documentController = (PTFlutterDocumentController *) [self getDocumentController];
+        [[self class] configureDocumentController:documentController
+                                           withConfig:self.config];
+        self.docCtrlrConfigured = YES;
+    }
 }
 
 - (void)importAnnotations:(NSString *)xfdf resultToken:(FlutterResult)flutterResult
