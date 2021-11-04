@@ -65,6 +65,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, nullable) NSArray<NSString*>* uneditableAnnotTypes;
 
+@property (nonatomic, assign, getter=isDocCtrlrConfigured) BOOL docCtrlrConfigured;
+
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
 
