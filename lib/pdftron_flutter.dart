@@ -133,11 +133,10 @@ class PdftronFlutter {
   }
 
   /// Creates a new bookmark with the given title and page number.
-  /// 
+  ///
   /// [pageNumber] is 1-indexed
   static Future<void> addBookmark(String title, int pageNumber) {
-    return _channel
-        .invokeMethod(Functions.addBookmark, <String, dynamic>{
+    return _channel.invokeMethod(Functions.addBookmark, <String, dynamic>{
       Parameters.title: title,
       Parameters.pageNumber: pageNumber
     });
@@ -255,59 +254,61 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.deleteAllAnnotations);
   }
 
-  /// Displays the annotation tab of the existing list container. 
-  /// 
+  /// Displays the annotation tab of the existing list container.
+  ///
   /// If this tab has been disabled, the method does nothing.
   static Future<void> openAnnotationList() {
     return _channel.invokeMethod(Functions.openAnnotationList);
   }
 
-  /// Displays the bookmark tab of the existing list container. 
-  /// 
+  /// Displays the bookmark tab of the existing list container.
+  ///
   /// If this tab has been disabled, the method does nothing.
   static Future<void> openBookmarkList() {
     return _channel.invokeMethod(Functions.openBookmarkList);
   }
 
-  /// Displays the outline tab of the existing list container. 
-  /// 
+  /// Displays the outline tab of the existing list container.
+  ///
   /// If this tab has been disabled, the method does nothing.
   static Future<void> openOutlineList() {
     return _channel.invokeMethod(Functions.openOutlineList);
   }
 
-  /// On Android it displays the layers dialog while on iOS it displays the layers tab of the existing list container. 
-  /// 
+  /// On Android it displays the layers dialog while on iOS it displays the layers tab of the existing list container.
+  ///
   /// If this tab has been disabled or there are no layers in the document, the method does nothing.
   static Future<void> openLayersList() {
     return _channel.invokeMethod(Functions.openLayersList);
   }
 
-  /// Displays the existing list container. 
-  /// 
-  /// Its current tab will be the one last opened. 
+  /// Displays the existing list container.
+  ///
+  /// Its current tab will be the one last opened.
   static Future<void> openNavigationLists() {
     return _channel.invokeMethod(Functions.openNavigationLists);
   }
 
   /// Changes the orientation of this activity
-  /// 
-  /// Android only. For more information on the native API, 
+  ///
+  /// Android only. For more information on the native API,
   /// see the [Android API reference](https://developer.android.com/reference/android/app/Activity#setRequestedOrientation(int)).
   static Future<void> setRequestedOrientation(int requestedOrientation) {
-    return _channel.invokeMethod(Functions.setRequestedOrientation,
-        <String, dynamic>{Parameters.requestedOrientation: requestedOrientation});
+    return _channel.invokeMethod(
+        Functions.setRequestedOrientation, <String, dynamic>{
+      Parameters.requestedOrientation: requestedOrientation
+    });
   }
 
-  /// Go to the previous page of the document. 
-  /// 
+  /// Go to the previous page of the document.
+  ///
   /// If on first page, it will stay on first page.
   static Future<bool?> gotoPreviousPage() {
     return _channel.invokeMethod(Functions.gotoPreviousPage);
   }
 
   /// Go to the next page of the document.
-  /// 
+  ///
   /// If on last page, it will stay on last page.
   static Future<bool?> gotoNextPage() {
     return _channel.invokeMethod(Functions.gotoNextPage);
@@ -324,7 +325,7 @@ class PdftronFlutter {
   }
 
   /// Gets the current page of the document.
-  /// 
+  ///
   /// The page numbers returned are 1-indexed.
   static Future<int?> getCurrentPage() {
     return _channel.invokeMethod(Functions.getCurrentPage);

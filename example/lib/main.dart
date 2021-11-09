@@ -42,9 +42,9 @@ class _ViewerState extends State<Viewer> {
     // * Change the _document field to your local filepath.
     // * Uncomment the section below, including launchWithPermission().
     // if (Platform.isIOS) {
-      // showViewer(); // Permission not required for iOS.
+    // showViewer(); // Permission not required for iOS.
     // } else {
-      // launchWithPermission(); // Permission required for Android.
+    // launchWithPermission(); // Permission required for Android.
     // }
   }
 
@@ -61,7 +61,7 @@ class _ViewerState extends State<Viewer> {
     String version;
     // Platform messages may fail, so use a try/catch PlatformException.
     try {
-      // Initializes the PDFTron SDK, it must be called before you can use 
+      // Initializes the PDFTron SDK, it must be called before you can use
       // any functionality.
       PdftronFlutter.initialize("your_pdftron_license_key");
 
@@ -100,7 +100,7 @@ class _ViewerState extends State<Viewer> {
     await PdftronFlutter.openDocument(_document, config: config);
 
     try {
-      // The imported command is in XFDF format and tells whether to add, 
+      // The imported command is in XFDF format and tells whether to add,
       // modify or delete annotations in the current document.
       PdftronFlutter.importAnnotationCommand(
           "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
@@ -122,14 +122,14 @@ class _ViewerState extends State<Viewer> {
       print("Failed to importBookmarkJson '${e.message}'.");
     }
 
-    // An event listener for when local annotation changes are committed 
-    // to the document. xfdfCommand is the XFDF Command of the annotation 
+    // An event listener for when local annotation changes are committed
+    // to the document. xfdfCommand is the XFDF Command of the annotation
     // that was last changed.
     var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
       // Local annotation changed.
       // Upload XFDF command to server here.
       String command = xfdfCommand;
-      // Dart limits how many characters are printed onto the console. 
+      // Dart limits how many characters are printed onto the console.
       // The code below ensures that all of the XFDF command is printed.
       if (command.length > 1024) {
         print("flutter xfdfCommand:\n");
@@ -147,7 +147,7 @@ class _ViewerState extends State<Viewer> {
     });
 
     // An event listener for when local bookmark changes are committed to
-    // the document. bookmarkJson is the JSON string containing all the 
+    // the document. bookmarkJson is the JSON string containing all the
     // bookmarks that exist when the change was made.
     var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
       print("flutter bookmark: $bookmarkJson");
@@ -173,7 +173,7 @@ class _ViewerState extends State<Viewer> {
     // SystemChrome.setEnabledSystemUIMode(
     //   SystemUiMode.edgeToEdge,
     // );
-    
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -191,7 +191,7 @@ class _ViewerState extends State<Viewer> {
   }
 
   // This function is used to control the DocumentView widget after it
-  // has been created. The widget will not work without a void 
+  // has been created. The widget will not work without a void
   // Function(DocumentViewController controller) being passed to it.
   void _onDocumentViewCreated(DocumentViewController controller) async {
     Config config = new Config();

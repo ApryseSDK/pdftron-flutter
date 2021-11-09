@@ -285,18 +285,19 @@ class Config {
       _pageNumberIndicatorAlwaysVisible = value;
 
   /// A list of [Tools] that cannot be edited after creation.
-  /// 
+  ///
   /// Defaults to empty.
-  set disableEditingByAnnotationType(List value) => _disableEditingByAnnotationType = value;
+  set disableEditingByAnnotationType(List value) =>
+      _disableEditingByAnnotationType = value;
 
-  /// A list of [ViewModePickerItem] constants that defines which view mode items to be 
+  /// A list of [ViewModePickerItem] constants that defines which view mode items to be
   /// hidden in the view mode dialog.
-  /// 
+  ///
   /// Defaults to empty.
   set hideViewModeItems(List value) => _hideViewModeItems = value;
 
-  /// Sets the default eraser tool type. 
-  /// 
+  /// Sets the default eraser tool type.
+  ///
   /// Value only applied after a clean install.
   set defaultEraserType(String value) => _defaultEraserType = value;
 
@@ -345,7 +346,7 @@ class Config {
         _tabTitle = json['tabTitle'],
         _pageNumberIndicatorAlwaysVisible =
             json['pageNumberIndicatorAlwaysVisible'],
-        _disableEditingByAnnotationType = 
+        _disableEditingByAnnotationType =
             json['disableEditingByAnnotationType'],
         _hideViewModeItems = json['hideViewModeItems'],
         _defaultEraserType = json['defaultEraserType'];
@@ -394,6 +395,6 @@ class Config {
         'pageNumberIndicatorAlwaysVisible': _pageNumberIndicatorAlwaysVisible,
         'disableEditingByAnnotationType': _disableEditingByAnnotationType,
         'hideViewModeItems': _hideViewModeItems,
-        'defaultEraserType' : _defaultEraserType,
+        'defaultEraserType': _defaultEraserType,
       };
 }

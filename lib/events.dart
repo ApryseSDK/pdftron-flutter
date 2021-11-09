@@ -130,9 +130,9 @@ CancelListener startAnnotationChangedListener(
       .listen((annotationsWithActionString) {
     dynamic annotationsWithAction = jsonDecode(annotationsWithActionString);
     String action = annotationsWithAction[EventParameters.action];
-    List<dynamic> annotations = Platform.isIOS ? 
-        jsonDecode(annotationsWithAction[EventParameters.annotations]) :
-        annotationsWithAction[EventParameters.annotations];
+    List<dynamic> annotations = Platform.isIOS
+        ? jsonDecode(annotationsWithAction[EventParameters.annotations])
+        : annotationsWithAction[EventParameters.annotations];
     List<Annot> annotList = new List<Annot>.empty(growable: true);
     for (dynamic annotation in annotations) {
       annotList.add(new Annot.fromJson(annotation));
@@ -302,12 +302,13 @@ CancelListener startZoomChangedListener(ZoomChangedListener listener) {
 
 CancelListener startPageMovedListener(PageMovedListener listener) {
   var subscription = _pageMovedChannel
-    .receiveBroadcastStream(eventSinkId.pageMovedId.index)
-    .listen((pagesString) {
-      dynamic pagesObject = jsonDecode(pagesString);
-      dynamic previousPageNumber = pagesObject[EventParameters.previousPageNumber];
-      dynamic pageNumber = pagesObject[EventParameters.pageNumber];
-      listener(previousPageNumber, pageNumber);
+      .receiveBroadcastStream(eventSinkId.pageMovedId.index)
+      .listen((pagesString) {
+    dynamic pagesObject = jsonDecode(pagesString);
+    dynamic previousPageNumber =
+        pagesObject[EventParameters.previousPageNumber];
+    dynamic pageNumber = pagesObject[EventParameters.pageNumber];
+    listener(previousPageNumber, pageNumber);
   }, cancelOnError: true);
 
   return () {
