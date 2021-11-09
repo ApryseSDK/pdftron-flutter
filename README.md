@@ -63,8 +63,8 @@ The release can be found here: https://github.com/PDFTron/pdftron-flutter/releas
     dependencies:
         flutter:
           sdk: flutter
-    +   pdftron_flutter: 1.0.0-beta.2
-    # To use a specific version from pub.dev, replace 1.0.0-beta.2
+    +   pdftron_flutter: 1.0.0-beta.3
+    # To use a specific version from pub.dev, replace 1.0.0-beta.3
     # To retain null safety, the minimum version must be 1.0.0-beta.2
     ```
   - If you want to use our null safe branch from GitHub:
