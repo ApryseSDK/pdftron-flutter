@@ -2469,45 +2469,50 @@ public class PluginUtils {
     }
 
     private static void importAnnotationCommand(String xfdfCommand, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
-        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
-        PDFDoc pdfDoc = component.getPdfDoc();
-        if (null == pdfViewCtrl || null == pdfDoc || null == xfdfCommand) {
-            result.error("InvalidState", "Activity not attached", null);
-            return;
-        }
-        boolean shouldUnlockRead = false;
-        try {
-            pdfViewCtrl.docLockRead();
-            shouldUnlockRead = true;
-
-            if (pdfDoc.hasDownloader()) {
-                // still downloading file, let's wait for next call
-                result.error("InvalidState", "Document download in progress, try again later", null);
+        ToolManager toolManager = component.getToolManager();
+        if (toolManager != null && toolManager.getAnnotManager() != null) {
+            toolManager.getAnnotManager().onRemoteChange(xfdfCommand);
+        } else {
+            PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+            PDFDoc pdfDoc = component.getPdfDoc();
+            if (null == pdfViewCtrl || null == pdfDoc || null == xfdfCommand) {
+                result.error("InvalidState", "Activity not attached", null);
                 return;
             }
-        } finally {
-            if (shouldUnlockRead) {
-                pdfViewCtrl.docUnlockRead();
+            boolean shouldUnlockRead = false;
+            try {
+                pdfViewCtrl.docLockRead();
+                shouldUnlockRead = true;
+
+                if (pdfDoc.hasDownloader()) {
+                    // still downloading file, let's wait for next call
+                    result.error("InvalidState", "Document download in progress, try again later", null);
+                    return;
+                }
+            } finally {
+                if (shouldUnlockRead) {
+                    pdfViewCtrl.docUnlockRead();
+                }
             }
-        }
 
-        boolean shouldUnlock = false;
-        try {
-            pdfViewCtrl.docLock(true);
-            shouldUnlock = true;
+            boolean shouldUnlock = false;
+            try {
+                pdfViewCtrl.docLock(true);
+                shouldUnlock = true;
 
-            FDFDoc fdfDoc = pdfDoc.fdfExtract(PDFDoc.e_both);
-            String xfdf = fdfDoc.saveAsXFDF();
-            FDFDoc newFdfDoc = FDFDoc.createFromXFDF(xfdf);
-            newFdfDoc.mergeAnnots(xfdfCommand);
+                FDFDoc fdfDoc = pdfDoc.fdfExtract(PDFDoc.e_both);
+                String xfdf = fdfDoc.saveAsXFDF();
+                FDFDoc newFdfDoc = FDFDoc.createFromXFDF(xfdf);
+                newFdfDoc.mergeAnnots(xfdfCommand);
 
-            pdfDoc.fdfUpdate(newFdfDoc);
-            pdfDoc.refreshAnnotAppearances();
-            pdfViewCtrl.update(true);
-            result.success(null);
-        } finally {
-            if (shouldUnlock) {
-                pdfViewCtrl.docUnlock();
+                pdfDoc.fdfUpdate(newFdfDoc);
+                pdfDoc.refreshAnnotAppearances();
+                pdfViewCtrl.update(true);
+                result.success(null);
+            } finally {
+                if (shouldUnlock) {
+                    pdfViewCtrl.docUnlock();
+                }
             }
         }
     }
