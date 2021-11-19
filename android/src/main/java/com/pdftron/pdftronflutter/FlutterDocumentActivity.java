@@ -52,6 +52,10 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     private static boolean mShowLeadingNavButton;
     private static ArrayList<String> mActionOverrideItems;
 
+    private static boolean mAnnotationManagerEnabled;
+    private static String mUserId;
+    private static String mUserName;
+
     private static FlutterDocumentActivity sCurrentActivity;
 
     private static ArrayList<File> mTempFiles = new ArrayList<>();
@@ -102,6 +106,10 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
         mShowLeadingNavButton = configInfo.isShowLeadingNavButton();
         mActionOverrideItems = configInfo.getActionOverrideItems();
+
+        mAnnotationManagerEnabled = configInfo.isAnnotationManagerEnabled();
+        mUserId = configInfo.getUserId();
+        mUserName = configInfo.getUserName();
 
         if (mShowLeadingNavButton) {
             openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build());
@@ -395,6 +403,19 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
     public boolean isAutoSaveEnabled() {
         return mAutoSaveEnabled;
+    }
+
+    public boolean isAnnotationManagerEnabled() { return mAnnotationManagerEnabled; };
+
+    public String getUserId() { return mUserId; };
+
+    public String getUserName() { return mUserName; };
+
+    public void onLocalChange(String action, String xfdfCommand, String xfdfJSON) {
+        EventSink eventSink = getExportAnnotationCommandEventEmitter();
+        if (eventSink != null) {
+            eventSink.success(xfdfJSON);
+        }
     }
 
     public boolean isUseStylusAsPen() {

@@ -8,6 +8,7 @@ import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
+import com.pdftron.pdf.tools.AnnotManager;
 import com.pdftron.pdf.tools.ToolManager;
 
 import java.io.File;
@@ -17,7 +18,7 @@ import java.util.HashMap;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
-public interface ViewerComponent {
+public interface ViewerComponent extends AnnotManager.AnnotationSyncingListener {
 
     ArrayList<String> getActionOverrideItems();
     
@@ -30,6 +31,12 @@ public interface ViewerComponent {
     ArrayList<String> getAnnotationMenuItems();
 
     ArrayList<String> getAnnotationMenuOverrideItems();
+
+    boolean isAnnotationManagerEnabled();
+
+    String getUserId();
+
+    String getUserName();
 
     boolean isAutoSaveEnabled();
 
