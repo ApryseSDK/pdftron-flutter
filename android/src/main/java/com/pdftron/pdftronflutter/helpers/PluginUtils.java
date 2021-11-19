@@ -2899,8 +2899,6 @@ public class PluginUtils {
         }
 
         if (component.isAnnotationManagerEnabled() && component.getUserId() != null) {
-            String userId = component.getUserId();
-            String userName = component.getUserName();
             component.getToolManager().enableAnnotManager(
                     component.getUserId(),
                     component.getUserName(),
