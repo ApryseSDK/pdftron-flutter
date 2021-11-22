@@ -34,7 +34,7 @@ class _ViewerState extends State<Viewer> {
     super.initState();
     initPlatformState();
 
-    showViewer();
+    // showViewer();
 
     // If you are using local files delete the line above, change the _document field
     // appropriately and uncomment the section below.
@@ -82,6 +82,12 @@ class _ViewerState extends State<Viewer> {
     // await PdftronFlutter.openDocument(_document);
 
     var config = Config();
+
+    // config.annotationManagerEnabled = true;
+    // config.userId = "aaa";
+    // config.userName = "bbb";
+
+    
     // How to disable functionality:
     //      config.disabledElements = [Buttons.shareButton, Buttons.searchButton];
     //      config.disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
@@ -119,25 +125,25 @@ class _ViewerState extends State<Viewer> {
       print("Failed to importBookmarkJson '${e.message}'.");
     }
 
-    // An event listener for when local annotation changes are committed to the document.
-    // xfdfCommand is the XFDF Command of the annotation that was last changed.
+    
     var annotCancel = startExportAnnotationCommandListener((xfdfCommand) async {
-      String command = xfdfCommand;
-      print("flutter xfdfCommand:\n");
-      // Dart limits how many characters are printed onto the console. 
-      // The code below ensures that all of the XFDF command is printed.
-      if (command.length > 1024) {
-        int start = 0;
-        int end = 1023;
-        while (end < command.length) {
-          print(command.substring(start, end) + "\n");
-          start += 1024;
-          end += 1024;
-        }
-        print(command.substring(start));
-      } else {
-        print(command);
-      }
+      // local annotation changed
+      // upload XFDF command to server here
+      print("flutter xfdfCommand: $xfdfCommand");
+    });
+
+    var pageChangedCancel = startPageChangedListener((previousPageNumber, pageNumber)
+    {
+      print("startPageChangedListener flutter page changed. from $previousPageNumber to $pageNumber");
+    });
+
+    var pageMovedCancel = startPageMovedListener((previousPageNumber, pageNumber) {
+      print("startPageMovedListener flutter page moved from $previousPageNumber to $pageNumber");
+    });
+
+    var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects) 
+    {
+      print("startAnnotationsSelectedListener");
     });
 
     // An event listener for when local bookmark changes are committed to the document.
@@ -173,11 +179,11 @@ class _ViewerState extends State<Viewer> {
         height: double.infinity,
         child:
             // Uncomment this to use Widget version of the viewer.
-            // _showViewer
-            // ? SafeArea (
-            //   child: DocumentView(
-            //     onCreated: _onDocumentViewCreated,
-            //   )):
+            _showViewer
+            ? SafeArea (
+              child: DocumentView(
+                onCreated: _onDocumentViewCreated,
+              )):
             Container(),
       ),
     );
@@ -187,6 +193,10 @@ class _ViewerState extends State<Viewer> {
   // The widget will not work without a void Function(DocumentViewController controller) being passed to it.
   void _onDocumentViewCreated(DocumentViewController controller) async {
     Config config = new Config();
+
+    config.annotationManagerEnabled = true;
+    config.userId = "aaa";
+    config.userName = "bbb";
 
     var leadingNavCancel = startLeadingNavButtonPressedListener(() {
       // Uncomment this to quit the viewer when leading navigation button is pressed.
@@ -198,7 +208,53 @@ class _ViewerState extends State<Viewer> {
       _showMyDialog();
     });
 
-    controller.openDocument(_document, config: config);
+    await controller.openDocument(_document, config: config);
+
+    try {
+      // The imported command is in XFDF format and tells whether to add, modify or delete annotations in the current document.
+      await controller.importAnnotationCommand(
+          "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+              "    <xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xml:space=\"preserve\">\n" +
+              "      <add>\n" +
+              "        <square style=\"solid\" width=\"5\" color=\"#E44234\" opacity=\"1\" creationdate=\"D:20200619203211Z\" flags=\"print\" date=\"D:20200619203211Z\" name=\"c684da06-12d2-4ccd-9361-0a1bf2e089e3\" page=\"1\" rect=\"113.312,277.056,235.43,350.173\" title=\"\" />\n" +
+              "      </add>\n" +
+              "      <modify />\n" +
+              "      <delete />\n" +
+              "      <pdf-info import-version=\"3\" version=\"2\" xmlns=\"http://www.pdftron.com/pdfinfo\" />\n" +
+              "    </xfdf>");
+    } on PlatformException catch (e) {
+      print("Failed to importAnnotationCommand '${e.message}'.");
+    }
+
+    // var xfdf = await controller.exportAnnotations(null);
+    // print("all the annots: " + xfdf);
+
+    var annotCancel = startExportAnnotationCommandListener((xfdfCommand) async {
+      // local annotation changed
+      // upload XFDF command to server here
+      print("flutter xfdfCommand: $xfdfCommand");
+    });
+
+    var documentLoadedCancel = startDocumentLoadedListener((path) async
+    {
+      print("flutter document loaded: ${path}");
+    });
+
+    var pageChangedCancel = startPageChangedListener((previousPageNumber, pageNumber)
+    {
+      print("startPageChangedListener flutter page changed. from $previousPageNumber to $pageNumber");
+    });
+
+    var pageMovedCancel = startPageMovedListener((previousPageNumber, pageNumber) {
+      print("startPageMovedListener flutter page moved from $previousPageNumber to $pageNumber");
+    });
+
+    var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects) 
+    {
+      print("startAnnotationsSelectedListener");
+    });
+
+
   }
 
   Future<void> _showMyDialog() async {
