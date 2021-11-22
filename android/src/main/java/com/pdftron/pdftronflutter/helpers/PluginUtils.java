@@ -2473,47 +2473,47 @@ public class PluginUtils {
         if (toolManager != null && toolManager.getAnnotManager() != null) {
             toolManager.getAnnotManager().onRemoteChange(xfdfCommand);
         } else {
-            PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
-            PDFDoc pdfDoc = component.getPdfDoc();
-            if (null == pdfViewCtrl || null == pdfDoc || null == xfdfCommand) {
-                result.error("InvalidState", "Activity not attached", null);
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        PDFDoc pdfDoc = component.getPdfDoc();
+        if (null == pdfViewCtrl || null == pdfDoc || null == xfdfCommand) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        boolean shouldUnlockRead = false;
+        try {
+            pdfViewCtrl.docLockRead();
+            shouldUnlockRead = true;
+
+            if (pdfDoc.hasDownloader()) {
+                // still downloading file, let's wait for next call
+                result.error("InvalidState", "Document download in progress, try again later", null);
                 return;
             }
-            boolean shouldUnlockRead = false;
-            try {
-                pdfViewCtrl.docLockRead();
-                shouldUnlockRead = true;
-
-                if (pdfDoc.hasDownloader()) {
-                    // still downloading file, let's wait for next call
-                    result.error("InvalidState", "Document download in progress, try again later", null);
-                    return;
-                }
-            } finally {
-                if (shouldUnlockRead) {
-                    pdfViewCtrl.docUnlockRead();
-                }
+        } finally {
+            if (shouldUnlockRead) {
+                pdfViewCtrl.docUnlockRead();
             }
+        }
 
-            boolean shouldUnlock = false;
-            try {
-                pdfViewCtrl.docLock(true);
-                shouldUnlock = true;
+        boolean shouldUnlock = false;
+        try {
+            pdfViewCtrl.docLock(true);
+            shouldUnlock = true;
 
-                FDFDoc fdfDoc = pdfDoc.fdfExtract(PDFDoc.e_both);
-                String xfdf = fdfDoc.saveAsXFDF();
-                FDFDoc newFdfDoc = FDFDoc.createFromXFDF(xfdf);
-                newFdfDoc.mergeAnnots(xfdfCommand);
+            FDFDoc fdfDoc = pdfDoc.fdfExtract(PDFDoc.e_both);
+            String xfdf = fdfDoc.saveAsXFDF();
+            FDFDoc newFdfDoc = FDFDoc.createFromXFDF(xfdf);
+            newFdfDoc.mergeAnnots(xfdfCommand);
 
-                pdfDoc.fdfUpdate(newFdfDoc);
-                pdfDoc.refreshAnnotAppearances();
-                pdfViewCtrl.update(true);
-                result.success(null);
-            } finally {
-                if (shouldUnlock) {
-                    pdfViewCtrl.docUnlock();
-                }
+            pdfDoc.fdfUpdate(newFdfDoc);
+            pdfDoc.refreshAnnotAppearances();
+            pdfViewCtrl.update(true);
+            result.success(null);
+        } finally {
+            if (shouldUnlock) {
+                pdfViewCtrl.docUnlock();
             }
+        }
         }
     }
 
@@ -3030,25 +3030,25 @@ public class PluginUtils {
         if (component.getToolManager() != null && component.getToolManager().getAnnotManager() != null ) {
             return;
         } else {
-            // TODO: when collabManager is null
-            ArrayList<Annot> annots = new ArrayList<>(map.keySet());
-            String xfdfCommand = null;
-            try {
-                if (action.equals(KEY_ACTION_ADD)) {
-                    xfdfCommand = generateXfdfCommand(annots, null, null, component);
-                } else if (action.equals(KEY_ACTION_MODIFY)) {
-                    xfdfCommand = generateXfdfCommand(null, annots, null, component);
-                } else {
-                    xfdfCommand = generateXfdfCommand(null, null, annots, component);
-                }
-            } catch (PDFNetException e) {
-                e.printStackTrace();
+        // TODO: when collabManager is null
+        ArrayList<Annot> annots = new ArrayList<>(map.keySet());
+        String xfdfCommand = null;
+        try {
+            if (action.equals(KEY_ACTION_ADD)) {
+                xfdfCommand = generateXfdfCommand(annots, null, null, component);
+            } else if (action.equals(KEY_ACTION_MODIFY)) {
+                xfdfCommand = generateXfdfCommand(null, annots, null, component);
+            } else {
+                xfdfCommand = generateXfdfCommand(null, null, annots, component);
             }
+        } catch (PDFNetException e) {
+            e.printStackTrace();
+        }
 
-            EventChannel.EventSink eventSink = component.getExportAnnotationCommandEventEmitter();
-            if (eventSink != null) {
-                eventSink.success(xfdfCommand);
-            }
+        EventChannel.EventSink eventSink = component.getExportAnnotationCommandEventEmitter();
+        if (eventSink != null) {
+            eventSink.success(xfdfCommand);
+        }
         }
     }
 
