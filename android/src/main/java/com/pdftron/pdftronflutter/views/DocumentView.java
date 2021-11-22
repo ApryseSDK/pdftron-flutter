@@ -304,13 +304,6 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
     public String getUserName() { return mUserName; };
 
-    public void onLocalChange(String action, String xfdfCommand, String xfdfJSON) {
-        EventChannel.EventSink eventSink = getExportAnnotationCommandEventEmitter();
-        if (eventSink != null) {
-            eventSink.success(xfdfJSON);
-        }
-    }
-
     public boolean isUseStylusAsPen() {
         return mUseStylusAsPen;
     }

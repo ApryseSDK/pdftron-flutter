@@ -18,7 +18,7 @@ import java.util.HashMap;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
-public interface ViewerComponent extends AnnotManager.AnnotationSyncingListener {
+public interface ViewerComponent {
 
     ArrayList<String> getActionOverrideItems();
     
