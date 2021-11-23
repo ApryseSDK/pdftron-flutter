@@ -2914,7 +2914,7 @@ public class PluginUtils {
                         public void onLocalChange(String action, String xfdfCommand, String xfdfJSON) {
                             EventChannel.EventSink eventSink = component.getExportAnnotationCommandEventEmitter();
                             if (eventSink != null) {
-                                eventSink.success(xfdfJSON);
+                                eventSink.success(xfdfCommand);
                             }
                         }
                     }
