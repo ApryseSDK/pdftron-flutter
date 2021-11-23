@@ -35,6 +35,19 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     // Workaround to ensure thumbnail slider is hidden at launch.
     self.thumbnailSliderHidden = YES;
     self.thumbnailSliderController.view.hidden = YES;
+    
+    NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
+    PTUndoRedoManager *undoRedoManager = self.toolManager.undoRedoManager;
+    
+    [center addObserver:self
+               selector:@selector(undoManagerSentNotification:)
+                   name:PTUndoRedoManagerDidRedoNotification
+                 object:undoRedoManager];
+    
+    [center addObserver:self
+               selector:@selector(undoManagerSentNotification:)
+                   name:PTUndoRedoManagerDidUndoNotification
+                 object:undoRedoManager];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -260,7 +273,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         [self.plugin documentController:self annotationsChangedWithActionString:annotationsWithActionString];
     }
     
-    NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:Nil removed:@[annotation]];
+    NSString* xfdf = self.isAnnotationManagerEnabled ? [self.pdfViewCtrl.externalAnnotManager GetLastXFDF] : [self generateXfdfCommandWithAdded:Nil modified:Nil removed:@[annotation]];
     [self.plugin documentController:self annotationsAsXFDFCommand:xfdf];
     
 }
@@ -272,7 +285,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         [self.plugin documentController:self annotationsChangedWithActionString:annotationsWithActionString];
     }
     
-    NSString* xfdf = [self generateXfdfCommandWithAdded:@[annotation] modified:Nil removed:Nil];
+    NSString* xfdf = self.isAnnotationManagerEnabled ? [self.pdfViewCtrl.externalAnnotManager GetLastXFDF] : [self generateXfdfCommandWithAdded:@[annotation] modified:Nil removed:Nil];
     [self.plugin documentController:self annotationsAsXFDFCommand:xfdf];
 }
 
@@ -283,7 +296,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         [self.plugin documentController:self annotationsChangedWithActionString:annotationsWithActionString];
     }
   
-    NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:@[annotation] removed:Nil];
+    NSString* xfdf = self.isAnnotationManagerEnabled ? [self.pdfViewCtrl.externalAnnotManager GetLastXFDF] : [self generateXfdfCommandWithAdded:Nil modified:@[annotation] removed:Nil];
     [self.plugin documentController:self annotationsAsXFDFCommand:xfdf];
 }
 
@@ -797,6 +810,27 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     return YES;
 }
 
+#pragma mark - Notification
+
+- (void)undoManagerSentNotification:(NSNotification *) notification
+{
+    if (self.isAnnotationManagerEnabled) {
+        NSString* xfdf = [self.pdfViewCtrl.externalAnnotManager GetLastXFDF];
+        NSError* error;
+        
+        [self.toolManager.annotationManager updateAnnotationsWithXFDFCommand:xfdf error:&error];
+        
+        if (error) {
+            NSLog(@"An error occurred: %@", error);
+            return;
+        }
+        
+        [self.plugin documentController:self annotationsAsXFDFCommand:xfdf];
+    } else {
+        // For UndoRedoStateChanged event
+    }
+}
+
 #pragma mark - <PTPDFViewCtrlDelegate>
 
 - (void)pdfViewCtrl:(PTPDFViewCtrl *)pdfViewCtrl onSetDoc:(PTPDFDoc *)doc
@@ -889,6 +923,11 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     // Always allow toggling toolbars on tap.
     BOOL hidesToolbarsOnTap = YES;
     self.hidesControlsOnTap = hidesToolbarsOnTap;
+    
+    // Annotation Manager
+    if (self.annotationManagerEnabled && self.userId) {
+        PTExternalAnnotManager* annotManager = [self.pdfViewCtrl EnableAnnotationManager:self.userId mode:e_ptadmin_undo_others];
+    }
     
     [self applyToolGroupSettings];
 }
@@ -1231,6 +1270,21 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 - (void)setTabTitle:(NSString *)tabTitle
 {
     self.documentTabItem.displayName = tabTitle;
+}
+
+- (void)setAnnotationManagerEnabled:(BOOL)annotationManagerEnabled
+{
+    _annotationManagerEnabled = annotationManagerEnabled;
+}
+
+- (void)setUserId:(NSString *)userId
+{
+    _userId = [userId copy];
+}
+
+- (void)setUserName:(NSString *)userName
+{
+    _userName = [userName copy];
 }
 
 #pragma mark - Other

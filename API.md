@@ -1431,7 +1431,7 @@ config.userId = "Pdftron";
 ```
 
 #### userName
-String.
+String, Android only.
 
 The name of the current user. Used in the annotation manager when [`annotationManagerEnabled`](#annotationManagerEnabled) is true.
 
