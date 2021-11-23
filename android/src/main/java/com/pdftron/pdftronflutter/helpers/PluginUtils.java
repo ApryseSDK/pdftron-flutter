@@ -2871,7 +2871,7 @@ public class PluginUtils {
 
     // Events
 
-    public static void handleDocumentLoaded(ViewerComponent component) {
+    public static void handleDocumentLoaded(final ViewerComponent component) {
 
         // Set initial page number
         if (component.getInitialPageNumber() > 0 && component.getPdfViewCtrl() != null) {
@@ -2909,7 +2909,15 @@ public class PluginUtils {
                     component.getUserName(),
                     PDFViewCtrl.AnnotationManagerMode.ADMIN_UNDO_OTHERS,
                     AnnotManager.EditPermissionMode.EDIT_OTHERS,
-                    component
+                    new AnnotManager.AnnotationSyncingListener() {
+                        @Override
+                        public void onLocalChange(String action, String xfdfCommand, String xfdfJSON) {
+                            EventChannel.EventSink eventSink = component.getExportAnnotationCommandEventEmitter();
+                            if (eventSink != null) {
+                                eventSink.success(xfdfCommand);
+                            }
+                        }
+                    }
             );
         }
     }
@@ -3019,7 +3027,9 @@ public class PluginUtils {
     }
 
     public static void emitExportAnnotationCommandEvent(String action, Map<Annot, Integer> map, ViewerComponent component) {
-        if (!component.isAnnotationManagerEnabled()) {
+        if (component.getToolManager() != null && component.getToolManager().getAnnotManager() != null ) {
+            return;
+        } else {
             // TODO: when collabManager is null
             ArrayList<Annot> annots = new ArrayList<>(map.keySet());
             String xfdfCommand = null;

@@ -411,13 +411,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
     public String getUserName() { return mUserName; };
 
-    public void onLocalChange(String action, String xfdfCommand, String xfdfJSON) {
-        EventSink eventSink = getExportAnnotationCommandEventEmitter();
-        if (eventSink != null) {
-            eventSink.success(xfdfJSON);
-        }
-    }
-
     public boolean isUseStylusAsPen() {
         return mUseStylusAsPen;
     }
