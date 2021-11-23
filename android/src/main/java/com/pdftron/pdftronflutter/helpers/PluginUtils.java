@@ -2472,6 +2472,7 @@ public class PluginUtils {
         ToolManager toolManager = component.getToolManager();
         if (toolManager != null && toolManager.getAnnotManager() != null) {
             toolManager.getAnnotManager().onRemoteChange(xfdfCommand);
+            result.success(null);
         } else {
             PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
             PDFDoc pdfDoc = component.getPdfDoc();
