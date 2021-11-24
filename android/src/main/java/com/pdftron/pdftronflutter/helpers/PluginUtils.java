@@ -3031,7 +3031,6 @@ public class PluginUtils {
         if (component.getToolManager() != null && component.getToolManager().getAnnotManager() != null ) {
             return;
         } else {
-            // TODO: when collabManager is null
             ArrayList<Annot> annots = new ArrayList<>(map.keySet());
             String xfdfCommand = null;
             try {

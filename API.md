@@ -1415,7 +1415,7 @@ When [`annotationManagerEnabled`](#annotationManagerEnabled) is true, and [`user
 
 ```dart
 config.annotationManagerEnabled = true;
-config.userId = "Pdftron";
+config.userId = "Bob123";
 ```
 
 #### userId
@@ -1427,7 +1427,7 @@ When [`annotationManagerEnabled`](#annotationManagerEnabled) is true, and [`user
 
 ```dart
 config.annotationManagerEnabled = true;
-config.userId = "Pdftron";
+config.userId = "Bob123";
 ```
 
 #### userName
@@ -1437,6 +1437,6 @@ The name of the current user. Used in the annotation manager when [`annotationMa
 
 ```dart
 config.annotationManagerEnabled = true;
-config.userId = "Pdftron";
-config.userName = "Hello_World";
+config.userId = "Bob123";
+config.userName = "Bob";
 ```
