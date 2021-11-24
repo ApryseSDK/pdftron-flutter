@@ -273,9 +273,19 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         [self.plugin documentController:self annotationsChangedWithActionString:annotationsWithActionString];
     }
     
-    NSString* xfdf = self.isAnnotationManagerEnabled ? [self.pdfViewCtrl.externalAnnotManager GetLastXFDF] : [self generateXfdfCommandWithAdded:Nil modified:Nil removed:@[annotation]];
-    [self.plugin documentController:self annotationsAsXFDFCommand:xfdf];
+    if (!self.isAnnotationManagerEnabled || self.userId == nil) {
+        NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:Nil removed:@[annotation]];
+        [self.plugin documentController:self annotationsAsXFDFCommand:xfdf];
+    }
     
+}
+
+-(void)toolManager:(PTToolManager *)toolManager annotationRemoved:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
+{
+    if (self.isAnnotationManagerEnabled && self.userId) {
+        NSString *xfdf = [self.pdfViewCtrl.externalAnnotManager GetLastXFDF];
+        [self.plugin documentController:self annotationsAsXFDFCommand:xfdf];
+    }
 }
 
 - (void)toolManager:(PTToolManager *)toolManager annotationAdded:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
@@ -285,7 +295,12 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         [self.plugin documentController:self annotationsChangedWithActionString:annotationsWithActionString];
     }
     
-    NSString* xfdf = self.isAnnotationManagerEnabled ? [self.pdfViewCtrl.externalAnnotManager GetLastXFDF] : [self generateXfdfCommandWithAdded:@[annotation] modified:Nil removed:Nil];
+    NSString* xfdf;
+    if (self.isAnnotationManagerEnabled && self.userId) {
+        xfdf = [self.pdfViewCtrl.externalAnnotManager GetLastXFDF];
+    } else {
+        xfdf = [self generateXfdfCommandWithAdded:@[annotation] modified:Nil removed:Nil];
+    }
     [self.plugin documentController:self annotationsAsXFDFCommand:xfdf];
 }
 
@@ -296,7 +311,12 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         [self.plugin documentController:self annotationsChangedWithActionString:annotationsWithActionString];
     }
   
-    NSString* xfdf = self.isAnnotationManagerEnabled ? [self.pdfViewCtrl.externalAnnotManager GetLastXFDF] : [self generateXfdfCommandWithAdded:Nil modified:@[annotation] removed:Nil];
+    NSString* xfdf;
+    if (self.isAnnotationManagerEnabled && self.userId) {
+        xfdf = [self.pdfViewCtrl.externalAnnotManager GetLastXFDF];
+    } else {
+        xfdf = [self generateXfdfCommandWithAdded:Nil modified:@[annotation] removed:Nil];
+    }
     [self.plugin documentController:self annotationsAsXFDFCommand:xfdf];
 }
 
@@ -814,7 +834,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 
 - (void)undoManagerSentNotification:(NSNotification *) notification
 {
-    if (self.isAnnotationManagerEnabled) {
+    if (self.isAnnotationManagerEnabled && self.userId) {
         NSString* xfdf = [self.pdfViewCtrl.externalAnnotManager GetLastXFDF];
         NSError* error;
         
@@ -925,7 +945,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     self.hidesControlsOnTap = hidesToolbarsOnTap;
     
     // Annotation Manager
-    if (self.annotationManagerEnabled && self.userId) {
+    if (self.isAnnotationManagerEnabled && self.userId) {
         PTExternalAnnotManager* annotManager = [self.pdfViewCtrl EnableAnnotationManager:self.userId mode:e_ptadmin_undo_others];
     }
     
