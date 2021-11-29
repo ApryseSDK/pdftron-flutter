@@ -36,6 +36,7 @@ class Config {
   var _hideTopAppNavBar;
   var _hideBottomToolbar;
   var _showLeadingNavButton;
+  var _rememberLastUsedTool;
   var _readOnly;
   var _thumbnailViewEditingEnabled;
   var _annotationAuthor;
@@ -125,6 +126,8 @@ class Config {
   set hideBottomToolbar(bool value) => _hideBottomToolbar = value;
 
   set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
+  
+  set rememberLastUsedTool(bool value) => _rememberLastUsedTool = value;
 
   set readOnly(bool value) => _readOnly = value;
 
@@ -189,6 +192,7 @@ class Config {
         _hideTopAppNavBar = json['hideTopAppNavBar'],
         _hideBottomToolbar = json['hideBottomToolbar'],
         _showLeadingNavButton = json['showLeadingNavButton'],
+        _rememberLastUsedTool = json['rememberLastUsedTool'],
         _readOnly = json['readOnly'],
         _thumbnailViewEditingEnabled = json['thumbnailViewEditingEnabled'],
         _annotationAuthor = json['annotationAuthor'],
@@ -238,6 +242,7 @@ class Config {
         'hideTopAppNavBar': _hideTopAppNavBar,
         'hideBottomToolbar': _hideBottomToolbar,
         'showLeadingNavButton': _showLeadingNavButton,
+        'rememberLastUsedTool': _rememberLastUsedTool,
         'readOnly': _readOnly,
         'thumbnailViewEditingEnabled': _thumbnailViewEditingEnabled,
         'annotationAuthor': _annotationAuthor,
