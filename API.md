@@ -443,7 +443,7 @@ Name | Type | Description
 --- | --- | ---
 pageChanged | bool | whether the setting process was successful
 
-```js
+```dart
 var pageChanged = await PdftronFlutter.gotoFirstPage();
 if (pageChanged) {
   print("Successfully went to first page");
@@ -461,7 +461,7 @@ Name | Type | Description
 --- | --- | ---
 success | bool | whether the setting process was successful
 
-```js
+```dart
 var pageChanged = await PdftronFlutter.gotoLastPage();
 if (pageChanged) {
   print("Successfully went to last page");
@@ -1068,6 +1068,24 @@ Eraser Type | Description
 config.defaultEraserType = DefaultEraserType.inkEraser;
 ```
 
+#### exportPath
+string, optional
+Sets the folder path for all save options, this defaults to the app cache path. Android only.
+Example:
+```dart
+config.exportPath = "/data/data/com.pdftron.pdftronflutterexample/cache/test/";
+```
+
+#### openUrlPath
+string, optional
+
+Sets the cache folder used to cache PDF files opened using a http/https link, this defaults to the app cache path. Android only.
+Example:
+
+```dart
+config.openUrlPath = "/data/data/com.pdftron.pdftronflutterexample/cache/test/";
+```
+
 #### isBase64String
 bool, defaults to false.
 
@@ -1367,6 +1385,27 @@ Sets the tab title if [`multiTabEnabled`](#multiTabEnabled) is true. (For Androi
 
 ```dart
 config.tabTitle = 'tab1';
+```
+
+#### openSavedCopyInNewTab
+bool, optional, default to true, Android only.
+
+Sets whether the new saved file should open after saving.
+Example:
+
+```dart
+config.multiTabEnabled = true;
+config.openSavedCopyInNewTab = false;
+```
+
+#### maxTabCount
+number, optional, defaults to unlimited
+
+Sets the limit on the maximum number of tabs that the viewer could have at a time. Open more documents after reaching this limit will overwrite the old tabs.
+
+```dart
+config.multiTabEnabled = true;
+config.maxTabCount={5}
 ```
 
 ### Signature
