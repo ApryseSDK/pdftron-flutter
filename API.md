@@ -261,6 +261,17 @@ PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png
 
 2. Now you can use the image in the viewer. For example, if you add `button_open.png` to the bundle, you could use `'button_open.png'` in leadingNavButtonIcon.
 
+#### rememberLastUsedTool
+boolean, optional, defaults to true, Android only
+
+Defines whether the last tool used in the current viewer session will be the tool selected upon starting a new viewer session.
+
+Example:
+
+```dart
+config.rememberLastUsedTool = false;
+```
+
 ### Annotation Tools
 
 #### setToolMode
