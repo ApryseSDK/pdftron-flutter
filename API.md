@@ -51,6 +51,28 @@ Using commercial license key:
 PdftronFlutter.initialize('your_license_key');
 ```
 
+### exportAsImageFromFilePath
+Export a PDF page to an image format defined in [`ExportFormat`](./lib/constants.dart). The page is taken from the PDF at the given filepath.
+
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pageNumber | int | the page to be converted
+dpi | double | the output image resolution
+exportFormat | String | one of [`ExportFormat`](./lib/constants.dart) constants
+filePath | String | local file path to pdf
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+resultImagePath | String | the temp path of the created image, user is responsible for clean up the cache
+
+```dart
+var resultImagePath = await PdftronFlutter.exportAsImageFromFilePath(1, 92, ExportFormat.BMP, "/sdcard/Download/red.pdf");
+```
+
 ### setRequestedOrientation
 
 Changes the orientation of this activity. Android only. 
@@ -731,6 +753,28 @@ Returns a Future.
 PdftronFlutter.closeAllTabs();
 ```
 
+### Export Images
+
+#### exportAsImage
+Export a PDF page to an image format defined in [`ExportFormat`](./lib/constants.dart). The page is taken from the currently opened document in the viewer.
+
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pageNumber | int | the page to be converted
+dpi | double | the output image resolution
+exportFormat | String | one of [`ExportFormat`](./lib/constants.dart) constants
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+resultImagePath | String | the temp path of the created image, user is responsible for clean up the cache
+
+```dart
+var resultImagePath = await PdftronFlutter.exportAsImage(1, 92, ExportFormat.BMP);
+```
 
 ## Events
 This section contains all the event listeners you could attach to the viewer.
