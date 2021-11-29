@@ -19,6 +19,8 @@ class Config {
   var _overrideAnnotationMenuBehavior;
   var _exportPath;
   var _openUrlPath;
+  var _openSavedCopyInNewTab;
+  var _maxTabCount;
   var _autoSaveEnabled;
   var _pageChangeOnTap;
   var _showSavedSignatures;
@@ -86,6 +88,10 @@ class Config {
   set exportPath(String value) => _exportPath = value;
 
   set openUrlPath(String value) => _openUrlPath = value;
+
+  set openSavedCopyInNewTab(bool value) => _openSavedCopyInNewTab = value;
+
+  set maxTabCount(int value) => _maxTabCount = value;
 
   set autoSaveEnabled(bool value) => _autoSaveEnabled = value;
 
@@ -169,6 +175,8 @@ class Config {
             json['overrideAnnotationMenuBehavior'],
         _exportPath = json['exportPath'],
         _openUrlPath = json['openUrlPath'],
+        _openSavedCopyInNewTab = json['openSavedCopyInNewTab'],
+        _maxTabCount = json['maxTabCount'],
         _autoSaveEnabled = json['autoSaveEnabled'],
         _pageChangeOnTap = json['pageChangeOnTap'],
         _showSavedSignatures = json['showSavedSignatures'],
@@ -217,6 +225,8 @@ class Config {
         'overrideAnnotationMenuBehavior': _overrideAnnotationMenuBehavior,
         'exportPath': _exportPath,
         'openUrlPath': _openUrlPath,
+        'openSavedCopyInNewTab': _openSavedCopyInNewTab,
+        'maxTabCount': _maxTabCount,
         'autoSaveEnabled': _autoSaveEnabled,
         'pageChangeOnTap': _pageChangeOnTap,
         'showSavedSignatures': _showSavedSignatures,

@@ -113,6 +113,8 @@ public class PluginUtils {
     public static final String KEY_CONFIG_OVERRIDE_ANNOTATION_MENU_BEHAVIOR = "overrideAnnotationMenuBehavior";
     public static final String KEY_CONFIG_EXPORT_PATH = "exportPath";
     public static final String KEY_CONFIG_OPEN_URL_PATH = "openUrlPath";
+    public static final String KEY_CONFIG_OPEN_SAVED_COPY_IN_NEW_TAB = "openSavedCopyInNewTab";
+    public static final String KEY_CONFIG_MAX_TAB_COUNT = "maxTabCount";
     public static final String KEY_CONFIG_AUTO_SAVE_ENABLED = "autoSaveEnabled";
     public static final String KEY_CONFIG_PAGE_CHANGE_ON_TAP = "pageChangeOnTap";
     public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
@@ -860,6 +862,14 @@ public class PluginUtils {
                     boolean permanentPageNumberIndicator = configJson.getBoolean(KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR);
                     builder.permanentPageNumberIndicator(permanentPageNumberIndicator);
                 }
+                if (!configJson.isNull(KEY_CONFIG_OPEN_SAVED_COPY_IN_NEW_TAB)) {
+                    boolean openSavedCopyInNewTab = configJson.getBoolean(KEY_CONFIG_OPEN_SAVED_COPY_IN_NEW_TAB);
+                    builder.openSavedCopyInNewTab(openSavedCopyInNewTab);
+                }
+                if (!configJson.isNull(KEY_CONFIG_MAX_TAB_COUNT)) {
+                    int maxTabCount = configJson.getInt(KEY_CONFIG_MAX_TAB_COUNT);
+                    builder.maximumTabCount(maxTabCount);
+                } 
                 if (!configJson.isNull(KEY_CONFIG_OPEN_URL_PATH)) {
                     String openUrlPath = configJson.getString(KEY_CONFIG_OPEN_URL_PATH);
                     configInfo.setOpenUrlPath(openUrlPath);
