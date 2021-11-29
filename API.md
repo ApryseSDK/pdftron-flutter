@@ -835,7 +835,7 @@ bool, optional, defaults to true
 Defines whether the document slider of the viewer is enabled.
 
 ```dart
-config.documentSliderEnabled=false;
+config.documentSliderEnabled = false;
 ```
 
 ### Page
