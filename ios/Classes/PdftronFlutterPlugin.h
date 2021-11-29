@@ -39,6 +39,7 @@ static NSString * const PTHideBottomToolbarKey = @"hideBottomToolbar";
 static NSString * const PTShowLeadingNavButtonKey = @"showLeadingNavButton";
 static NSString * const PTReadOnlyKey = @"readOnly";
 static NSString * const PTThumbnailViewEditingEnabledKey = @"thumbnailViewEditingEnabled";
+static NSString * const PTDocumentSliderEnabledKey = @"documentSliderEnabled";
 static NSString * const PTAnnotationAuthorKey = @"annotationAuthor";
 static NSString * const PTContinuousAnnotationEditingKey = @"continuousAnnotationEditing";
 static NSString * const PTAnnotationPermissionCheckEnabledKey = @"annotationPermissionCheckEnabled";

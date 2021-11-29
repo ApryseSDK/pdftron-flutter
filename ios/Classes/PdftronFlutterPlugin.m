@@ -311,6 +311,14 @@
                         [documentController setHideThumbnailFilterModes: hideThumbnailFilterModes];
                     }
                 }
+                else if ([key isEqualToString:PTDocumentSliderEnabledKey]) {
+                    
+                    NSNumber* documentSliderEnabled = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDocumentSliderEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && documentSliderEnabled) {
+                        [documentController setDocumentSliderEnabled:[documentSliderEnabled boolValue]];
+                    }
+                }
                 else if ([key isEqualToString:PTLongPressMenuEnabled]) {
                     
                     NSNumber* longPressMenuEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTLongPressMenuEnabled class:[NSNumber class] error:&error];
