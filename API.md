@@ -60,19 +60,17 @@ Name | Type | Description
 --- | --- | ---
 pageNumber | int | the page to be converted
 dpi | double | the output image resolution
-exportFormat | string | one of [`ExportFormat`](./lib/constants.dart) constants
-filePath | string | local file path to pdf
+exportFormat | String | one of [`ExportFormat`](./lib/constants.dart) constants
+filePath | String | local file path to pdf
 
-Returns a Promise.
+Returns a Future.
 
 Name | Type | Description
 --- | --- | ---
-resultImagePath | string | the temp path of the created image, user is responsible for clean up the cache
+resultImagePath | String | the temp path of the created image, user is responsible for clean up the cache
 
-```js
-PdftronFlutter.exportAsImageFromFilePath(1, 92, ExportFormat.BMP, "/sdcard/Download/red.pdf").then((resultImagePath) => {
-  console.log('export', resultImagePath);
-});
+```dart
+var resultImagePath = await PdftronFlutter.exportAsImageFromFilePath(1, 92, ExportFormat.BMP, "/sdcard/Download/red.pdf");
 ```
 
 ### setRequestedOrientation
@@ -766,18 +764,16 @@ Name | Type | Description
 --- | --- | ---
 pageNumber | int | the page to be converted
 dpi | double | the output image resolution
-exportFormat | string | one of [`ExportFormat`](./lib/constants.dart) constants
+exportFormat | String | one of [`ExportFormat`](./lib/constants.dart) constants
 
-Returns a Promise.
+Returns a Future.
 
 Name | Type | Description
 --- | --- | ---
-resultImagePath | string | the temp path of the created image, user is responsible for clean up the cache
+resultImagePath | String | the temp path of the created image, user is responsible for clean up the cache
 
-```js
-PdftronFlutter.exportAsImage(1, 92, ExportFormat.BMP).then((resultImagePath) => {
-  console.log('export', resultImagePath);
-});
+```dart
+var resultImagePath = await PdftronFlutter.exportAsImage(1, 92, ExportFormat.BMP);
 ```
 
 ## Events
