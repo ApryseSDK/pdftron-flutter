@@ -753,6 +753,16 @@ Returns a Future.
 PdftronFlutter.addBookmark("Page 7", 6);
 ```
 
+#### userBookmarksListEditingEnabled
+bool, optional, default value is true
+
+Defines whether the bookmark list can be edited. If the viewer is readonly then bookmarks on Android are 
+still editable but are saved to the device rather than the PDF.
+
+```dart
+config.userBookmarksListEditingEnabled = false;
+```
+
 ### Multi-tab
 
 #### closeAllTabs
@@ -1336,6 +1346,15 @@ If document editing is enabled, then this value determines if the annotation lis
 config.annotationsListEditingEnabled = false;
 ```
 
+#### excludedAnnotationListTypes
+array of [`Config.Tools`](./src/Config/Config.ts) constants, optional, defaults to none
+
+Defines types to be excluded from the annotation list.
+Example use:
+
+```dart
+config.excludedAnnotationListTypes=[Tools.annotationCreateEllipse, Tools.annotationCreateRedaction];
+```
 
 ### Annotation Menu
 

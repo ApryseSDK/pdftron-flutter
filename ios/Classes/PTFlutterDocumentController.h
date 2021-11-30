@@ -32,6 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSArray<NSString*>* annotationMenuItems;
 @property (nonatomic, copy, nullable) NSArray<NSString*>* overrideAnnotationMenuBehavior;
 
+@property (nonatomic, copy, nullable) NSArray<NSString*>* excludedAnnotationListTypes;
 @property (nonatomic, assign, getter=isAutoSaveEnabled) BOOL autoSaveEnabled;
 @property (nonatomic, assign) BOOL pageChangesOnTap;
 @property (nonatomic, assign) BOOL useStylusAsPen;
@@ -58,6 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, getter=isAnnotationPermissionCheckEnabled) BOOL annotationPermissionCheckEnabled;
 
 @property (nonatomic, assign, getter=isAnnotationsListEditingEnabled) BOOL annotationsListEditingEnabled;
+@property (nonatomic, assign, getter=isUserBookmarksListEditingEnabled) BOOL userBookmarksListEditingEnabled;
 
 @property (nonatomic, copy, nullable) NSArray<NSString *> *overrideBehavior;
 

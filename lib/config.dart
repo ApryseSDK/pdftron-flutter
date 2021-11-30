@@ -18,6 +18,7 @@ class Config {
   var _hideAnnotationMenu;
   var _annotationMenuItems;
   var _overrideAnnotationMenuBehavior;
+  var _excludedAnnotationListTypes;
   var _exportPath;
   var _openUrlPath;
   var _openSavedCopyInNewTab;
@@ -45,6 +46,7 @@ class Config {
   var _continuousAnnotationEditing;
   var _annotationPermissionCheckEnabled;
   var _annotationsListEditingEnabled;
+  var _userBookmarksListEditingEnabled;
   var _overrideBehavior;
   var _tabTitle;
   var _pageNumberIndicatorAlwaysVisible;
@@ -89,6 +91,9 @@ class Config {
 
   set overrideAnnotationMenuBehavior(List value) =>
       _overrideAnnotationMenuBehavior = value;
+
+  set excludedAnnotationListTypes(List value) => 
+      _excludedAnnotationListTypes = value;
 
   set exportPath(String value) => _exportPath = value;
 
@@ -152,6 +157,9 @@ class Config {
   set annotationsListEditingEnabled(bool value) =>
       _annotationsListEditingEnabled = value;
 
+  set userBookmarksListEditingEnabled(bool value) =>
+      _userBookmarksListEditingEnabled = value;
+
   set overrideBehavior(List<String> value) => _overrideBehavior = value;
 
   set tabTitle(String value) => _tabTitle = value;
@@ -184,6 +192,7 @@ class Config {
         _annotationMenuItems = json['annotationMenuItems'],
         _overrideAnnotationMenuBehavior =
             json['overrideAnnotationMenuBehavior'],
+        _excludedAnnotationListTypes = json['excludedAnnotationListTypes'],
         _exportPath = json['exportPath'],
         _openUrlPath = json['openUrlPath'],
         _openSavedCopyInNewTab = json['openSavedCopyInNewTab'],
@@ -212,6 +221,7 @@ class Config {
         _annotationPermissionCheckEnabled =
             json['annotationPermissionCheckEnabled'],
         _annotationsListEditingEnabled = json['annotationsListEditingEnabled'],
+        _userBookmarksListEditingEnabled = json['userBookmarksListEditingEnabled'],
         _overrideBehavior = json['overrideBehavior'],
         _tabTitle = json['tabTitle'],
         _pageNumberIndicatorAlwaysVisible = json['pageNumberIndicatorAlwaysVisible'],
@@ -237,6 +247,7 @@ class Config {
         'hideAnnotationMenu': _hideAnnotationMenu,
         'annotationMenuItems': _annotationMenuItems,
         'overrideAnnotationMenuBehavior': _overrideAnnotationMenuBehavior,
+        'excludedAnnotationListTypes': _excludedAnnotationListTypes,
         'exportPath': _exportPath,
         'openUrlPath': _openUrlPath,
         'openSavedCopyInNewTab': _openSavedCopyInNewTab,
@@ -264,6 +275,7 @@ class Config {
         'continuousAnnotationEditing': _continuousAnnotationEditing,
         'annotationPermissionCheckEnabled': _annotationPermissionCheckEnabled,
         'annotationsListEditingEnabled': _annotationsListEditingEnabled,
+        'userBookmarksListEditingEnabled': _userBookmarksListEditingEnabled,
         'overrideBehavior': _overrideBehavior,
         'tabTitle': _tabTitle,
         'pageNumberIndicatorAlwaysVisible': _pageNumberIndicatorAlwaysVisible,
