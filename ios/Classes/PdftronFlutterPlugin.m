@@ -210,6 +210,14 @@
                         tabbedDocumentViewController.tabsEnabled = [multiTabValue boolValue];
                     }
                 }
+                else if ([key isEqualToString:PTMaxTabCountKey]) {
+                    NSError* error;
+                    NSNumber* maxTabCount = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTMaxTabCountKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && maxTabCount) {
+                        tabbedDocumentViewController.maximumTabCount = [maxTabCount intValue];
+                    }
+                }
             }
         }
         else
@@ -269,6 +277,9 @@
                     }
                 }
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
+                    // Handled by tabbed config.
+                }
+                else if ([key isEqualToString:PTMaxTabCountKey]) {
                     // Handled by tabbed config.
                 }
                 else if ([key isEqualToString:PTFitModeKey]) {
