@@ -47,6 +47,7 @@ class Config {
   var _annotationPermissionCheckEnabled;
   var _annotationsListEditingEnabled;
   var _userBookmarksListEditingEnabled;
+  var _showNavigationListAsSidePanelOnLargeDevices;
   var _overrideBehavior;
   var _tabTitle;
   var _pageNumberIndicatorAlwaysVisible;
@@ -160,6 +161,9 @@ class Config {
   set userBookmarksListEditingEnabled(bool value) =>
       _userBookmarksListEditingEnabled = value;
 
+  set showNavigationListAsSidePanelOnLargeDevices(bool value) =>
+      _showNavigationListAsSidePanelOnLargeDevices = value;
+
   set overrideBehavior(List<String> value) => _overrideBehavior = value;
 
   set tabTitle(String value) => _tabTitle = value;
@@ -222,6 +226,7 @@ class Config {
             json['annotationPermissionCheckEnabled'],
         _annotationsListEditingEnabled = json['annotationsListEditingEnabled'],
         _userBookmarksListEditingEnabled = json['userBookmarksListEditingEnabled'],
+        _showNavigationListAsSidePanelOnLargeDevices = json['showNavigationListAsSidePanelOnLargeDevices'],
         _overrideBehavior = json['overrideBehavior'],
         _tabTitle = json['tabTitle'],
         _pageNumberIndicatorAlwaysVisible = json['pageNumberIndicatorAlwaysVisible'],
@@ -276,6 +281,7 @@ class Config {
         'annotationPermissionCheckEnabled': _annotationPermissionCheckEnabled,
         'annotationsListEditingEnabled': _annotationsListEditingEnabled,
         'userBookmarksListEditingEnabled': _userBookmarksListEditingEnabled,
+        'showNavigationListAsSidePanelOnLargeDevices': _showNavigationListAsSidePanelOnLargeDevices,
         'overrideBehavior': _overrideBehavior,
         'tabTitle': _tabTitle,
         'pageNumberIndicatorAlwaysVisible': _pageNumberIndicatorAlwaysVisible,

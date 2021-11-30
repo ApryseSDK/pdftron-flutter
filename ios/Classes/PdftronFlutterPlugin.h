@@ -46,6 +46,7 @@ static NSString * const PTContinuousAnnotationEditingKey = @"continuousAnnotatio
 static NSString * const PTAnnotationPermissionCheckEnabledKey = @"annotationPermissionCheckEnabled";
 static NSString * const PTAnnotationsListEditingEnabledKey = @"annotationsListEditingEnabled";
 static NSString * const PTUserBookmarksListEditingEnabledKey = @"userBookmarksListEditingEnabled";
+static NSString * const PTShowNavigationListAsSidePanelOnLargeDevicesKey = @"showNavigationListAsSidePanelOnLargeDevices";
 static NSString * const PTOverrideBehaviorKey = @"overrideBehavior";
 static NSString * const PTTabTitleKey = @"tabTitle";
 static NSString * const PTMaxTabCountKey = @"maxTabCount";

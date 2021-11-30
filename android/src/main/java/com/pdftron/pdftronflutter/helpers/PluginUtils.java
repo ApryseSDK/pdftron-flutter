@@ -141,6 +141,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED = "annotationPermissionCheckEnabled";
     public static final String KEY_CONFIG_ANNOTATIONS_LIST_EDITING_ENABLED = "annotationsListEditingEnabled";
     public static final String KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED = "userBookmarksListEditingEnabled";
+    public static final String KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES = "showNavigationListAsSidePanelOnLargeDevices";
     public static final String KEY_CONFIG_OVERRIDE_BEHAVIOR = "overrideBehavior";
     public static final String KEY_CONFIG_TAB_TITLE = "tabTitle";
     public static final String KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR = "pageNumberIndicatorAlwaysVisible";
@@ -880,6 +881,10 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED)) {
                     boolean userBookmarksListEditingEnabled = configJson.getBoolean(KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED);
                     builder.userBookmarksListEditingEnabled(userBookmarksListEditingEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES)) {
+                    boolean showNavigationListAsSidePanelOnLargeDevices = configJson.getBoolean(KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES);
+                    builder.navigationListAsSheetOnLargeDevice(showNavigationListAsSidePanelOnLargeDevices);
                 }
                 if (!configJson.isNull(KEY_CONFIG_OVERRIDE_BEHAVIOR)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_OVERRIDE_BEHAVIOR);

@@ -961,6 +961,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     self.navigationListsViewController.annotationViewController.readonly = !self.isAnnotationsListEditingEnabled;
     self.navigationListsViewController.bookmarkViewController.readonly = !self.userBookmarksListEditingEnabled;
     [self excludeAnnotationListTypes:self.excludedAnnotationListTypes];
+    self.alwaysShowNavigationListsAsModal = !self.showNavigationListAsSidePanelOnLargeDevices;
 }
 
 - (void)excludeAnnotationListTypes:(NSArray<NSString*> *)excludedAnnotationListTypes

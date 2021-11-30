@@ -763,6 +763,17 @@ still editable but are saved to the device rather than the PDF.
 config.userBookmarksListEditingEnabled = false;
 ```
 
+### Navigation
+
+#### showNavigationListAsSidePanelOnLargeDevices
+bool, optional, defaults to true
+
+Defines whether the navigation list will be displayed as a side panel on large devices such as iPads and tablets.
+
+```dart
+config.showNavigationListAsSidePanelOnLargeDevices = true;
+```
+
 ### Multi-tab
 
 #### closeAllTabs

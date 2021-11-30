@@ -563,6 +563,15 @@
                         [documentController setUserBookmarksListEditingEnabled:[userBookmarksListEditingEnabled boolValue]];
                     }
                 }
+                else if ([key isEqualToString:PTShowNavigationListAsSidePanelOnLargeDevicesKey]) {
+                    
+                    NSNumber* showNavigationListAsSidePanelOnLargeDevices = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowNavigationListAsSidePanelOnLargeDevicesKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && showNavigationListAsSidePanelOnLargeDevices) {
+                        
+                        [documentController setShowNavigationListAsSidePanelOnLargeDevices:[showNavigationListAsSidePanelOnLargeDevices boolValue]];
+                    }
+                }
                 else if ([key isEqualToString:PTOverrideBehaviorKey]) {
                     
                     NSArray* overrideBehavior = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTOverrideBehaviorKey class:[NSArray class] error:&error];
