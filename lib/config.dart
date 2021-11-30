@@ -7,6 +7,7 @@ class Config {
   var _customHeaders;
   var _fitMode;
   var _layoutMode;
+  var _tabletLayoutEnabled;
   var _initialPageNumber;
   var _isBase64String;
   var _base64FileExtension;
@@ -19,6 +20,8 @@ class Config {
   var _overrideAnnotationMenuBehavior;
   var _exportPath;
   var _openUrlPath;
+  var _openSavedCopyInNewTab;
+  var _maxTabCount;
   var _autoSaveEnabled;
   var _pageChangeOnTap;
   var _showSavedSignatures;
@@ -38,6 +41,8 @@ class Config {
   var _hideBottomToolbar;
   var _bottomToolbar;
   var _showLeadingNavButton;
+  var _documentSliderEnabled;
+  var _rememberLastUsedTool;
   var _readOnly;
   var _thumbnailViewEditingEnabled;
   var _annotationAuthor;
@@ -64,6 +69,8 @@ class Config {
 
   set layoutMode(String value) => _layoutMode = value;
 
+  set tabletLayoutEnabled(bool value) => _tabletLayoutEnabled = value;
+
   set initialPageNumber(int value) => _initialPageNumber = value;
 
   set isBase64String(bool value) => _isBase64String = value;
@@ -89,6 +96,10 @@ class Config {
   set exportPath(String value) => _exportPath = value;
 
   set openUrlPath(String value) => _openUrlPath = value;
+
+  set openSavedCopyInNewTab(bool value) => _openSavedCopyInNewTab = value;
+
+  set maxTabCount(int value) => _maxTabCount = value;
 
   set autoSaveEnabled(bool value) => _autoSaveEnabled = value;
 
@@ -132,6 +143,10 @@ class Config {
 
   set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
 
+  set documentSliderEnabled(bool value) => _documentSliderEnabled = value;
+  
+  set rememberLastUsedTool(bool value) => _rememberLastUsedTool = value;
+
   set readOnly(bool value) => _readOnly = value;
 
   set thumbnailViewEditingEnabled(bool value) =>
@@ -165,6 +180,7 @@ class Config {
         _customHeaders = json['customHeaders'],
         _fitMode = json['fitMode'],
         _layoutMode = json['layoutMode'],
+        _tabletLayoutEnabled = json['tabletLayoutEnabled'],
         _initialPageNumber = json['initialPageNumber'],
         _isBase64String = json['isBase64String'],
         _base64FileExtension = json['base64FileExtension'],
@@ -178,6 +194,8 @@ class Config {
             json['overrideAnnotationMenuBehavior'],
         _exportPath = json['exportPath'],
         _openUrlPath = json['openUrlPath'],
+        _openSavedCopyInNewTab = json['openSavedCopyInNewTab'],
+        _maxTabCount = json['maxTabCount'],
         _autoSaveEnabled = json['autoSaveEnabled'],
         _pageChangeOnTap = json['pageChangeOnTap'],
         _showSavedSignatures = json['showSavedSignatures'],
@@ -197,6 +215,8 @@ class Config {
         _hideBottomToolbar = json['hideBottomToolbar'],
         _bottomToolbar = json['bottomToolbar'],
         _showLeadingNavButton = json['showLeadingNavButton'],
+        _documentSliderEnabled = json['documentSliderEnabled'],
+        _rememberLastUsedTool = json['rememberLastUsedTool'],
         _readOnly = json['readOnly'],
         _thumbnailViewEditingEnabled = json['thumbnailViewEditingEnabled'],
         _annotationAuthor = json['annotationAuthor'],
@@ -217,6 +237,7 @@ class Config {
         'customHeaders': _customHeaders,
         'fitMode': _fitMode,
         'layoutMode': _layoutMode,
+        'tabletLayoutEnabled': _tabletLayoutEnabled,
         'initialPageNumber': _initialPageNumber,
         'isBase64String': _isBase64String,
         'base64FileExtension': _base64FileExtension,
@@ -229,6 +250,8 @@ class Config {
         'overrideAnnotationMenuBehavior': _overrideAnnotationMenuBehavior,
         'exportPath': _exportPath,
         'openUrlPath': _openUrlPath,
+        'openSavedCopyInNewTab': _openSavedCopyInNewTab,
+        'maxTabCount': _maxTabCount,
         'autoSaveEnabled': _autoSaveEnabled,
         'pageChangeOnTap': _pageChangeOnTap,
         'showSavedSignatures': _showSavedSignatures,
@@ -248,6 +271,8 @@ class Config {
         'hideBottomToolbar': _hideBottomToolbar,
         'bottomToolbar': _bottomToolbar,
         'showLeadingNavButton': _showLeadingNavButton,
+        'documentSliderEnabled': _documentSliderEnabled,
+        'rememberLastUsedTool': _rememberLastUsedTool,
         'readOnly': _readOnly,
         'thumbnailViewEditingEnabled': _thumbnailViewEditingEnabled,
         'annotationAuthor': _annotationAuthor,

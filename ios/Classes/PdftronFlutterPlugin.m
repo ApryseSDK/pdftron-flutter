@@ -210,6 +210,14 @@
                         tabbedDocumentViewController.tabsEnabled = [multiTabValue boolValue];
                     }
                 }
+                else if ([key isEqualToString:PTMaxTabCountKey]) {
+                    NSError* error;
+                    NSNumber* maxTabCount = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTMaxTabCountKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && maxTabCount) {
+                        tabbedDocumentViewController.maximumTabCount = [maxTabCount intValue];
+                    }
+                }
             }
         }
         else
@@ -271,6 +279,9 @@
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
                     // Handled by tabbed config.
                 }
+                else if ([key isEqualToString:PTMaxTabCountKey]) {
+                    // Handled by tabbed config.
+                }
                 else if ([key isEqualToString:PTFitModeKey]) {
                     
                     NSString* fitMode = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTFitModeKey class:[NSString class] error:&error];
@@ -309,6 +320,14 @@
                     
                     if (!error && hideThumbnailFilterModes) {
                         [documentController setHideThumbnailFilterModes: hideThumbnailFilterModes];
+                    }
+                }
+                else if ([key isEqualToString:PTDocumentSliderEnabledKey]) {
+                    
+                    NSNumber* documentSliderEnabled = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDocumentSliderEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && documentSliderEnabled) {
+                        [documentController setDocumentSliderEnabled:[documentSliderEnabled boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTLongPressMenuEnabled]) {

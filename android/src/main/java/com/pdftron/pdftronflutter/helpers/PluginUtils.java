@@ -102,6 +102,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_CUSTOM_HEADERS = "customHeaders";
     public static final String KEY_CONFIG_FIT_MODE = "fitMode";
     public static final String KEY_CONFIG_LAYOUT_MODE = "layoutMode";
+    public static final String KEY_CONFIG_TABLET_LAYOUT_ENABLED = "tabletLayoutEnabled";
     public static final String KEY_CONFIG_INITIAL_PAGE_NUMBER = "initialPageNumber";
     public static final String KEY_CONFIG_IS_BASE_64_STRING = "isBase64String";
     public static final String KEY_CONFIG_BASE_64_FILE_EXTENSION = "base64FileExtension";
@@ -114,6 +115,8 @@ public class PluginUtils {
     public static final String KEY_CONFIG_OVERRIDE_ANNOTATION_MENU_BEHAVIOR = "overrideAnnotationMenuBehavior";
     public static final String KEY_CONFIG_EXPORT_PATH = "exportPath";
     public static final String KEY_CONFIG_OPEN_URL_PATH = "openUrlPath";
+    public static final String KEY_CONFIG_OPEN_SAVED_COPY_IN_NEW_TAB = "openSavedCopyInNewTab";
+    public static final String KEY_CONFIG_MAX_TAB_COUNT = "maxTabCount";
     public static final String KEY_CONFIG_AUTO_SAVE_ENABLED = "autoSaveEnabled";
     public static final String KEY_CONFIG_PAGE_CHANGE_ON_TAP = "pageChangeOnTap";
     public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
@@ -132,6 +135,8 @@ public class PluginUtils {
     public static final String KEY_CONFIG_HIDE_BOTTOM_TOOLBAR = "hideBottomToolbar";
     public static final String KEY_CONFIG_BOTTOM_TOOLBAR = "bottomToolbar";
     public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
+    public static final String KEY_CONFIG_REMEMBER_LAST_USED_TOOL = "rememberLastUsedTool";
+    public static final String KEY_CONFIG_DOCUMENT_SLIDER_ENABLED = "documentSliderEnabled";
     public static final String KEY_CONFIG_READ_ONLY = "readOnly";
     public static final String KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED = "thumbnailViewEditingEnabled";
     public static final String KEY_CONFIG_ANNOTATION_AUTHOR = "annotationAuthor";
@@ -694,6 +699,10 @@ public class PluginUtils {
                     String layoutMode = convStringToLayoutMode(layoutString);
                     PdfViewCtrlSettingsManager.updateViewMode(context, layoutMode);
                 }
+                if (!configJson.isNull(KEY_CONFIG_TABLET_LAYOUT_ENABLED)) {
+                    boolean tabletLayoutEnabled = configJson.getBoolean(KEY_CONFIG_TABLET_LAYOUT_ENABLED);
+                    builder.tabletLayoutEnabled(tabletLayoutEnabled);
+                }
                 if (!configJson.isNull(KEY_CONFIG_INITIAL_PAGE_NUMBER)) {
                     int initialPageNumber = configJson.getInt(KEY_CONFIG_INITIAL_PAGE_NUMBER);
                     configInfo.setInitialPageNumber(initialPageNumber);
@@ -837,6 +846,14 @@ public class PluginUtils {
                     boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
                     configInfo.setShowLeadingNavButton(showLeadingNavButton);
                 }
+                if (!configJson.isNull(KEY_CONFIG_DOCUMENT_SLIDER_ENABLED)) {
+                    boolean documentSliderEnabled = configJson.getBoolean(KEY_CONFIG_DOCUMENT_SLIDER_ENABLED);
+                    builder.showDocumentSlider(documentSliderEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_REMEMBER_LAST_USED_TOOL)) {
+                    boolean rememberLastUsedTool = configJson.getBoolean(KEY_CONFIG_REMEMBER_LAST_USED_TOOL);
+                    builder.rememberLastUsedTool(rememberLastUsedTool);
+                }
                 if (!configJson.isNull(KEY_CONFIG_READ_ONLY)) {
                     boolean readOnly = configJson.getBoolean(KEY_CONFIG_READ_ONLY);
                     builder.documentEditingEnabled(!readOnly);
@@ -873,6 +890,14 @@ public class PluginUtils {
                     boolean permanentPageNumberIndicator = configJson.getBoolean(KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR);
                     builder.permanentPageNumberIndicator(permanentPageNumberIndicator);
                 }
+                if (!configJson.isNull(KEY_CONFIG_OPEN_SAVED_COPY_IN_NEW_TAB)) {
+                    boolean openSavedCopyInNewTab = configJson.getBoolean(KEY_CONFIG_OPEN_SAVED_COPY_IN_NEW_TAB);
+                    builder.openSavedCopyInNewTab(openSavedCopyInNewTab);
+                }
+                if (!configJson.isNull(KEY_CONFIG_MAX_TAB_COUNT)) {
+                    int maxTabCount = configJson.getInt(KEY_CONFIG_MAX_TAB_COUNT);
+                    builder.maximumTabCount(maxTabCount);
+                } 
                 if (!configJson.isNull(KEY_CONFIG_OPEN_URL_PATH)) {
                     String openUrlPath = configJson.getString(KEY_CONFIG_OPEN_URL_PATH);
                     configInfo.setOpenUrlPath(openUrlPath);
