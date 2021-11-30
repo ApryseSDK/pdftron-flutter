@@ -921,6 +921,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     
     _annotationsListEditingEnabled = YES;
     _userBookmarksListEditingEnabled = YES;
+    _showNavigationListAsSidePanelOnLargeDevices = YES;
 }
 
 - (void)applyViewerSettings
