@@ -30,9 +30,13 @@ class Config {
   var _annotationToolbars;
   var _hideDefaultAnnotationToolbars;
   var _hideAnnotationToolbarSwitcher;
+  var _initialToolbar;
   var _hideTopToolbars;
+  var _hideToolbarsOnTap;
   var _hideTopAppNavBar;
+  var _topAppNavBarRighBar;
   var _hideBottomToolbar;
+  var _bottomToolbar;
   var _showLeadingNavButton;
   var _readOnly;
   var _thumbnailViewEditingEnabled;
@@ -112,11 +116,19 @@ class Config {
   set hideAnnotationToolbarSwitcher(bool value) =>
       _hideAnnotationToolbarSwitcher = value;
 
+  set initialToolbar(String value) => _initialToolbar = value;    
+
   set hideTopToolbars(bool value) => _hideTopToolbars = value;
+
+  set hideToolbarsOnTap(bool value) => _hideToolbarsOnTap = value;
 
   set hideTopAppNavBar(bool value) => _hideTopAppNavBar = value;
 
+  set topAppNavBarRightBar(List value) => _topAppNavBarRighBar = value;
+
   set hideBottomToolbar(bool value) => _hideBottomToolbar = value;
+
+  set bottomToolbar(List value) => _bottomToolbar = value;
 
   set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
 
@@ -177,9 +189,13 @@ class Config {
         _annotationToolbars = json['annotationToolbars'],
         _hideDefaultAnnotationToolbars = json['hideDefaultAnnotationToolbars'],
         _hideAnnotationToolbarSwitcher = json['hideAnnotationToolbarSwitcher'],
+        _initialToolbar = json['initialToolbar'],
         _hideTopToolbars = json['hideTopToolbars'],
+        _hideToolbarsOnTap = json['hideToolbarsOnTap'],
         _hideTopAppNavBar = json['hideTopAppNavBar'],
+        _topAppNavBarRighBar = json['topAppNavBarRightBar'],
         _hideBottomToolbar = json['hideBottomToolbar'],
+        _bottomToolbar = json['bottomToolbar'],
         _showLeadingNavButton = json['showLeadingNavButton'],
         _readOnly = json['readOnly'],
         _thumbnailViewEditingEnabled = json['thumbnailViewEditingEnabled'],
@@ -224,9 +240,13 @@ class Config {
         'annotationToolbars': _annotationToolbars,
         'hideDefaultAnnotationToolbars': _hideDefaultAnnotationToolbars,
         'hideAnnotationToolbarSwitcher': _hideAnnotationToolbarSwitcher,
+        'initialToolbar': _initialToolbar,
         'hideTopToolbars': _hideTopToolbars,
+        'hideToolbarsOnTap': _hideToolbarsOnTap,
         'hideTopAppNavBar': _hideTopAppNavBar,
+        'topAppNavBarRightBar': _topAppNavBarRighBar,
         'hideBottomToolbar': _hideBottomToolbar,
+        'bottomToolbar': _bottomToolbar,
         'showLeadingNavButton': _showLeadingNavButton,
         'readOnly': _readOnly,
         'thumbnailViewEditingEnabled': _thumbnailViewEditingEnabled,

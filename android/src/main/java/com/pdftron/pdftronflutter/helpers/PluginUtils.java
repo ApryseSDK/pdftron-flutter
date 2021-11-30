@@ -40,6 +40,7 @@ import com.pdftron.pdf.utils.BookmarkManager;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.utils.ViewerUtils;
+import com.pdftron.pdf.widget.bottombar.builder.BottomBarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
@@ -124,9 +125,12 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_TOOLBARS = "annotationToolbars";
     public static final String KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS = "hideDefaultAnnotationToolbars";
     public static final String KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER = "hideAnnotationToolbarSwitcher";
+    public static final String KEY_CONFIG_INITIAL_TOOLBAR = "initialToolbar";
     public static final String KEY_CONFIG_HIDE_TOP_TOOLBARS = "hideTopToolbars";
+    public static final String KEY_CONFIG_HIDE_TOOLBARS_ON_TAP = "hideToolbarsOnTap";
     public static final String KEY_CONFIG_HIDE_TOP_APP_NAV_BAR = "hideTopAppNavBar";
     public static final String KEY_CONFIG_HIDE_BOTTOM_TOOLBAR = "hideBottomToolbar";
+    public static final String KEY_CONFIG_BOTTOM_TOOLBAR = "bottomToolbar";
     public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
     public static final String KEY_CONFIG_READ_ONLY = "readOnly";
     public static final String KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED = "thumbnailViewEditingEnabled";
@@ -803,9 +807,19 @@ public class PluginUtils {
                     boolean hideAnnotationToolbarSwitcher = configJson.getBoolean(KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER);
                     builder.showToolbarSwitcher(!hideAnnotationToolbarSwitcher);
                 }
+                if (!configJson.isNull(KEY_CONFIG_INITIAL_TOOLBAR)) {
+                    String initialToolbar = configJson.getString(KEY_CONFIG_INITIAL_TOOLBAR);
+                    if (!initialToolbar.isEmpty()) {
+                        builder.initialToolbarTag(initialToolbar).rememberLastUsedToolbar(false);
+                    }
+                }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_TOP_TOOLBARS)) {
                     boolean hideTopToolbars = configJson.getBoolean(KEY_CONFIG_HIDE_TOP_TOOLBARS);
                     builder.showAppBar(!hideTopToolbars);
+                }
+                if (!configJson.isNull(KEY_CONFIG_HIDE_TOOLBARS_ON_TAP)) {
+                    boolean hideToolbarsOnTap = configJson.getBoolean(KEY_CONFIG_HIDE_TOOLBARS_ON_TAP);
+                    builder.permanentToolbars(!hideToolbarsOnTap);
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_TOP_APP_NAV_BAR)) {
                     boolean hideTopAppNavBars = configJson.getBoolean(KEY_CONFIG_HIDE_TOP_APP_NAV_BAR);
@@ -814,6 +828,10 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_HIDE_BOTTOM_TOOLBAR)) {
                     boolean hideBottomToolbar = configJson.getBoolean(KEY_CONFIG_HIDE_BOTTOM_TOOLBAR);
                     builder.showBottomToolbar(!hideBottomToolbar);
+                }
+                if (!configJson.isNull(KEY_CONFIG_BOTTOM_TOOLBAR)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_BOTTOM_TOOLBAR);
+                    setBottomToolbar(array, builder);
                 }
                 if (!configJson.isNull(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON)) {
                     boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
@@ -978,6 +996,30 @@ public class PluginUtils {
                 }
             }
         }
+    }
+
+    private static void setBottomToolbar(JSONArray array, ViewerConfig.Builder builder) throws JSONException{
+        BottomBarBuilder customBottomBar = BottomBarBuilder.withTag("CustomBottomBar");
+
+        for (int i = 0; i < array.length(); i++) {
+            String item = array.getString(i);
+
+            if (BUTTON_THUMBNAILS.equals(item)) {
+                customBottomBar.addCustomButton(R.string.pref_viewmode_thumbnails, R.drawable.ic_thumbnails_grid_black_24dp, R.id.action_thumbnails);
+            } else if (BUTTON_LISTS.equals(item)) {
+                customBottomBar.addCustomButton(R.string.action_outline, R.drawable.ic_outline_white_24dp, R.id.action_outline);
+            } else if (BUTTON_SHARE.equals(item)) {
+                customBottomBar.addCustomButton(R.string.action_file_share, R.drawable.ic_share_black_24dp, R.id.action_share);
+            } else if (BUTTON_VIEW_CONTROLS.equals(item)) {
+                customBottomBar.addCustomButton(R.string.action_view_mode, R.drawable.ic_viewing_mode_white_24dp, R.id.action_viewmode);
+            } else if (BUTTON_SEARCH.equals(item)) {
+                customBottomBar.addCustomButton(R.string.action_search, R.drawable.ic_search_white_24dp, R.id.action_search);
+            } else if (BUTTON_REFLOW_MODE.equals(item)) {
+                customBottomBar.addCustomButton(R.string.pref_viewmode_reflow, R.drawable.ic_view_mode_reflow_black_24dp, R.id.action_reflow_mode);
+            }
+        }
+
+        builder.bottomBarBuilder(customBottomBar);
     }
 
     private static Uri getUri(Context context, String path, boolean isBase64, String base64FileExtension) {
