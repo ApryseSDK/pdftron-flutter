@@ -1233,6 +1233,15 @@ Defines the layout mode of the viewer.
 config.layoutMode = LayoutModes.facingCover;
 ```
 
+#### tabletLayoutEnabled
+bool, optional, defaults to true, Android only.
+
+Defines whether the tablet layout should be used on tablets. Otherwise uses the same layout as phones. 
+
+```dart
+config.tabletLayoutEnabled = true;
+```
+
 ### Page
 
 #### initialPageNumber
