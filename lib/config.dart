@@ -36,6 +36,7 @@ class Config {
   var _hideTopAppNavBar;
   var _hideBottomToolbar;
   var _showLeadingNavButton;
+  var _documentSliderEnabled;
   var _rememberLastUsedTool;
   var _readOnly;
   var _thumbnailViewEditingEnabled;
@@ -126,6 +127,8 @@ class Config {
   set hideBottomToolbar(bool value) => _hideBottomToolbar = value;
 
   set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
+
+  set documentSliderEnabled(bool value) => _documentSliderEnabled = value;
   
   set rememberLastUsedTool(bool value) => _rememberLastUsedTool = value;
 
@@ -192,6 +195,7 @@ class Config {
         _hideTopAppNavBar = json['hideTopAppNavBar'],
         _hideBottomToolbar = json['hideBottomToolbar'],
         _showLeadingNavButton = json['showLeadingNavButton'],
+        _documentSliderEnabled = json['documentSliderEnabled'],
         _rememberLastUsedTool = json['rememberLastUsedTool'],
         _readOnly = json['readOnly'],
         _thumbnailViewEditingEnabled = json['thumbnailViewEditingEnabled'],
@@ -242,6 +246,7 @@ class Config {
         'hideTopAppNavBar': _hideTopAppNavBar,
         'hideBottomToolbar': _hideBottomToolbar,
         'showLeadingNavButton': _showLeadingNavButton,
+        'documentSliderEnabled': _documentSliderEnabled,
         'rememberLastUsedTool': _rememberLastUsedTool,
         'readOnly': _readOnly,
         'thumbnailViewEditingEnabled': _thumbnailViewEditingEnabled,

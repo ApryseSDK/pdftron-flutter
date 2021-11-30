@@ -131,6 +131,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_HIDE_BOTTOM_TOOLBAR = "hideBottomToolbar";
     public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
     public static final String KEY_CONFIG_REMEMBER_LAST_USED_TOOL = "rememberLastUsedTool";
+    public static final String KEY_CONFIG_DOCUMENT_SLIDER_ENABLED = "documentSliderEnabled";
     public static final String KEY_CONFIG_READ_ONLY = "readOnly";
     public static final String KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED = "thumbnailViewEditingEnabled";
     public static final String KEY_CONFIG_ANNOTATION_AUTHOR = "annotationAuthor";
@@ -821,6 +822,10 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON)) {
                     boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
                     configInfo.setShowLeadingNavButton(showLeadingNavButton);
+                }
+                if (!configJson.isNull(KEY_CONFIG_DOCUMENT_SLIDER_ENABLED)) {
+                    boolean documentSliderEnabled = configJson.getBoolean(KEY_CONFIG_DOCUMENT_SLIDER_ENABLED);
+                    builder.showDocumentSlider(documentSliderEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_REMEMBER_LAST_USED_TOOL)) {
                     boolean rememberLastUsedTool = configJson.getBoolean(KEY_CONFIG_REMEMBER_LAST_USED_TOOL);
