@@ -7,6 +7,7 @@ class Config {
   var _customHeaders;
   var _fitMode;
   var _layoutMode;
+  var _tabletLayoutEnabled;
   var _initialPageNumber;
   var _isBase64String;
   var _base64FileExtension;
@@ -63,6 +64,8 @@ class Config {
   set fitMode(String value) => _fitMode = value;
 
   set layoutMode(String value) => _layoutMode = value;
+
+  set tabletLayoutEnabled(bool value) => _tabletLayoutEnabled = value;
 
   set initialPageNumber(int value) => _initialPageNumber = value;
 
@@ -165,6 +168,7 @@ class Config {
         _customHeaders = json['customHeaders'],
         _fitMode = json['fitMode'],
         _layoutMode = json['layoutMode'],
+        _tabletLayoutEnabled = json['tabletLayoutEnabled'],
         _initialPageNumber = json['initialPageNumber'],
         _isBase64String = json['isBase64String'],
         _base64FileExtension = json['base64FileExtension'],
@@ -217,6 +221,7 @@ class Config {
         'customHeaders': _customHeaders,
         'fitMode': _fitMode,
         'layoutMode': _layoutMode,
+        'tabletLayoutEnabled': _tabletLayoutEnabled,
         'initialPageNumber': _initialPageNumber,
         'isBase64String': _isBase64String,
         'base64FileExtension': _base64FileExtension,

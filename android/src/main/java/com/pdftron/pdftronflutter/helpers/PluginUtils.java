@@ -101,6 +101,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_CUSTOM_HEADERS = "customHeaders";
     public static final String KEY_CONFIG_FIT_MODE = "fitMode";
     public static final String KEY_CONFIG_LAYOUT_MODE = "layoutMode";
+    public static final String KEY_CONFIG_TABLET_LAYOUT_ENABLED = "tabletLayoutEnabled";
     public static final String KEY_CONFIG_INITIAL_PAGE_NUMBER = "initialPageNumber";
     public static final String KEY_CONFIG_IS_BASE_64_STRING = "isBase64String";
     public static final String KEY_CONFIG_BASE_64_FILE_EXTENSION = "base64FileExtension";
@@ -693,6 +694,10 @@ public class PluginUtils {
                     String layoutString = configJson.getString(KEY_CONFIG_LAYOUT_MODE);
                     String layoutMode = convStringToLayoutMode(layoutString);
                     PdfViewCtrlSettingsManager.updateViewMode(context, layoutMode);
+                }
+                if (!configJson.isNull(KEY_CONFIG_TABLET_LAYOUT_ENABLED)) {
+                    boolean tabletLayoutEnabled = configJson.getBoolean(KEY_CONFIG_TABLET_LAYOUT_ENABLED);
+                    builder.tabletLayoutEnabled(tabletLayoutEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_INITIAL_PAGE_NUMBER)) {
                     int initialPageNumber = configJson.getInt(KEY_CONFIG_INITIAL_PAGE_NUMBER);
