@@ -43,6 +43,7 @@ static NSString * const PTDocumentSliderEnabledKey = @"documentSliderEnabled";
 static NSString * const PTAnnotationAuthorKey = @"annotationAuthor";
 static NSString * const PTContinuousAnnotationEditingKey = @"continuousAnnotationEditing";
 static NSString * const PTAnnotationPermissionCheckEnabledKey = @"annotationPermissionCheckEnabled";
+static NSString * const PTAnnotationsListEditingEnabledKey = @"annotationsListEditingEnabled";
 static NSString * const PTOverrideBehaviorKey = @"overrideBehavior";
 static NSString * const PTTabTitleKey = @"tabTitle";
 static NSString * const PTMaxTabCountKey = @"maxTabCount";

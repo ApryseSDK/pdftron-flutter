@@ -537,6 +537,15 @@
                         [documentController setAnnotationPermissionCheckEnabled:[checkEnabledNumber boolValue]];
                     }
                 }
+                else if ([key isEqualToString:PTAnnotationsListEditingEnabledKey]) {
+                    
+                    NSNumber* annotationsListEditingEnabled = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationsListEditingEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && annotationsListEditingEnabled) {
+                        
+                        [documentController setAnnotationsListEditingEnabled:[annotationsListEditingEnabled boolValue]];
+                    }
+                }
                 else if ([key isEqualToString:PTOverrideBehaviorKey]) {
                     
                     NSArray* overrideBehavior = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTOverrideBehaviorKey class:[NSArray class] error:&error];

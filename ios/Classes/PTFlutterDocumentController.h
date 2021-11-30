@@ -57,6 +57,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign, getter=isAnnotationPermissionCheckEnabled) BOOL annotationPermissionCheckEnabled;
 
+@property (nonatomic, assign, getter=isAnnotationsListEditingEnabled) BOOL annotationsListEditingEnabled;
+
 @property (nonatomic, copy, nullable) NSArray<NSString *> *overrideBehavior;
 
 @property (nonatomic, copy, nullable) NSString* leadingNavButtonIcon;

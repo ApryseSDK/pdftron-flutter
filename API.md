@@ -1327,6 +1327,16 @@ Defines annotation types that cannot be edited after creation.
 config.disableEditingByAnnotationType = [Tools.annotationCreateTextSquiggly, Tools.annotationCreateTextHighlight, Tools.annotationCreateEllipse];
 ```
 
+#### annotationsListEditingEnabled
+bool, optional, default value is true
+
+If document editing is enabled, then this value determines if the annotation list is editable. 
+
+```dart
+config.annotationsListEditingEnabled = false;
+```
+
+
 ### Annotation Menu
 
 #### hideAnnotationMenu

@@ -44,6 +44,7 @@ class Config {
   var _annotationAuthor;
   var _continuousAnnotationEditing;
   var _annotationPermissionCheckEnabled;
+  var _annotationsListEditingEnabled;
   var _overrideBehavior;
   var _tabTitle;
   var _pageNumberIndicatorAlwaysVisible;
@@ -148,6 +149,9 @@ class Config {
   set annotationPermissionCheckEnabled(bool value) =>
       _annotationPermissionCheckEnabled = value;
 
+  set annotationsListEditingEnabled(bool value) =>
+      _annotationsListEditingEnabled = value;
+
   set overrideBehavior(List<String> value) => _overrideBehavior = value;
 
   set tabTitle(String value) => _tabTitle = value;
@@ -207,6 +211,7 @@ class Config {
         _continuousAnnotationEditing = json['continuousAnnotationEditing'],
         _annotationPermissionCheckEnabled =
             json['annotationPermissionCheckEnabled'],
+        _annotationsListEditingEnabled = json['annotationsListEditingEnabled'],
         _overrideBehavior = json['overrideBehavior'],
         _tabTitle = json['tabTitle'],
         _pageNumberIndicatorAlwaysVisible = json['pageNumberIndicatorAlwaysVisible'],
@@ -258,6 +263,7 @@ class Config {
         'annotationAuthor': _annotationAuthor,
         'continuousAnnotationEditing': _continuousAnnotationEditing,
         'annotationPermissionCheckEnabled': _annotationPermissionCheckEnabled,
+        'annotationsListEditingEnabled': _annotationsListEditingEnabled,
         'overrideBehavior': _overrideBehavior,
         'tabTitle': _tabTitle,
         'pageNumberIndicatorAlwaysVisible': _pageNumberIndicatorAlwaysVisible,

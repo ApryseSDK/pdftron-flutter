@@ -891,6 +891,8 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     self.hidesControlsOnTap = hidesToolbarsOnTap;
     
     [self applyToolGroupSettings];
+    
+    self.navigationListsViewController.annotationViewController.readonly = !self.isAnnotationsListEditingEnabled;
 }
 
 - (void)applyFitMode
