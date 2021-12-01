@@ -134,6 +134,14 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.redo);
   }
 
+  static Future<void> canUndo() {
+    return _channel.invokeMethod(Functions.canUndo);
+  }
+  
+  static Future<void> canRedo() {
+    return _channel.invokeMethod(Functions.canRedo);
+  }
+
   static Future<Rect> getPageCropBox(int pageNumber) async {
     String cropBoxString = await _channel.invokeMethod(Functions.getPageCropBox,
         <String, dynamic>{Parameters.pageNumber: pageNumber});

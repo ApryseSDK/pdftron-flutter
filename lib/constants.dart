@@ -21,6 +21,8 @@ class Functions {
   static const handleBackButton = "handleBackButton";
   static const undo = "undo";
   static const redo = "redo";
+  static const canUndo = "canUndo";
+  static const canRedo = "canRedo";
   static const getPageCropBox = "getPageCropBox";
   static const getPageRotation = "getPageRotation";
   static const setCurrentPage = "setCurrentPage";

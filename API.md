@@ -807,6 +807,36 @@ Returns a Future.
 PdftronFlutter.redo();
 ```
 
+#### canUndo
+Checks whether an undo operation can be performed from the current snapshot.
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+canUndo | bool | whether it is possible to undo from the current snapshot
+
+```dart
+PdftronFlutter.canUndo().then((canUndo) => {
+  print(canUndo ? 'undo possible' : 'no action to undo');
+});
+```
+
+#### canRedo
+Checks whether a redo operation can be perfromed from the current snapshot.
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+canRedo | bool | whether it is possible to redo from the current snapshot
+
+```dart
+PdftronFlutter.canRedo().then((canRedo) => {
+  print(canRedo ? 'redo possible' : 'no action to redo');
+});
+```
+
 ## Events
 This section contains all the event listeners you could attach to the viewer.
 
