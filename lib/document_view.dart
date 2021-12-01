@@ -148,6 +148,14 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.handleBackButton);
   }
 
+  Future<void> undo() {
+    return _channel.invokeMethod(Functions.undo);
+  }
+  
+  Future<void> redo() {
+    return _channel.invokeMethod(Functions.redo);
+  }
+
   Future<Rect> getPageCropBox(int pageNumber) async {
     String cropBoxString = await _channel.invokeMethod(Functions.getPageCropBox,
         <String, dynamic>{Parameters.pageNumber: pageNumber});

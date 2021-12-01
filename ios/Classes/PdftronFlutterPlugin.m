@@ -1206,6 +1206,10 @@
         [self commitTool:result];
     } else if ([call.method isEqualToString:PTGetPageCountKey]) {
         [self getPageCount:result];
+    } else if ([call.method isEqualToString:PTUndoKey]) {
+        [self undo:result];
+    } else if ([call.method isEqualToString:PTRedoKey]) {
+        [self redo:result];
     } else if ([call.method isEqualToString:PTGetPageCropBoxKey]) {
         NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self getPageCropBox:pageNumber resultToken:result];
@@ -2147,6 +2151,32 @@
     }
 
     flutterResult([NSNumber numberWithInt:documentController.pdfViewCtrl.pageCount]);
+}
+
+- (void)undo:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if (documentController.undoManager == Nil) {
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"undo" message:@"Failed to undo" details:@"Error: The document view controller has no undo manager."]);
+        return;
+    }
+    
+    [documentController.undoManager undo];
+    flutterResult(nil);
+}
+
+- (void)redo:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if (documentController.undoManager == Nil) {
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"redo" message:@"Failed to redo" details:@"Error: The document view controller has no undo manager."]);
+        return;
+    }
+    
+    [documentController.undoManager redo];
+    flutterResult(nil);
 }
 
 - (void)getPageCropBox:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult
