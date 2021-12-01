@@ -635,8 +635,10 @@
         if ([item isKindOfClass:[NSString class]]) {
             NSString *string = (NSString *)item;
             
-            if ([string isEqualToString:PTAnnotationEditToolKey]) {
-                // multi-select not implemented
+            if ([string isEqualToString:PTAnnotationEditToolKey] ||
+                [string isEqualToString:PTEditToolButtonKey] ||
+                [string isEqualToString:PTMultiSelectToolKey]) {
+                toolManager.allowsMultipleAnnotationSelection = value;
             }
             else if ([string isEqualToString:PTAnnotationCreateStickyToolKey] ||
                      [string isEqualToString:PTStickyToolButtonKey]) {
@@ -763,6 +765,9 @@
             else if ([string isEqualToString:PTFormCreateListBoxFieldToolKey]) {
                 // TODO
             }
+            else if ([string isEqualToString:PTAnnotationCreateFreeHighlighterToolKey]) {
+                toolManager.freehandHighlightAnnotationOptions.canCreate = value;
+            }
             else if ([string isEqualToString:PTPencilKitDrawingToolKey]) {
                 toolManager.pencilDrawingAnnotationOptions.canCreate = value;
             }
@@ -844,10 +849,15 @@
             ^{
                 documentController.bookmarkListHidden = YES;
             },
-//        PTEditMenuButtonKey:
-//            ^{
-//
-//            },
+        PTLayerListButtonKey:
+            ^{
+                documentController.pdfLayerListHidden = YES;
+                documentController.navigationListsViewController.pdfLayerViewControllerVisibility = PTNavigationListsViewControllerVisibilityAlwaysHidden;
+            },
+        PTEditMenuButtonKey:
+            ^{
+                documentController.toolGroupManager.editingEnabled = NO;
+            },
         PTCropPageButtonKey:
             ^{
                 documentController.settingsViewController.cropPagesHidden = YES;
@@ -855,6 +865,22 @@
         PTMoreItemsButtonKey:
             ^{
                 documentController.moreItemsButtonHidden = YES;
+            },
+        PTSaveIdenticalCopyButtonKey:
+            ^ {
+                if (![documentController isExportButtonHidden]) {
+                    NSMutableArray * exportItems = [documentController.exportItems mutableCopy];
+                    [exportItems removeObject:documentController.exportCopyButtonItem];
+                    documentController.exportItems = [exportItems copy];
+                }
+            },
+        PTSaveFlattenedCopyButtonKey:
+            ^{
+                if (![documentController isExportButtonHidden]) {
+                    NSMutableArray * exportItems = [documentController.exportItems mutableCopy];
+                    [exportItems removeObject:documentController.exportFlattenedCopyButtonItem];
+                    documentController.exportItems = [exportItems copy];
+                }
             },
     };
     
