@@ -119,6 +119,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_AUTO_SAVE_ENABLED = "autoSaveEnabled";
     public static final String KEY_CONFIG_PAGE_CHANGE_ON_TAP = "pageChangeOnTap";
     public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
+    public static final String KEY_CONFIG_PHOTO_PICKER_ENABLED = "photoPickerEnabled";
     public static final String KEY_CONFIG_USE_STYLUS_AS_PEN = "useStylusAsPen";
     public static final String KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS = "signSignatureFieldWithStamps";
     public static final String KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION = "selectAnnotationAfterCreation";
@@ -772,6 +773,10 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_SHOW_SAVED_SIGNATURES)) {
                     boolean showSavedSignatures = configJson.getBoolean(KEY_CONFIG_SHOW_SAVED_SIGNATURES);
                     toolManagerBuilder = toolManagerBuilder.setShowSavedSignatures(showSavedSignatures);
+                }
+                if (!configJson.isNull(KEY_CONFIG_PHOTO_PICKER_ENABLED)) {
+                    boolean photoPickerEnabled = configJson.getBoolean(KEY_CONFIG_PHOTO_PICKER_ENABLED);
+                    toolManagerBuilder = toolManagerBuilder.setShowSignatureFromImage(photoPickerEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_USE_STYLUS_AS_PEN)) {
                     boolean useStylusAsPen = configJson.getBoolean(KEY_CONFIG_USE_STYLUS_AS_PEN);

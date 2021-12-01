@@ -1457,6 +1457,15 @@ Defines whether to show saved signatures for re-use when using the signing tool.
 config.showSavedSignatures = true;
 ```
 
+#### photoPickerEnabled
+bool, optional, defaults to true. Android only.
+
+Defines whether to show the option to pick images in the signature dialog.
+
+```dart
+config.photoPickerEnabled = true;
+```
+
 ### Thumbnail Browser
 
 #### thumbnailViewEditingEnabled
