@@ -35,6 +35,7 @@ import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.tools.UndoRedoManager;
 import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.BookmarkManager;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
@@ -218,6 +219,8 @@ public class PluginUtils {
     public static final String FUNCTION_HANDLE_BACK_BUTTON = "handleBackButton";
     public static final String FUNCTION_UNDO = "undo";
     public static final String FUNCTION_REDO = "redo";
+    public static final String FUNCTION_CAN_UNDO = "canUndo";
+    public static final String FUNCTION_CAN_REDO = "canRedo";
     public static final String FUNCTION_GET_PAGE_CROP_BOX = "getPageCropBox";
     public static final String FUNCTION_SET_CURRENT_PAGE = "setCurrentPage";
     public static final String FUNCTION_GET_DOCUMENT_PATH = "getDocumentPath";
@@ -1897,6 +1900,16 @@ public class PluginUtils {
                 redo(result, component);
                 break;
             }
+            case FUNCTION_CAN_UNDO: {
+                checkFunctionPrecondition(component);
+                canUndo(result, component);
+                break;
+            }
+            case FUNCTION_CAN_REDO: {
+                checkFunctionPrecondition(component);
+                canRedo(result, component);
+                break;
+            }
             case FUNCTION_SET_CURRENT_PAGE: {
                 checkFunctionPrecondition(component);
                 Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
@@ -2673,6 +2686,24 @@ public class PluginUtils {
             result.success(null);
         } else {
             result.error("InvalidState", "Activity not attached", null);
+        }
+    }
+
+    private static void canUndo(MethodChannel.Result result, ViewerComponent component) {
+        ToolManager toolManager = component.getToolManager();
+        if (toolManager != null && toolManager.getUndoRedoManger() != null) {
+            result.success(toolManager.getUndoRedoManger().canUndo());
+        } else {
+            result.error("InvalidState", "Tool manager or undoRedo manager not found", null);
+        }
+    }
+
+    private static void canRedo(MethodChannel.Result result, ViewerComponent component) {
+        ToolManager toolManager = component.getToolManager();
+        if (toolManager != null && toolManager.getUndoRedoManger() != null) {
+            result.success(toolManager.getUndoRedoManger().canRedo());
+        } else {
+            result.error("InvalidState", "Tool manager or undoRedo manager not found", null);
         }
     }
 

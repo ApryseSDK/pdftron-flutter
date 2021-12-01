@@ -839,7 +839,7 @@ canUndo | bool | whether it is possible to undo from the current snapshot
 
 ```dart
 PdftronFlutter.canUndo().then((canUndo) => {
-  print(canUndo ? 'undo possible' : 'no action to undo');
+  print("undo possible: $canUndo")
 });
 ```
 
@@ -854,7 +854,7 @@ canRedo | bool | whether it is possible to redo from the current snapshot
 
 ```dart
 PdftronFlutter.canRedo().then((canRedo) => {
-  print(canRedo ? 'redo possible' : 'no action to redo');
+  print("redo possible: $canRedo")
 });
 ```
 

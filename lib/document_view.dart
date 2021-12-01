@@ -156,11 +156,11 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.redo);
   }
 
-  Future<void> canUndo() {
+  Future<bool> canUndo() {
     return _channel.invokeMethod(Functions.canUndo);
   }
   
-  Future<void> canRedo() {
+  Future<bool> canRedo() {
     return _channel.invokeMethod(Functions.canRedo);
   }
 

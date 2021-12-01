@@ -134,11 +134,11 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.redo);
   }
 
-  static Future<void> canUndo() {
+  static Future<bool> canUndo() {
     return _channel.invokeMethod(Functions.canUndo);
   }
   
-  static Future<void> canRedo() {
+  static Future<bool> canRedo() {
     return _channel.invokeMethod(Functions.canRedo);
   }
 
