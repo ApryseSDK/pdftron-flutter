@@ -94,7 +94,7 @@ class _ViewerState extends State<Viewer> {
       print("document loaded: $filePath");
     });
 
-    await PdftronFlutter.openDocument(_document, config: config);
+    // await PdftronFlutter.openDocument(_document, config: config);
 
     try {
       // The imported command is in XFDF format and tells whether to add, modify or delete annotations in the current document.
@@ -173,11 +173,11 @@ class _ViewerState extends State<Viewer> {
         height: double.infinity,
         child:
             // Uncomment this to use Widget version of the viewer.
-            // _showViewer
-            // ? SafeArea (
-            //   child: DocumentView(
-            //     onCreated: _onDocumentViewCreated,
-            //   )):
+            _showViewer
+            ? SafeArea (
+              child: DocumentView(
+                onCreated: _onDocumentViewCreated,
+              )):
             Container(),
       ),
     );
@@ -190,9 +190,9 @@ class _ViewerState extends State<Viewer> {
 
     var leadingNavCancel = startLeadingNavButtonPressedListener(() {
       // Uncomment this to quit the viewer when leading navigation button is pressed.
-      // this.setState(() {
-      //   _showViewer = !_showViewer;
-      // });
+      this.setState(() {
+        _showViewer = !_showViewer;
+      });
 
       // Show a dialog when leading navigation button is pressed.
       _showMyDialog();
