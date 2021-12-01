@@ -1396,6 +1396,17 @@ Defines actions that should skip default behavior, such as external link click. 
 config.overrideBehavior = [Behaviors.linkPress];
 ```
 
+### Navigation
+
+#### showQuickNavigationButton
+bool, defaults to true.
+
+Defines whether the quick navigation buttons will appear in the viewer.
+
+```dart
+config.showQuickNavigationButton = false;
+```
+
 ### Multi-tab
 
 #### multiTabEnabled

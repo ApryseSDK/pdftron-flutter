@@ -437,6 +437,14 @@
                         [documentController setPageIndicatorAlwaysVisible:[pageIndicatorAlwaysVisibleNumber boolValue]];
                     }
                 }
+                else if ([key isEqualToString:PTShowQuickNavigationButtonKey]) {
+                    
+                    NSNumber *showQuickNavButton = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowQuickNavigationButtonKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && showQuickNavButton) {
+                        documentController.navigationHistoryEnabled = [showQuickNavButton boolValue];
+                    }
+                }
                 else if ([key isEqualToString:PTFollowSystemDarkModeKey]) {
                     // Android only.
                 }
