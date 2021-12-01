@@ -1327,6 +1327,26 @@ Defines annotation types that cannot be edited after creation.
 config.disableEditingByAnnotationType = [Tools.annotationCreateTextSquiggly, Tools.annotationCreateTextHighlight, Tools.annotationCreateEllipse];
 ```
 
+### Reflow
+
+#### reflowOrientation
+one of [`ReflowOrientation`](./lib/constants.dart) constants, defaults to `ReflowOrientation.vertical`, Android only.
+
+Sets the scrolling direction of the reflow control.
+
+```dart
+config.reflowOrientation = ReflowOrientation.horizontal;
+```
+
+#### imageInReflowModEnabled
+bool, defaults to true.
+
+Whether to show images in reflow mode.
+
+```dart
+config.imageInReflowModeEnabled = false;
+```
+
 ### Annotation Menu
 
 #### hideAnnotationMenu

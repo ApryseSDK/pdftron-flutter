@@ -336,7 +336,7 @@ class DefaultEraserType {
   static const inkEraser = "inkEraser"; // Android only
 }
 
-// ReflowOrientation defines the scrolling direction of the viewer while in reader mode. Android only.
+// ReflowOrientation defines the scrolling direction of the viewer while in reflow mode. Android only.
 class ReflowOrientation {
   static const horizontal = "horizontal";
   static const vertical = "vertical";
