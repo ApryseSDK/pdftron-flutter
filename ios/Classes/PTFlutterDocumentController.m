@@ -739,6 +739,69 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 
 }
 
+-(PTAnnotType)annotTypeForString:(NSString *)string {
+    if ([string isEqualToString:PTAnnotationCreateStickyToolKey]) {
+        return e_ptText;
+    } else if ([string isEqualToString:PTAnnotationCreateLinkToolKey]) {
+        return e_ptLink;
+    } else if ([string isEqualToString:PTAnnotationCreateFreeTextToolKey]) {
+        return e_ptFreeText;
+    } else if ([string isEqualToString:PTAnnotationCreateLineToolKey]) {
+        return e_ptLine;
+    } else if ([string isEqualToString:PTAnnotationCreateRectangleToolKey]) {
+        return e_ptSquare;
+    } else if ([string isEqualToString:PTAnnotationCreateEllipseToolKey]) {
+        return e_ptCircle;
+    } else if ([string isEqualToString:PTAnnotationCreatePolygonToolKey]) {
+        return e_ptPolygon;
+    } else if ([string isEqualToString:PTAnnotationCreatePolylineToolKey]) {
+        return e_ptPolyline;
+    } else if ([string isEqualToString:PTAnnotationCreateFreeHighlighterToolKey]) {
+        return e_ptHighlight;
+    } else if ([string isEqualToString:PTAnnotationCreateTextUnderlineToolKey]) {
+        return e_ptUnderline;
+    } else if ([string isEqualToString:PTAnnotationCreateTextSquigglyToolKey]) {
+        return e_ptSquiggly;
+    } else if ([string isEqualToString:PTAnnotationCreateTextStrikeoutToolKey]) {
+        return e_ptStrikeOut;
+    } else if ([string isEqualToString:PTAnnotationCreateStampToolKey]) {
+        return e_ptStamp;
+    } else if ([string isEqualToString:PTAnnotationCreateFreeHandToolKey]) {
+        return e_ptInk;
+    } else if ([string isEqualToString:PTAnnotationCreateFileAttachmentToolKey]) {
+        return e_ptFileAttachment;
+    } else if ([string isEqualToString:PTAnnotationCreateSoundToolKey]) {
+        return e_ptSound;
+    } else if ([string isEqualToString:PTFormCreateTextFieldToolKey]) {
+        return e_ptWidget;
+    } else if ([string isEqualToString:PTAnnotationCreateRedactionToolKey]) {
+        return e_ptRedact;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptCaret;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptPopup;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptMovie;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptScreen;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptPrinterMark;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptTrapNet;
+//    } else if ([string isEqualToString:@"");
+//        return e_pt3D;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptProjection;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptRichMedia;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptUnknown;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptWatermark;
+    }
+    return e_ptUnknown;
+}
+
 - (BOOL)toolManager:(PTToolManager *)toolManager shouldHandleLinkAnnotation:(PTAnnot *)annotation orLinkInfo:(PTLinkInfo *)linkInfo onPageNumber:(unsigned long)pageNumber
 {
     if (![self.overrideBehavior containsObject:PTLinkPressLinkAnnotationKey]) {
@@ -855,6 +918,10 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     _readOnly = NO;
     
     _showNavButton = YES;
+    
+    _annotationsListEditingEnabled = YES;
+    _userBookmarksListEditingEnabled = YES;
+    _showNavigationListAsSidePanelOnLargeDevices = YES;
 }
 
 - (void)applyViewerSettings
@@ -891,6 +958,25 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     self.hidesControlsOnTap = hidesToolbarsOnTap;
     
     [self applyToolGroupSettings];
+    
+    self.navigationListsViewController.annotationViewController.readonly = !self.isAnnotationsListEditingEnabled;
+    self.navigationListsViewController.bookmarkViewController.readonly = !self.userBookmarksListEditingEnabled;
+    [self excludeAnnotationListTypes:self.excludedAnnotationListTypes];
+    self.alwaysShowNavigationListsAsModal = !self.showNavigationListAsSidePanelOnLargeDevices;
+}
+
+- (void)excludeAnnotationListTypes:(NSArray<NSString*> *)excludedAnnotationListTypes
+{
+    NSMutableArray<NSNumber *> *annotTypes = [[NSMutableArray alloc] init];
+    
+    for (NSString *string in excludedAnnotationListTypes) {
+        PTAnnotType annotType = [self annotTypeForString:string];
+        [annotTypes addObject:[NSNumber numberWithInt:annotType]];
+    }
+    
+    if (annotTypes.count > 0) {
+        self.navigationListsViewController.annotationViewController.excludedAnnotationTypes = annotTypes;
+    }
 }
 
 - (void)applyFitMode

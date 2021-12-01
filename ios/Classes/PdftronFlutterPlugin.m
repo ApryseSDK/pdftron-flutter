@@ -378,6 +378,14 @@
                         [documentController setOverrideAnnotationMenuBehavior:overrideAnnotationMenuBehavior];
                     }
                 }
+                else if ([key isEqualToString:PTExcludedAnnotationListTypesKey]) {
+                    
+                    NSArray* excludedAnnotationListTypes = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTExcludedAnnotationListTypesKey class:[NSArray class] error:&error];
+                    
+                    if (!error && excludedAnnotationListTypes) {
+                        [documentController setExcludedAnnotationListTypes:excludedAnnotationListTypes];
+                    }
+                }
                 else if ([key isEqualToString:PTAutoSaveEnabledKey]) {
                     
                     NSNumber* autoSaveEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAutoSaveEnabledKey class:[NSNumber class] error:&error];
@@ -535,6 +543,33 @@
                     if (!error && checkEnabledNumber) {
                         
                         [documentController setAnnotationPermissionCheckEnabled:[checkEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTAnnotationsListEditingEnabledKey]) {
+                    
+                    NSNumber* annotationsListEditingEnabled = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationsListEditingEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && annotationsListEditingEnabled) {
+                        
+                        [documentController setAnnotationsListEditingEnabled:[annotationsListEditingEnabled boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTUserBookmarksListEditingEnabledKey]) {
+                    
+                    NSNumber* userBookmarksListEditingEnabled = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUserBookmarksListEditingEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && userBookmarksListEditingEnabled) {
+                        
+                        [documentController setUserBookmarksListEditingEnabled:[userBookmarksListEditingEnabled boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTShowNavigationListAsSidePanelOnLargeDevicesKey]) {
+                    
+                    NSNumber* showNavigationListAsSidePanelOnLargeDevices = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowNavigationListAsSidePanelOnLargeDevicesKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && showNavigationListAsSidePanelOnLargeDevices) {
+                        
+                        [documentController setShowNavigationListAsSidePanelOnLargeDevices:[showNavigationListAsSidePanelOnLargeDevices boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTOverrideBehaviorKey]) {
