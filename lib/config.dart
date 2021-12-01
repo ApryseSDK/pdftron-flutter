@@ -25,7 +25,7 @@ class Config {
   var _autoSaveEnabled;
   var _pageChangeOnTap;
   var _showSavedSignatures;
-  var _photoPickerEnabled;
+  var _signaturePhotoPickerEnabled;
   var _useStylusAsPen;
   var _signSignatureFieldWithStamps;
   var _selectAnnotationAfterCreation;
@@ -104,7 +104,7 @@ class Config {
 
   set showSavedSignatures(bool value) => _showSavedSignatures = value;
 
-  set photoPickerEnabled(bool value) => _photoPickerEnabled = value;
+  set signaturePhotoPickerEnabled(bool value) => _signaturePhotoPickerEnabled = value;
 
   set useStylusAsPen(bool value) => _useStylusAsPen;
 
@@ -190,7 +190,7 @@ class Config {
         _autoSaveEnabled = json['autoSaveEnabled'],
         _pageChangeOnTap = json['pageChangeOnTap'],
         _showSavedSignatures = json['showSavedSignatures'],
-        _photoPickerEnabled = json['photoPickerEnabled'],
+        _signaturePhotoPickerEnabled = json['signaturePhotoPickerEnabled'],
         _useStylusAsPen = json['useStylusAsPen'],
         _signSignatureFieldWithStamps = json['signSignatureFieldWithStamps'],
         _selectAnnotationAfterCreation = json['selectAnnotationAfterCreation'],
@@ -243,7 +243,7 @@ class Config {
         'autoSaveEnabled': _autoSaveEnabled,
         'pageChangeOnTap': _pageChangeOnTap,
         'showSavedSignatures': _showSavedSignatures,
-        'photoPickerEnabled': _photoPickerEnabled,
+        'signaturePhotoPickerEnabled': _signaturePhotoPickerEnabled,
         'useStylusAsPen': _useStylusAsPen,
         'signSignatureFieldWithStamps': _signSignatureFieldWithStamps,
         'selectAnnotationAfterCreation': _selectAnnotationAfterCreation,
