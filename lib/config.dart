@@ -30,6 +30,8 @@ class Config {
   var _signSignatureFieldWithStamps;
   var _selectAnnotationAfterCreation;
   var _pageIndicatorEnabled;
+  var _pageStackEnabled;
+  var _showQuickNavigationButton;
   var _followSystemDarkMode;
   var _annotationToolbars;
   var _hideDefaultAnnotationToolbars;
@@ -120,6 +122,8 @@ class Config {
 
   set pageIndicatorEnabled(bool value) => _pageIndicatorEnabled = value;
 
+  set showQuickNavigationButton(bool value) => _showQuickNavigationButton = value;
+
   set followSystemDarkMode(bool value) => _followSystemDarkMode = value;
 
   set annotationToolbars(List value) => _annotationToolbars = value;
@@ -208,6 +212,7 @@ class Config {
         _signSignatureFieldWithStamps = json['signSignatureFieldWithStamps'],
         _selectAnnotationAfterCreation = json['selectAnnotationAfterCreation'],
         _pageIndicatorEnabled = json['pageIndicatorEnabled'],
+        _showQuickNavigationButton = json['showQuickNavigationButton'],
         _followSystemDarkMode = json['followSystemDarkMode'],
         _annotationToolbars = json['annotationToolbars'],
         _hideDefaultAnnotationToolbars = json['hideDefaultAnnotationToolbars'],
@@ -264,6 +269,7 @@ class Config {
         'signSignatureFieldWithStamps': _signSignatureFieldWithStamps,
         'selectAnnotationAfterCreation': _selectAnnotationAfterCreation,
         'pageIndicatorEnabled': _pageIndicatorEnabled,
+        'showQuickNavigationButton': _showQuickNavigationButton,
         'followSystemDarkMode': _followSystemDarkMode,
         'annotationToolbars': _annotationToolbars,
         'hideDefaultAnnotationToolbars': _hideDefaultAnnotationToolbars,
