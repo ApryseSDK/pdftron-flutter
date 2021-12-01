@@ -49,6 +49,7 @@ static NSString * const PTMaxTabCountKey = @"maxTabCount";
 static NSString * const PTDisableEditingByAnnotationTypeKey = @"disableEditingByAnnotationType";
 static NSString * const PTHideViewModeItemsKey = @"hideViewModeItems";
 static NSString * const PTDefaultEraserTypeKey = @"defaultEraserType";
+static NSString * const PTImageInReflowModeEnabledKey = @"imageInReflowModeEnabled";
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";

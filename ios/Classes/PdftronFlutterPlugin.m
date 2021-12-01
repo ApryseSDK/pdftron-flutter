@@ -580,6 +580,18 @@
                         [documentController setDefaultEraserType:defaultEraserType];
                     }
                 }
+                else if ([key isEqualToString:PTImageInReflowModeEnabledKey]) {
+                    
+                    NSNumber *imageInReflowModeEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTImageInReflowModeEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && imageInReflowModeEnabledNumber) {
+                        if ([imageInReflowModeEnabledNumber boolValue]) {
+                            documentController.reflowViewController.reflowMode = PTReflowModeTextAndRawImages;
+                        } else {
+                            documentController.reflowViewController.reflowMode = PTReflowModeTextOnly;
+                        }
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);

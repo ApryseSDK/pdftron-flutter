@@ -24,6 +24,7 @@ import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
+import com.pdftron.pdf.controls.ReflowControl;
 import com.pdftron.pdf.controls.ThumbnailsViewFragment;
 import com.pdftron.pdf.dialog.ViewModePickerDialogFragment;
 import com.pdftron.pdf.dialog.pdflayer.PdfLayerDialog;
@@ -144,6 +145,8 @@ public class PluginUtils {
     public static final String KEY_CONFIG_DISABLE_EDITING_BY_ANNOTATION_TYPE = "disableEditingByAnnotationType";
     public static final String KEY_CONFIG_HIDE_VIEW_MODE_ITEMS = "hideViewModeItems";
     public static final String KEY_CONFIG_DEFAULT_ERASER_TYPE = "defaultEraserType";
+    public static final String KEY_CONFIG_REFLOW_ORIENTATION = "reflowOrientation";
+    public static final String KEY_CONFIG_IMAGE_IN_REFLOW_MODE_ENABLED = "imageInReflowModeEnabled";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -454,6 +457,10 @@ public class PluginUtils {
     public static final String DEFAULT_ERASER_TYPE_ANNOTATION = "annotationEraser";
     public static final String DEFAULT_ERASER_TYPE_HYBRID = "hybrideEraser";
     public static final String DEFAULT_ERASER_TYPE_INK = "inkEraser";
+
+    // Reflow Orientation
+    public static final String REFLOW_ORIENTATION_HORIZONTAL = "horizontal";
+    public static final String REFLOW_ORIENTATION_VERTICAL = "vertical";
 
     // Navigation List visibility
     public static boolean isBookmarkListVisible = true;
@@ -919,6 +926,18 @@ public class PluginUtils {
                     } else if (DEFAULT_ERASER_TYPE_INK.equals(eraserType)) {
                         toolManagerBuilder = toolManagerBuilder.setEraserType(Eraser.EraserType.INK_ERASER);
                     }
+                }
+                if (!configJson.isNull(KEY_CONFIG_REFLOW_ORIENTATION)) {
+                    int orientation = ReflowControl.HORIZONTAL;
+                    String reflowOrientation = configJson.getString(KEY_CONFIG_REFLOW_ORIENTATION);
+                    if (REFLOW_ORIENTATION_VERTICAL.equals(reflowOrientation)) {
+                        orientation = ReflowControl.VERTICAL;
+                    }
+                    builder.reflowOrientation(orientation);
+                }
+                if (!configJson.isNull(KEY_CONFIG_IMAGE_IN_REFLOW_MODE_ENABLED)) {
+                    boolean imageInReflowModeEnabled = configJson.getBoolean(KEY_CONFIG_IMAGE_IN_REFLOW_MODE_ENABLED);
+                    builder.imageInReflowEnabled(imageInReflowModeEnabled);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

@@ -50,6 +50,8 @@ class Config {
   var _disableEditingByAnnotationType;
   var _hideViewModeItems;
   var _defaultEraserType;
+  var _reflowOrientation;
+  var _imageInReflowModeEnabled;
 
   Config();
 
@@ -161,6 +163,10 @@ class Config {
 
   set defaultEraserType(String value) => _defaultEraserType = value;
 
+  set reflowOrientation(String value) => _reflowOrientation = value;
+
+  set imageInReflowModeEnabled(bool value) => _imageInReflowModeEnabled = value;
+
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
         _disabledTools = json['disabledTools'],
@@ -212,7 +218,9 @@ class Config {
         _pageNumberIndicatorAlwaysVisible = json['pageNumberIndicatorAlwaysVisible'],
         _disableEditingByAnnotationType = json['disableEditingByAnnotationType'],
         _hideViewModeItems = json['hideViewModeItems'],
-        _defaultEraserType = json['defaultEraserType'];
+        _defaultEraserType = json['defaultEraserType'],
+        _reflowOrientation = json['reflowOrientation'],
+        _imageInReflowModeEnabled = json['imageInReflowModeEnabled'];
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -264,5 +272,7 @@ class Config {
         'disableEditingByAnnotationType': _disableEditingByAnnotationType,
         'hideViewModeItems': _hideViewModeItems,
         'defaultEraserType' : _defaultEraserType,
+        'reflowOrientation': _reflowOrientation,
+        'imageInReflowModeEnabled': _imageInReflowModeEnabled,
       };
 }
