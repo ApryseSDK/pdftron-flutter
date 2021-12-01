@@ -787,6 +787,26 @@ resultImagePath | String | the temp path of the created image, user is responsib
 var resultImagePath = await PdftronFlutter.exportAsImage(1, 92, ExportFormat.BMP);
 ```
 
+### Undo/Redo
+
+#### undo
+Undo the last modification.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.undo();
+```
+
+#### redo
+Redo the last modification.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.redo();
+```
+
 ## Events
 This section contains all the event listeners you could attach to the viewer.
 
