@@ -49,6 +49,7 @@ static NSString * const PTMaxTabCountKey = @"maxTabCount";
 static NSString * const PTDisableEditingByAnnotationTypeKey = @"disableEditingByAnnotationType";
 static NSString * const PTHideViewModeItemsKey = @"hideViewModeItems";
 static NSString * const PTDefaultEraserTypeKey = @"defaultEraserType";
+static NSString * const PTReflowOrientationKey = @"reflowOrientation";
 static NSString * const PTImageInReflowModeEnabledKey = @"imageInReflowModeEnabled";
 
 // tool
@@ -334,6 +335,10 @@ static NSString * const PTViewModeColorModeKey = @"viewModeColorMode";
 // DefaultEraserType keys
 static NSString * const PTInkEraserModeAllKey = @"annotationEraser";
 static NSString * const PTInkEraserModePointsKey = @"hybrideEraser";
+
+// ReflowOrientation
+static NSString * const PTReflowOrientationHorizontalKey = @"horizontal";
+static NSString * const PTReflowOrientationVerticalKey = @"vertical";
 
 // Default annotation toolbar names.
 typedef NSString * PTDefaultAnnotationToolbarKey;

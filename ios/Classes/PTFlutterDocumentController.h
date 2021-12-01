@@ -40,6 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL selectAnnotationAfterCreation;
 @property (nonatomic, assign, getter=isBottomToolbarOn) BOOL bottomToolbarOn;
 @property (nonatomic, copy, nullable) NSString* defaultEraserType;
+@property (nonatomic, copy, nullable) NSString *reflowOrientation;
 @property (nonatomic, assign) BOOL imageInReflowModeEnabled;
 
 @property (nonatomic, copy, nullable) NSArray<NSString *> * annotationToolbars;

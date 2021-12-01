@@ -1330,7 +1330,7 @@ config.disableEditingByAnnotationType = [Tools.annotationCreateTextSquiggly, Too
 ### Reflow
 
 #### reflowOrientation
-one of [`ReflowOrientation`](./lib/constants.dart) constants, defaults to `ReflowOrientation.vertical`, Android only.
+one of [`ReflowOrientation`](./lib/constants.dart) constants, defaults to `ReflowOrientation.vertical`.
 
 Sets the scrolling direction of the reflow control.
 

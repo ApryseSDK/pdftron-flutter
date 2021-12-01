@@ -580,6 +580,19 @@
                         [documentController setDefaultEraserType:defaultEraserType];
                     }
                 }
+                else if ([key isEqualToString:PTReflowOrientationKey]) {
+                    
+                    NSString *reflowOrientation = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTReflowOrientationKey class:[NSString class] error:&error];
+                    
+                    if (!error && reflowOrientation) {
+                        if ([PTReflowOrientationHorizontalKey isEqualToString:reflowOrientation]) {
+                            documentController.reflowViewController.scrollingDirection = PTReflowViewControllerScrollingDirectionHorizontal;
+                        } else {
+                            documentController.reflowViewController.scrollingDirection = PTReflowViewControllerScrollingDirectionVertical;
+                        }
+                        [documentController.reflowViewController updateSettings];
+                    }
+                }
                 else if ([key isEqualToString:PTImageInReflowModeEnabledKey]) {
                     
                     NSNumber *imageInReflowModeEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTImageInReflowModeEnabledKey class:[NSNumber class] error:&error];
@@ -590,6 +603,7 @@
                         } else {
                             documentController.reflowViewController.reflowMode = PTReflowModeTextOnly;
                         }
+                        [documentController.reflowViewController updateSettings];
                     }
                 }
                 else
