@@ -41,6 +41,14 @@ class Functions {
   static const openBookmarkList = "openBookmarkList";
   static const openOutlineList = "openOutlineList";
   static const openLayersList = "openLayersList";
+  static const openThumbnailsView = "openThumbnailsView";
+  static const showRotateDialog = "showRotateDialog";
+  static const showAddPagesView = "showAddPagesView";
+  static const showViewSettings = "showViewSettings";
+  static const showCrop = "showCrop";
+  static const openSearch = "openSearch";
+  static const openTabSwitcher = "openTabSwitcher";
+  static const showGoToPageView = "showGoToPageView";
   static const openNavigationLists = "openNavigationLists";
   static const getCurrentPage = "getCurrentPage";
 }

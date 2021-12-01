@@ -214,6 +214,80 @@ Returns a Future that resolves when the view has loaded.
 await PdftronFlutter.openLayersList();
 ```
 
+#### openThumbnailsView
+Display a page thumbnails view. 
+
+This view allows users to navigate pages of a document. If [`thumbnailViewEditingEnabled`](#thumbnailViewEditingEnabled) is true, the user can also manipulate the document, including add, remove, re-arrange, rotate and duplicate pages.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.openThumbnailsView();
+```
+
+#### showRotateDialog
+Displays a rotate dialog. Android only.
+
+The dialog allows users to rotate pages of the opened document by 90, 180 and 270 degrees. It also displays a thumbnail of the current page at the selected rotation angle.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.showRotateDialog();
+```
+
+#### showAddPagesView
+Displays the add pages view.
+
+Requires a source rect in screen co-ordinates. On iOS this rect will be the anchor point for the view. The rect is ignored on Android.
+
+Returns a Future.
+
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+rect | map | The rectangular area in screen co-ordinates with keys x1 (left), y1(bottom), y1(right), y2(top). Coordinates are in double format.
+
+```dart
+PdftronFlutter.showAddPagesView({'x1': 10.0, 'y1': 10.0, 'x2': 20.0, 'y2': 20.0});
+```
+
+#### showViewSettings
+Displays the view settings.
+
+Requires a source rect in screen co-ordinates. On iOS this rect will be the anchor point for the view. The rect is ignored on Android.
+
+Returns a Future.
+
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+rect | map | The rectangular area in screen co-ordinates with keys x1 (left), y1(bottom), y1(right), y2(top). Coordinates are in double format.
+
+```dart
+PdftronFlutter.showViewSettings({'x1': 10.0, 'y1': 10.0, 'x2': 20.0, 'y2': 20.0});
+```
+
+#### showCrop
+Displays the page crop option. Android only.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.showCrop();
+```
+
+#### openSearch
+Displays a search bar that allows the user to enter and search text within a document.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.openSearch();
+```
+
 #### openNavigationLists
 Displays the existing list container. Its current tab will be the one last opened. 
 
@@ -477,6 +551,15 @@ var pageChanged = await PdftronFlutter.gotoLastPage();
 if (pageChanged) {
   print("Successfully went to last page");
 }
+```
+
+#### showGoToPageView
+Opens a go-to page dialog. If the user inputs a valid page number into the dialog, the viewer will go to that page.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.showGoToPageView();
 ```
 
 ### Import/Export Annotations
@@ -783,6 +866,15 @@ Returns a Future.
 
 ```dart
 PdftronFlutter.closeAllTabs();
+```
+
+#### openTabSwitcher
+Opens the tab switcher in a multi-tab environment.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.openTabSwitcher();
 ```
 
 ### Export Images
