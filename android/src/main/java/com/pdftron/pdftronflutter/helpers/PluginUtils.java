@@ -2030,34 +2030,42 @@ public class PluginUtils {
             case FUNCTION_OPEN_THUMBNAILS_VIEW: {
                 checkFunctionPrecondition(component);
                 openThumbnailsView(result, component);
+                break;
             }
             case FUNCTION_SHOW_ROTATE_DIALOG: {
                 checkFunctionPrecondition(component);
                 showRotateDialog(result, component);
+                break;
             }
             case FUNCTION_SHOW_ADD_PAGES_VIEW: {
                 checkFunctionPrecondition(component);
                 showAddPagesView(result, component);
+                break;
             }
             case FUNCTION_SHOW_VIEW_SETTINGS: {
                 checkFunctionPrecondition(component);
                 showViewSettings(result, component);
+                break;
             }
             case FUNCTION_SHOW_CROP: {
                 checkFunctionPrecondition(component);
                 showCrop(result, component);
+                break;
             }
             case FUNCTION_OPEN_SEARCH: {
                 checkFunctionPrecondition(component);
                 openSearch(result, component);
+                break;
             }
             case FUNCTION_OPEN_TAB_SWITCHER: {
                 checkFunctionPrecondition(component);
                 openTabSwitcher(result, component);
+                break;
             }
 //            case FUNCTION_SHOW_GO_TO_PAGE_VIEW: {
 //                checkFunctionPrecondition(component);
 //                showGoToPageView(result, component);
+//                break;
 //            }
             case FUNCTION_OPEN_NAVIGATION_LISTS: {
                 checkFunctionPrecondition(component);
