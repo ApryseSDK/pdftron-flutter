@@ -45,6 +45,7 @@ import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 import com.pdftron.pdftronflutter.R;
+import com.pdftron.pdf.PDFDraw;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -55,6 +56,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -86,6 +88,12 @@ public class PluginUtils {
     public static final String KEY_ANNOTATIONS_WITH_FLAGS = "annotationsWithFlags";
     public static final String KEY_ANNOTATION_PROPERTIES = "annotationProperties";
     public static final String KEY_LEADING_NAV_BUTTON_ICON = "leadingNavButtonIcon";
+    public static final String KEY_DPI = "dpi";
+    public static final String KEY_EXPORT_FORMAT = "exportFormat";
+    public static final String KEY_EXPORT_FORMAT_BMP = "BMP";
+    public static final String KEY_EXPORT_FORMAT_JPEG = "JPEG";
+    public static final String KEY_EXPORT_FORMAT_PNG = "PNG";
+
     public static final String KEY_REQUESTED_ORIENTATION = "requestedOrientation";
 
     public static final String KEY_CONFIG_DISABLED_ELEMENTS = "disabledElements";
@@ -94,6 +102,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_CUSTOM_HEADERS = "customHeaders";
     public static final String KEY_CONFIG_FIT_MODE = "fitMode";
     public static final String KEY_CONFIG_LAYOUT_MODE = "layoutMode";
+    public static final String KEY_CONFIG_TABLET_LAYOUT_ENABLED = "tabletLayoutEnabled";
     public static final String KEY_CONFIG_INITIAL_PAGE_NUMBER = "initialPageNumber";
     public static final String KEY_CONFIG_IS_BASE_64_STRING = "isBase64String";
     public static final String KEY_CONFIG_BASE_64_FILE_EXTENSION = "base64FileExtension";
@@ -104,8 +113,11 @@ public class PluginUtils {
     public static final String KEY_CONFIG_HIDE_ANNOTATION_MENU = "hideAnnotationMenu";
     public static final String KEY_CONFIG_ANNOTATION_MENU_ITEMS = "annotationMenuItems";
     public static final String KEY_CONFIG_OVERRIDE_ANNOTATION_MENU_BEHAVIOR = "overrideAnnotationMenuBehavior";
+    public static final String KEY_CONFIG_EXCLUDED_ANNOTATION_LIST_TYPES = "excludedAnnotationListTypes";
     public static final String KEY_CONFIG_EXPORT_PATH = "exportPath";
     public static final String KEY_CONFIG_OPEN_URL_PATH = "openUrlPath";
+    public static final String KEY_CONFIG_OPEN_SAVED_COPY_IN_NEW_TAB = "openSavedCopyInNewTab";
+    public static final String KEY_CONFIG_MAX_TAB_COUNT = "maxTabCount";
     public static final String KEY_CONFIG_AUTO_SAVE_ENABLED = "autoSaveEnabled";
     public static final String KEY_CONFIG_PAGE_CHANGE_ON_TAP = "pageChangeOnTap";
     public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
@@ -113,7 +125,9 @@ public class PluginUtils {
     public static final String KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS = "signSignatureFieldWithStamps";
     public static final String KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION = "selectAnnotationAfterCreation";
     public static final String KEY_CONFIG_PAGE_INDICATOR_ENABLED = "pageIndicatorEnabled";
+    public static final String KEY_CONFIG_SHOW_QUICK_NAVIGATION_BUTTON = "showQuickNavigationButton";
     public static final String KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE = "followSystemDarkMode";
+    public static final String KEY_CONFIG_DOWNLOAD_DIALOG_ENABLED = "downloadDialogEnabled";
     public static final String KEY_CONFIG_ANNOTATION_TOOLBARS = "annotationToolbars";
     public static final String KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS = "hideDefaultAnnotationToolbars";
     public static final String KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER = "hideAnnotationToolbarSwitcher";
@@ -121,11 +135,16 @@ public class PluginUtils {
     public static final String KEY_CONFIG_HIDE_TOP_APP_NAV_BAR = "hideTopAppNavBar";
     public static final String KEY_CONFIG_HIDE_BOTTOM_TOOLBAR = "hideBottomToolbar";
     public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
+    public static final String KEY_CONFIG_REMEMBER_LAST_USED_TOOL = "rememberLastUsedTool";
+    public static final String KEY_CONFIG_DOCUMENT_SLIDER_ENABLED = "documentSliderEnabled";
     public static final String KEY_CONFIG_READ_ONLY = "readOnly";
     public static final String KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED = "thumbnailViewEditingEnabled";
     public static final String KEY_CONFIG_ANNOTATION_AUTHOR = "annotationAuthor";
     public static final String KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING = "continuousAnnotationEditing";
     public static final String KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED = "annotationPermissionCheckEnabled";
+    public static final String KEY_CONFIG_ANNOTATIONS_LIST_EDITING_ENABLED = "annotationsListEditingEnabled";
+    public static final String KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED = "userBookmarksListEditingEnabled";
+    public static final String KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES = "showNavigationListAsSidePanelOnLargeDevices";
     public static final String KEY_CONFIG_OVERRIDE_BEHAVIOR = "overrideBehavior";
     public static final String KEY_CONFIG_TAB_TITLE = "tabTitle";
     public static final String KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR = "pageNumberIndicatorAlwaysVisible";
@@ -175,6 +194,8 @@ public class PluginUtils {
     public static final String KEY_LONG_PRESS_MENU_ITEM = "longPressMenuItem";
     public static final String KEY_LONG_PRESS_TEXT = "longPressText";
 
+    public static final String KEY_PATH = "path";
+
     public static final String EVENT_EXPORT_ANNOTATION_COMMAND = "export_annotation_command_event";
     public static final String EVENT_EXPORT_BOOKMARK = "export_bookmark_event";
     public static final String EVENT_DOCUMENT_LOADED = "document_loaded_event";
@@ -217,6 +238,8 @@ public class PluginUtils {
     public static final String FUNCTION_CLOSE_ALL_TABS = "closeAllTabs";
     public static final String FUNCTION_DELETE_ALL_ANNOTATIONS = "deleteAllAnnotations";
     public static final String FUNCTION_GET_PAGE_ROTATION = "getPageRotation";
+    public static final String FUNCTION_EXPORT_AS_IMAGE = "exportAsImage";
+    public static final String FUNCTION_EXPORT_AS_IMAGE_FROM_FILE_PATH = "exportAsImageFromFilePath";
     public static final String FUNCTION_OPEN_ANNOTATION_LIST = "openAnnotationList";
     public static final String FUNCTION_SET_REQUESTED_ORIENTATION = "setRequestedOrientation";
     public static final String FUNCTION_GO_TO_PREVIOUS_PAGE = "gotoPreviousPage";
@@ -712,6 +735,10 @@ public class PluginUtils {
                     String layoutMode = convStringToLayoutMode(layoutString);
                     PdfViewCtrlSettingsManager.updateViewMode(context, layoutMode);
                 }
+                if (!configJson.isNull(KEY_CONFIG_TABLET_LAYOUT_ENABLED)) {
+                    boolean tabletLayoutEnabled = configJson.getBoolean(KEY_CONFIG_TABLET_LAYOUT_ENABLED);
+                    builder.tabletLayoutEnabled(tabletLayoutEnabled);
+                }
                 if (!configJson.isNull(KEY_CONFIG_INITIAL_PAGE_NUMBER)) {
                     int initialPageNumber = configJson.getInt(KEY_CONFIG_INITIAL_PAGE_NUMBER);
                     configInfo.setInitialPageNumber(initialPageNumber);
@@ -767,6 +794,17 @@ public class PluginUtils {
                     ArrayList<String> annotationMenuOverrideItems = convertJSONArrayToArrayList(array);
                     configInfo.setAnnotationMenuOverrideItems(annotationMenuOverrideItems);
                 }
+                if (!configJson.isNull(KEY_CONFIG_EXCLUDED_ANNOTATION_LIST_TYPES)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_EXCLUDED_ANNOTATION_LIST_TYPES);
+                    ArrayList<String> excludedTypes = convertJSONArrayToArrayList(array);
+                    int[] annotTypes = new int[excludedTypes.size()];
+                    for (int i = 0; i < excludedTypes.size(); i++) {
+                        String type = excludedTypes.get(i);
+                        annotTypes[i] = convStringToAnnotType(type);
+                    }
+
+                    builder = builder.excludeAnnotationListTypes(annotTypes);
+                }
                 if (!configJson.isNull(KEY_CONFIG_EXPORT_PATH)) {
                     String exportPath = configJson.getString(KEY_CONFIG_EXPORT_PATH);
                     configInfo.setExportPath(exportPath);
@@ -802,9 +840,17 @@ public class PluginUtils {
                     boolean pageIndicatorEnabled = configJson.getBoolean(KEY_CONFIG_PAGE_INDICATOR_ENABLED);
                     builder.showPageNumberIndicator(pageIndicatorEnabled);
                 }
+                if (!configJson.isNull(KEY_CONFIG_SHOW_QUICK_NAVIGATION_BUTTON)) {
+                    boolean showQuickNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_QUICK_NAVIGATION_BUTTON);
+                    builder.pageStackEnabled(showQuickNavButton);
+                }
                 if (!configJson.isNull(KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE)) {
                     boolean followSystem = configJson.getBoolean(KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE);
                     PdfViewCtrlSettingsManager.setFollowSystemDarkMode(context, followSystem);
+                }
+                if (!configJson.isNull(KEY_CONFIG_DOWNLOAD_DIALOG_ENABLED)) {
+                    boolean downloadDialogEnabled = configJson.getBoolean(KEY_CONFIG_DOWNLOAD_DIALOG_ENABLED);
+                    builder.showDownloadDialog(downloadDialogEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_TOOLBARS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_ANNOTATION_TOOLBARS);
@@ -841,6 +887,14 @@ public class PluginUtils {
                     boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
                     configInfo.setShowLeadingNavButton(showLeadingNavButton);
                 }
+                if (!configJson.isNull(KEY_CONFIG_DOCUMENT_SLIDER_ENABLED)) {
+                    boolean documentSliderEnabled = configJson.getBoolean(KEY_CONFIG_DOCUMENT_SLIDER_ENABLED);
+                    builder.showDocumentSlider(documentSliderEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_REMEMBER_LAST_USED_TOOL)) {
+                    boolean rememberLastUsedTool = configJson.getBoolean(KEY_CONFIG_REMEMBER_LAST_USED_TOOL);
+                    builder.rememberLastUsedTool(rememberLastUsedTool);
+                }
                 if (!configJson.isNull(KEY_CONFIG_READ_ONLY)) {
                     boolean readOnly = configJson.getBoolean(KEY_CONFIG_READ_ONLY);
                     builder.documentEditingEnabled(!readOnly);
@@ -864,6 +918,18 @@ public class PluginUtils {
                     boolean annotationPermissionCheckEnabled = configJson.getBoolean(KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED);
                     toolManagerBuilder = toolManagerBuilder.setAnnotPermission(annotationPermissionCheckEnabled);
                 }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATIONS_LIST_EDITING_ENABLED)) {
+                    boolean annotationsListEditingEnabled = configJson.getBoolean(KEY_CONFIG_ANNOTATIONS_LIST_EDITING_ENABLED);
+                    builder.annotationsListEditingEnabled(annotationsListEditingEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED)) {
+                    boolean userBookmarksListEditingEnabled = configJson.getBoolean(KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED);
+                    builder.userBookmarksListEditingEnabled(userBookmarksListEditingEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES)) {
+                    boolean showNavigationListAsSidePanelOnLargeDevices = configJson.getBoolean(KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES);
+                    builder.navigationListAsSheetOnLargeDevice(showNavigationListAsSidePanelOnLargeDevices);
+                }
                 if (!configJson.isNull(KEY_CONFIG_OVERRIDE_BEHAVIOR)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_OVERRIDE_BEHAVIOR);
                     ArrayList<String> actionOverrideItems = convertJSONArrayToArrayList(array);
@@ -877,6 +943,14 @@ public class PluginUtils {
                     boolean permanentPageNumberIndicator = configJson.getBoolean(KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR);
                     builder.permanentPageNumberIndicator(permanentPageNumberIndicator);
                 }
+                if (!configJson.isNull(KEY_CONFIG_OPEN_SAVED_COPY_IN_NEW_TAB)) {
+                    boolean openSavedCopyInNewTab = configJson.getBoolean(KEY_CONFIG_OPEN_SAVED_COPY_IN_NEW_TAB);
+                    builder.openSavedCopyInNewTab(openSavedCopyInNewTab);
+                }
+                if (!configJson.isNull(KEY_CONFIG_MAX_TAB_COUNT)) {
+                    int maxTabCount = configJson.getInt(KEY_CONFIG_MAX_TAB_COUNT);
+                    builder.maximumTabCount(maxTabCount);
+                } 
                 if (!configJson.isNull(KEY_CONFIG_OPEN_URL_PATH)) {
                     String openUrlPath = configJson.getString(KEY_CONFIG_OPEN_URL_PATH);
                     configInfo.setOpenUrlPath(openUrlPath);
@@ -1934,6 +2008,27 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_EXPORT_AS_IMAGE: {
+                checkFunctionPrecondition(component);
+                Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
+                Integer dpi = call.argument(KEY_DPI);
+                String exportFormat = call.argument(KEY_EXPORT_FORMAT);
+                if (pageNumber != null && dpi != null && exportFormat != null) {
+                    exportAsImage(pageNumber, dpi, exportFormat, result, component);
+                }
+                break;
+            }
+            case FUNCTION_EXPORT_AS_IMAGE_FROM_FILE_PATH: {
+                // Static, doesn't require viewer.
+                Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
+                Integer dpi = call.argument(KEY_DPI);
+                String exportFormat = call.argument(KEY_EXPORT_FORMAT);
+                String path = call.argument(KEY_PATH);
+                if (pageNumber != null && dpi != null && exportFormat != null && path != null) {
+                    exportAsImageFromFilePath(pageNumber, dpi, exportFormat, path, result, component);
+                }
+                break;
+            }
             case FUNCTION_GO_TO_PREVIOUS_PAGE: {
                 checkFunctionPrecondition(component);
                 gotoPreviousPage(result, component);
@@ -2803,6 +2898,65 @@ public class PluginUtils {
         result.success(pageRotation);
     }
 
+    private static void exportAsImage(int pageNumber, int dpi, String exportFormat, MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        PDFDoc pdfDoc = component.getPdfDoc();
+        if (pdfViewCtrl == null || pdfDoc == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+        }
+        try {
+            String imagePath = exportAsImageHelper(pdfDoc, pageNumber, dpi, exportFormat);
+            result.success(imagePath);
+        } catch (Exception e) {
+            result.error(Long.toString(e.hashCode()), "Exception Error: " + e, null);
+        }
+    }
+
+    private static void exportAsImageFromFilePath(int pageNumber, int dpi, String exportFormat, String path, MethodChannel.Result result, ViewerComponent component) {
+        try {
+            PDFDoc pdfDoc = new PDFDoc(path);
+            String imagePath = exportAsImageHelper(pdfDoc, pageNumber, dpi, exportFormat);
+            pdfDoc.close();
+            result.success(imagePath);
+        } catch (Exception e) {
+            result.error(Long.toString(e.hashCode()), "Exception Error: " + e, null);
+        }
+    }
+
+    private static String exportAsImageHelper(PDFDoc doc, int pageNumber, int dpi, String exportFormat) throws PDFNetException {
+        PDFDraw draw = null;
+        boolean shouldUnlockRead = false;
+        try {
+            doc.lockRead();
+            shouldUnlockRead = true;
+
+            draw = new PDFDraw();
+            draw.setDPI(dpi);
+            Page pg = doc.getPage(pageNumber);
+            String ext = "png";
+            if (KEY_EXPORT_FORMAT_BMP.equals(exportFormat)) {
+                ext = "bmp";
+            } else if (KEY_EXPORT_FORMAT_JPEG.equals(exportFormat)) {
+                ext = "jpeg";
+            }
+            File tempFile = File.createTempFile("tmp", "." + ext);
+            draw.export(pg, tempFile.getAbsolutePath(), exportFormat);
+            return tempFile.getAbsolutePath();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (draw != null) {
+                try {
+                    draw.destroy();
+                } catch (Exception ignored) {
+                }
+            }
+            if (shouldUnlockRead) {
+                doc.unlockRead();
+            }
+        }
+    }
+    
     private static void gotoPreviousPage(MethodChannel.Result result, ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         if (pdfViewCtrl == null) {

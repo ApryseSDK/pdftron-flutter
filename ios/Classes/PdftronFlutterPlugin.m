@@ -210,6 +210,14 @@
                         tabbedDocumentViewController.tabsEnabled = [multiTabValue boolValue];
                     }
                 }
+                else if ([key isEqualToString:PTMaxTabCountKey]) {
+                    NSError* error;
+                    NSNumber* maxTabCount = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTMaxTabCountKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && maxTabCount) {
+                        tabbedDocumentViewController.maximumTabCount = [maxTabCount intValue];
+                    }
+                }
             }
         }
         else
@@ -271,6 +279,9 @@
                 else if ([key isEqualToString:PTMultiTabEnabledKey]) {
                     // Handled by tabbed config.
                 }
+                else if ([key isEqualToString:PTMaxTabCountKey]) {
+                    // Handled by tabbed config.
+                }
                 else if ([key isEqualToString:PTFitModeKey]) {
                     
                     NSString* fitMode = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTFitModeKey class:[NSString class] error:&error];
@@ -309,6 +320,14 @@
                     
                     if (!error && hideThumbnailFilterModes) {
                         [documentController setHideThumbnailFilterModes: hideThumbnailFilterModes];
+                    }
+                }
+                else if ([key isEqualToString:PTDocumentSliderEnabledKey]) {
+                    
+                    NSNumber* documentSliderEnabled = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTDocumentSliderEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && documentSliderEnabled) {
+                        [documentController setDocumentSliderEnabled:[documentSliderEnabled boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTLongPressMenuEnabled]) {
@@ -357,6 +376,14 @@
                     
                     if (!error && overrideAnnotationMenuBehavior) {
                         [documentController setOverrideAnnotationMenuBehavior:overrideAnnotationMenuBehavior];
+                    }
+                }
+                else if ([key isEqualToString:PTExcludedAnnotationListTypesKey]) {
+                    
+                    NSArray* excludedAnnotationListTypes = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTExcludedAnnotationListTypesKey class:[NSArray class] error:&error];
+                    
+                    if (!error && excludedAnnotationListTypes) {
+                        [documentController setExcludedAnnotationListTypes:excludedAnnotationListTypes];
                     }
                 }
                 else if ([key isEqualToString:PTAutoSaveEnabledKey]) {
@@ -416,6 +443,14 @@
 
                     if (!error && pageIndicatorAlwaysVisibleNumber) {
                         [documentController setPageIndicatorAlwaysVisible:[pageIndicatorAlwaysVisibleNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTShowQuickNavigationButtonKey]) {
+                    
+                    NSNumber *showQuickNavButton = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowQuickNavigationButtonKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && showQuickNavButton) {
+                        documentController.navigationHistoryEnabled = [showQuickNavButton boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTFollowSystemDarkModeKey]) {
@@ -516,6 +551,33 @@
                     if (!error && checkEnabledNumber) {
                         
                         [documentController setAnnotationPermissionCheckEnabled:[checkEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTAnnotationsListEditingEnabledKey]) {
+                    
+                    NSNumber* annotationsListEditingEnabled = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationsListEditingEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && annotationsListEditingEnabled) {
+                        
+                        [documentController setAnnotationsListEditingEnabled:[annotationsListEditingEnabled boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTUserBookmarksListEditingEnabledKey]) {
+                    
+                    NSNumber* userBookmarksListEditingEnabled = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUserBookmarksListEditingEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && userBookmarksListEditingEnabled) {
+                        
+                        [documentController setUserBookmarksListEditingEnabled:[userBookmarksListEditingEnabled boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTShowNavigationListAsSidePanelOnLargeDevicesKey]) {
+                    
+                    NSNumber* showNavigationListAsSidePanelOnLargeDevices = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowNavigationListAsSidePanelOnLargeDevicesKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && showNavigationListAsSidePanelOnLargeDevices) {
+                        
+                        [documentController setShowNavigationListAsSidePanelOnLargeDevices:[showNavigationListAsSidePanelOnLargeDevices boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTOverrideBehaviorKey]) {
@@ -638,8 +700,10 @@
         if ([item isKindOfClass:[NSString class]]) {
             NSString *string = (NSString *)item;
             
-            if ([string isEqualToString:PTAnnotationEditToolKey]) {
-                // multi-select not implemented
+            if ([string isEqualToString:PTAnnotationEditToolKey] ||
+                [string isEqualToString:PTEditToolButtonKey] ||
+                [string isEqualToString:PTMultiSelectToolKey]) {
+                toolManager.allowsMultipleAnnotationSelection = value;
             }
             else if ([string isEqualToString:PTAnnotationCreateStickyToolKey] ||
                      [string isEqualToString:PTStickyToolButtonKey]) {
@@ -766,6 +830,9 @@
             else if ([string isEqualToString:PTFormCreateListBoxFieldToolKey]) {
                 // TODO
             }
+            else if ([string isEqualToString:PTAnnotationCreateFreeHighlighterToolKey]) {
+                toolManager.freehandHighlightAnnotationOptions.canCreate = value;
+            }
             else if ([string isEqualToString:PTPencilKitDrawingToolKey]) {
                 toolManager.pencilDrawingAnnotationOptions.canCreate = value;
             }
@@ -847,10 +914,15 @@
             ^{
                 documentController.bookmarkListHidden = YES;
             },
-//        PTEditMenuButtonKey:
-//            ^{
-//
-//            },
+        PTLayerListButtonKey:
+            ^{
+                documentController.pdfLayerListHidden = YES;
+                documentController.navigationListsViewController.pdfLayerViewControllerVisibility = PTNavigationListsViewControllerVisibilityAlwaysHidden;
+            },
+        PTEditMenuButtonKey:
+            ^{
+                documentController.toolGroupManager.editingEnabled = NO;
+            },
         PTCropPageButtonKey:
             ^{
                 documentController.settingsViewController.cropPagesHidden = YES;
@@ -858,6 +930,22 @@
         PTMoreItemsButtonKey:
             ^{
                 documentController.moreItemsButtonHidden = YES;
+            },
+        PTSaveIdenticalCopyButtonKey:
+            ^ {
+                if (![documentController isExportButtonHidden]) {
+                    NSMutableArray * exportItems = [documentController.exportItems mutableCopy];
+                    [exportItems removeObject:documentController.exportCopyButtonItem];
+                    documentController.exportItems = [exportItems copy];
+                }
+            },
+        PTSaveFlattenedCopyButtonKey:
+            ^{
+                if (![documentController isExportButtonHidden]) {
+                    NSMutableArray * exportItems = [documentController.exportItems mutableCopy];
+                    [exportItems removeObject:documentController.exportFlattenedCopyButtonItem];
+                    documentController.exportItems = [exportItems copy];
+                }
             },
     };
     
@@ -1247,6 +1335,17 @@
         [self closeAllTabs:result];
     } else if ([call.method isEqualToString:PTDeleteAllAnnotationsKey]) {
         [self deleteAllAnnotations:result];
+    } else if ([call.method isEqualToString:PTExportAsImageKey]) {
+        NSNumber* pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
+        NSNumber* dpi = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTDpiArgumentKey]];
+        NSString* exportFormat = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTExportFormatArgumentKey]];
+        [self exportAsImage:pageNumber dpi:dpi exportFormat:exportFormat filePath:Nil resultToken:result];
+    } else if ([call.method isEqualToString:PTExportAsImageFromFilePathKey]) {
+        NSNumber* pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
+        NSNumber* dpi = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTDpiArgumentKey]];
+        NSString* exportFormat = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTExportFormatArgumentKey]];
+        NSString* filePath = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTPathArgumentKey]];
+        [self exportAsImage:pageNumber dpi:dpi exportFormat:exportFormat filePath:filePath resultToken:result];
     } else if ([call.method isEqualToString:PTOpenAnnotationListKey]) {
         [self openAnnotationList:result];
     } else if ([call.method isEqualToString:PTOpenBookmarkListKey]) {
@@ -2476,6 +2575,50 @@
     flutterResult(nil);
 }
 
+-(void)exportAsImage:(NSNumber*)pageNumber dpi:(NSNumber*)dpi exportFormat:(NSString *)exportFormat filePath:(NSString*)filePath resultToken:(FlutterResult)flutterResult
+{
+    if (filePath == Nil) {
+        PTDocumentController *documentController = [self getDocumentController];
+        if(documentController == Nil)
+        {
+            // something is wrong, document view controller is not present
+            NSLog(@"Error: The document view controller is not initialized.");
+            flutterResult([FlutterError errorWithCode:@"export_as_image" message:@"Failed to export image from file" details:@"Error: The document view controller is not initialized."]);
+            return;
+        }
+        
+        PTPDFViewCtrl *pdfViewCtrl = documentController.pdfViewCtrl;
+        
+        [self exportAsImageHelper:[pdfViewCtrl GetDoc] pageNumber:pageNumber dpi:dpi exportFormat:exportFormat usesFilePath:NO resultToken:flutterResult];
+    } else {
+        [self exportAsImageHelper:[[PTPDFDoc alloc] initWithFilepath:filePath] pageNumber:pageNumber dpi:dpi exportFormat:exportFormat usesFilePath:YES resultToken:flutterResult];
+    }
+}
+
+-(void)exportAsImageHelper:(PTPDFDoc*)doc pageNumber:(NSNumber*)pageNumber dpi:(NSNumber*)dpi exportFormat:(NSString *)exportFormat usesFilePath:(BOOL)usesFilePath resultToken:(FlutterResult)flutterResult
+{
+    __block NSString* imagePath;
+    NSError *error;
+    
+    [doc LockReadWithBlock:^() {
+        PTPDFDraw *draw = [[PTPDFDraw alloc] initWithDpi:[dpi doubleValue]];
+        NSString* tempDir = NSTemporaryDirectory();
+        NSString* fileName = [NSUUID UUID].UUIDString;
+        imagePath = [tempDir stringByAppendingPathComponent:fileName];
+        imagePath = [imagePath stringByAppendingPathExtension:exportFormat];
+        [draw Export:[doc GetPage:[pageNumber doubleValue]] filename:imagePath format:exportFormat];
+    }
+    error:&error];
+    
+    if (error) {
+        NSLog(@"Error: Failed to export image from file. %@", error.localizedDescription);
+        NSString * errorCode = usesFilePath ? @"export_as_image_from_file_path" : @"export_as_image";
+        flutterResult([FlutterError errorWithCode:errorCode message:@"Failed to export image from file" details:@"Error: Failed to export image from file"]);
+    } else {
+        flutterResult(imagePath);
+    }
+}
+    
 - (void)openAnnotationList:(FlutterResult)flutterResult
 {
     PTDocumentController *documentController = [self getDocumentController];

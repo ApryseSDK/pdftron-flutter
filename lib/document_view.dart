@@ -201,6 +201,14 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.deleteAllAnnotations);
   }
 
+  Future<String> exportAsImage(int pageNumber, int dpi, String exportFormat) {
+    return _channel.invokeMethod(Functions.exportAsImage, <String, dynamic>{
+      Parameters.pageNumber: pageNumber,
+      Parameters.dpi: dpi,
+      Parameters.exportFormat: exportFormat
+    });
+  }
+
   Future<void> openAnnotationList() {
     return _channel.invokeMethod(Functions.openAnnotationList);
   }

@@ -51,6 +51,28 @@ Using commercial license key:
 PdftronFlutter.initialize('your_license_key');
 ```
 
+### exportAsImageFromFilePath
+Export a PDF page to an image format defined in [`ExportFormat`](./lib/constants.dart). The page is taken from the PDF at the given filepath.
+
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pageNumber | int | the page to be converted
+dpi | double | the output image resolution
+exportFormat | String | one of [`ExportFormat`](./lib/constants.dart) constants
+filePath | String | local file path to pdf
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+resultImagePath | String | the temp path of the created image, user is responsible for clean up the cache
+
+```dart
+var resultImagePath = await PdftronFlutter.exportAsImageFromFilePath(1, 92, ExportFormat.BMP, "/sdcard/Download/red.pdf");
+```
+
 ### setRequestedOrientation
 
 Changes the orientation of this activity. Android only. 
@@ -239,6 +261,17 @@ PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png
 
 2. Now you can use the image in the viewer. For example, if you add `button_open.png` to the bundle, you could use `'button_open.png'` in leadingNavButtonIcon.
 
+#### rememberLastUsedTool
+boolean, optional, defaults to true, Android only
+
+Defines whether the last tool used in the current viewer session will be the tool selected upon starting a new viewer session.
+
+Example:
+
+```dart
+config.rememberLastUsedTool = false;
+```
+
 ### Annotation Tools
 
 #### setToolMode
@@ -421,7 +454,7 @@ Name | Type | Description
 --- | --- | ---
 pageChanged | bool | whether the setting process was successful
 
-```js
+```dart
 var pageChanged = await PdftronFlutter.gotoFirstPage();
 if (pageChanged) {
   print("Successfully went to first page");
@@ -439,7 +472,7 @@ Name | Type | Description
 --- | --- | ---
 success | bool | whether the setting process was successful
 
-```js
+```dart
 var pageChanged = await PdftronFlutter.gotoLastPage();
 if (pageChanged) {
   print("Successfully went to last page");
@@ -720,6 +753,27 @@ Returns a Future.
 PdftronFlutter.addBookmark("Page 7", 6);
 ```
 
+#### userBookmarksListEditingEnabled
+bool, optional, default value is true
+
+Defines whether the bookmark list can be edited. If the viewer is readonly then bookmarks on Android are 
+still editable but are saved to the device rather than the PDF.
+
+```dart
+config.userBookmarksListEditingEnabled = false;
+```
+
+### Navigation
+
+#### showNavigationListAsSidePanelOnLargeDevices
+bool, optional, defaults to true
+
+Defines whether the navigation list will be displayed as a side panel on large devices such as iPads and tablets.
+
+```dart
+config.showNavigationListAsSidePanelOnLargeDevices = true;
+```
+
 ### Multi-tab
 
 #### closeAllTabs
@@ -731,6 +785,28 @@ Returns a Future.
 PdftronFlutter.closeAllTabs();
 ```
 
+### Export Images
+
+#### exportAsImage
+Export a PDF page to an image format defined in [`ExportFormat`](./lib/constants.dart). The page is taken from the currently opened document in the viewer.
+
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pageNumber | int | the page to be converted
+dpi | double | the output image resolution
+exportFormat | String | one of [`ExportFormat`](./lib/constants.dart) constants
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+resultImagePath | String | the temp path of the created image, user is responsible for clean up the cache
+
+```dart
+var resultImagePath = await PdftronFlutter.exportAsImage(1, 92, ExportFormat.BMP);
+```
 
 ## Events
 This section contains all the event listeners you could attach to the viewer.
@@ -772,6 +848,15 @@ var navPressedCancel = startLeadingNavButtonPressedListener(()
 {
   print("flutter nav button pressed");
 });
+```
+
+#### documentSliderEnabled
+bool, optional, defaults to true
+
+Defines whether the document slider of the viewer is enabled.
+
+```dart
+config.documentSliderEnabled = false;
 ```
 
 ### Page
@@ -1026,6 +1111,24 @@ Eraser Type | Description
 config.defaultEraserType = DefaultEraserType.inkEraser;
 ```
 
+#### exportPath
+string, optional
+Sets the folder path for all save options, this defaults to the app cache path. Android only.
+Example:
+```dart
+config.exportPath = "/data/data/com.pdftron.pdftronflutterexample/cache/test/";
+```
+
+#### openUrlPath
+string, optional
+
+Sets the cache folder used to cache PDF files opened using a http/https link, this defaults to the app cache path. Android only.
+Example:
+
+```dart
+config.openUrlPath = "/data/data/com.pdftron.pdftronflutterexample/cache/test/";
+```
+
 #### isBase64String
 bool, defaults to false.
 
@@ -1041,6 +1144,10 @@ config.isBase64String = true;
 String, defaults to `.pdf`, required if using base64 string of a non-pdf file.
 
 Defines the file extension for the base64 string in document, if [`isBase64String`](#isBase64String) is true.
+
+```dart
+config.base64FileExtension = '.jpeg';
+```
 
 ### UI Customization
 
@@ -1071,6 +1178,15 @@ Defines whether to show the leading navigation button.
 
 ```dart
 config.showLeadingNavButton = true;
+```
+
+#### downloadDialogEnabled
+bool, defaults to true, Android only.
+
+Defines whether the download dialog should be shown.
+
+```dart
+config.downloadDialogEnabled = false;
 ```
 
 ### Toolbar Customization
@@ -1151,6 +1267,15 @@ Defines the layout mode of the viewer.
 
 ```dart
 config.layoutMode = LayoutModes.facingCover;
+```
+
+#### tabletLayoutEnabled
+bool, optional, defaults to true, Android only.
+
+Defines whether the tablet layout should be used on tablets. Otherwise uses the same layout as phones. 
+
+```dart
+config.tabletLayoutEnabled = true;
 ```
 
 ### Page
@@ -1238,6 +1363,25 @@ Defines annotation types that cannot be edited after creation.
 config.disableEditingByAnnotationType = [Tools.annotationCreateTextSquiggly, Tools.annotationCreateTextHighlight, Tools.annotationCreateEllipse];
 ```
 
+#### annotationsListEditingEnabled
+bool, optional, default value is true
+
+If document editing is enabled, then this value determines if the annotation list is editable. 
+
+```dart
+config.annotationsListEditingEnabled = false;
+```
+
+#### excludedAnnotationListTypes
+array of [`Config.Tools`](./src/Config/Config.ts) constants, optional, defaults to none
+
+Defines types to be excluded from the annotation list.
+Example use:
+
+```dart
+config.excludedAnnotationListTypes=[Tools.annotationCreateEllipse, Tools.annotationCreateRedaction];
+```
+
 ### Annotation Menu
 
 #### hideAnnotationMenu
@@ -1307,6 +1451,17 @@ Defines actions that should skip default behavior, such as external link click. 
 config.overrideBehavior = [Behaviors.linkPress];
 ```
 
+### Navigation
+
+#### showQuickNavigationButton
+bool, defaults to true.
+
+Defines whether the quick navigation buttons will appear in the viewer.
+
+```dart
+config.showQuickNavigationButton = false;
+```
+
 ### Multi-tab
 
 #### multiTabEnabled
@@ -1325,6 +1480,27 @@ Sets the tab title if [`multiTabEnabled`](#multiTabEnabled) is true. (For Androi
 
 ```dart
 config.tabTitle = 'tab1';
+```
+
+#### openSavedCopyInNewTab
+bool, optional, default to true, Android only.
+
+Sets whether the new saved file should open after saving.
+Example:
+
+```dart
+config.multiTabEnabled = true;
+config.openSavedCopyInNewTab = false;
+```
+
+#### maxTabCount
+number, optional, defaults to unlimited
+
+Sets the limit on the maximum number of tabs that the viewer could have at a time. Open more documents after reaching this limit will overwrite the old tabs.
+
+```dart
+config.multiTabEnabled = true;
+config.maxTabCount={5}
 ```
 
 ### Signature

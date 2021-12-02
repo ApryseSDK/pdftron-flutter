@@ -7,6 +7,7 @@ class Config {
   var _customHeaders;
   var _fitMode;
   var _layoutMode;
+  var _tabletLayoutEnabled;
   var _initialPageNumber;
   var _isBase64String;
   var _base64FileExtension;
@@ -17,8 +18,11 @@ class Config {
   var _hideAnnotationMenu;
   var _annotationMenuItems;
   var _overrideAnnotationMenuBehavior;
+  var _excludedAnnotationListTypes;
   var _exportPath;
   var _openUrlPath;
+  var _openSavedCopyInNewTab;
+  var _maxTabCount;
   var _autoSaveEnabled;
   var _pageChangeOnTap;
   var _showSavedSignatures;
@@ -26,7 +30,10 @@ class Config {
   var _signSignatureFieldWithStamps;
   var _selectAnnotationAfterCreation;
   var _pageIndicatorEnabled;
+  var _pageStackEnabled;
+  var _showQuickNavigationButton;
   var _followSystemDarkMode;
+  var _downloadDialogEnabled;
   var _annotationToolbars;
   var _hideDefaultAnnotationToolbars;
   var _hideAnnotationToolbarSwitcher;
@@ -34,11 +41,16 @@ class Config {
   var _hideTopAppNavBar;
   var _hideBottomToolbar;
   var _showLeadingNavButton;
+  var _documentSliderEnabled;
+  var _rememberLastUsedTool;
   var _readOnly;
   var _thumbnailViewEditingEnabled;
   var _annotationAuthor;
   var _continuousAnnotationEditing;
   var _annotationPermissionCheckEnabled;
+  var _annotationsListEditingEnabled;
+  var _userBookmarksListEditingEnabled;
+  var _showNavigationListAsSidePanelOnLargeDevices;
   var _overrideBehavior;
   var _tabTitle;
   var _pageNumberIndicatorAlwaysVisible;
@@ -63,6 +75,8 @@ class Config {
 
   set layoutMode(String value) => _layoutMode = value;
 
+  set tabletLayoutEnabled(bool value) => _tabletLayoutEnabled = value;
+
   set initialPageNumber(int value) => _initialPageNumber = value;
 
   set isBase64String(bool value) => _isBase64String = value;
@@ -85,9 +99,16 @@ class Config {
   set overrideAnnotationMenuBehavior(List value) =>
       _overrideAnnotationMenuBehavior = value;
 
+  set excludedAnnotationListTypes(List value) => 
+      _excludedAnnotationListTypes = value;
+
   set exportPath(String value) => _exportPath = value;
 
   set openUrlPath(String value) => _openUrlPath = value;
+
+  set openSavedCopyInNewTab(bool value) => _openSavedCopyInNewTab = value;
+
+  set maxTabCount(int value) => _maxTabCount = value;
 
   set autoSaveEnabled(bool value) => _autoSaveEnabled = value;
 
@@ -105,7 +126,11 @@ class Config {
 
   set pageIndicatorEnabled(bool value) => _pageIndicatorEnabled = value;
 
+  set showQuickNavigationButton(bool value) => _showQuickNavigationButton = value;
+
   set followSystemDarkMode(bool value) => _followSystemDarkMode = value;
+
+  set downloadDialogEnabled(bool value) => _downloadDialogEnabled = value;
 
   set annotationToolbars(List value) => _annotationToolbars = value;
 
@@ -123,6 +148,10 @@ class Config {
 
   set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
 
+  set documentSliderEnabled(bool value) => _documentSliderEnabled = value;
+  
+  set rememberLastUsedTool(bool value) => _rememberLastUsedTool = value;
+
   set readOnly(bool value) => _readOnly = value;
 
   set thumbnailViewEditingEnabled(bool value) =>
@@ -135,6 +164,15 @@ class Config {
 
   set annotationPermissionCheckEnabled(bool value) =>
       _annotationPermissionCheckEnabled = value;
+
+  set annotationsListEditingEnabled(bool value) =>
+      _annotationsListEditingEnabled = value;
+
+  set userBookmarksListEditingEnabled(bool value) =>
+      _userBookmarksListEditingEnabled = value;
+
+  set showNavigationListAsSidePanelOnLargeDevices(bool value) =>
+      _showNavigationListAsSidePanelOnLargeDevices = value;
 
   set overrideBehavior(List<String> value) => _overrideBehavior = value;
 
@@ -162,6 +200,7 @@ class Config {
         _customHeaders = json['customHeaders'],
         _fitMode = json['fitMode'],
         _layoutMode = json['layoutMode'],
+        _tabletLayoutEnabled = json['tabletLayoutEnabled'],
         _initialPageNumber = json['initialPageNumber'],
         _isBase64String = json['isBase64String'],
         _base64FileExtension = json['base64FileExtension'],
@@ -173,8 +212,11 @@ class Config {
         _annotationMenuItems = json['annotationMenuItems'],
         _overrideAnnotationMenuBehavior =
             json['overrideAnnotationMenuBehavior'],
+        _excludedAnnotationListTypes = json['excludedAnnotationListTypes'],
         _exportPath = json['exportPath'],
         _openUrlPath = json['openUrlPath'],
+        _openSavedCopyInNewTab = json['openSavedCopyInNewTab'],
+        _maxTabCount = json['maxTabCount'],
         _autoSaveEnabled = json['autoSaveEnabled'],
         _pageChangeOnTap = json['pageChangeOnTap'],
         _showSavedSignatures = json['showSavedSignatures'],
@@ -182,7 +224,9 @@ class Config {
         _signSignatureFieldWithStamps = json['signSignatureFieldWithStamps'],
         _selectAnnotationAfterCreation = json['selectAnnotationAfterCreation'],
         _pageIndicatorEnabled = json['pageIndicatorEnabled'],
+        _showQuickNavigationButton = json['showQuickNavigationButton'],
         _followSystemDarkMode = json['followSystemDarkMode'],
+        _downloadDialogEnabled = json['downloadDialogEnabled'],
         _annotationToolbars = json['annotationToolbars'],
         _hideDefaultAnnotationToolbars = json['hideDefaultAnnotationToolbars'],
         _hideAnnotationToolbarSwitcher = json['hideAnnotationToolbarSwitcher'],
@@ -190,12 +234,17 @@ class Config {
         _hideTopAppNavBar = json['hideTopAppNavBar'],
         _hideBottomToolbar = json['hideBottomToolbar'],
         _showLeadingNavButton = json['showLeadingNavButton'],
+        _documentSliderEnabled = json['documentSliderEnabled'],
+        _rememberLastUsedTool = json['rememberLastUsedTool'],
         _readOnly = json['readOnly'],
         _thumbnailViewEditingEnabled = json['thumbnailViewEditingEnabled'],
         _annotationAuthor = json['annotationAuthor'],
         _continuousAnnotationEditing = json['continuousAnnotationEditing'],
         _annotationPermissionCheckEnabled =
             json['annotationPermissionCheckEnabled'],
+        _annotationsListEditingEnabled = json['annotationsListEditingEnabled'],
+        _userBookmarksListEditingEnabled = json['userBookmarksListEditingEnabled'],
+        _showNavigationListAsSidePanelOnLargeDevices = json['showNavigationListAsSidePanelOnLargeDevices'],
         _overrideBehavior = json['overrideBehavior'],
         _tabTitle = json['tabTitle'],
         _pageNumberIndicatorAlwaysVisible = json['pageNumberIndicatorAlwaysVisible'],
@@ -214,6 +263,7 @@ class Config {
         'customHeaders': _customHeaders,
         'fitMode': _fitMode,
         'layoutMode': _layoutMode,
+        'tabletLayoutEnabled': _tabletLayoutEnabled,
         'initialPageNumber': _initialPageNumber,
         'isBase64String': _isBase64String,
         'base64FileExtension': _base64FileExtension,
@@ -224,8 +274,11 @@ class Config {
         'hideAnnotationMenu': _hideAnnotationMenu,
         'annotationMenuItems': _annotationMenuItems,
         'overrideAnnotationMenuBehavior': _overrideAnnotationMenuBehavior,
+        'excludedAnnotationListTypes': _excludedAnnotationListTypes,
         'exportPath': _exportPath,
         'openUrlPath': _openUrlPath,
+        'openSavedCopyInNewTab': _openSavedCopyInNewTab,
+        'maxTabCount': _maxTabCount,
         'autoSaveEnabled': _autoSaveEnabled,
         'pageChangeOnTap': _pageChangeOnTap,
         'showSavedSignatures': _showSavedSignatures,
@@ -233,7 +286,9 @@ class Config {
         'signSignatureFieldWithStamps': _signSignatureFieldWithStamps,
         'selectAnnotationAfterCreation': _selectAnnotationAfterCreation,
         'pageIndicatorEnabled': _pageIndicatorEnabled,
+        'showQuickNavigationButton': _showQuickNavigationButton,
         'followSystemDarkMode': _followSystemDarkMode,
+        'downloadDialogEnabled': _downloadDialogEnabled,
         'annotationToolbars': _annotationToolbars,
         'hideDefaultAnnotationToolbars': _hideDefaultAnnotationToolbars,
         'hideAnnotationToolbarSwitcher': _hideAnnotationToolbarSwitcher,
@@ -241,11 +296,16 @@ class Config {
         'hideTopAppNavBar': _hideTopAppNavBar,
         'hideBottomToolbar': _hideBottomToolbar,
         'showLeadingNavButton': _showLeadingNavButton,
+        'documentSliderEnabled': _documentSliderEnabled,
+        'rememberLastUsedTool': _rememberLastUsedTool,
         'readOnly': _readOnly,
         'thumbnailViewEditingEnabled': _thumbnailViewEditingEnabled,
         'annotationAuthor': _annotationAuthor,
         'continuousAnnotationEditing': _continuousAnnotationEditing,
         'annotationPermissionCheckEnabled': _annotationPermissionCheckEnabled,
+        'annotationsListEditingEnabled': _annotationsListEditingEnabled,
+        'userBookmarksListEditingEnabled': _userBookmarksListEditingEnabled,
+        'showNavigationListAsSidePanelOnLargeDevices': _showNavigationListAsSidePanelOnLargeDevices,
         'overrideBehavior': _overrideBehavior,
         'tabTitle': _tabTitle,
         'pageNumberIndicatorAlwaysVisible': _pageNumberIndicatorAlwaysVisible,
