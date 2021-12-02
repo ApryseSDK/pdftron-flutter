@@ -112,6 +112,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_HIDE_ANNOTATION_MENU = "hideAnnotationMenu";
     public static final String KEY_CONFIG_ANNOTATION_MENU_ITEMS = "annotationMenuItems";
     public static final String KEY_CONFIG_OVERRIDE_ANNOTATION_MENU_BEHAVIOR = "overrideAnnotationMenuBehavior";
+    public static final String KEY_CONFIG_EXCLUDED_ANNOTATION_LIST_TYPES = "excludedAnnotationListTypes";
     public static final String KEY_CONFIG_EXPORT_PATH = "exportPath";
     public static final String KEY_CONFIG_OPEN_URL_PATH = "openUrlPath";
     public static final String KEY_CONFIG_OPEN_SAVED_COPY_IN_NEW_TAB = "openSavedCopyInNewTab";
@@ -123,6 +124,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS = "signSignatureFieldWithStamps";
     public static final String KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION = "selectAnnotationAfterCreation";
     public static final String KEY_CONFIG_PAGE_INDICATOR_ENABLED = "pageIndicatorEnabled";
+    public static final String KEY_CONFIG_SHOW_QUICK_NAVIGATION_BUTTON = "showQuickNavigationButton";
     public static final String KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE = "followSystemDarkMode";
     public static final String KEY_CONFIG_DOWNLOAD_DIALOG_ENABLED = "downloadDialogEnabled";
     public static final String KEY_CONFIG_ANNOTATION_TOOLBARS = "annotationToolbars";
@@ -139,6 +141,9 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_AUTHOR = "annotationAuthor";
     public static final String KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING = "continuousAnnotationEditing";
     public static final String KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED = "annotationPermissionCheckEnabled";
+    public static final String KEY_CONFIG_ANNOTATIONS_LIST_EDITING_ENABLED = "annotationsListEditingEnabled";
+    public static final String KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED = "userBookmarksListEditingEnabled";
+    public static final String KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES = "showNavigationListAsSidePanelOnLargeDevices";
     public static final String KEY_CONFIG_OVERRIDE_BEHAVIOR = "overrideBehavior";
     public static final String KEY_CONFIG_TAB_TITLE = "tabTitle";
     public static final String KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR = "pageNumberIndicatorAlwaysVisible";
@@ -755,6 +760,17 @@ public class PluginUtils {
                     ArrayList<String> annotationMenuOverrideItems = convertJSONArrayToArrayList(array);
                     configInfo.setAnnotationMenuOverrideItems(annotationMenuOverrideItems);
                 }
+                if (!configJson.isNull(KEY_CONFIG_EXCLUDED_ANNOTATION_LIST_TYPES)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_EXCLUDED_ANNOTATION_LIST_TYPES);
+                    ArrayList<String> excludedTypes = convertJSONArrayToArrayList(array);
+                    int[] annotTypes = new int[excludedTypes.size()];
+                    for (int i = 0; i < excludedTypes.size(); i++) {
+                        String type = excludedTypes.get(i);
+                        annotTypes[i] = convStringToAnnotType(type);
+                    }
+
+                    builder = builder.excludeAnnotationListTypes(annotTypes);
+                }
                 if (!configJson.isNull(KEY_CONFIG_EXPORT_PATH)) {
                     String exportPath = configJson.getString(KEY_CONFIG_EXPORT_PATH);
                     configInfo.setExportPath(exportPath);
@@ -789,6 +805,10 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_PAGE_INDICATOR_ENABLED)) {
                     boolean pageIndicatorEnabled = configJson.getBoolean(KEY_CONFIG_PAGE_INDICATOR_ENABLED);
                     builder.showPageNumberIndicator(pageIndicatorEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SHOW_QUICK_NAVIGATION_BUTTON)) {
+                    boolean showQuickNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_QUICK_NAVIGATION_BUTTON);
+                    builder.pageStackEnabled(showQuickNavButton);
                 }
                 if (!configJson.isNull(KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE)) {
                     boolean followSystem = configJson.getBoolean(KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE);
@@ -863,6 +883,18 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED)) {
                     boolean annotationPermissionCheckEnabled = configJson.getBoolean(KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED);
                     toolManagerBuilder = toolManagerBuilder.setAnnotPermission(annotationPermissionCheckEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATIONS_LIST_EDITING_ENABLED)) {
+                    boolean annotationsListEditingEnabled = configJson.getBoolean(KEY_CONFIG_ANNOTATIONS_LIST_EDITING_ENABLED);
+                    builder.annotationsListEditingEnabled(annotationsListEditingEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED)) {
+                    boolean userBookmarksListEditingEnabled = configJson.getBoolean(KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED);
+                    builder.userBookmarksListEditingEnabled(userBookmarksListEditingEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES)) {
+                    boolean showNavigationListAsSidePanelOnLargeDevices = configJson.getBoolean(KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES);
+                    builder.navigationListAsSheetOnLargeDevice(showNavigationListAsSidePanelOnLargeDevices);
                 }
                 if (!configJson.isNull(KEY_CONFIG_OVERRIDE_BEHAVIOR)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_OVERRIDE_BEHAVIOR);
