@@ -1332,6 +1332,20 @@
         [self openOutlineList:result];
     } else if ([call.method isEqualToString:PTOpenLayersListKey]) {
         [self openLayersList:result];
+    } else if ([call.method isEqualToString:PTOpenThumbnailsViewKey]) {
+        [self openThumbnailsView:result];
+    } else if ([call.method isEqualToString:PTOpenAddPagesViewKey]) {
+        NSDictionary* rect = [PdftronFlutterPlugin PT_idAsNSDict:call.arguments[PTSourceRectArgumentKey]];
+        [self openAddPagesView:result rect:rect];
+    } else if ([call.method isEqualToString:PTOpenViewSettingsKey]) {
+        NSDictionary* rect = [PdftronFlutterPlugin PT_idAsNSDict:call.arguments[PTSourceRectArgumentKey]];
+        [self openViewSettings:result rect:rect];
+    } else if ([call.method isEqualToString:PTOpenSearchKey]) {
+        [self openSearch:result];
+    } else if ([call.method isEqualToString:PTOpenTabSwitcherKey]) {
+        [self openTabSwitcher:result];
+    } else if ([call.method isEqualToString:PTOpenGoToPageViewKey]) {
+        [self openGoToPageView:result];
     } else if ([call.method isEqualToString:PTOpenNavigationListsKey]) {
         [self openNavigationLists:result];
     } else if ([call.method isEqualToString:PTGetCurrentPageKey]) {
@@ -2652,6 +2666,76 @@
         }
     }
     
+    flutterResult(nil);
+}
+
+-(void)openThumbnailsView:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if (documentController) {
+        [documentController showThumbnailsController];
+    }
+
+    flutterResult(nil);
+}
+
+-(void)openAddPagesView:(FlutterResult)flutterResult rect:(NSDictionary *)rect
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    NSNumber *rectX1 = rect[PTRectX1Key];
+    NSNumber *rectY1 = rect[PTRectY1Key];
+    NSNumber *rectX2 = rect[PTRectX2Key];
+    NSNumber *rectY2 = rect[PTRectY2Key];
+    CGRect screenRect = CGRectMake([rectX1 doubleValue], [rectY1 doubleValue], [rectX2 doubleValue]-[rectX1 doubleValue], [rectY2 doubleValue]-[rectY1 doubleValue]);
+    if (documentController) {
+        [documentController showAddPagesViewFromScreenRect:screenRect];
+    }
+
+    flutterResult(nil);
+}
+
+-(void)openViewSettings:(FlutterResult)flutterResult rect:(NSDictionary *)rect
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    NSNumber *rectX1 = rect[PTRectX1Key];
+    NSNumber *rectY1 = rect[PTRectY1Key];
+    NSNumber *rectX2 = rect[PTRectX2Key];
+    NSNumber *rectY2 = rect[PTRectY2Key];
+    CGRect screenRect = CGRectMake([rectX1 doubleValue], [rectY1 doubleValue], [rectX2 doubleValue]-[rectX1 doubleValue], [rectY2 doubleValue]-[rectY1 doubleValue]);
+    if (documentController) {
+        [documentController showSettingsFromScreenRect:screenRect];
+    }
+
+    flutterResult(nil);
+}
+
+-(void)openSearch:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if (documentController) {
+        [documentController showSearchViewController];
+    }
+
+    flutterResult(nil);
+}
+
+-(void)openTabSwitcher:(FlutterResult)flutterResult
+{
+    if (self.tabbedDocumentViewController) {
+        [self.tabbedDocumentViewController showTabsList:self.tabbedDocumentViewController.tabBar];
+    }
+
+    flutterResult(nil);
+}
+
+-(void)openGoToPageView:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if (documentController && documentController.pageIndicatorViewController) {
+        PTPageIndicatorViewController * pageIndicator = documentController.pageIndicatorViewController;
+        [pageIndicator presentGoToPageController];
+    }
+
     flutterResult(nil);
 }
 

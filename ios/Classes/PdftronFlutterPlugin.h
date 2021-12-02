@@ -212,6 +212,12 @@ static NSString * const PTOpenAnnotationListKey = @"openAnnotationList";
 static NSString * const PTOpenBookmarkListKey = @"openBookmarkList";
 static NSString * const PTOpenOutlineListKey = @"openOutlineList";
 static NSString * const PTOpenLayersListKey = @"openLayersList";
+static NSString * const PTOpenThumbnailsViewKey = @"openThumbnailsView";
+static NSString * const PTOpenAddPagesViewKey = @"openAddPagesView";
+static NSString * const PTOpenViewSettingsKey = @"openViewSettings";
+static NSString * const PTOpenSearchKey = @"openSearch";
+static NSString * const PTOpenTabSwitcherKey = @"openTabSwitcher";
+static NSString * const PTOpenGoToPageViewKey = @"openGoToPageView";
 static NSString * const PTOpenNavigationListsKey = @"openNavigationLists";
 static NSString * const PTGetCurrentPageKey = @"getCurrentPage";
 
@@ -236,6 +242,7 @@ static NSString * const PTAnnotationArgumentKey = @"annotation";
 static NSString * const PTAnnotationsWithFlagsArgumentKey = @"annotationsWithFlags";
 static NSString * const PTAnnotationPropertiesArgumentKey = @"annotationProperties";
 static NSString * const PTLeadingNavButtonIconArgumentKey = @"leadingNavButtonIcon";
+static NSString * const PTSourceRectArgumentKey = @"sourceRect";
 static NSString * const PTPathArgumentKey = @"path";
 static NSString * const PTDpiArgumentKey = @"dpi";
 static NSString * const PTExportFormatArgumentKey = @"exportFormat";
@@ -287,6 +294,11 @@ static NSString * const PTActionKey = @"action";
 static NSString * const PTAnnotationIdKey = @"id";
 static NSString * const PTAnnotationPageNumberKey = @"pageNumber";
 static NSString * const PTAnnotationListKey = @"annotations";
+
+static NSString * const PTRectX1Key = @"x1";
+static NSString * const PTRectY1Key = @"y1";
+static NSString * const PTRectX2Key = @"x2";
+static NSString * const PTRectY2Key = @"y2";
 
 static NSString * const PTFormFieldNameKey = @"fieldName";
 static NSString * const PTFormFieldValueKey = @"fieldValue";
