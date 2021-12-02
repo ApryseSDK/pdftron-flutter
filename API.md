@@ -753,6 +753,27 @@ Returns a Future.
 PdftronFlutter.addBookmark("Page 7", 6);
 ```
 
+#### userBookmarksListEditingEnabled
+bool, optional, default value is true
+
+Defines whether the bookmark list can be edited. If the viewer is readonly then bookmarks on Android are 
+still editable but are saved to the device rather than the PDF.
+
+```dart
+config.userBookmarksListEditingEnabled = false;
+```
+
+### Navigation
+
+#### showNavigationListAsSidePanelOnLargeDevices
+bool, optional, defaults to true
+
+Defines whether the navigation list will be displayed as a side panel on large devices such as iPads and tablets.
+
+```dart
+config.showNavigationListAsSidePanelOnLargeDevices = true;
+```
+
 ### Multi-tab
 
 #### closeAllTabs
@@ -1122,6 +1143,10 @@ String, defaults to `.pdf`, required if using base64 string of a non-pdf file.
 
 Defines the file extension for the base64 string in document, if [`isBase64String`](#isBase64String) is true.
 
+```dart
+config.base64FileExtension = '.jpeg';
+```
+
 ### UI Customization
 
 #### disabledElements
@@ -1151,6 +1176,15 @@ Defines whether to show the leading navigation button.
 
 ```dart
 config.showLeadingNavButton = true;
+```
+
+#### downloadDialogEnabled
+bool, defaults to true, Android only.
+
+Defines whether the download dialog should be shown.
+
+```dart
+config.downloadDialogEnabled = false;
 ```
 
 ### Toolbar Customization
@@ -1375,6 +1409,25 @@ Defines annotation types that cannot be edited after creation.
 config.disableEditingByAnnotationType = [Tools.annotationCreateTextSquiggly, Tools.annotationCreateTextHighlight, Tools.annotationCreateEllipse];
 ```
 
+#### annotationsListEditingEnabled
+bool, optional, default value is true
+
+If document editing is enabled, then this value determines if the annotation list is editable. 
+
+```dart
+config.annotationsListEditingEnabled = false;
+```
+
+#### excludedAnnotationListTypes
+array of [`Config.Tools`](./src/Config/Config.ts) constants, optional, defaults to none
+
+Defines types to be excluded from the annotation list.
+Example use:
+
+```dart
+config.excludedAnnotationListTypes=[Tools.annotationCreateEllipse, Tools.annotationCreateRedaction];
+```
+
 ### Annotation Menu
 
 #### hideAnnotationMenu
@@ -1442,6 +1495,17 @@ Defines actions that should skip default behavior, such as external link click. 
 
 ```dart
 config.overrideBehavior = [Behaviors.linkPress];
+```
+
+### Navigation
+
+#### showQuickNavigationButton
+bool, defaults to true.
+
+Defines whether the quick navigation buttons will appear in the viewer.
+
+```dart
+config.showQuickNavigationButton = false;
 ```
 
 ### Multi-tab

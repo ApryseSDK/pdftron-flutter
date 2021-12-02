@@ -378,6 +378,14 @@
                         [documentController setOverrideAnnotationMenuBehavior:overrideAnnotationMenuBehavior];
                     }
                 }
+                else if ([key isEqualToString:PTExcludedAnnotationListTypesKey]) {
+                    
+                    NSArray* excludedAnnotationListTypes = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTExcludedAnnotationListTypesKey class:[NSArray class] error:&error];
+                    
+                    if (!error && excludedAnnotationListTypes) {
+                        [documentController setExcludedAnnotationListTypes:excludedAnnotationListTypes];
+                    }
+                }
                 else if ([key isEqualToString:PTAutoSaveEnabledKey]) {
                     
                     NSNumber* autoSaveEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAutoSaveEnabledKey class:[NSNumber class] error:&error];
@@ -435,6 +443,14 @@
 
                     if (!error && pageIndicatorAlwaysVisibleNumber) {
                         [documentController setPageIndicatorAlwaysVisible:[pageIndicatorAlwaysVisibleNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTShowQuickNavigationButtonKey]) {
+                    
+                    NSNumber *showQuickNavButton = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowQuickNavigationButtonKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && showQuickNavButton) {
+                        documentController.navigationHistoryEnabled = [showQuickNavButton boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTFollowSystemDarkModeKey]) {
@@ -568,6 +584,33 @@
                         [documentController setAnnotationPermissionCheckEnabled:[checkEnabledNumber boolValue]];
                     }
                 }
+                else if ([key isEqualToString:PTAnnotationsListEditingEnabledKey]) {
+                    
+                    NSNumber* annotationsListEditingEnabled = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationsListEditingEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && annotationsListEditingEnabled) {
+                        
+                        [documentController setAnnotationsListEditingEnabled:[annotationsListEditingEnabled boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTUserBookmarksListEditingEnabledKey]) {
+                    
+                    NSNumber* userBookmarksListEditingEnabled = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUserBookmarksListEditingEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && userBookmarksListEditingEnabled) {
+                        
+                        [documentController setUserBookmarksListEditingEnabled:[userBookmarksListEditingEnabled boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTShowNavigationListAsSidePanelOnLargeDevicesKey]) {
+                    
+                    NSNumber* showNavigationListAsSidePanelOnLargeDevices = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowNavigationListAsSidePanelOnLargeDevicesKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && showNavigationListAsSidePanelOnLargeDevices) {
+                        
+                        [documentController setShowNavigationListAsSidePanelOnLargeDevices:[showNavigationListAsSidePanelOnLargeDevices boolValue]];
+                    }
+                }
                 else if ([key isEqualToString:PTOverrideBehaviorKey]) {
                     
                     NSArray* overrideBehavior = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTOverrideBehaviorKey class:[NSArray class] error:&error];
@@ -666,8 +709,10 @@
         if ([item isKindOfClass:[NSString class]]) {
             NSString *string = (NSString *)item;
             
-            if ([string isEqualToString:PTAnnotationEditToolKey]) {
-                // multi-select not implemented
+            if ([string isEqualToString:PTAnnotationEditToolKey] ||
+                [string isEqualToString:PTEditToolButtonKey] ||
+                [string isEqualToString:PTMultiSelectToolKey]) {
+                toolManager.allowsMultipleAnnotationSelection = value;
             }
             else if ([string isEqualToString:PTAnnotationCreateStickyToolKey] ||
                      [string isEqualToString:PTStickyToolButtonKey]) {
@@ -794,6 +839,9 @@
             else if ([string isEqualToString:PTFormCreateListBoxFieldToolKey]) {
                 // TODO
             }
+            else if ([string isEqualToString:PTAnnotationCreateFreeHighlighterToolKey]) {
+                toolManager.freehandHighlightAnnotationOptions.canCreate = value;
+            }
             else if ([string isEqualToString:PTPencilKitDrawingToolKey]) {
                 toolManager.pencilDrawingAnnotationOptions.canCreate = value;
             }
@@ -875,10 +923,15 @@
             ^{
                 documentController.bookmarkListHidden = YES;
             },
-//        PTEditMenuButtonKey:
-//            ^{
-//
-//            },
+        PTLayerListButtonKey:
+            ^{
+                documentController.pdfLayerListHidden = YES;
+                documentController.navigationListsViewController.pdfLayerViewControllerVisibility = PTNavigationListsViewControllerVisibilityAlwaysHidden;
+            },
+        PTEditMenuButtonKey:
+            ^{
+                documentController.toolGroupManager.editingEnabled = NO;
+            },
         PTCropPageButtonKey:
             ^{
                 documentController.settingsViewController.cropPagesHidden = YES;
@@ -886,6 +939,22 @@
         PTMoreItemsButtonKey:
             ^{
                 documentController.moreItemsButtonHidden = YES;
+            },
+        PTSaveIdenticalCopyButtonKey:
+            ^ {
+                if (![documentController isExportButtonHidden]) {
+                    NSMutableArray * exportItems = [documentController.exportItems mutableCopy];
+                    [exportItems removeObject:documentController.exportCopyButtonItem];
+                    documentController.exportItems = [exportItems copy];
+                }
+            },
+        PTSaveFlattenedCopyButtonKey:
+            ^{
+                if (![documentController isExportButtonHidden]) {
+                    NSMutableArray * exportItems = [documentController.exportItems mutableCopy];
+                    [exportItems removeObject:documentController.exportFlattenedCopyButtonItem];
+                    documentController.exportItems = [exportItems copy];
+                }
             },
     };
     
