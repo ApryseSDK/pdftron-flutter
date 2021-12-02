@@ -18,6 +18,7 @@ class Config {
   var _hideAnnotationMenu;
   var _annotationMenuItems;
   var _overrideAnnotationMenuBehavior;
+  var _excludedAnnotationListTypes;
   var _exportPath;
   var _openUrlPath;
   var _openSavedCopyInNewTab;
@@ -29,6 +30,8 @@ class Config {
   var _signSignatureFieldWithStamps;
   var _selectAnnotationAfterCreation;
   var _pageIndicatorEnabled;
+  var _pageStackEnabled;
+  var _showQuickNavigationButton;
   var _followSystemDarkMode;
   var _annotationToolbars;
   var _hideDefaultAnnotationToolbars;
@@ -44,6 +47,9 @@ class Config {
   var _annotationAuthor;
   var _continuousAnnotationEditing;
   var _annotationPermissionCheckEnabled;
+  var _annotationsListEditingEnabled;
+  var _userBookmarksListEditingEnabled;
+  var _showNavigationListAsSidePanelOnLargeDevices;
   var _overrideBehavior;
   var _tabTitle;
   var _pageNumberIndicatorAlwaysVisible;
@@ -91,6 +97,9 @@ class Config {
   set overrideAnnotationMenuBehavior(List value) =>
       _overrideAnnotationMenuBehavior = value;
 
+  set excludedAnnotationListTypes(List value) => 
+      _excludedAnnotationListTypes = value;
+
   set exportPath(String value) => _exportPath = value;
 
   set openUrlPath(String value) => _openUrlPath = value;
@@ -114,6 +123,8 @@ class Config {
       _selectAnnotationAfterCreation = value;
 
   set pageIndicatorEnabled(bool value) => _pageIndicatorEnabled = value;
+
+  set showQuickNavigationButton(bool value) => _showQuickNavigationButton = value;
 
   set followSystemDarkMode(bool value) => _followSystemDarkMode = value;
 
@@ -149,6 +160,15 @@ class Config {
 
   set annotationPermissionCheckEnabled(bool value) =>
       _annotationPermissionCheckEnabled = value;
+
+  set annotationsListEditingEnabled(bool value) =>
+      _annotationsListEditingEnabled = value;
+
+  set userBookmarksListEditingEnabled(bool value) =>
+      _userBookmarksListEditingEnabled = value;
+
+  set showNavigationListAsSidePanelOnLargeDevices(bool value) =>
+      _showNavigationListAsSidePanelOnLargeDevices = value;
 
   set overrideBehavior(List<String> value) => _overrideBehavior = value;
 
@@ -186,6 +206,7 @@ class Config {
         _annotationMenuItems = json['annotationMenuItems'],
         _overrideAnnotationMenuBehavior =
             json['overrideAnnotationMenuBehavior'],
+        _excludedAnnotationListTypes = json['excludedAnnotationListTypes'],
         _exportPath = json['exportPath'],
         _openUrlPath = json['openUrlPath'],
         _openSavedCopyInNewTab = json['openSavedCopyInNewTab'],
@@ -197,6 +218,7 @@ class Config {
         _signSignatureFieldWithStamps = json['signSignatureFieldWithStamps'],
         _selectAnnotationAfterCreation = json['selectAnnotationAfterCreation'],
         _pageIndicatorEnabled = json['pageIndicatorEnabled'],
+        _showQuickNavigationButton = json['showQuickNavigationButton'],
         _followSystemDarkMode = json['followSystemDarkMode'],
         _annotationToolbars = json['annotationToolbars'],
         _hideDefaultAnnotationToolbars = json['hideDefaultAnnotationToolbars'],
@@ -213,6 +235,9 @@ class Config {
         _continuousAnnotationEditing = json['continuousAnnotationEditing'],
         _annotationPermissionCheckEnabled =
             json['annotationPermissionCheckEnabled'],
+        _annotationsListEditingEnabled = json['annotationsListEditingEnabled'],
+        _userBookmarksListEditingEnabled = json['userBookmarksListEditingEnabled'],
+        _showNavigationListAsSidePanelOnLargeDevices = json['showNavigationListAsSidePanelOnLargeDevices'],
         _overrideBehavior = json['overrideBehavior'],
         _tabTitle = json['tabTitle'],
         _pageNumberIndicatorAlwaysVisible = json['pageNumberIndicatorAlwaysVisible'],
@@ -240,6 +265,7 @@ class Config {
         'hideAnnotationMenu': _hideAnnotationMenu,
         'annotationMenuItems': _annotationMenuItems,
         'overrideAnnotationMenuBehavior': _overrideAnnotationMenuBehavior,
+        'excludedAnnotationListTypes': _excludedAnnotationListTypes,
         'exportPath': _exportPath,
         'openUrlPath': _openUrlPath,
         'openSavedCopyInNewTab': _openSavedCopyInNewTab,
@@ -251,6 +277,7 @@ class Config {
         'signSignatureFieldWithStamps': _signSignatureFieldWithStamps,
         'selectAnnotationAfterCreation': _selectAnnotationAfterCreation,
         'pageIndicatorEnabled': _pageIndicatorEnabled,
+        'showQuickNavigationButton': _showQuickNavigationButton,
         'followSystemDarkMode': _followSystemDarkMode,
         'annotationToolbars': _annotationToolbars,
         'hideDefaultAnnotationToolbars': _hideDefaultAnnotationToolbars,
@@ -266,6 +293,9 @@ class Config {
         'annotationAuthor': _annotationAuthor,
         'continuousAnnotationEditing': _continuousAnnotationEditing,
         'annotationPermissionCheckEnabled': _annotationPermissionCheckEnabled,
+        'annotationsListEditingEnabled': _annotationsListEditingEnabled,
+        'userBookmarksListEditingEnabled': _userBookmarksListEditingEnabled,
+        'showNavigationListAsSidePanelOnLargeDevices': _showNavigationListAsSidePanelOnLargeDevices,
         'overrideBehavior': _overrideBehavior,
         'tabTitle': _tabTitle,
         'pageNumberIndicatorAlwaysVisible': _pageNumberIndicatorAlwaysVisible,
