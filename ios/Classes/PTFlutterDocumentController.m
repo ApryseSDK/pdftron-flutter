@@ -836,15 +836,6 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 {
     if (self.isAnnotationManagerEnabled && self.userId) {
         NSString* xfdf = [self.pdfViewCtrl.externalAnnotManager GetLastXFDF];
-        NSError* error;
-        
-        [self.toolManager.annotationManager updateAnnotationsWithXFDFCommand:xfdf error:&error];
-        
-        if (error) {
-            NSLog(@"An error occurred: %@", error);
-            return;
-        }
-        
         [self.plugin documentController:self annotationsAsXFDFCommand:xfdf];
     } else {
         // For UndoRedoStateChanged event
