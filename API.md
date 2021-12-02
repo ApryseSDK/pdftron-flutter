@@ -1339,7 +1339,7 @@ config.reflowOrientation = ReflowOrientation.horizontal;
 ```
 
 #### imageInReflowModEnabled
-bool, defaults to true.
+bool, defaults to true, will be available on iOS in version 9.1.2 and greater.
 
 Whether to show images in reflow mode.
 

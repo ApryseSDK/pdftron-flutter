@@ -590,7 +590,6 @@
                         } else {
                             documentController.reflowViewController.scrollingDirection = PTReflowViewControllerScrollingDirectionVertical;
                         }
-                        [documentController.reflowViewController updateSettings];
                     }
                 }
                 else if ([key isEqualToString:PTImageInReflowModeEnabledKey]) {
@@ -598,12 +597,8 @@
                     NSNumber *imageInReflowModeEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTImageInReflowModeEnabledKey class:[NSNumber class] error:&error];
                     
                     if (!error && imageInReflowModeEnabledNumber) {
-                        if ([imageInReflowModeEnabledNumber boolValue]) {
-                            documentController.reflowViewController.reflowMode = PTReflowModeTextAndRawImages;
-                        } else {
-                            documentController.reflowViewController.reflowMode = PTReflowModeTextOnly;
-                        }
-                        [documentController.reflowViewController updateSettings];
+                        // TODO: When support is added, use the code below
+                        // documentController.reflowViewController.reflowManager.includeImages = [imageInReflowModeEnabledNumber boolValue];
                     }
                 }
                 else
