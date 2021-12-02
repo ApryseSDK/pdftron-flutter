@@ -220,14 +220,14 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.openRotateDialog);
   }
 
-  static Future<void> openAddPagesView(Map<String, double> rect) {
+  static Future<void> openAddPagesView(Map<String, double> sourceRect) {
     return _channel.invokeMethod(Functions.openAddPagesView,
-        <String, dynamic>{Parameters.rect: rect});
+        <String, dynamic>{Parameters.sourceRect: sourceRect});
   }
 
-  static Future<void> openViewSettings(Map<String, double> rect) {
+  static Future<void> openViewSettings(Map<String, double> sourceRect) {
     return _channel.invokeMethod(Functions.openViewSettings,
-        <String, dynamic>{Parameters.rect: rect});
+        <String, dynamic>{Parameters.sourceRect: sourceRect});
   }
 
   static Future<void> openCrop() {

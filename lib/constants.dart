@@ -75,7 +75,7 @@ class Parameters {
   static const annotationsWithFlags = "annotationsWithFlags";
   static const annotationProperties = "annotationProperties";
   static const leadingNavButtonIcon = "leadingNavButtonIcon";
-  static const rect = "rect";
+  static const sourceRect = "sourceRect";
   static const path = "path";
   static const exportFormat = "exportFormat";
   static const dpi = "dpi";

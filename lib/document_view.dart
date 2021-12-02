@@ -233,14 +233,14 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.openRotateDialog);
   }
 
-  Future<void> openAddPagesView(Map<String, double> rect) {
+  Future<void> openAddPagesView(Map<String, double> sourceRect) {
     return _channel.invokeMethod(Functions.openAddPagesView,
-        <String, dynamic>{Parameters.rect: rect});
+        <String, dynamic>{Parameters.sourceRect: sourceRect});
   }
 
-  Future<void> openViewSettings(Map<String, double> rect) {
+  Future<void> openViewSettings(Map<String, double> sourceRect) {
     return _channel.invokeMethod(Functions.openViewSettings,
-        <String, dynamic>{Parameters.rect: rect});
+        <String, dynamic>{Parameters.sourceRect: sourceRect});
   }
 
   Future<void> openCrop() {
