@@ -1074,7 +1074,6 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
            if (@available(iOS 13.0, *)) {
                self.toolGroupIndicatorView.button.largeContentImage = matchedDefaultGroup.image;
            }
-           return;
         }
 
         if (initialToolbarIndex != NSNotFound) {
