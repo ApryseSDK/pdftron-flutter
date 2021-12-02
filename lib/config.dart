@@ -57,6 +57,9 @@ class Config {
   var _disableEditingByAnnotationType;
   var _hideViewModeItems;
   var _defaultEraserType;
+  var _annotationManagerEnabled;
+  var _userId;
+  var _userName;
 
   Config();
 
@@ -184,6 +187,12 @@ class Config {
 
   set defaultEraserType(String value) => _defaultEraserType = value;
 
+  set annotationManagerEnabled(bool value) => _annotationManagerEnabled = value;
+
+  set userId(String value) => _userId = value;
+  
+  set userName(String value) => _userName = value;
+
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
         _disabledTools = json['disabledTools'],
@@ -241,7 +250,11 @@ class Config {
         _pageNumberIndicatorAlwaysVisible = json['pageNumberIndicatorAlwaysVisible'],
         _disableEditingByAnnotationType = json['disableEditingByAnnotationType'],
         _hideViewModeItems = json['hideViewModeItems'],
-        _defaultEraserType = json['defaultEraserType'];
+        _defaultEraserType = json['defaultEraserType'],
+        _annotationManagerEnabled = json['annotationManagerEnabled'],
+        _userId = json['userId'],
+        _userName = json['userName'];
+
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -299,5 +312,8 @@ class Config {
         'disableEditingByAnnotationType': _disableEditingByAnnotationType,
         'hideViewModeItems': _hideViewModeItems,
         'defaultEraserType' : _defaultEraserType,
+        'annotationManagerEnabled' : _annotationManagerEnabled,
+        'userId' : _userId,
+        'userName' : _userName
       };
 }

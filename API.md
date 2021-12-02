@@ -899,6 +899,8 @@ var pageMovedCancel = startPageMovedListener((previousPageNumber, pageNumber) {
 #### startExportAnnotationCommandListener
 Event is raised when local annotation changes committed to the document.
 
+To also raise this event upon undo/redo, [`annotationManagerEnabled`](#annotationManagerEnabled) must be true, and [`userId`](#userId) must not be null.
+
 Event Parameters:
 
 Name | Type | Description
@@ -1554,7 +1556,7 @@ config.hideViewModeItems=[ViewModePickerItem.ColorMode, ViewModePickerItem.Crop]
 ### Others
 
 #### autoSaveEnabled
-bool, dafaults to true.
+bool, defaults to true.
 
 Defines whether document is automatically saved by the viewer.
 
@@ -1578,4 +1580,39 @@ Defines whether the UI will appear in a dark color when the system is dark mode.
 
 ```dart
 config.followSystemDarkMode = false;
+```
+
+#### annotationManagerEnabled
+bool, defaults to false.
+
+Defines whether the annotation manager is enabled. 
+
+When [`annotationManagerEnabled`](#annotationManagerEnabled) is true, and [`userId`](#userId) is not null, then [`startExportAnnotationCommandListener`](#startExportAnnotationCommandListener) will be raised when the state of the current document's undo/redo stack has been changed.
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Bob123";
+```
+
+#### userId
+String.
+
+The unique identifier of the current user.
+
+When [`annotationManagerEnabled`](#annotationManagerEnabled) is true, and [`userId`](#userId) is not null, then [`startExportAnnotationCommandListener`](#startExportAnnotationCommandListener) will be raised when the state of the current document's undo/redo stack has been changed.
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Bob123";
+```
+
+#### userName
+String, Android only.
+
+The name of the current user. Used in the annotation manager when [`annotationManagerEnabled`](#annotationManagerEnabled) is true.
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Bob123";
+config.userName = "Bob";
 ```
