@@ -30,6 +30,7 @@ class Config {
   var _selectAnnotationAfterCreation;
   var _pageIndicatorEnabled;
   var _followSystemDarkMode;
+  var _downloadDialogEnabled;
   var _annotationToolbars;
   var _hideDefaultAnnotationToolbars;
   var _hideAnnotationToolbarSwitcher;
@@ -115,6 +116,8 @@ class Config {
 
   set followSystemDarkMode(bool value) => _followSystemDarkMode = value;
 
+  set downloadDialogEnabled(bool value) => _downloadDialogEnabled = value;
+
   set annotationToolbars(List value) => _annotationToolbars = value;
 
   set hideDefaultAnnotationToolbars(List value) =>
@@ -192,6 +195,7 @@ class Config {
         _selectAnnotationAfterCreation = json['selectAnnotationAfterCreation'],
         _pageIndicatorEnabled = json['pageIndicatorEnabled'],
         _followSystemDarkMode = json['followSystemDarkMode'],
+        _downloadDialogEnabled = json['downloadDialogEnabled'],
         _annotationToolbars = json['annotationToolbars'],
         _hideDefaultAnnotationToolbars = json['hideDefaultAnnotationToolbars'],
         _hideAnnotationToolbarSwitcher = json['hideAnnotationToolbarSwitcher'],
@@ -244,6 +248,7 @@ class Config {
         'selectAnnotationAfterCreation': _selectAnnotationAfterCreation,
         'pageIndicatorEnabled': _pageIndicatorEnabled,
         'followSystemDarkMode': _followSystemDarkMode,
+        'downloadDialogEnabled': _downloadDialogEnabled,
         'annotationToolbars': _annotationToolbars,
         'hideDefaultAnnotationToolbars': _hideDefaultAnnotationToolbars,
         'hideAnnotationToolbarSwitcher': _hideAnnotationToolbarSwitcher,
