@@ -7,6 +7,7 @@ import android.util.Base64;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.fdf.FDFDoc;
@@ -22,6 +23,7 @@ import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
+import com.pdftron.pdf.controls.PdfViewCtrlTabBaseFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.controls.ThumbnailsViewFragment;
@@ -36,8 +38,10 @@ import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.utils.AnalyticsHandlerAdapter;
 import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.BookmarkManager;
+import com.pdftron.pdf.utils.DialogGoToPage;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.utils.ViewerUtils;
@@ -2062,11 +2066,11 @@ public class PluginUtils {
                 openTabSwitcher(result, component);
                 break;
             }
-//            case FUNCTION_OPEN_GO_TO_PAGE_VIEW: {
-//                checkFunctionPrecondition(component);
-//                openGoToPageView(result, component);
-//                break;
-//            }
+            case FUNCTION_OPEN_GO_TO_PAGE_VIEW: {
+                checkFunctionPrecondition(component);
+                openGoToPageView(result, component);
+                break;
+            }
             case FUNCTION_OPEN_NAVIGATION_LISTS: {
                 checkFunctionPrecondition(component);
                 openNavigationLists(result, component);
@@ -2421,15 +2425,30 @@ public class PluginUtils {
         return;
     }
 
-//    private static void openGoToPageView(MethodChannel.Result result, ViewerComponent component) {
-//        PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
-//        if (pdfViewCtrlTabFragment != null) {
-//            pdfViewCtrlTabFragment.openGoToPageView();
-//            result.success(null);
-//            return;
-//        }
-//        result.error("InvalidState", "Activity not attached", null);
-//    }
+    private static void openGoToPageView(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        final PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
+        if (pdfViewCtrl == null || pdfViewCtrlTabFragment == null) {
+            result.error("InvalidState", "Activity not attached", null);
+        }
+
+        DialogGoToPage dlgGotoPage = new DialogGoToPage(pdfViewCtrl.getContext(), pdfViewCtrl, new DialogGoToPage.DialogGoToPageListener() {
+            @Override
+            public void onPageSet(int pageNum) {
+                pdfViewCtrlTabFragment.setCurrentPageHelper(pageNum, true);
+                if (pdfViewCtrlTabFragment.getReflowControl() != null) {
+                    try {
+                        pdfViewCtrlTabFragment.getReflowControl().setCurrentPage(pageNum);
+                    } catch (Exception e) {
+                        AnalyticsHandlerAdapter.getInstance().sendException(e);
+                    }
+                }
+            }
+        });
+        dlgGotoPage.show();
+        result.success(null);
+        return;
+    }
 
     private static void openNavigationLists(MethodChannel.Result result, ViewerComponent component) {
         PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
