@@ -225,7 +225,7 @@ Returns a Future.
 PdftronFlutter.openThumbnailsView();
 ```
 
-#### showRotateDialog
+#### openRotateDialog
 Displays a rotate dialog. Android only.
 
 The dialog allows users to rotate pages of the opened document by 90, 180 and 270 degrees. It also displays a thumbnail of the current page at the selected rotation angle.
@@ -233,10 +233,10 @@ The dialog allows users to rotate pages of the opened document by 90, 180 and 27
 Returns a Future.
 
 ```dart
-PdftronFlutter.showRotateDialog();
+PdftronFlutter.openRotateDialog();
 ```
 
-#### showAddPagesView
+#### openAddPagesView
 Displays the add pages view.
 
 Requires a source rect in screen co-ordinates. On iOS this rect will be the anchor point for the view. The rect is ignored on Android.
@@ -250,10 +250,10 @@ Name | Type | Description
 rect | map | The rectangular area in screen co-ordinates with keys x1 (left), y1(bottom), y1(right), y2(top). Coordinates are in double format.
 
 ```dart
-PdftronFlutter.showAddPagesView({'x1': 10.0, 'y1': 10.0, 'x2': 20.0, 'y2': 20.0});
+PdftronFlutter.openAddPagesView({'x1': 10.0, 'y1': 10.0, 'x2': 20.0, 'y2': 20.0});
 ```
 
-#### showViewSettings
+#### openViewSettings
 Displays the view settings.
 
 Requires a source rect in screen co-ordinates. On iOS this rect will be the anchor point for the view. The rect is ignored on Android.
@@ -267,16 +267,16 @@ Name | Type | Description
 rect | map | The rectangular area in screen co-ordinates with keys x1 (left), y1(bottom), y1(right), y2(top). Coordinates are in double format.
 
 ```dart
-PdftronFlutter.showViewSettings({'x1': 10.0, 'y1': 10.0, 'x2': 20.0, 'y2': 20.0});
+PdftronFlutter.openViewSettings({'x1': 10.0, 'y1': 10.0, 'x2': 20.0, 'y2': 20.0});
 ```
 
-#### showCrop
+#### openCrop
 Displays the page crop option. Android only.
 
 Returns a Future.
 
 ```dart
-PdftronFlutter.showCrop();
+PdftronFlutter.openCrop();
 ```
 
 #### openSearch
@@ -553,13 +553,13 @@ if (pageChanged) {
 }
 ```
 
-#### showGoToPageView
+#### openGoToPageView
 Opens a go-to page dialog. If the user inputs a valid page number into the dialog, the viewer will go to that page.
 
 Returns a Future.
 
 ```dart
-PdftronFlutter.showGoToPageView();
+PdftronFlutter.openGoToPageView();
 ```
 
 ### Import/Export Annotations

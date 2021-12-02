@@ -229,20 +229,20 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.openThumbnailsView);
   }
   
-  Future<void> showRotateDialog() {
-    return _channel.invokeMethod(Functions.showRotateDialog);
+  Future<void> openRotateDialog() {
+    return _channel.invokeMethod(Functions.openRotateDialog);
   }
 
-  Future<void> showAddPagesView() {
-    return _channel.invokeMethod(Functions.showAddPagesView);
+  Future<void> openAddPagesView() {
+    return _channel.invokeMethod(Functions.openAddPagesView);
   }
 
-  Future<void> showViewSettings() {
-    return _channel.invokeMethod(Functions.showViewSettings);
+  Future<void> openViewSettings() {
+    return _channel.invokeMethod(Functions.openViewSettings);
   }
 
-  Future<void> showCrop() {
-    return _channel.invokeMethod(Functions.showCrop);
+  Future<void> openCrop() {
+    return _channel.invokeMethod(Functions.openCrop);
   }
 
   Future<void> openSearch() {
@@ -253,8 +253,8 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.openTabSwitcher);
   }
   
-  Future<void> showGoToPageView() {
-    return _channel.invokeMethod(Functions.showGoToPageView);
+  Future<void> openGoToPageView() {
+    return _channel.invokeMethod(Functions.openGoToPageView);
   }
 
   Future<void> openNavigationLists() {

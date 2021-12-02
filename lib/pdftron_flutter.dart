@@ -216,20 +216,20 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.openThumbnailsView);
   }
   
-  static Future<void> showRotateDialog() {
-    return _channel.invokeMethod(Functions.showRotateDialog);
+  static Future<void> openRotateDialog() {
+    return _channel.invokeMethod(Functions.openRotateDialog);
   }
 
-  static Future<void> showAddPagesView() {
-    return _channel.invokeMethod(Functions.showAddPagesView);
+  static Future<void> openAddPagesView() {
+    return _channel.invokeMethod(Functions.openAddPagesView);
   }
 
-  static Future<void> showViewSettings() {
-    return _channel.invokeMethod(Functions.showViewSettings);
+  static Future<void> openViewSettings() {
+    return _channel.invokeMethod(Functions.openViewSettings);
   }
 
-  static Future<void> showCrop() {
-    return _channel.invokeMethod(Functions.showCrop);
+  static Future<void> openCrop() {
+    return _channel.invokeMethod(Functions.openCrop);
   }
 
   static Future<void> openSearch() {
@@ -240,8 +240,8 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.openTabSwitcher);
   }
   
-  static Future<void> showGoToPageView() {
-    return _channel.invokeMethod(Functions.showGoToPageView);
+  static Future<void> openGoToPageView() {
+    return _channel.invokeMethod(Functions.openGoToPageView);
   }
 
   static Future<void> openNavigationLists() {
