@@ -33,6 +33,7 @@ class Config {
   var _pageStackEnabled;
   var _showQuickNavigationButton;
   var _followSystemDarkMode;
+  var _downloadDialogEnabled;
   var _annotationToolbars;
   var _hideDefaultAnnotationToolbars;
   var _hideAnnotationToolbarSwitcher;
@@ -56,6 +57,9 @@ class Config {
   var _disableEditingByAnnotationType;
   var _hideViewModeItems;
   var _defaultEraserType;
+  var _annotationManagerEnabled;
+  var _userId;
+  var _userName;
 
   Config();
 
@@ -126,6 +130,8 @@ class Config {
 
   set followSystemDarkMode(bool value) => _followSystemDarkMode = value;
 
+  set downloadDialogEnabled(bool value) => _downloadDialogEnabled = value;
+
   set annotationToolbars(List value) => _annotationToolbars = value;
 
   set hideDefaultAnnotationToolbars(List value) =>
@@ -181,6 +187,12 @@ class Config {
 
   set defaultEraserType(String value) => _defaultEraserType = value;
 
+  set annotationManagerEnabled(bool value) => _annotationManagerEnabled = value;
+
+  set userId(String value) => _userId = value;
+  
+  set userName(String value) => _userName = value;
+
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
         _disabledTools = json['disabledTools'],
@@ -214,6 +226,7 @@ class Config {
         _pageIndicatorEnabled = json['pageIndicatorEnabled'],
         _showQuickNavigationButton = json['showQuickNavigationButton'],
         _followSystemDarkMode = json['followSystemDarkMode'],
+        _downloadDialogEnabled = json['downloadDialogEnabled'],
         _annotationToolbars = json['annotationToolbars'],
         _hideDefaultAnnotationToolbars = json['hideDefaultAnnotationToolbars'],
         _hideAnnotationToolbarSwitcher = json['hideAnnotationToolbarSwitcher'],
@@ -237,7 +250,11 @@ class Config {
         _pageNumberIndicatorAlwaysVisible = json['pageNumberIndicatorAlwaysVisible'],
         _disableEditingByAnnotationType = json['disableEditingByAnnotationType'],
         _hideViewModeItems = json['hideViewModeItems'],
-        _defaultEraserType = json['defaultEraserType'];
+        _defaultEraserType = json['defaultEraserType'],
+        _annotationManagerEnabled = json['annotationManagerEnabled'],
+        _userId = json['userId'],
+        _userName = json['userName'];
+
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -271,6 +288,7 @@ class Config {
         'pageIndicatorEnabled': _pageIndicatorEnabled,
         'showQuickNavigationButton': _showQuickNavigationButton,
         'followSystemDarkMode': _followSystemDarkMode,
+        'downloadDialogEnabled': _downloadDialogEnabled,
         'annotationToolbars': _annotationToolbars,
         'hideDefaultAnnotationToolbars': _hideDefaultAnnotationToolbars,
         'hideAnnotationToolbarSwitcher': _hideAnnotationToolbarSwitcher,
@@ -294,5 +312,8 @@ class Config {
         'disableEditingByAnnotationType': _disableEditingByAnnotationType,
         'hideViewModeItems': _hideViewModeItems,
         'defaultEraserType' : _defaultEraserType,
+        'annotationManagerEnabled' : _annotationManagerEnabled,
+        'userId' : _userId,
+        'userName' : _userName
       };
 }

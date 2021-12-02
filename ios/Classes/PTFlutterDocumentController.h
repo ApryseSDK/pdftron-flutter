@@ -74,6 +74,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, nullable) NSArray<NSString*>* uneditableAnnotTypes;
 
+@property (nonatomic, assign, getter=isAnnotationManagerEnabled) BOOL annotationManagerEnabled;
+
+@property (nonatomic, copy, nullable) NSString* userId;
+
+@property (nonatomic, copy, nullable) NSString* userName;
+
 @property (nonatomic, assign, getter=isDocCtrlrConfigured) BOOL docCtrlrConfigured;
 
 - (void)initViewerSettings;
