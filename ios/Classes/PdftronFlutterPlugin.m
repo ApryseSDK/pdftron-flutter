@@ -450,7 +450,7 @@
                     NSNumber *showQuickNavButton = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowQuickNavigationButtonKey class:[NSNumber class] error:&error];
                     
                     if (!error && showQuickNavButton) {
-                        documentController.navigationHistoryEnabled = [showQuickNavButton boolValue];
+                        documentController.showQuickNavigationButton = [showQuickNavButton boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTFollowSystemDarkModeKey]) {
@@ -621,6 +621,22 @@
                     
                     if (!error && defaultEraserType) {
                         [documentController setDefaultEraserType:defaultEraserType];
+                    }
+                }
+                else if ([key isEqualToString:PTAutoResizeFreeTextEnabledKey]) {
+                    
+                    NSNumber *autoResizeFreeTextEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAutoResizeFreeTextEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && autoResizeFreeTextEnabledNumber) {
+                        documentController.autoResizeFreeTextEnabled = [autoResizeFreeTextEnabledNumber boolValue];
+                    }
+                }
+                else if ([key isEqualToString:PTRestrictDownloadUsageKey]) {
+                    
+                    NSNumber *restrictDownloadUsageNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTRestrictDownloadUsageKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && restrictDownloadUsageNumber) {
+                        documentController.restrictDownloadUsage = [restrictDownloadUsageNumber boolValue];
                     }
                 }
                 else

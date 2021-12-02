@@ -72,6 +72,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) int maxTabCount;
 
+@property (nonatomic, assign) BOOL autoResizeFreeTextEnabled;
+
+@property (nonatomic, assign) BOOL restrictDownloadUsage;
+
 @property (nonatomic, copy, nullable) NSArray<NSString*>* uneditableAnnotTypes;
 
 @property (nonatomic, assign, getter=isDocCtrlrConfigured) BOOL docCtrlrConfigured;

@@ -968,6 +968,15 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     self.navigationListsViewController.bookmarkViewController.readonly = !self.userBookmarksListEditingEnabled;
     [self excludeAnnotationListTypes:self.excludedAnnotationListTypes];
     self.alwaysShowNavigationListsAsModal = !self.showNavigationListAsSidePanelOnLargeDevices;
+    
+    // Auto Resize Free Text
+    self.toolManager.autoResizeFreeTextEnabled = self.autoResizeFreeTextEnabled;
+    
+    // Restrict Download Usage
+    [self.httpRequestOptions RestrictDownloadUsage:self.restrictDownloadUsage];
+    
+    // Quick Navigation Button
+    self.navigationHistoryEnabled = self.showQuickNavigationButton;
 }
 
 - (void)excludeAnnotationListTypes:(NSArray<NSString*> *)excludedAnnotationListTypes

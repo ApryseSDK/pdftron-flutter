@@ -150,6 +150,8 @@ public class PluginUtils {
     public static final String KEY_CONFIG_DISABLE_EDITING_BY_ANNOTATION_TYPE = "disableEditingByAnnotationType";
     public static final String KEY_CONFIG_HIDE_VIEW_MODE_ITEMS = "hideViewModeItems";
     public static final String KEY_CONFIG_DEFAULT_ERASER_TYPE = "defaultEraserType";
+    public static final String KEY_CONFIG_AUTO_RESIZE_FREE_TEXT_ENABLED = "autoResizeFreeTextEnabled";
+    public static final String KEY_CONFIG_RESTRICT_DOWNLOAD_USAGE = "restrictDownloadUsage";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -956,6 +958,14 @@ public class PluginUtils {
                     } else if (DEFAULT_ERASER_TYPE_INK.equals(eraserType)) {
                         toolManagerBuilder = toolManagerBuilder.setEraserType(Eraser.EraserType.INK_ERASER);
                     }
+                }
+                if (!configJson.isNull(KEY_CONFIG_AUTO_RESIZE_FREE_TEXT_ENABLED)) {
+                    boolean autoResizeFreeTextEnabled = configJson.getBoolean(KEY_CONFIG_AUTO_RESIZE_FREE_TEXT_ENABLED);
+                    toolManagerBuilder = toolManagerBuilder.setAutoResizeFreeText(autoResizeFreeTextEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_RESTRICT_DOWNLOAD_USAGE)) {
+                    boolean restrictDownloadUsage = configJson.getBoolean(KEY_CONFIG_RESTRICT_DOWNLOAD_USAGE);
+                    builder.restrictDownloadUsage(restrictDownloadUsage);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

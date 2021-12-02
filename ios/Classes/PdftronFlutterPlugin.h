@@ -54,6 +54,8 @@ static NSString * const PTMaxTabCountKey = @"maxTabCount";
 static NSString * const PTDisableEditingByAnnotationTypeKey = @"disableEditingByAnnotationType";
 static NSString * const PTHideViewModeItemsKey = @"hideViewModeItems";
 static NSString * const PTDefaultEraserTypeKey = @"defaultEraserType";
+static NSString * const PTAutoResizeFreeTextEnabledKey = @"autoResizeFreeTextEnabled";
+static NSString * const PTRestrictDownloadUsageKey = @"restrictDownloadUsage";
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";

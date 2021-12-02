@@ -30,7 +30,6 @@ class Config {
   var _signSignatureFieldWithStamps;
   var _selectAnnotationAfterCreation;
   var _pageIndicatorEnabled;
-  var _pageStackEnabled;
   var _showQuickNavigationButton;
   var _followSystemDarkMode;
   var _downloadDialogEnabled;
@@ -57,6 +56,8 @@ class Config {
   var _disableEditingByAnnotationType;
   var _hideViewModeItems;
   var _defaultEraserType;
+  var _autoResizeFreeTextEnabled;
+  var _restrictDownloadUsage;
 
   Config();
 
@@ -184,6 +185,10 @@ class Config {
 
   set defaultEraserType(String value) => _defaultEraserType = value;
 
+  set autoResizeFreeTextEnabled(bool value) => _autoResizeFreeTextEnabled = value;
+
+  set restrictDownloadUsage(bool value) => _restrictDownloadUsage = value;
+
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
         _disabledTools = json['disabledTools'],
@@ -241,7 +246,9 @@ class Config {
         _pageNumberIndicatorAlwaysVisible = json['pageNumberIndicatorAlwaysVisible'],
         _disableEditingByAnnotationType = json['disableEditingByAnnotationType'],
         _hideViewModeItems = json['hideViewModeItems'],
-        _defaultEraserType = json['defaultEraserType'];
+        _defaultEraserType = json['defaultEraserType'],
+        _autoResizeFreeTextEnabled = json['autoResizeFreeTextEnabled'],
+        _restrictDownloadUsage = json['restrictDownloadUsage'];
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -299,5 +306,7 @@ class Config {
         'disableEditingByAnnotationType': _disableEditingByAnnotationType,
         'hideViewModeItems': _hideViewModeItems,
         'defaultEraserType' : _defaultEraserType,
+        'autoResizeFreeTextEnabled': _autoResizeFreeTextEnabled,
+        'restrictDownloadUsage': _restrictDownloadUsage,
       };
 }
