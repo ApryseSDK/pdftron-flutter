@@ -58,6 +58,9 @@ class Config {
   var _defaultEraserType;
   var _autoResizeFreeTextEnabled;
   var _restrictDownloadUsage;
+  var _annotationManagerEnabled;
+  var _userId;
+  var _userName;
 
   Config();
 
@@ -188,6 +191,12 @@ class Config {
   set autoResizeFreeTextEnabled(bool value) => _autoResizeFreeTextEnabled = value;
 
   set restrictDownloadUsage(bool value) => _restrictDownloadUsage = value;
+  
+  set annotationManagerEnabled(bool value) => _annotationManagerEnabled = value;
+
+  set userId(String value) => _userId = value;
+  
+  set userName(String value) => _userName = value;
 
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
@@ -248,7 +257,11 @@ class Config {
         _hideViewModeItems = json['hideViewModeItems'],
         _defaultEraserType = json['defaultEraserType'],
         _autoResizeFreeTextEnabled = json['autoResizeFreeTextEnabled'],
-        _restrictDownloadUsage = json['restrictDownloadUsage'];
+        _restrictDownloadUsage = json['restrictDownloadUsage'],
+        _annotationManagerEnabled = json['annotationManagerEnabled'],
+        _userId = json['userId'],
+        _userName = json['userName'];
+
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -308,5 +321,8 @@ class Config {
         'defaultEraserType' : _defaultEraserType,
         'autoResizeFreeTextEnabled': _autoResizeFreeTextEnabled,
         'restrictDownloadUsage': _restrictDownloadUsage,
+        'annotationManagerEnabled' : _annotationManagerEnabled,
+        'userId' : _userId,
+        'userName' : _userName,
       };
 }

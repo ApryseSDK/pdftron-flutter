@@ -623,7 +623,8 @@
                         [documentController setDefaultEraserType:defaultEraserType];
                     }
                 }
-                else if ([key isEqualToString:PTAutoResizeFreeTextEnabledKey]) {
+                else if ([key isEqualToString:PTAutoResizeFreeTextEnabledKey]) 
+                {
                     
                     NSNumber *autoResizeFreeTextEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAutoResizeFreeTextEnabledKey class:[NSNumber class] error:&error];
                     
@@ -631,12 +632,37 @@
                         documentController.autoResizeFreeTextEnabled = [autoResizeFreeTextEnabledNumber boolValue];
                     }
                 }
-                else if ([key isEqualToString:PTRestrictDownloadUsageKey]) {
+                else if ([key isEqualToString:PTRestrictDownloadUsageKey]) 
+                {
                     
                     NSNumber *restrictDownloadUsageNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTRestrictDownloadUsageKey class:[NSNumber class] error:&error];
                     
                     if (!error && restrictDownloadUsageNumber) {
                         documentController.restrictDownloadUsage = [restrictDownloadUsageNumber boolValue];
+                    }
+                }
+                else if ([key isEqualToString:PTAnnotationManagerEnabedKey])
+                {
+                    NSNumber* annotationManagerEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationManagerEnabedKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && annotationManagerEnabledNumber) {
+                        [documentController setAnnotationManagerEnabled:[annotationManagerEnabledNumber boolValue]];
+                    }
+                } 
+                lse if ([key isEqualToString:PTUserIdKey])
+                {
+                    NSString* userId = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUserIdKey class:[NSString class] error:&error];
+                    
+                    if (!error && userId) {
+                        [documentController setUserId:userId];
+                    }
+                } 
+                else if ([key isEqualToString:PTUserNameKey])
+                {
+                    NSString* userName = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTReadOnlyKey class:[NSString class] error:&error];
+                    
+                    if (!error && userName) {
+                        [documentController setUserName:userName];
                     }
                 }
                 else

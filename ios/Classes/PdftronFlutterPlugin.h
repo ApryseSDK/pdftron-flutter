@@ -56,6 +56,9 @@ static NSString * const PTHideViewModeItemsKey = @"hideViewModeItems";
 static NSString * const PTDefaultEraserTypeKey = @"defaultEraserType";
 static NSString * const PTAutoResizeFreeTextEnabledKey = @"autoResizeFreeTextEnabled";
 static NSString * const PTRestrictDownloadUsageKey = @"restrictDownloadUsage";
+static NSString * const PTAnnotationManagerEnabedKey = @"annotationManagerEnabled";
+static NSString * const PTUserIdKey = @"userId";
+static NSString * const PTUserNameKey = @"userName";
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";
