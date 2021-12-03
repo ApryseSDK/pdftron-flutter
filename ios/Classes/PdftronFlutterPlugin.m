@@ -480,12 +480,28 @@
                         documentController.annotationToolbarSwitcherHidden = [hideAnnotationToolbarSwitcherNumber boolValue];
                     }
                 }
+                else if ([key isEqualToString:PTInitialToolbarKey]) {
+                    
+                    NSString *initialToolbar = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTInitialToolbarKey class:[NSString class] error:&error];
+                    
+                    if (!error && initialToolbar) {
+                        documentController.initialToolbar = initialToolbar;
+                    }
+                }
                 else if ([key isEqualToString:PTHideTopToolbarsKey]) {
                     
                     NSNumber* hideTopToolbarsNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideTopToolbarsKey class:[NSNumber class] error:&error];
                     
                     if (!error && hideTopToolbarsNumber) {
                         documentController.topToolbarsHidden = [hideTopToolbarsNumber boolValue];
+                    }
+                }
+                else if ([key isEqualToString:PTHideToolbarsOnTapKey]) {
+                    
+                    NSNumber* hideToolbarsOnTapNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideToolbarsOnTapKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && hideToolbarsOnTapNumber) {
+                        documentController.toolbarsHiddenOnTap = [hideToolbarsOnTapNumber boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTHideTopAppNavBarKey]) {
@@ -496,12 +512,27 @@
                         documentController.topAppNavBarHidden = [hideTopAppNavBarNumber boolValue];
                     }
                 }
+                else if ([key isEqualToString:PTTopAppNavBarRightBarKey]) {
+                    
+                    NSArray *topAppNavBarRightBar = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTTopAppNavBarRightBarKey class:[NSArray class] error:&error];
+                    
+                    if (!error && topAppNavBarRightBar) {
+                        documentController.topAppNavBarRightBar = topAppNavBarRightBar;
+                    }
+                }
                 else if ([key isEqualToString:PTHideBottomToolbarKey]) {
                     
                     NSNumber* hideBottomToolbarNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideBottomToolbarKey class:[NSNumber class] error:&error];
                     
                     if (!error && hideBottomToolbarNumber) {
                         documentController.bottomToolbarHidden = [hideBottomToolbarNumber boolValue];
+                    }
+                }
+                else if ([key isEqualToString:PTBottomToolbarKey]) {
+                    NSArray *bottomToolbar = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTBottomToolbarKey class:[NSArray class] error:&error];
+                    
+                    if (!error && bottomToolbar) {
+                        documentController.bottomToolbar = bottomToolbar;
                     }
                 }
                 else if ([key isEqualToString:PTShowLeadingNavButtonKey]) {
