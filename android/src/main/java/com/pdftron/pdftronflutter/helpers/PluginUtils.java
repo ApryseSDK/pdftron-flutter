@@ -285,6 +285,7 @@ public class PluginUtils {
     public static final String BUTTON_UNDO = "undo";
     public static final String BUTTON_REDO = "redo";
     public static final String BUTTON_EDIT_ANNOTATION_TOOLBAR = "editAnnotationToolButton";
+    public static final String BUTTON_VIEW_LAYERS = "viewLayersButton";
 
     public static final String TOOL_BUTTON_FREE_HAND = "freeHandToolButton";
     public static final String TOOL_BUTTON_HIGHLIGHT = "highlightToolButton";
@@ -1255,6 +1256,8 @@ public class PluginUtils {
                         .showFillAndSignToolbarOption(false)
                         .showEditMenuOption(false)
                         .showReflowOption(false);
+            } else if (BUTTON_VIEW_LAYERS.equals(item)) {
+                builder = builder.showViewLayersToolbarOption(false);
             }
         }
 
