@@ -654,6 +654,28 @@
                         [documentController setDefaultEraserType:defaultEraserType];
                     }
                 }
+                else if ([key isEqualToString:PTAnnotationManagerEnabedKey])
+                {
+                    NSNumber* annotationManagerEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationManagerEnabedKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && annotationManagerEnabledNumber) {
+                        [documentController setAnnotationManagerEnabled:[annotationManagerEnabledNumber boolValue]];
+                    }
+                } else if ([key isEqualToString:PTUserIdKey])
+                {
+                    NSString* userId = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUserIdKey class:[NSString class] error:&error];
+                    
+                    if (!error && userId) {
+                        [documentController setUserId:userId];
+                    }
+                } else if ([key isEqualToString:PTUserNameKey])
+                {
+                    NSString* userName = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTReadOnlyKey class:[NSString class] error:&error];
+                    
+                    if (!error && userName) {
+                        [documentController setUserName:userName];
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
