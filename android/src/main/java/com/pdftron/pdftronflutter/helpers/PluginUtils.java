@@ -1214,14 +1214,14 @@ public class PluginUtils {
                         .showEditMenuOption(false)
                         .showReflowOption(false);
             }
+        }
 
-            if (!saveCopyOptions.isEmpty()) {
-                int[] modes = new int[saveCopyOptions.size()];
-                for (int j = 0; j < modes.length; j++) {
-                    modes[j] = saveCopyOptions.get(j);
-                }
-                builder.hideSaveCopyOptions(modes);
+        if (!saveCopyOptions.isEmpty()) {
+            int[] modes = new int[saveCopyOptions.size()];
+            for (int j = 0; j < modes.length; j++) {
+                modes[j] = saveCopyOptions.get(j);
             }
+            builder.hideSaveCopyOptions(modes);
         }
 
         builder.hideViewModeItems(viewModePickerItems.toArray(new ViewModePickerDialogFragment.ViewModePickerItems[0]));
