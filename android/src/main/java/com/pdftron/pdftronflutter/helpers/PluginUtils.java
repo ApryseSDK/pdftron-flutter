@@ -261,11 +261,6 @@ public class PluginUtils {
     public static final String BUTTON_LISTS = "listsButton";
     public static final String BUTTON_THUMBNAIL_SLIDER = "thumbnailSlider";
     public static final String BUTTON_SAVE_COPY = "saveCopyButton";
-    public static final String BUTTON_SAVE_IDENTICAL_COPY = "saveIdenticalCopyButton";
-    public static final String BUTTON_SAVE_FLATTENED_COPY = "saveFlattenedCopyButton";
-    public static final String BUTTON_SAVE_REDUCED_COPY = "saveReducedCopyButton";
-    public static final String BUTTON_SAVE_CROPPED_COPY = "saveCroppedCopyButton";
-    public static final String BUTTON_SAVE_PASSWORD_COPY = "savePasswordCopyButton";
     public static final String BUTTON_EDIT_PAGES = "editPagesButton";
     public static final String BUTTON_PRINT = "printButton";
     public static final String BUTTON_FILL_AND_SIGN = "fillAndSignButton";
@@ -1141,7 +1136,6 @@ public class PluginUtils {
     private static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
 
         ArrayList<ViewModePickerDialogFragment.ViewModePickerItems> viewModePickerItems = new ArrayList<>();
-        ArrayList<Integer> saveCopyOptions = new ArrayList<>();
 
         for (int i = 0; i < args.length(); i++) {
             String item = args.getString(i);
@@ -1167,16 +1161,6 @@ public class PluginUtils {
                 builder = builder.showBottomNavBar(false);
             } else if (BUTTON_SAVE_COPY.equals(item)) {
                 builder = builder.showSaveCopyOption(false);
-            } else if (BUTTON_SAVE_IDENTICAL_COPY.equals(item)) {
-                saveCopyOptions.add(R.id.menu_export_copy);
-            } else if (BUTTON_SAVE_FLATTENED_COPY.equals(item)) {
-                saveCopyOptions.add(R.id.menu_export_flattened_copy);
-            } else if (BUTTON_SAVE_REDUCED_COPY.equals(item)) {
-                saveCopyOptions.add(R.id.menu_export_optimized_copy);
-            } else if (BUTTON_SAVE_CROPPED_COPY.equals(item)) {
-                saveCopyOptions.add(R.id.menu_export_cropped_copy);
-            } else if (BUTTON_SAVE_PASSWORD_COPY.equals(item)) {
-                saveCopyOptions.add(R.id.menu_export_password_copy);
             } else if (BUTTON_EDIT_PAGES.equals(item)) {
                 builder = builder.showEditPagesOption(false);
             } else if (BUTTON_PRINT.equals(item)) {
@@ -1213,14 +1197,6 @@ public class PluginUtils {
                         .showFillAndSignToolbarOption(false)
                         .showEditMenuOption(false)
                         .showReflowOption(false);
-            }
-
-            if (!saveCopyOptions.isEmpty()) {
-                int[] modes = new int[saveCopyOptions.size()];
-                for (int j = 0; j < modes.length; j++) {
-                    modes[j] = saveCopyOptions.get(j);
-                }
-                builder.hideSaveCopyOptions(modes);
             }
         }
 

@@ -135,9 +135,6 @@ class Buttons {
 
   // Android only
   static const editAnnotationToolbarButton = 'editAnnotationToolButton';
-  static const saveReducedCopyButton = 'saveReducedCopyButton';
-  static const saveCroppedCopyButton = 'saveCroppedCopyButton';
-  static const savePasswordCopyButton = 'savePasswordCopyButton';
 }
 
 // Tools define the various kinds of tools for the viewer
