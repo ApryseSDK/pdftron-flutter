@@ -64,6 +64,8 @@ class Config {
   var _annotationManagerEnabled;
   var _userId;
   var _userName;
+  var _annotationManagerEditMode;
+  var _annotationManagerUndoMode;
 
   Config();
 
@@ -205,6 +207,10 @@ class Config {
   
   set userName(String value) => _userName = value;
 
+  set annotationManagerEditMode(String value) => _annotationManagerEditMode = value;
+
+  set annotationManagerUndoMode(String value) => _annotationManagerUndoMode = value;
+
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
         _disabledTools = json['disabledTools'],
@@ -269,7 +275,9 @@ class Config {
         _defaultEraserType = json['defaultEraserType'],
         _annotationManagerEnabled = json['annotationManagerEnabled'],
         _userId = json['userId'],
-        _userName = json['userName'];
+        _userName = json['userName'],
+        _annotationManagerEditMode = json['annotationManagerEditMode'],
+        _annotationManagerUndoMode = json['annotationManagerUndoMode'];
 
 
   Map<String, dynamic> toJson() => {
@@ -334,6 +342,8 @@ class Config {
         'defaultEraserType' : _defaultEraserType,
         'annotationManagerEnabled' : _annotationManagerEnabled,
         'userId' : _userId,
-        'userName' : _userName
+        'userName' : _userName,
+        'annotationManagerEditMode': _annotationManagerEditMode,
+        'annotationManagerUndoMode': _annotationManagerUndoMode,
       };
 }

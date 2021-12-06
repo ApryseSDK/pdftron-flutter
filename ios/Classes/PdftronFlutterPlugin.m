@@ -654,26 +654,44 @@
                         [documentController setDefaultEraserType:defaultEraserType];
                     }
                 }
-                else if ([key isEqualToString:PTAnnotationManagerEnabedKey])
+                else if ([key isEqualToString:PTAnnotationManagerEnabledKey])
                 {
-                    NSNumber* annotationManagerEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationManagerEnabedKey class:[NSNumber class] error:&error];
+                    NSNumber* annotationManagerEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationManagerEnabledKey class:[NSNumber class] error:&error];
                     
                     if (!error && annotationManagerEnabledNumber) {
                         [documentController setAnnotationManagerEnabled:[annotationManagerEnabledNumber boolValue]];
                     }
-                } else if ([key isEqualToString:PTUserIdKey])
+                }
+                else if ([key isEqualToString:PTUserIdKey])
                 {
                     NSString* userId = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUserIdKey class:[NSString class] error:&error];
                     
                     if (!error && userId) {
                         [documentController setUserId:userId];
                     }
-                } else if ([key isEqualToString:PTUserNameKey])
+                }
+                else if ([key isEqualToString:PTUserNameKey])
                 {
-                    NSString* userName = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTReadOnlyKey class:[NSString class] error:&error];
+                    NSString* userName = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUserNameKey class:[NSString class] error:&error];
                     
                     if (!error && userName) {
                         [documentController setUserName:userName];
+                    }
+                }
+                else if ([key isEqualToString:PTAnnotationManagerEditModeKey])
+                {
+                    NSString *editMode = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationManagerEditModeKey class:[NSString class] error:&error];
+                    
+                    if (!error && editMode) {
+                        documentController.annotationManagerEditMode = [editMode copy];
+                    }
+                }
+                else if ([key isEqualToString:PTAnnotationManagerUndoModeKey])
+                {
+                    NSString *undoMode = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationManagerUndoModeKey class:[NSString class] error:&error];
+                    
+                    if (!error && undoMode) {
+                        documentController.annotationManagerUndoMode = [undoMode copy];
                     }
                 }
                 else

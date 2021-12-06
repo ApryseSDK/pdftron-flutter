@@ -1009,7 +1009,22 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     
     // Annotation Manager
     if (self.isAnnotationManagerEnabled && self.userId) {
-        PTExternalAnnotManager* annotManager = [self.pdfViewCtrl EnableAnnotationManager:self.userId mode:e_ptadmin_undo_others];
+        // Edit Mode
+        if ([PTAnnotationManagerEditModeOwnKey isEqualToString:self.annotationManagerEditMode]) {
+            self.toolManager.annotationManager.annotationEditMode = PTAnnotationModeEditOwn;
+        } else if ([PTAnnotationManagerEditModeAllKey isEqualToString:self.annotationManagerEditMode]) {
+            self.toolManager.annotationManager.annotationEditMode = PTAnnotationModeEditAll;
+        }
+        
+        self.toolManager.annotationPermissionCheckEnabled = YES;
+        
+        // Undo Mode
+        PTExternalAnnotManagerMode undoMode = e_ptadmin_undo_others;
+        if ([PTAnnotationManagerUndoModeOwnKey isEqualToString:self.annotationManagerUndoMode]) {
+            undoMode = e_ptadmin_undo_own;
+        }
+        
+        PTExternalAnnotManager* annotManager = [self.pdfViewCtrl EnableAnnotationManager:self.userId mode:undoMode];
     }
     
     [self applyToolGroupSettings];

@@ -342,3 +342,13 @@ class DefaultEraserType {
   static const hybrideEraser = "hybrideEraser";
   static const inkEraser = "inkEraser";
 }
+
+class AnnotationManagerEditMode {
+  static const Own = "own";
+  static const All = "all";
+}
+
+class AnnotationManagerUndoMode {
+  static const Own = "own";
+  static const All = "all";
+}

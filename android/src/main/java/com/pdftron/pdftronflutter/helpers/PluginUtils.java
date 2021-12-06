@@ -158,6 +158,8 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_MANAGER_ENABLED = "annotationManagerEnabled";
     public static final String KEY_CONFIG_USER_ID = "userId";
     public static final String KEY_CONFIG_USER_NAME = "userName";
+    public static final String KEY_CONFIG_ANNOTATION_MANAGER_UNDO_MODE = "annotationManagerUndoMode";
+    public static final String KEY_CONFIG_ANNOTATION_MANAGER_EDIT_MODE = "annotationManagerEditMode";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -475,10 +477,21 @@ public class PluginUtils {
     public static final String DEFAULT_ERASER_TYPE_HYBRID = "hybrideEraser";
     public static final String DEFAULT_ERASER_TYPE_INK = "inkEraser";
 
+    // Annotation Manager Edit Mode
+    public static final String ANNOTATION_MANAGER_EDIT_MODE_OWN = "own";
+    public static final String ANNOTATION_MANAGER_EDIT_MODE_ALL = "all";
+
+    // Annotation Manager Undo Mode
+    public static final String ANNOTATION_MANAGER_UNDO_MODE_OWN = "own";
+    public static final String ANNOTATION_MANAGER_UNDO_MODE_ALL = "all";
+
     // Navigation List visibility
     public static boolean isBookmarkListVisible = true;
     public static boolean isOutlineListVisible = true;
     public static boolean isAnnotationListVisible = true;
+
+    private static AnnotManager.EditPermissionMode mAnnotationManagerEditMode = AnnotManager.EditPermissionMode.EDIT_OTHERS;
+    private static PDFViewCtrl.AnnotationManagerMode mAnnotationManagerUndoMode = PDFViewCtrl.AnnotationManagerMode.ADMIN_UNDO_OTHERS;
 
     public static class ConfigInfo {
         private int initialPageNumber;
@@ -1029,6 +1042,18 @@ public class PluginUtils {
                     String userName = configJson.getString(KEY_CONFIG_USER_NAME);
                     if (!userName.isEmpty()) {
                         configInfo.setUserName(userName);
+                    }
+                }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_MANAGER_EDIT_MODE)) {
+                    String editMode = configJson.getString(KEY_CONFIG_ANNOTATION_MANAGER_EDIT_MODE);
+                    if (ANNOTATION_MANAGER_EDIT_MODE_OWN.equals(editMode)) {
+                        mAnnotationManagerEditMode = AnnotManager.EditPermissionMode.EDIT_OWN;
+                    }
+                }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_MANAGER_UNDO_MODE)) {
+                    String undoMode = configJson.getString(KEY_CONFIG_ANNOTATION_MANAGER_UNDO_MODE);
+                    if (ANNOTATION_MANAGER_UNDO_MODE_OWN.equals(undoMode)) {
+                        mAnnotationManagerUndoMode = PDFViewCtrl.AnnotationManagerMode.ADMIN_UNDO_OWN;
                     }
                 }
             } catch (Exception ex) {
@@ -3131,8 +3156,8 @@ public class PluginUtils {
             component.getToolManager().enableAnnotManager(
                     component.getUserId(),
                     component.getUserName(),
-                    PDFViewCtrl.AnnotationManagerMode.ADMIN_UNDO_OTHERS,
-                    AnnotManager.EditPermissionMode.EDIT_OTHERS,
+                    mAnnotationManagerUndoMode,
+                    mAnnotationManagerEditMode,
                     new AnnotManager.AnnotationSyncingListener() {
                         @Override
                         public void onLocalChange(String action, String xfdfCommand, String xfdfJSON) {

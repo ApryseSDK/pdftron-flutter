@@ -84,6 +84,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, nullable) NSString* userName;
 
+@property (nonatomic, copy, nullable) NSString *annotationManagerEditMode;
+
+@property (nonatomic, copy, nullable) NSString *annotationManagerUndoMode;
+
 @property (nonatomic, assign, getter=isDocCtrlrConfigured) BOOL docCtrlrConfigured;
 
 - (void)initViewerSettings;

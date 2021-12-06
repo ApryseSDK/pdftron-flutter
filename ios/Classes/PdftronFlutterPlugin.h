@@ -58,9 +58,11 @@ static NSString * const PTMaxTabCountKey = @"maxTabCount";
 static NSString * const PTDisableEditingByAnnotationTypeKey = @"disableEditingByAnnotationType";
 static NSString * const PTHideViewModeItemsKey = @"hideViewModeItems";
 static NSString * const PTDefaultEraserTypeKey = @"defaultEraserType";
-static NSString * const PTAnnotationManagerEnabedKey = @"annotationManagerEnabled";
+static NSString * const PTAnnotationManagerEnabledKey = @"annotationManagerEnabled";
 static NSString * const PTUserIdKey = @"userId";
 static NSString * const PTUserNameKey = @"userName";
+static NSString * const PTAnnotationManagerEditModeKey = @"annotationManagerEditMode";
+static NSString * const PTAnnotationManagerUndoModeKey = @"annotationManagerUndoMode";
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";
@@ -350,6 +352,14 @@ static NSString * const PTViewModeColorModeKey = @"viewModeColorMode";
 // DefaultEraserType keys
 static NSString * const PTInkEraserModeAllKey = @"annotationEraser";
 static NSString * const PTInkEraserModePointsKey = @"hybrideEraser";
+
+// Annotation Mananger Edit Mode
+static NSString * const PTAnnotationManagerEditModeOwnKey = @"own";
+static NSString * const PTAnnotationManagerEditModeAllKey = @"all";
+
+// Annotation Mananger Undo Mode
+static NSString * const PTAnnotationManagerUndoModeOwnKey = @"own";
+static NSString * const PTAnnotationManagerUndoModeAllKey = @"all";
 
 // Default annotation toolbar names.
 typedef NSString * PTDefaultAnnotationToolbarKey;
