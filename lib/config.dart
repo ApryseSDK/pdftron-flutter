@@ -24,22 +24,26 @@ class Config {
   var _openSavedCopyInNewTab;
   var _maxTabCount;
   var _autoSaveEnabled;
+  var _showDocumentSavedToast;
   var _pageChangeOnTap;
   var _showSavedSignatures;
   var _useStylusAsPen;
   var _signSignatureFieldWithStamps;
   var _selectAnnotationAfterCreation;
   var _pageIndicatorEnabled;
-  var _pageStackEnabled;
   var _showQuickNavigationButton;
   var _followSystemDarkMode;
   var _downloadDialogEnabled;
   var _annotationToolbars;
   var _hideDefaultAnnotationToolbars;
   var _hideAnnotationToolbarSwitcher;
+  var _initialToolbar;
   var _hideTopToolbars;
+  var _hideToolbarsOnTap;
   var _hideTopAppNavBar;
+  var _topAppNavBarRighBar;
   var _hideBottomToolbar;
+  var _bottomToolbar;
   var _showLeadingNavButton;
   var _documentSliderEnabled;
   var _rememberLastUsedTool;
@@ -112,6 +116,8 @@ class Config {
 
   set autoSaveEnabled(bool value) => _autoSaveEnabled = value;
 
+  set showDocumentSavedToast(bool value) => _showDocumentSavedToast = value;
+
   set pageChangeOnTap(bool value) => _pageChangeOnTap = value;
 
   set showSavedSignatures(bool value) => _showSavedSignatures = value;
@@ -140,11 +146,19 @@ class Config {
   set hideAnnotationToolbarSwitcher(bool value) =>
       _hideAnnotationToolbarSwitcher = value;
 
+  set initialToolbar(String value) => _initialToolbar = value;    
+
   set hideTopToolbars(bool value) => _hideTopToolbars = value;
+
+  set hideToolbarsOnTap(bool value) => _hideToolbarsOnTap = value;
 
   set hideTopAppNavBar(bool value) => _hideTopAppNavBar = value;
 
+  set topAppNavBarRightBar(List value) => _topAppNavBarRighBar = value;
+
   set hideBottomToolbar(bool value) => _hideBottomToolbar = value;
+
+  set bottomToolbar(List value) => _bottomToolbar = value;
 
   set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
 
@@ -218,6 +232,7 @@ class Config {
         _openSavedCopyInNewTab = json['openSavedCopyInNewTab'],
         _maxTabCount = json['maxTabCount'],
         _autoSaveEnabled = json['autoSaveEnabled'],
+        _showDocumentSavedToast = json['showDocumentSavedToast'],
         _pageChangeOnTap = json['pageChangeOnTap'],
         _showSavedSignatures = json['showSavedSignatures'],
         _useStylusAsPen = json['useStylusAsPen'],
@@ -230,9 +245,13 @@ class Config {
         _annotationToolbars = json['annotationToolbars'],
         _hideDefaultAnnotationToolbars = json['hideDefaultAnnotationToolbars'],
         _hideAnnotationToolbarSwitcher = json['hideAnnotationToolbarSwitcher'],
+        _initialToolbar = json['initialToolbar'],
         _hideTopToolbars = json['hideTopToolbars'],
+        _hideToolbarsOnTap = json['hideToolbarsOnTap'],
         _hideTopAppNavBar = json['hideTopAppNavBar'],
+        _topAppNavBarRighBar = json['topAppNavBarRightBar'],
         _hideBottomToolbar = json['hideBottomToolbar'],
+        _bottomToolbar = json['bottomToolbar'],
         _showLeadingNavButton = json['showLeadingNavButton'],
         _documentSliderEnabled = json['documentSliderEnabled'],
         _rememberLastUsedTool = json['rememberLastUsedTool'],
@@ -280,6 +299,7 @@ class Config {
         'openSavedCopyInNewTab': _openSavedCopyInNewTab,
         'maxTabCount': _maxTabCount,
         'autoSaveEnabled': _autoSaveEnabled,
+        'showDocumentSavedToast': _showDocumentSavedToast,
         'pageChangeOnTap': _pageChangeOnTap,
         'showSavedSignatures': _showSavedSignatures,
         'useStylusAsPen': _useStylusAsPen,
@@ -292,9 +312,13 @@ class Config {
         'annotationToolbars': _annotationToolbars,
         'hideDefaultAnnotationToolbars': _hideDefaultAnnotationToolbars,
         'hideAnnotationToolbarSwitcher': _hideAnnotationToolbarSwitcher,
+        'initialToolbar': _initialToolbar,
         'hideTopToolbars': _hideTopToolbars,
+        'hideToolbarsOnTap': _hideToolbarsOnTap,
         'hideTopAppNavBar': _hideTopAppNavBar,
+        'topAppNavBarRightBar': _topAppNavBarRighBar,
         'hideBottomToolbar': _hideBottomToolbar,
+        'bottomToolbar': _bottomToolbar,
         'showLeadingNavButton': _showLeadingNavButton,
         'documentSliderEnabled': _documentSliderEnabled,
         'rememberLastUsedTool': _rememberLastUsedTool,

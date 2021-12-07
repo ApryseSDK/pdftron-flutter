@@ -43,9 +43,11 @@ import com.pdftron.pdf.utils.AnalyticsHandlerAdapter;
 import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.BookmarkManager;
 import com.pdftron.pdf.utils.DialogGoToPage;
+import com.pdftron.pdf.utils.CommonToast;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.utils.ViewerUtils;
+import com.pdftron.pdf.widget.bottombar.builder.BottomBarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
@@ -124,6 +126,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_OPEN_SAVED_COPY_IN_NEW_TAB = "openSavedCopyInNewTab";
     public static final String KEY_CONFIG_MAX_TAB_COUNT = "maxTabCount";
     public static final String KEY_CONFIG_AUTO_SAVE_ENABLED = "autoSaveEnabled";
+    public static final String KEY_CONFIG_SHOW_DOCUMENT_SAVED_TOAST = "showDocumentSavedToast";
     public static final String KEY_CONFIG_PAGE_CHANGE_ON_TAP = "pageChangeOnTap";
     public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
     public static final String KEY_CONFIG_USE_STYLUS_AS_PEN = "useStylusAsPen";
@@ -136,9 +139,12 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_TOOLBARS = "annotationToolbars";
     public static final String KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS = "hideDefaultAnnotationToolbars";
     public static final String KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER = "hideAnnotationToolbarSwitcher";
+    public static final String KEY_CONFIG_INITIAL_TOOLBAR = "initialToolbar";
     public static final String KEY_CONFIG_HIDE_TOP_TOOLBARS = "hideTopToolbars";
+    public static final String KEY_CONFIG_HIDE_TOOLBARS_ON_TAP = "hideToolbarsOnTap";
     public static final String KEY_CONFIG_HIDE_TOP_APP_NAV_BAR = "hideTopAppNavBar";
     public static final String KEY_CONFIG_HIDE_BOTTOM_TOOLBAR = "hideBottomToolbar";
+    public static final String KEY_CONFIG_BOTTOM_TOOLBAR = "bottomToolbar";
     public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
     public static final String KEY_CONFIG_REMEMBER_LAST_USED_TOOL = "rememberLastUsedTool";
     public static final String KEY_CONFIG_DOCUMENT_SLIDER_ENABLED = "documentSliderEnabled";
@@ -274,6 +280,11 @@ public class PluginUtils {
     public static final String BUTTON_LISTS = "listsButton";
     public static final String BUTTON_THUMBNAIL_SLIDER = "thumbnailSlider";
     public static final String BUTTON_SAVE_COPY = "saveCopyButton";
+    public static final String BUTTON_SAVE_IDENTICAL_COPY = "saveIdenticalCopyButton";
+    public static final String BUTTON_SAVE_FLATTENED_COPY = "saveFlattenedCopyButton";
+    public static final String BUTTON_SAVE_REDUCED_COPY = "saveReducedCopyButton";
+    public static final String BUTTON_SAVE_CROPPED_COPY = "saveCroppedCopyButton";
+    public static final String BUTTON_SAVE_PASSWORD_COPY = "savePasswordCopyButton";
     public static final String BUTTON_EDIT_PAGES = "editPagesButton";
     public static final String BUTTON_PRINT = "printButton";
     public static final String BUTTON_FILL_AND_SIGN = "fillAndSignButton";
@@ -289,6 +300,7 @@ public class PluginUtils {
     public static final String BUTTON_UNDO = "undo";
     public static final String BUTTON_REDO = "redo";
     public static final String BUTTON_EDIT_ANNOTATION_TOOLBAR = "editAnnotationToolButton";
+    public static final String BUTTON_VIEW_LAYERS = "viewLayersButton";
 
     public static final String TOOL_BUTTON_FREE_HAND = "freeHandToolButton";
     public static final String TOOL_BUTTON_HIGHLIGHT = "highlightToolButton";
@@ -829,6 +841,18 @@ public class PluginUtils {
                     boolean autoSaveEnabled = configJson.getBoolean(KEY_CONFIG_AUTO_SAVE_ENABLED);
                     configInfo.setAutoSaveEnabled(autoSaveEnabled);
                 }
+                if (!configJson.isNull(KEY_CONFIG_SHOW_DOCUMENT_SAVED_TOAST)) {
+                    boolean showDocumentSavedToast = configJson.getBoolean(KEY_CONFIG_SHOW_DOCUMENT_SAVED_TOAST);
+                    if (!showDocumentSavedToast) {
+                        CommonToast.CommonToastHandler.getInstance().setCommonToastListener(new CommonToast.CommonToastListener() {
+                            @Override
+                            public boolean canShowToast(int stringRes, @Nullable CharSequence text) {
+                                return stringRes != R.string.document_saved_toast_message &&
+                                        stringRes != R.string.document_save_error_toast_message;
+                            }
+                        });
+                    }
+                }
                 if (!configJson.isNull(KEY_CONFIG_PAGE_CHANGE_ON_TAP)) {
                     boolean pageChangeOnTap = configJson.getBoolean(KEY_CONFIG_PAGE_CHANGE_ON_TAP);
                     PdfViewCtrlSettingsManager.setAllowPageChangeOnTap(context, pageChangeOnTap);
@@ -884,9 +908,19 @@ public class PluginUtils {
                     boolean hideAnnotationToolbarSwitcher = configJson.getBoolean(KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER);
                     builder.showToolbarSwitcher(!hideAnnotationToolbarSwitcher);
                 }
+                if (!configJson.isNull(KEY_CONFIG_INITIAL_TOOLBAR)) {
+                    String initialToolbar = configJson.getString(KEY_CONFIG_INITIAL_TOOLBAR);
+                    if (!initialToolbar.isEmpty()) {
+                        builder.initialToolbarTag(initialToolbar).rememberLastUsedToolbar(false);
+                    }
+                }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_TOP_TOOLBARS)) {
                     boolean hideTopToolbars = configJson.getBoolean(KEY_CONFIG_HIDE_TOP_TOOLBARS);
                     builder.showAppBar(!hideTopToolbars);
+                }
+                if (!configJson.isNull(KEY_CONFIG_HIDE_TOOLBARS_ON_TAP)) {
+                    boolean hideToolbarsOnTap = configJson.getBoolean(KEY_CONFIG_HIDE_TOOLBARS_ON_TAP);
+                    builder.permanentToolbars(!hideToolbarsOnTap);
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_TOP_APP_NAV_BAR)) {
                     boolean hideTopAppNavBars = configJson.getBoolean(KEY_CONFIG_HIDE_TOP_APP_NAV_BAR);
@@ -895,6 +929,10 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_HIDE_BOTTOM_TOOLBAR)) {
                     boolean hideBottomToolbar = configJson.getBoolean(KEY_CONFIG_HIDE_BOTTOM_TOOLBAR);
                     builder.showBottomToolbar(!hideBottomToolbar);
+                }
+                if (!configJson.isNull(KEY_CONFIG_BOTTOM_TOOLBAR)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_BOTTOM_TOOLBAR);
+                    setBottomToolbar(array, builder);
                 }
                 if (!configJson.isNull(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON)) {
                     boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
@@ -1105,6 +1143,30 @@ public class PluginUtils {
         }
     }
 
+    private static void setBottomToolbar(JSONArray array, ViewerConfig.Builder builder) throws JSONException{
+        BottomBarBuilder customBottomBar = BottomBarBuilder.withTag("CustomBottomBar");
+
+        for (int i = 0; i < array.length(); i++) {
+            String item = array.getString(i);
+
+            if (BUTTON_THUMBNAILS.equals(item)) {
+                customBottomBar.addCustomButton(R.string.pref_viewmode_thumbnails, R.drawable.ic_thumbnails_grid_black_24dp, R.id.action_thumbnails);
+            } else if (BUTTON_LISTS.equals(item)) {
+                customBottomBar.addCustomButton(R.string.action_outline, R.drawable.ic_outline_white_24dp, R.id.action_outline);
+            } else if (BUTTON_SHARE.equals(item)) {
+                customBottomBar.addCustomButton(R.string.action_file_share, R.drawable.ic_share_black_24dp, R.id.action_share);
+            } else if (BUTTON_VIEW_CONTROLS.equals(item)) {
+                customBottomBar.addCustomButton(R.string.action_view_mode, R.drawable.ic_viewing_mode_white_24dp, R.id.action_viewmode);
+            } else if (BUTTON_SEARCH.equals(item)) {
+                customBottomBar.addCustomButton(R.string.action_search, R.drawable.ic_search_white_24dp, R.id.action_search);
+            } else if (BUTTON_REFLOW_MODE.equals(item)) {
+                customBottomBar.addCustomButton(R.string.pref_viewmode_reflow, R.drawable.ic_view_mode_reflow_black_24dp, R.id.action_reflow_mode);
+            }
+        }
+
+        builder.bottomBarBuilder(customBottomBar);
+    }
+
     private static Uri getUri(Context context, String path, boolean isBase64, String base64FileExtension) {
         if (context == null || path == null) {
             return null;
@@ -1149,6 +1211,7 @@ public class PluginUtils {
     private static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
 
         ArrayList<ViewModePickerDialogFragment.ViewModePickerItems> viewModePickerItems = new ArrayList<>();
+        ArrayList<Integer> saveCopyOptions = new ArrayList<>();
 
         for (int i = 0; i < args.length(); i++) {
             String item = args.getString(i);
@@ -1174,6 +1237,16 @@ public class PluginUtils {
                 builder = builder.showBottomNavBar(false);
             } else if (BUTTON_SAVE_COPY.equals(item)) {
                 builder = builder.showSaveCopyOption(false);
+            } else if (BUTTON_SAVE_IDENTICAL_COPY.equals(item)) {
+                saveCopyOptions.add(R.id.menu_export_copy);
+            } else if (BUTTON_SAVE_FLATTENED_COPY.equals(item)) {
+                saveCopyOptions.add(R.id.menu_export_flattened_copy);
+            } else if (BUTTON_SAVE_REDUCED_COPY.equals(item)) {
+                saveCopyOptions.add(R.id.menu_export_optimized_copy);
+            } else if (BUTTON_SAVE_CROPPED_COPY.equals(item)) {
+                saveCopyOptions.add(R.id.menu_export_cropped_copy);
+            } else if (BUTTON_SAVE_PASSWORD_COPY.equals(item)) {
+                saveCopyOptions.add(R.id.menu_export_password_copy);
             } else if (BUTTON_EDIT_PAGES.equals(item)) {
                 builder = builder.showEditPagesOption(false);
             } else if (BUTTON_PRINT.equals(item)) {
@@ -1210,7 +1283,17 @@ public class PluginUtils {
                         .showFillAndSignToolbarOption(false)
                         .showEditMenuOption(false)
                         .showReflowOption(false);
+            } else if (BUTTON_VIEW_LAYERS.equals(item)) {
+                builder = builder.showViewLayersToolbarOption(false);
             }
+        }
+
+        if (!saveCopyOptions.isEmpty()) {
+            int[] modes = new int[saveCopyOptions.size()];
+            for (int j = 0; j < modes.length; j++) {
+                modes[j] = saveCopyOptions.get(j);
+            }
+            builder.hideSaveCopyOptions(modes);
         }
 
         builder.hideViewModeItems(viewModePickerItems.toArray(new ViewModePickerDialogFragment.ViewModePickerItems[0]));

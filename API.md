@@ -1314,6 +1314,15 @@ Defines whether to show the toolbar switcher in the top toolbar.
 config.hideAnnotationToolbarSwitcher = true;
 ```
 
+#### initialToolbar
+one of the [`DefaultToolbars`](./lib/constants.dart) constants or the `id` of a custom toolbar object, optional, defaults to none.
+
+Defines which [`annotationToolbar`](#annotationToolbars) should be selected when the document is opened.
+
+```dart
+config.initialToolbar = DefaultToolbars.view;
+```
+
 #### hideTopToolbars
 bool, defaults to false.
 
@@ -1321,6 +1330,15 @@ Defines whether to hide both the top app nav bar and the annotation toolbar.
 
 ```dart
 config.hideTopToolbars = true;
+```
+
+#### hideToolbarsOnTap
+bool, defaults to true.
+
+Defines whether an unhandled tap in the viewer should toggle the visibility of the top and bottom toolbars. When false, the top and bottom toolbar visibility will not be toggled and the page content will fit between the bars, if any.
+
+```dart
+config.hideToolbarsOnTap = false;
 ```
 
 #### hideTopAppNavBar
@@ -1332,6 +1350,15 @@ Defines whether to hide the top navigation app bar.
 config.hideTopAppNavBar = true;
 ```
 
+#### topAppNavBarRightBar
+array of [`Buttons`](./lib/constants.dart) constants, iOS only
+
+Customizes the right bar section of the top app nav bar. If passed in, the default right bar section will not be used.
+
+```dart
+config.topAppNavBarRightBar = [Buttons.searchButton, Buttons.moreItemsButton];
+```
+
 #### hideBottomToolbar
 bool, default to false.
 
@@ -1339,6 +1366,27 @@ Defines whether to hide the bottom toolbar for the current viewer.
 
 ```dart
 config.hideBottomToolbar = true;
+```
+
+#### bottomToolbar
+array of [`Buttons`](./lib/constants.dart) constants, defaults to none.
+
+Defines a custom bottom toolbar. If passed in, the default bottom toolbar will not be used. 
+
+Below is the list of supported buttons for each platform:
+
+| `Button` | Android | iOS |
+| :----- | :-----: | :-----: |
+| `listsButton` | ✅ | ✅ |
+| `thumbnailsButton` | ✅ | ✅ |
+| `shareButton` | ✅ | ✅ |
+| `viewControlsButton` | ✅ | ✅ |
+| `reflowModeButton` | ✅ | ✅ |
+| `searchButton` | ✅ | ✅ |
+| `moreItemsButton` | ❌ | ✅ |
+
+```dart
+config.bottomToolbar = [Buttons.reflowModeButton, Buttons.thumbnailsButton];
 ```
 
 ### Layout
@@ -1654,6 +1702,15 @@ Defines whether document is automatically saved by the viewer.
 
 ```dart
 config.autoSaveEnabled = true;
+```
+
+#### showDocumentSavedToast
+bool, defaults to true, Android only.
+
+Defines whether a toast indicating that the document has been successfully or unsuccessfully saved will appear.
+
+```dart
+config.showDocumentSavedToast = false;
 ```
 
 #### useStylusAsPen
