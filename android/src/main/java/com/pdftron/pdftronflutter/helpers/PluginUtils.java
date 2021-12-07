@@ -38,6 +38,7 @@ import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.tools.AnnotManager;
 import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.BookmarkManager;
+import com.pdftron.pdf.utils.CommonToast;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.utils.ViewerUtils;
@@ -120,6 +121,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_OPEN_SAVED_COPY_IN_NEW_TAB = "openSavedCopyInNewTab";
     public static final String KEY_CONFIG_MAX_TAB_COUNT = "maxTabCount";
     public static final String KEY_CONFIG_AUTO_SAVE_ENABLED = "autoSaveEnabled";
+    public static final String KEY_CONFIG_SHOW_DOCUMENT_SAVED_TOAST = "showDocumentSavedToast";
     public static final String KEY_CONFIG_PAGE_CHANGE_ON_TAP = "pageChangeOnTap";
     public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
     public static final String KEY_CONFIG_USE_STYLUS_AS_PEN = "useStylusAsPen";
@@ -825,6 +827,18 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_AUTO_SAVE_ENABLED)) {
                     boolean autoSaveEnabled = configJson.getBoolean(KEY_CONFIG_AUTO_SAVE_ENABLED);
                     configInfo.setAutoSaveEnabled(autoSaveEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SHOW_DOCUMENT_SAVED_TOAST)) {
+                    boolean showDocumentSavedToast = configJson.getBoolean(KEY_CONFIG_SHOW_DOCUMENT_SAVED_TOAST);
+                    if (!showDocumentSavedToast) {
+                        CommonToast.CommonToastHandler.getInstance().setCommonToastListener(new CommonToast.CommonToastListener() {
+                            @Override
+                            public boolean canShowToast(int stringRes, @Nullable CharSequence text) {
+                                return stringRes != R.string.document_saved_toast_message &&
+                                        stringRes != R.string.document_save_error_toast_message;
+                            }
+                        });
+                    }
                 }
                 if (!configJson.isNull(KEY_CONFIG_PAGE_CHANGE_ON_TAP)) {
                     boolean pageChangeOnTap = configJson.getBoolean(KEY_CONFIG_PAGE_CHANGE_ON_TAP);

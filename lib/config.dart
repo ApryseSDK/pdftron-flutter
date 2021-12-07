@@ -24,13 +24,13 @@ class Config {
   var _openSavedCopyInNewTab;
   var _maxTabCount;
   var _autoSaveEnabled;
+  var _showDocumentSavedToast;
   var _pageChangeOnTap;
   var _showSavedSignatures;
   var _useStylusAsPen;
   var _signSignatureFieldWithStamps;
   var _selectAnnotationAfterCreation;
   var _pageIndicatorEnabled;
-  var _pageStackEnabled;
   var _showQuickNavigationButton;
   var _followSystemDarkMode;
   var _downloadDialogEnabled;
@@ -115,6 +115,8 @@ class Config {
   set maxTabCount(int value) => _maxTabCount = value;
 
   set autoSaveEnabled(bool value) => _autoSaveEnabled = value;
+
+  set showDocumentSavedToast(bool value) => _showDocumentSavedToast = value;
 
   set pageChangeOnTap(bool value) => _pageChangeOnTap = value;
 
@@ -230,6 +232,7 @@ class Config {
         _openSavedCopyInNewTab = json['openSavedCopyInNewTab'],
         _maxTabCount = json['maxTabCount'],
         _autoSaveEnabled = json['autoSaveEnabled'],
+        _showDocumentSavedToast = json['showDocumentSavedToast'],
         _pageChangeOnTap = json['pageChangeOnTap'],
         _showSavedSignatures = json['showSavedSignatures'],
         _useStylusAsPen = json['useStylusAsPen'],
@@ -296,6 +299,7 @@ class Config {
         'openSavedCopyInNewTab': _openSavedCopyInNewTab,
         'maxTabCount': _maxTabCount,
         'autoSaveEnabled': _autoSaveEnabled,
+        'showDocumentSavedToast': _showDocumentSavedToast,
         'pageChangeOnTap': _pageChangeOnTap,
         'showSavedSignatures': _showSavedSignatures,
         'useStylusAsPen': _useStylusAsPen,

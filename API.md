@@ -1612,6 +1612,15 @@ Defines whether document is automatically saved by the viewer.
 config.autoSaveEnabled = true;
 ```
 
+#### showDocumentSavedToast
+bool, defaults to true, Android only.
+
+Defines whether a toast indicating that the document has been successfully or unsuccessfully saved will appear.
+
+```dart
+config.showDocumentSavedToast = false;
+```
+
 #### useStylusAsPen
 bool, defaults to true.
 
