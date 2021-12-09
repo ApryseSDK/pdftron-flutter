@@ -132,6 +132,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_SHOW_QUICK_NAVIGATION_BUTTON = "showQuickNavigationButton";
     public static final String KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE = "followSystemDarkMode";
     public static final String KEY_CONFIG_DOWNLOAD_DIALOG_ENABLED = "downloadDialogEnabled";
+    public static final String KEY_CONFIG_SINGLE_LINE_TOOLBAR = "singleLineToolbar";
     public static final String KEY_CONFIG_ANNOTATION_TOOLBARS = "annotationToolbars";
     public static final String KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS = "hideDefaultAnnotationToolbars";
     public static final String KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER = "hideAnnotationToolbarSwitcher";
@@ -880,6 +881,10 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_DOWNLOAD_DIALOG_ENABLED)) {
                     boolean downloadDialogEnabled = configJson.getBoolean(KEY_CONFIG_DOWNLOAD_DIALOG_ENABLED);
                     builder.showDownloadDialog(downloadDialogEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SINGLE_LINE_TOOLBAR)) {
+                    boolean singleLineToolbar = configJson.getBoolean(KEY_CONFIG_SINGLE_LINE_TOOLBAR);
+                    builder.useCompactViewer(singleLineToolbar);
                 }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_TOOLBARS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_ANNOTATION_TOOLBARS);

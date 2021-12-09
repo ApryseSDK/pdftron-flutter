@@ -1297,6 +1297,17 @@ Below is the list of supported buttons for each platform:
 config.bottomToolbar = [Buttons.reflowModeButton, Buttons.thumbnailsButton];
 ```
 
+#### singleLineToolbar
+bool, default to false.
+
+Sets whether to use 2-line toolbar or 1-line toolbar.
+
+```dart
+config.singleLineToolbar = true;
+```
+
+
+
 ### Layout
 
 #### fitMode
