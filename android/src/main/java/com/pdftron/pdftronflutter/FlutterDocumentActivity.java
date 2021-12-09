@@ -129,7 +129,8 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
             ViewerBuilder2 viewerBuilder = ViewerBuilder2.withUri(fileUri, password)
                     .usingCustomHeaders(customHeaders)
                     .usingConfig(config)
-                    .usingNavIcon(navIconId);
+                    .usingNavIcon(navIconId)
+                    .usingTheme(R.style.FlutterAppTheme);
 
             getCurrentActivity().getPdfViewCtrlTabHostFragment().onOpenAddNewTab(viewerBuilder.createBundle(packageContext));
         } else {
