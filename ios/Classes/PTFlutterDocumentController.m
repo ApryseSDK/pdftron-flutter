@@ -1019,6 +1019,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         self.toolManager.annotationAuthor = self.userId;
         self.toolManager.annotationManager.annotationAuthorIdentifier = self.userId;
         self.toolManager.annotationPermissionCheckEnabled = YES;
+        self.toolManager.annotationAuthorCheckEnabled = YES;
         
         // Undo Mode
         PTExternalAnnotManagerMode undoMode = e_ptadmin_undo_others;
