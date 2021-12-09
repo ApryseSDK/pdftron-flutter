@@ -62,6 +62,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private boolean mUseStylusAsPen;
     private boolean mSignSignatureFieldWithStamps;
 
+    private static boolean mAnnotationManagerEnabled;
+    private static String mUserId;
+    private static String mUserName;
+
     private EventChannel.EventSink sExportAnnotationCommandEventEmitter;
     private EventChannel.EventSink sExportBookmarkEventEmitter;
     private EventChannel.EventSink sDocumentLoadedEventEmitter;
@@ -138,6 +142,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         mSignSignatureFieldWithStamps = configInfo.isSignSignatureFieldWithStamps();
 
         mTabTitle = configInfo.getTabTitle();
+
+        mAnnotationManagerEnabled = configInfo.isAnnotationManagerEnabled();
+        mUserId = configInfo.getUserId();
+        mUserName = configInfo.getUserName();
 
         mFromAttach = false;
         mDetached = false;
@@ -289,6 +297,12 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     public boolean isAutoSaveEnabled() {
         return mAutoSaveEnabled;
     }
+
+    public boolean isAnnotationManagerEnabled() { return mAnnotationManagerEnabled; };
+
+    public String getUserId() { return mUserId; };
+
+    public String getUserName() { return mUserName; };
 
     public boolean isUseStylusAsPen() {
         return mUseStylusAsPen;

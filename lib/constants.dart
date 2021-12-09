@@ -113,6 +113,8 @@ class Buttons {
   static const listsButton = 'listsButton';
   static const thumbnailSlider = 'thumbnailSlider';
   static const saveCopyButton = 'saveCopyButton';
+  static const saveIdenticalCopyButton = 'saveIdenticalCopyButton';
+  static const saveFlattenedCopyButton = 'saveFlattenedCopyButton';
   static const editPagesButton = 'editPagesButton';
   static const printButton = 'printButton';
   static const closeButton = 'closeButton';
@@ -121,6 +123,8 @@ class Buttons {
   static const outlineListButton = 'outlineListButton';
   static const annotationListButton = 'annotationListButton';
   static const userBookmarkListButton = 'userBookmarkListButton';
+  static const viewLayersButton = 'viewLayersButton';
+  static const editToolButton = 'editToolButton';
   static const reflowModeButton = 'reflowModeButton';
   static const editMenuButton = 'editMenuButton';
   static const cropPageButton = 'cropPageButton';
@@ -131,6 +135,9 @@ class Buttons {
 
   // Android only
   static const editAnnotationToolbarButton = 'editAnnotationToolButton';
+  static const saveReducedCopyButton = 'saveReducedCopyButton';
+  static const saveCroppedCopyButton = 'saveCroppedCopyButton';
+  static const savePasswordCopyButton = 'savePasswordCopyButton';
 }
 
 // Tools define the various kinds of tools for the viewer
@@ -139,6 +146,7 @@ class Tools {
   static const textSelect = 'TextSelect';
   static const annotationCreateSticky = 'AnnotationCreateSticky';
   static const annotationCreateFreeHand = 'AnnotationCreateFreeHand';
+  static const multiSelect = 'MultiSelect';
   static const annotationCreateTextHighlight = 'AnnotationCreateTextHighlight';
   static const annotationCreateTextUnderline = 'AnnotationCreateTextUnderline';
   static const annotationCreateTextSquiggly = 'AnnotationCreateTextSquiggly';

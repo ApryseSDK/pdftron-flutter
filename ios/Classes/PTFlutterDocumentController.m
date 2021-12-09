@@ -35,6 +35,19 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     // Workaround to ensure thumbnail slider is hidden at launch.
     self.thumbnailSliderHidden = YES;
     self.thumbnailSliderController.view.hidden = YES;
+    
+    NSNotificationCenter *center = NSNotificationCenter.defaultCenter;
+    PTUndoRedoManager *undoRedoManager = self.toolManager.undoRedoManager;
+    
+    [center addObserver:self
+               selector:@selector(undoManagerSentNotification:)
+                   name:PTUndoRedoManagerDidRedoNotification
+                 object:undoRedoManager];
+    
+    [center addObserver:self
+               selector:@selector(undoManagerSentNotification:)
+                   name:PTUndoRedoManagerDidUndoNotification
+                 object:undoRedoManager];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -260,9 +273,19 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         [self.plugin documentController:self annotationsChangedWithActionString:annotationsWithActionString];
     }
     
-    NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:Nil removed:@[annotation]];
-    [self.plugin documentController:self annotationsAsXFDFCommand:xfdf];
+    if (!self.isAnnotationManagerEnabled || self.userId == nil) {
+        NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:Nil removed:@[annotation]];
+        [self.plugin documentController:self annotationsAsXFDFCommand:xfdf];
+    }
     
+}
+
+-(void)toolManager:(PTToolManager *)toolManager annotationRemoved:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
+{
+    if (self.isAnnotationManagerEnabled && self.userId) {
+        NSString *xfdf = [self.pdfViewCtrl.externalAnnotManager GetLastXFDF];
+        [self.plugin documentController:self annotationsAsXFDFCommand:xfdf];
+    }
 }
 
 - (void)toolManager:(PTToolManager *)toolManager annotationAdded:(PTAnnot *)annotation onPageNumber:(unsigned long)pageNumber
@@ -272,7 +295,12 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         [self.plugin documentController:self annotationsChangedWithActionString:annotationsWithActionString];
     }
     
-    NSString* xfdf = [self generateXfdfCommandWithAdded:@[annotation] modified:Nil removed:Nil];
+    NSString* xfdf;
+    if (self.isAnnotationManagerEnabled && self.userId) {
+        xfdf = [self.pdfViewCtrl.externalAnnotManager GetLastXFDF];
+    } else {
+        xfdf = [self generateXfdfCommandWithAdded:@[annotation] modified:Nil removed:Nil];
+    }
     [self.plugin documentController:self annotationsAsXFDFCommand:xfdf];
 }
 
@@ -283,7 +311,12 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         [self.plugin documentController:self annotationsChangedWithActionString:annotationsWithActionString];
     }
   
-    NSString* xfdf = [self generateXfdfCommandWithAdded:Nil modified:@[annotation] removed:Nil];
+    NSString* xfdf;
+    if (self.isAnnotationManagerEnabled && self.userId) {
+        xfdf = [self.pdfViewCtrl.externalAnnotManager GetLastXFDF];
+    } else {
+        xfdf = [self generateXfdfCommandWithAdded:Nil modified:@[annotation] removed:Nil];
+    }
     [self.plugin documentController:self annotationsAsXFDFCommand:xfdf];
 }
 
@@ -721,6 +754,11 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         PTAnnotationCreateFileAttachmentToolKey : @(PTExtendedAnnotTypeFileAttachment),
         PTAnnotationCreateSoundToolKey : @(PTExtendedAnnotTypeSound),
         PTAnnotationCreateFreeHighlighterToolKey : @(PTExtendedAnnotTypeFreehandHighlight),
+        PTPencilKitDrawingToolKey: @(PTExtendedAnnotTypePencilDrawing),
+        PTAnnotationCreateFreeHighlighterToolKey: @(PTExtendedAnnotTypeFreehandHighlight),
+        PTAnnotationCreateRubberStampToolKey: @(PTExtendedAnnotTypeStamp),
+        PTAnnotationCreateRedactionToolKey : @(PTExtendedAnnotTypeRedact),
+        PTAnnotationCreateLinkToolKey : @(PTExtendedAnnotTypeLink),
 //        @"FormCreateTextField" : @(),
 //        @"FormCreateCheckboxField" : @(),
 //        @"FormCreateRadioField" : @(),
@@ -737,6 +775,69 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 
     return annotType;
 
+}
+
+-(PTAnnotType)annotTypeForString:(NSString *)string {
+    if ([string isEqualToString:PTAnnotationCreateStickyToolKey]) {
+        return e_ptText;
+    } else if ([string isEqualToString:PTAnnotationCreateLinkToolKey]) {
+        return e_ptLink;
+    } else if ([string isEqualToString:PTAnnotationCreateFreeTextToolKey]) {
+        return e_ptFreeText;
+    } else if ([string isEqualToString:PTAnnotationCreateLineToolKey]) {
+        return e_ptLine;
+    } else if ([string isEqualToString:PTAnnotationCreateRectangleToolKey]) {
+        return e_ptSquare;
+    } else if ([string isEqualToString:PTAnnotationCreateEllipseToolKey]) {
+        return e_ptCircle;
+    } else if ([string isEqualToString:PTAnnotationCreatePolygonToolKey]) {
+        return e_ptPolygon;
+    } else if ([string isEqualToString:PTAnnotationCreatePolylineToolKey]) {
+        return e_ptPolyline;
+    } else if ([string isEqualToString:PTAnnotationCreateFreeHighlighterToolKey]) {
+        return e_ptHighlight;
+    } else if ([string isEqualToString:PTAnnotationCreateTextUnderlineToolKey]) {
+        return e_ptUnderline;
+    } else if ([string isEqualToString:PTAnnotationCreateTextSquigglyToolKey]) {
+        return e_ptSquiggly;
+    } else if ([string isEqualToString:PTAnnotationCreateTextStrikeoutToolKey]) {
+        return e_ptStrikeOut;
+    } else if ([string isEqualToString:PTAnnotationCreateStampToolKey]) {
+        return e_ptStamp;
+    } else if ([string isEqualToString:PTAnnotationCreateFreeHandToolKey]) {
+        return e_ptInk;
+    } else if ([string isEqualToString:PTAnnotationCreateFileAttachmentToolKey]) {
+        return e_ptFileAttachment;
+    } else if ([string isEqualToString:PTAnnotationCreateSoundToolKey]) {
+        return e_ptSound;
+    } else if ([string isEqualToString:PTFormCreateTextFieldToolKey]) {
+        return e_ptWidget;
+    } else if ([string isEqualToString:PTAnnotationCreateRedactionToolKey]) {
+        return e_ptRedact;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptCaret;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptPopup;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptMovie;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptScreen;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptPrinterMark;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptTrapNet;
+//    } else if ([string isEqualToString:@"");
+//        return e_pt3D;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptProjection;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptRichMedia;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptUnknown;
+//    } else if ([string isEqualToString:@"");
+//        return e_ptWatermark;
+    }
+    return e_ptUnknown;
 }
 
 - (BOOL)toolManager:(PTToolManager *)toolManager shouldHandleLinkAnnotation:(PTAnnot *)annotation orLinkInfo:(PTLinkInfo *)linkInfo onPageNumber:(unsigned long)pageNumber
@@ -797,6 +898,18 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     return YES;
 }
 
+#pragma mark - Notification
+
+- (void)undoManagerSentNotification:(NSNotification *) notification
+{
+    if (self.isAnnotationManagerEnabled && self.userId) {
+        NSString* xfdf = [self.pdfViewCtrl.externalAnnotManager GetLastXFDF];
+        [self.plugin documentController:self annotationsAsXFDFCommand:xfdf];
+    } else {
+        // For UndoRedoStateChanged event
+    }
+}
+
 #pragma mark - <PTPDFViewCtrlDelegate>
 
 - (void)pdfViewCtrl:(PTPDFViewCtrl *)pdfViewCtrl onSetDoc:(PTPDFDoc *)doc
@@ -851,10 +964,15 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     _topToolbarsHidden = NO;
     _topAppNavBarHidden = NO;
     _bottomToolbarHidden = NO;
+    _toolbarsHiddenOnTap = YES;
     
     _readOnly = NO;
     
     _showNavButton = YES;
+    
+    _annotationsListEditingEnabled = YES;
+    _userBookmarksListEditingEnabled = YES;
+    _showNavigationListAsSidePanelOnLargeDevices = YES;
 }
 
 - (void)applyViewerSettings
@@ -886,11 +1004,34 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     // when the top toolbar(s) are disabled, to be able to still toggle the bottom toolbar.
     self.bottomToolbarEnabled = YES;
     
-    // Always allow toggling toolbars on tap.
-    BOOL hidesToolbarsOnTap = YES;
-    self.hidesControlsOnTap = hidesToolbarsOnTap;
+    // Whether toggling toolbars on tap is allowed.
+    self.hidesControlsOnTap = _toolbarsHiddenOnTap;
+    
+    // Annotation Manager
+    if (self.isAnnotationManagerEnabled && self.userId) {
+        PTExternalAnnotManager* annotManager = [self.pdfViewCtrl EnableAnnotationManager:self.userId mode:e_ptadmin_undo_others];
+    }
     
     [self applyToolGroupSettings];
+    
+    self.navigationListsViewController.annotationViewController.readonly = !self.isAnnotationsListEditingEnabled;
+    self.navigationListsViewController.bookmarkViewController.readonly = !self.userBookmarksListEditingEnabled;
+    [self excludeAnnotationListTypes:self.excludedAnnotationListTypes];
+    self.alwaysShowNavigationListsAsModal = !self.showNavigationListAsSidePanelOnLargeDevices;
+}
+
+- (void)excludeAnnotationListTypes:(NSArray<NSString*> *)excludedAnnotationListTypes
+{
+    NSMutableArray<NSNumber *> *annotTypes = [[NSMutableArray alloc] init];
+    
+    for (NSString *string in excludedAnnotationListTypes) {
+        PTAnnotType annotType = [self annotTypeForString:string];
+        [annotTypes addObject:[NSNumber numberWithInt:annotType]];
+    }
+    
+    if (annotTypes.count > 0) {
+        self.navigationListsViewController.annotationViewController.excludedAnnotationTypes = annotTypes;
+    }
 }
 
 - (void)applyFitMode
@@ -1050,6 +1191,38 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         }
     }
     
+    if (self.initialToolbar && self.initialToolbar.length > 0) {
+        NSMutableArray *toolGroupTitles = [NSMutableArray array];
+        NSMutableArray *toolGroupIdentifiers = [NSMutableArray array];
+
+        for (PTToolGroup *toolGroup in toolGroupManager.groups) {
+           [toolGroupTitles addObject:toolGroup.title.lowercaseString];
+           [toolGroupIdentifiers addObject:toolGroup.identifier.lowercaseString];
+        }
+
+        NSInteger initialToolbarIndex = [toolGroupIdentifiers indexOfObject:self.initialToolbar.lowercaseString];
+
+        if (initialToolbarIndex == NSNotFound) {
+           // not found in identifiers, check titles
+           initialToolbarIndex = [toolGroupTitles indexOfObject:self.initialToolbar.lowercaseString];
+        }
+
+        PTToolGroup *matchedDefaultGroup = [self toolGroupForKey:self.initialToolbar toolGroupManager:toolGroupManager];
+        if (matchedDefaultGroup != nil) {
+           // use a default group if its key is found
+           [toolGroupManager setSelectedGroup:matchedDefaultGroup];
+           [self.toolGroupIndicatorView.button setTitle:matchedDefaultGroup.title forState:UIControlStateNormal];
+           if (@available(iOS 13.0, *)) {
+               self.toolGroupIndicatorView.button.largeContentImage = matchedDefaultGroup.image;
+           }
+        }
+
+        if (initialToolbarIndex != NSNotFound) {
+           [toolGroupManager setSelectedGroupIndex:initialToolbarIndex];
+        }
+    }
+    
+    // Handle toolbar switcher
     if (self.annotationToolbarSwitcherHidden) {
         self.navigationItem.titleView = [[UIView alloc] init];
     } else {
@@ -1057,6 +1230,131 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
             self.navigationItem.titleView = self.toolGroupIndicatorView;
         } else {
             self.navigationItem.titleView = nil;
+        }
+    }
+    
+    // Handle the right side of the top app nav bar
+    if (self.topAppNavBarRightBar && self.topAppNavBarRightBar.count >= 0) {
+       NSMutableArray *righBarItems = [[NSMutableArray alloc] init];
+       
+       for (NSString *rightBarItemString in self.topAppNavBarRightBar) {
+           UIBarButtonItem *rightBarItem = [self itemForButton:rightBarItemString
+                                              inViewController:self];
+           if (rightBarItem) {
+               [righBarItems addObject:rightBarItem];
+           }
+       }
+       
+       self.navigationItem.rightBarButtonItems = [righBarItems copy];
+    }
+    
+    // Handle bottomToolbar.
+    if (self.bottomToolbar && self.bottomToolbar.count >= 0) {
+        NSMutableArray<UIBarButtonItem *> *bottomToolbarItems = [[NSMutableArray alloc] init];
+        
+        for (NSString *bottomToolbarString in self.bottomToolbar) {
+            UIBarButtonItem *bottomToolbarItem = [self itemForButton:bottomToolbarString inViewController:self];
+            if (bottomToolbarItem) {
+                [self ensureUniqueBottomBarButtonItem:bottomToolbarItem inViewController:self];
+                [bottomToolbarItems addObject:bottomToolbarItem];
+                // the spacing item between elements
+                UIBarButtonItem *space = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
+                                                                                       target:nil
+                                                                                       action:nil];
+                [bottomToolbarItems addObject:space];
+            }
+        }
+        
+        // remove last spacing if there is at least 1 element
+        if ([bottomToolbarItems count] > 0) {
+            [bottomToolbarItems removeLastObject];
+        }
+        self.toolbarItems = [bottomToolbarItems copy];
+    }
+}
+
+- (UIBarButtonItem *)itemForButton:(NSString *)buttonString
+                  inViewController:(PTDocumentBaseViewController *)documentViewController
+{
+    if ([buttonString isEqualToString:PTSearchButtonKey]) {
+        return documentViewController.searchButtonItem;
+    } else if ([buttonString isEqualToString:PTMoreItemsButtonKey]) {
+        return documentViewController.moreItemsButtonItem;
+    } else if ([buttonString isEqualToString:PTThumbnailsButtonKey]) {
+        return documentViewController.thumbnailsButtonItem;
+    } else if ([buttonString isEqualToString:PTListsButtonKey]) {
+        return documentViewController.navigationListsButtonItem;
+    } else if ([buttonString isEqualToString:PTReflowModeButtonKey]) {
+        return documentViewController.readerModeButtonItem;
+    } else if ([buttonString isEqualToString:PTShareButtonKey]) {
+        return documentViewController.shareButtonItem;
+    } else if ([buttonString isEqualToString:PTViewControlsButtonKey]) {
+        return documentViewController.settingsButtonItem;
+    }
+    return nil;
+}
+
+- (void)ensureUniqueBottomBarButtonItem:(UIBarButtonItem *)item
+                       inViewController:(PTDocumentBaseViewController *)documentViewController
+{
+    if (!item) {
+        return;
+    }
+    
+    if ([documentViewController isKindOfClass:[PTDocumentController class]]) {
+        PTDocumentController * const documentController = (PTDocumentController *)documentViewController;
+        PTDocumentNavigationItem * const navigationItem = documentController.navigationItem;
+        
+        NSArray<UIBarButtonItem *> * const compactLeftBarButtonItems = [navigationItem leftBarButtonItemsForSizeClass:UIUserInterfaceSizeClassCompact];
+        if ([compactLeftBarButtonItems containsObject:item]) {
+            NSMutableArray<UIBarButtonItem *> * const mutableLeftBarButtonItems = [compactLeftBarButtonItems mutableCopy];
+            [mutableLeftBarButtonItems removeObject:item];
+            [navigationItem setLeftBarButtonItems:[mutableLeftBarButtonItems copy]
+                                     forSizeClass:UIUserInterfaceSizeClassCompact
+                                         animated:NO];
+        }
+        
+        NSArray<UIBarButtonItem *> * const regularLeftBarButtonItems = [navigationItem leftBarButtonItemsForSizeClass:UIUserInterfaceSizeClassRegular];
+        if ([regularLeftBarButtonItems containsObject:item]) {
+            NSMutableArray<UIBarButtonItem *> * const mutableLeftBarButtonItems = [regularLeftBarButtonItems mutableCopy];
+            [mutableLeftBarButtonItems removeObject:item];
+            [navigationItem setLeftBarButtonItems:[mutableLeftBarButtonItems copy]
+                                     forSizeClass:UIUserInterfaceSizeClassRegular
+                                         animated:NO];
+        }
+        
+        NSArray<UIBarButtonItem *> * const compactRightBarButtonItems = [navigationItem rightBarButtonItemsForSizeClass:UIUserInterfaceSizeClassCompact];
+        if ([compactRightBarButtonItems containsObject:item]) {
+            NSMutableArray<UIBarButtonItem *> * const mutableRightBarButtonItems = [compactRightBarButtonItems mutableCopy];
+            [mutableRightBarButtonItems removeObject:item];
+            [navigationItem setRightBarButtonItems:[mutableRightBarButtonItems copy]
+                                      forSizeClass:UIUserInterfaceSizeClassCompact
+                                          animated:NO];
+        }
+        
+        NSArray<UIBarButtonItem *> * const regularRightBarButtonItems = [navigationItem rightBarButtonItemsForSizeClass:UIUserInterfaceSizeClassRegular];
+        if ([regularRightBarButtonItems containsObject:item]) {
+            NSMutableArray<UIBarButtonItem *> * const mutableRightBarButtonItems = [regularRightBarButtonItems mutableCopy];
+            [mutableRightBarButtonItems removeObject:item];
+            [navigationItem setRightBarButtonItems:[mutableRightBarButtonItems copy]
+                                      forSizeClass:UIUserInterfaceSizeClassRegular
+                                          animated:NO];
+        }
+    } else {
+        UINavigationItem * const navigationItem = documentViewController.navigationItem;
+        
+        NSArray<UIBarButtonItem *> * const leftBarButtonItems = navigationItem.leftBarButtonItems;
+        if ([leftBarButtonItems containsObject:item]) {
+            NSMutableArray<UIBarButtonItem *> * const mutableLeftBarButtonItems = [leftBarButtonItems mutableCopy];
+            [mutableLeftBarButtonItems removeObject:item];
+            [navigationItem setLeftBarButtonItems:[mutableLeftBarButtonItems copy] animated:NO];
+        }
+
+        NSArray<UIBarButtonItem *> * const rightBarButtonItems = navigationItem.rightBarButtonItems;
+        if ([rightBarButtonItems containsObject:item]) {
+            NSMutableArray<UIBarButtonItem *> * const mutableRightBarButtonItems = [rightBarButtonItems mutableCopy];
+            [mutableRightBarButtonItems removeObject:item];
+            [navigationItem setRightBarButtonItems:[mutableRightBarButtonItems copy] animated:NO];
         }
     }
 }
@@ -1231,6 +1529,21 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 - (void)setTabTitle:(NSString *)tabTitle
 {
     self.documentTabItem.displayName = tabTitle;
+}
+
+- (void)setAnnotationManagerEnabled:(BOOL)annotationManagerEnabled
+{
+    _annotationManagerEnabled = annotationManagerEnabled;
+}
+
+- (void)setUserId:(NSString *)userId
+{
+    _userId = [userId copy];
+}
+
+- (void)setUserName:(NSString *)userName
+{
+    _userName = [userName copy];
 }
 
 #pragma mark - Other

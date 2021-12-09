@@ -35,11 +35,14 @@ import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.tools.AnnotManager;
 import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.BookmarkManager;
+import com.pdftron.pdf.utils.CommonToast;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.utils.ViewerUtils;
+import com.pdftron.pdf.widget.bottombar.builder.BottomBarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
@@ -112,11 +115,13 @@ public class PluginUtils {
     public static final String KEY_CONFIG_HIDE_ANNOTATION_MENU = "hideAnnotationMenu";
     public static final String KEY_CONFIG_ANNOTATION_MENU_ITEMS = "annotationMenuItems";
     public static final String KEY_CONFIG_OVERRIDE_ANNOTATION_MENU_BEHAVIOR = "overrideAnnotationMenuBehavior";
+    public static final String KEY_CONFIG_EXCLUDED_ANNOTATION_LIST_TYPES = "excludedAnnotationListTypes";
     public static final String KEY_CONFIG_EXPORT_PATH = "exportPath";
     public static final String KEY_CONFIG_OPEN_URL_PATH = "openUrlPath";
     public static final String KEY_CONFIG_OPEN_SAVED_COPY_IN_NEW_TAB = "openSavedCopyInNewTab";
     public static final String KEY_CONFIG_MAX_TAB_COUNT = "maxTabCount";
     public static final String KEY_CONFIG_AUTO_SAVE_ENABLED = "autoSaveEnabled";
+    public static final String KEY_CONFIG_SHOW_DOCUMENT_SAVED_TOAST = "showDocumentSavedToast";
     public static final String KEY_CONFIG_PAGE_CHANGE_ON_TAP = "pageChangeOnTap";
     public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
     public static final String KEY_CONFIG_SIGNATURE_PHOTO_PICKER_ENABLED = "signaturePhotoPickerEnabled";
@@ -124,13 +129,18 @@ public class PluginUtils {
     public static final String KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS = "signSignatureFieldWithStamps";
     public static final String KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION = "selectAnnotationAfterCreation";
     public static final String KEY_CONFIG_PAGE_INDICATOR_ENABLED = "pageIndicatorEnabled";
+    public static final String KEY_CONFIG_SHOW_QUICK_NAVIGATION_BUTTON = "showQuickNavigationButton";
     public static final String KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE = "followSystemDarkMode";
+    public static final String KEY_CONFIG_DOWNLOAD_DIALOG_ENABLED = "downloadDialogEnabled";
     public static final String KEY_CONFIG_ANNOTATION_TOOLBARS = "annotationToolbars";
     public static final String KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS = "hideDefaultAnnotationToolbars";
     public static final String KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER = "hideAnnotationToolbarSwitcher";
+    public static final String KEY_CONFIG_INITIAL_TOOLBAR = "initialToolbar";
     public static final String KEY_CONFIG_HIDE_TOP_TOOLBARS = "hideTopToolbars";
+    public static final String KEY_CONFIG_HIDE_TOOLBARS_ON_TAP = "hideToolbarsOnTap";
     public static final String KEY_CONFIG_HIDE_TOP_APP_NAV_BAR = "hideTopAppNavBar";
     public static final String KEY_CONFIG_HIDE_BOTTOM_TOOLBAR = "hideBottomToolbar";
+    public static final String KEY_CONFIG_BOTTOM_TOOLBAR = "bottomToolbar";
     public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
     public static final String KEY_CONFIG_REMEMBER_LAST_USED_TOOL = "rememberLastUsedTool";
     public static final String KEY_CONFIG_DOCUMENT_SLIDER_ENABLED = "documentSliderEnabled";
@@ -139,12 +149,18 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_AUTHOR = "annotationAuthor";
     public static final String KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING = "continuousAnnotationEditing";
     public static final String KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED = "annotationPermissionCheckEnabled";
+    public static final String KEY_CONFIG_ANNOTATIONS_LIST_EDITING_ENABLED = "annotationsListEditingEnabled";
+    public static final String KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED = "userBookmarksListEditingEnabled";
+    public static final String KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES = "showNavigationListAsSidePanelOnLargeDevices";
     public static final String KEY_CONFIG_OVERRIDE_BEHAVIOR = "overrideBehavior";
     public static final String KEY_CONFIG_TAB_TITLE = "tabTitle";
     public static final String KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR = "pageNumberIndicatorAlwaysVisible";
     public static final String KEY_CONFIG_DISABLE_EDITING_BY_ANNOTATION_TYPE = "disableEditingByAnnotationType";
     public static final String KEY_CONFIG_HIDE_VIEW_MODE_ITEMS = "hideViewModeItems";
     public static final String KEY_CONFIG_DEFAULT_ERASER_TYPE = "defaultEraserType";
+    public static final String KEY_CONFIG_ANNOTATION_MANAGER_ENABLED = "annotationManagerEnabled";
+    public static final String KEY_CONFIG_USER_ID = "userId";
+    public static final String KEY_CONFIG_USER_NAME = "userName";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -252,6 +268,11 @@ public class PluginUtils {
     public static final String BUTTON_LISTS = "listsButton";
     public static final String BUTTON_THUMBNAIL_SLIDER = "thumbnailSlider";
     public static final String BUTTON_SAVE_COPY = "saveCopyButton";
+    public static final String BUTTON_SAVE_IDENTICAL_COPY = "saveIdenticalCopyButton";
+    public static final String BUTTON_SAVE_FLATTENED_COPY = "saveFlattenedCopyButton";
+    public static final String BUTTON_SAVE_REDUCED_COPY = "saveReducedCopyButton";
+    public static final String BUTTON_SAVE_CROPPED_COPY = "saveCroppedCopyButton";
+    public static final String BUTTON_SAVE_PASSWORD_COPY = "savePasswordCopyButton";
     public static final String BUTTON_EDIT_PAGES = "editPagesButton";
     public static final String BUTTON_PRINT = "printButton";
     public static final String BUTTON_FILL_AND_SIGN = "fillAndSignButton";
@@ -267,6 +288,7 @@ public class PluginUtils {
     public static final String BUTTON_UNDO = "undo";
     public static final String BUTTON_REDO = "redo";
     public static final String BUTTON_EDIT_ANNOTATION_TOOLBAR = "editAnnotationToolButton";
+    public static final String BUTTON_VIEW_LAYERS = "viewLayersButton";
 
     public static final String TOOL_BUTTON_FREE_HAND = "freeHandToolButton";
     public static final String TOOL_BUTTON_HIGHLIGHT = "highlightToolButton";
@@ -476,6 +498,9 @@ public class PluginUtils {
         private boolean useStylusAsPen;
         private boolean signSignatureFieldWithStamps;
         private boolean showLeadingNavButton;
+        private boolean annotationManagerEnabled;
+        private String userId;
+        private String userName;
         private ArrayList<String> actionOverrideItems;
         private String tabTitle;
         private String openUrlPath;
@@ -500,6 +525,9 @@ public class PluginUtils {
             this.tabTitle = null;
             this.openUrlPath = null;
             this.exportPath = null;
+            this.annotationManagerEnabled = false;
+            this.userId = null;
+            this.userName = null;
         }
 
         public void setInitialPageNumber(int initialPageNumber) {
@@ -574,6 +602,18 @@ public class PluginUtils {
             this.openUrlPath = openUrlPath;
         }
 
+        public void setAnnotationManagerEnabled(boolean annotationManagerEnabled) {
+            this.annotationManagerEnabled = annotationManagerEnabled;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+
         public int getInitialPageNumber() {
             return initialPageNumber;
         }
@@ -632,6 +672,18 @@ public class PluginUtils {
 
         public boolean isShowLeadingNavButton() {
             return showLeadingNavButton;
+        }
+
+        public boolean isAnnotationManagerEnabled() {
+            return annotationManagerEnabled;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public String getUserName() {
+            return userName;
         }
 
         public ArrayList<String> getActionOverrideItems() {
@@ -755,6 +807,17 @@ public class PluginUtils {
                     ArrayList<String> annotationMenuOverrideItems = convertJSONArrayToArrayList(array);
                     configInfo.setAnnotationMenuOverrideItems(annotationMenuOverrideItems);
                 }
+                if (!configJson.isNull(KEY_CONFIG_EXCLUDED_ANNOTATION_LIST_TYPES)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_EXCLUDED_ANNOTATION_LIST_TYPES);
+                    ArrayList<String> excludedTypes = convertJSONArrayToArrayList(array);
+                    int[] annotTypes = new int[excludedTypes.size()];
+                    for (int i = 0; i < excludedTypes.size(); i++) {
+                        String type = excludedTypes.get(i);
+                        annotTypes[i] = convStringToAnnotType(type);
+                    }
+
+                    builder = builder.excludeAnnotationListTypes(annotTypes);
+                }
                 if (!configJson.isNull(KEY_CONFIG_EXPORT_PATH)) {
                     String exportPath = configJson.getString(KEY_CONFIG_EXPORT_PATH);
                     configInfo.setExportPath(exportPath);
@@ -765,6 +828,18 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_AUTO_SAVE_ENABLED)) {
                     boolean autoSaveEnabled = configJson.getBoolean(KEY_CONFIG_AUTO_SAVE_ENABLED);
                     configInfo.setAutoSaveEnabled(autoSaveEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SHOW_DOCUMENT_SAVED_TOAST)) {
+                    boolean showDocumentSavedToast = configJson.getBoolean(KEY_CONFIG_SHOW_DOCUMENT_SAVED_TOAST);
+                    if (!showDocumentSavedToast) {
+                        CommonToast.CommonToastHandler.getInstance().setCommonToastListener(new CommonToast.CommonToastListener() {
+                            @Override
+                            public boolean canShowToast(int stringRes, @Nullable CharSequence text) {
+                                return stringRes != R.string.document_saved_toast_message &&
+                                        stringRes != R.string.document_save_error_toast_message;
+                            }
+                        });
+                    }
                 }
                 if (!configJson.isNull(KEY_CONFIG_PAGE_CHANGE_ON_TAP)) {
                     boolean pageChangeOnTap = configJson.getBoolean(KEY_CONFIG_PAGE_CHANGE_ON_TAP);
@@ -794,9 +869,17 @@ public class PluginUtils {
                     boolean pageIndicatorEnabled = configJson.getBoolean(KEY_CONFIG_PAGE_INDICATOR_ENABLED);
                     builder.showPageNumberIndicator(pageIndicatorEnabled);
                 }
+                if (!configJson.isNull(KEY_CONFIG_SHOW_QUICK_NAVIGATION_BUTTON)) {
+                    boolean showQuickNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_QUICK_NAVIGATION_BUTTON);
+                    builder.pageStackEnabled(showQuickNavButton);
+                }
                 if (!configJson.isNull(KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE)) {
                     boolean followSystem = configJson.getBoolean(KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE);
                     PdfViewCtrlSettingsManager.setFollowSystemDarkMode(context, followSystem);
+                }
+                if (!configJson.isNull(KEY_CONFIG_DOWNLOAD_DIALOG_ENABLED)) {
+                    boolean downloadDialogEnabled = configJson.getBoolean(KEY_CONFIG_DOWNLOAD_DIALOG_ENABLED);
+                    builder.showDownloadDialog(downloadDialogEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_TOOLBARS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_ANNOTATION_TOOLBARS);
@@ -817,9 +900,19 @@ public class PluginUtils {
                     boolean hideAnnotationToolbarSwitcher = configJson.getBoolean(KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER);
                     builder.showToolbarSwitcher(!hideAnnotationToolbarSwitcher);
                 }
+                if (!configJson.isNull(KEY_CONFIG_INITIAL_TOOLBAR)) {
+                    String initialToolbar = configJson.getString(KEY_CONFIG_INITIAL_TOOLBAR);
+                    if (!initialToolbar.isEmpty()) {
+                        builder.initialToolbarTag(initialToolbar).rememberLastUsedToolbar(false);
+                    }
+                }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_TOP_TOOLBARS)) {
                     boolean hideTopToolbars = configJson.getBoolean(KEY_CONFIG_HIDE_TOP_TOOLBARS);
                     builder.showAppBar(!hideTopToolbars);
+                }
+                if (!configJson.isNull(KEY_CONFIG_HIDE_TOOLBARS_ON_TAP)) {
+                    boolean hideToolbarsOnTap = configJson.getBoolean(KEY_CONFIG_HIDE_TOOLBARS_ON_TAP);
+                    builder.permanentToolbars(!hideToolbarsOnTap);
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_TOP_APP_NAV_BAR)) {
                     boolean hideTopAppNavBars = configJson.getBoolean(KEY_CONFIG_HIDE_TOP_APP_NAV_BAR);
@@ -828,6 +921,10 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_HIDE_BOTTOM_TOOLBAR)) {
                     boolean hideBottomToolbar = configJson.getBoolean(KEY_CONFIG_HIDE_BOTTOM_TOOLBAR);
                     builder.showBottomToolbar(!hideBottomToolbar);
+                }
+                if (!configJson.isNull(KEY_CONFIG_BOTTOM_TOOLBAR)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_BOTTOM_TOOLBAR);
+                    setBottomToolbar(array, builder);
                 }
                 if (!configJson.isNull(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON)) {
                     boolean showLeadingNavButton = configJson.getBoolean(KEY_CONFIG_SHOW_LEADING_NAV_BUTTON);
@@ -863,6 +960,18 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED)) {
                     boolean annotationPermissionCheckEnabled = configJson.getBoolean(KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED);
                     toolManagerBuilder = toolManagerBuilder.setAnnotPermission(annotationPermissionCheckEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATIONS_LIST_EDITING_ENABLED)) {
+                    boolean annotationsListEditingEnabled = configJson.getBoolean(KEY_CONFIG_ANNOTATIONS_LIST_EDITING_ENABLED);
+                    builder.annotationsListEditingEnabled(annotationsListEditingEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED)) {
+                    boolean userBookmarksListEditingEnabled = configJson.getBoolean(KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED);
+                    builder.userBookmarksListEditingEnabled(userBookmarksListEditingEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES)) {
+                    boolean showNavigationListAsSidePanelOnLargeDevices = configJson.getBoolean(KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES);
+                    builder.navigationListAsSheetOnLargeDevice(showNavigationListAsSidePanelOnLargeDevices);
                 }
                 if (!configJson.isNull(KEY_CONFIG_OVERRIDE_BEHAVIOR)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_OVERRIDE_BEHAVIOR);
@@ -923,6 +1032,22 @@ public class PluginUtils {
                         toolManagerBuilder = toolManagerBuilder.setEraserType(Eraser.EraserType.HYBRID_ERASER);
                     } else if (DEFAULT_ERASER_TYPE_INK.equals(eraserType)) {
                         toolManagerBuilder = toolManagerBuilder.setEraserType(Eraser.EraserType.INK_ERASER);
+                    }
+                }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_MANAGER_ENABLED)) {
+                    boolean annotationManagerEnabled = configJson.getBoolean(KEY_CONFIG_ANNOTATION_MANAGER_ENABLED);
+                    configInfo.setAnnotationManagerEnabled(annotationManagerEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_USER_ID)) {
+                    String userId = configJson.getString(KEY_CONFIG_USER_ID);
+                    if (!userId.isEmpty()) {
+                        configInfo.setUserId(userId);
+                    }
+                }
+                if (!configJson.isNull(KEY_CONFIG_USER_NAME)) {
+                    String userName = configJson.getString(KEY_CONFIG_USER_NAME);
+                    if (!userName.isEmpty()) {
+                        configInfo.setUserName(userName);
                     }
                 }
             } catch (Exception ex) {
@@ -1010,6 +1135,30 @@ public class PluginUtils {
         }
     }
 
+    private static void setBottomToolbar(JSONArray array, ViewerConfig.Builder builder) throws JSONException{
+        BottomBarBuilder customBottomBar = BottomBarBuilder.withTag("CustomBottomBar");
+
+        for (int i = 0; i < array.length(); i++) {
+            String item = array.getString(i);
+
+            if (BUTTON_THUMBNAILS.equals(item)) {
+                customBottomBar.addCustomButton(R.string.pref_viewmode_thumbnails, R.drawable.ic_thumbnails_grid_black_24dp, R.id.action_thumbnails);
+            } else if (BUTTON_LISTS.equals(item)) {
+                customBottomBar.addCustomButton(R.string.action_outline, R.drawable.ic_outline_white_24dp, R.id.action_outline);
+            } else if (BUTTON_SHARE.equals(item)) {
+                customBottomBar.addCustomButton(R.string.action_file_share, R.drawable.ic_share_black_24dp, R.id.action_share);
+            } else if (BUTTON_VIEW_CONTROLS.equals(item)) {
+                customBottomBar.addCustomButton(R.string.action_view_mode, R.drawable.ic_viewing_mode_white_24dp, R.id.action_viewmode);
+            } else if (BUTTON_SEARCH.equals(item)) {
+                customBottomBar.addCustomButton(R.string.action_search, R.drawable.ic_search_white_24dp, R.id.action_search);
+            } else if (BUTTON_REFLOW_MODE.equals(item)) {
+                customBottomBar.addCustomButton(R.string.pref_viewmode_reflow, R.drawable.ic_view_mode_reflow_black_24dp, R.id.action_reflow_mode);
+            }
+        }
+
+        builder.bottomBarBuilder(customBottomBar);
+    }
+
     private static Uri getUri(Context context, String path, boolean isBase64, String base64FileExtension) {
         if (context == null || path == null) {
             return null;
@@ -1054,6 +1203,7 @@ public class PluginUtils {
     private static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
 
         ArrayList<ViewModePickerDialogFragment.ViewModePickerItems> viewModePickerItems = new ArrayList<>();
+        ArrayList<Integer> saveCopyOptions = new ArrayList<>();
 
         for (int i = 0; i < args.length(); i++) {
             String item = args.getString(i);
@@ -1079,6 +1229,16 @@ public class PluginUtils {
                 builder = builder.showBottomNavBar(false);
             } else if (BUTTON_SAVE_COPY.equals(item)) {
                 builder = builder.showSaveCopyOption(false);
+            } else if (BUTTON_SAVE_IDENTICAL_COPY.equals(item)) {
+                saveCopyOptions.add(R.id.menu_export_copy);
+            } else if (BUTTON_SAVE_FLATTENED_COPY.equals(item)) {
+                saveCopyOptions.add(R.id.menu_export_flattened_copy);
+            } else if (BUTTON_SAVE_REDUCED_COPY.equals(item)) {
+                saveCopyOptions.add(R.id.menu_export_optimized_copy);
+            } else if (BUTTON_SAVE_CROPPED_COPY.equals(item)) {
+                saveCopyOptions.add(R.id.menu_export_cropped_copy);
+            } else if (BUTTON_SAVE_PASSWORD_COPY.equals(item)) {
+                saveCopyOptions.add(R.id.menu_export_password_copy);
             } else if (BUTTON_EDIT_PAGES.equals(item)) {
                 builder = builder.showEditPagesOption(false);
             } else if (BUTTON_PRINT.equals(item)) {
@@ -1115,7 +1275,17 @@ public class PluginUtils {
                         .showFillAndSignToolbarOption(false)
                         .showEditMenuOption(false)
                         .showReflowOption(false);
+            } else if (BUTTON_VIEW_LAYERS.equals(item)) {
+                builder = builder.showViewLayersToolbarOption(false);
             }
+        }
+
+        if (!saveCopyOptions.isEmpty()) {
+            int[] modes = new int[saveCopyOptions.size()];
+            for (int j = 0; j < modes.length; j++) {
+                modes[j] = saveCopyOptions.get(j);
+            }
+            builder.hideSaveCopyOptions(modes);
         }
 
         builder.hideViewModeItems(viewModePickerItems.toArray(new ViewModePickerDialogFragment.ViewModePickerItems[0]));
@@ -2482,45 +2652,51 @@ public class PluginUtils {
     }
 
     private static void importAnnotationCommand(String xfdfCommand, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
-        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
-        PDFDoc pdfDoc = component.getPdfDoc();
-        if (null == pdfViewCtrl || null == pdfDoc || null == xfdfCommand) {
-            result.error("InvalidState", "Activity not attached", null);
-            return;
-        }
-        boolean shouldUnlockRead = false;
-        try {
-            pdfViewCtrl.docLockRead();
-            shouldUnlockRead = true;
-
-            if (pdfDoc.hasDownloader()) {
-                // still downloading file, let's wait for next call
-                result.error("InvalidState", "Document download in progress, try again later", null);
+        ToolManager toolManager = component.getToolManager();
+        if (toolManager != null && toolManager.getAnnotManager() != null) {
+            toolManager.getAnnotManager().onRemoteChange(xfdfCommand);
+            result.success(null);
+        } else {
+            PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+            PDFDoc pdfDoc = component.getPdfDoc();
+            if (null == pdfViewCtrl || null == pdfDoc || null == xfdfCommand) {
+                result.error("InvalidState", "Activity not attached", null);
                 return;
             }
-        } finally {
-            if (shouldUnlockRead) {
-                pdfViewCtrl.docUnlockRead();
+            boolean shouldUnlockRead = false;
+            try {
+                pdfViewCtrl.docLockRead();
+                shouldUnlockRead = true;
+
+                if (pdfDoc.hasDownloader()) {
+                    // still downloading file, let's wait for next call
+                    result.error("InvalidState", "Document download in progress, try again later", null);
+                    return;
+                }
+            } finally {
+                if (shouldUnlockRead) {
+                    pdfViewCtrl.docUnlockRead();
+                }
             }
-        }
 
-        boolean shouldUnlock = false;
-        try {
-            pdfViewCtrl.docLock(true);
-            shouldUnlock = true;
+            boolean shouldUnlock = false;
+            try {
+                pdfViewCtrl.docLock(true);
+                shouldUnlock = true;
 
-            FDFDoc fdfDoc = pdfDoc.fdfExtract(PDFDoc.e_both);
-            String xfdf = fdfDoc.saveAsXFDF();
-            FDFDoc newFdfDoc = FDFDoc.createFromXFDF(xfdf);
-            newFdfDoc.mergeAnnots(xfdfCommand);
+                FDFDoc fdfDoc = pdfDoc.fdfExtract(PDFDoc.e_both);
+                String xfdf = fdfDoc.saveAsXFDF();
+                FDFDoc newFdfDoc = FDFDoc.createFromXFDF(xfdf);
+                newFdfDoc.mergeAnnots(xfdfCommand);
 
-            pdfDoc.fdfUpdate(newFdfDoc);
-            pdfDoc.refreshAnnotAppearances();
-            pdfViewCtrl.update(true);
-            result.success(null);
-        } finally {
-            if (shouldUnlock) {
-                pdfViewCtrl.docUnlock();
+                pdfDoc.fdfUpdate(newFdfDoc);
+                pdfDoc.refreshAnnotAppearances();
+                pdfViewCtrl.update(true);
+                result.success(null);
+            } finally {
+                if (shouldUnlock) {
+                    pdfViewCtrl.docUnlock();
+                }
             }
         }
     }
@@ -2938,7 +3114,7 @@ public class PluginUtils {
 
     // Events
 
-    public static void handleDocumentLoaded(ViewerComponent component) {
+    public static void handleDocumentLoaded(final ViewerComponent component) {
 
         // Set initial page number
         if (component.getInitialPageNumber() > 0 && component.getPdfViewCtrl() != null) {
@@ -2968,6 +3144,24 @@ public class PluginUtils {
             if (documentLoadedEventSink != null) {
                 documentLoadedEventSink.success(component.getPdfViewCtrlTabFragment().getFilePath());
             }
+        }
+
+        if (component.isAnnotationManagerEnabled() && component.getUserId() != null) {
+            component.getToolManager().enableAnnotManager(
+                    component.getUserId(),
+                    component.getUserName(),
+                    PDFViewCtrl.AnnotationManagerMode.ADMIN_UNDO_OTHERS,
+                    AnnotManager.EditPermissionMode.EDIT_OTHERS,
+                    new AnnotManager.AnnotationSyncingListener() {
+                        @Override
+                        public void onLocalChange(String action, String xfdfCommand, String xfdfJSON) {
+                            EventChannel.EventSink eventSink = component.getExportAnnotationCommandEventEmitter();
+                            if (eventSink != null) {
+                                eventSink.success(xfdfCommand);
+                            }
+                        }
+                    }
+            );
         }
     }
 
@@ -3076,24 +3270,27 @@ public class PluginUtils {
     }
 
     public static void emitExportAnnotationCommandEvent(String action, Map<Annot, Integer> map, ViewerComponent component) {
-        // TODO: when collabManager is null
-        ArrayList<Annot> annots = new ArrayList<>(map.keySet());
-        String xfdfCommand = null;
-        try {
-            if (action.equals(KEY_ACTION_ADD)) {
-                xfdfCommand = generateXfdfCommand(annots, null, null, component);
-            } else if (action.equals(KEY_ACTION_MODIFY)) {
-                xfdfCommand = generateXfdfCommand(null, annots, null, component);
-            } else {
-                xfdfCommand = generateXfdfCommand(null, null, annots, component);
+        if (component.getToolManager() != null && component.getToolManager().getAnnotManager() != null ) {
+            return;
+        } else {
+            ArrayList<Annot> annots = new ArrayList<>(map.keySet());
+            String xfdfCommand = null;
+            try {
+                if (action.equals(KEY_ACTION_ADD)) {
+                    xfdfCommand = generateXfdfCommand(annots, null, null, component);
+                } else if (action.equals(KEY_ACTION_MODIFY)) {
+                    xfdfCommand = generateXfdfCommand(null, annots, null, component);
+                } else {
+                    xfdfCommand = generateXfdfCommand(null, null, annots, component);
+                }
+            } catch (PDFNetException e) {
+                e.printStackTrace();
             }
-        } catch (PDFNetException e) {
-            e.printStackTrace();
-        }
 
-        EventChannel.EventSink eventSink = component.getExportAnnotationCommandEventEmitter();
-        if (eventSink != null) {
-            eventSink.success(xfdfCommand);
+            EventChannel.EventSink eventSink = component.getExportAnnotationCommandEventEmitter();
+            if (eventSink != null) {
+                eventSink.success(xfdfCommand);
+            }
         }
     }
 

@@ -753,6 +753,27 @@ Returns a Future.
 PdftronFlutter.addBookmark("Page 7", 6);
 ```
 
+#### userBookmarksListEditingEnabled
+bool, optional, default value is true
+
+Defines whether the bookmark list can be edited. If the viewer is readonly then bookmarks on Android are 
+still editable but are saved to the device rather than the PDF.
+
+```dart
+config.userBookmarksListEditingEnabled = false;
+```
+
+### Navigation
+
+#### showNavigationListAsSidePanelOnLargeDevices
+bool, optional, defaults to true
+
+Defines whether the navigation list will be displayed as a side panel on large devices such as iPads and tablets.
+
+```dart
+config.showNavigationListAsSidePanelOnLargeDevices = true;
+```
+
 ### Multi-tab
 
 #### closeAllTabs
@@ -877,6 +898,8 @@ var pageMovedCancel = startPageMovedListener((previousPageNumber, pageNumber) {
 
 #### startExportAnnotationCommandListener
 Event is raised when local annotation changes committed to the document.
+
+To also raise this event upon undo/redo, [`annotationManagerEnabled`](#annotationManagerEnabled) must be true, and [`userId`](#userId) must not be null.
 
 Event Parameters:
 
@@ -1122,6 +1145,10 @@ String, defaults to `.pdf`, required if using base64 string of a non-pdf file.
 
 Defines the file extension for the base64 string in document, if [`isBase64String`](#isBase64String) is true.
 
+```dart
+config.base64FileExtension = '.jpeg';
+```
+
 ### UI Customization
 
 #### disabledElements
@@ -1151,6 +1178,15 @@ Defines whether to show the leading navigation button.
 
 ```dart
 config.showLeadingNavButton = true;
+```
+
+#### downloadDialogEnabled
+bool, defaults to true, Android only.
+
+Defines whether the download dialog should be shown.
+
+```dart
+config.downloadDialogEnabled = false;
 ```
 
 ### Toolbar Customization
@@ -1186,6 +1222,15 @@ Defines whether to show the toolbar switcher in the top toolbar.
 config.hideAnnotationToolbarSwitcher = true;
 ```
 
+#### initialToolbar
+one of the [`DefaultToolbars`](./lib/constants.dart) constants or the `id` of a custom toolbar object, optional, defaults to none.
+
+Defines which [`annotationToolbar`](#annotationToolbars) should be selected when the document is opened.
+
+```dart
+config.initialToolbar = DefaultToolbars.view;
+```
+
 #### hideTopToolbars
 bool, defaults to false.
 
@@ -1193,6 +1238,15 @@ Defines whether to hide both the top app nav bar and the annotation toolbar.
 
 ```dart
 config.hideTopToolbars = true;
+```
+
+#### hideToolbarsOnTap
+bool, defaults to true.
+
+Defines whether an unhandled tap in the viewer should toggle the visibility of the top and bottom toolbars. When false, the top and bottom toolbar visibility will not be toggled and the page content will fit between the bars, if any.
+
+```dart
+config.hideToolbarsOnTap = false;
 ```
 
 #### hideTopAppNavBar
@@ -1204,6 +1258,15 @@ Defines whether to hide the top navigation app bar.
 config.hideTopAppNavBar = true;
 ```
 
+#### topAppNavBarRightBar
+array of [`Buttons`](./lib/constants.dart) constants, iOS only
+
+Customizes the right bar section of the top app nav bar. If passed in, the default right bar section will not be used.
+
+```dart
+config.topAppNavBarRightBar = [Buttons.searchButton, Buttons.moreItemsButton];
+```
+
 #### hideBottomToolbar
 bool, default to false.
 
@@ -1211,6 +1274,27 @@ Defines whether to hide the bottom toolbar for the current viewer.
 
 ```dart
 config.hideBottomToolbar = true;
+```
+
+#### bottomToolbar
+array of [`Buttons`](./lib/constants.dart) constants, defaults to none.
+
+Defines a custom bottom toolbar. If passed in, the default bottom toolbar will not be used. 
+
+Below is the list of supported buttons for each platform:
+
+| `Button` | Android | iOS |
+| :----- | :-----: | :-----: |
+| `listsButton` | ✅ | ✅ |
+| `thumbnailsButton` | ✅ | ✅ |
+| `shareButton` | ✅ | ✅ |
+| `viewControlsButton` | ✅ | ✅ |
+| `reflowModeButton` | ✅ | ✅ |
+| `searchButton` | ✅ | ✅ |
+| `moreItemsButton` | ❌ | ✅ |
+
+```dart
+config.bottomToolbar = [Buttons.reflowModeButton, Buttons.thumbnailsButton];
 ```
 
 ### Layout
@@ -1327,6 +1411,25 @@ Defines annotation types that cannot be edited after creation.
 config.disableEditingByAnnotationType = [Tools.annotationCreateTextSquiggly, Tools.annotationCreateTextHighlight, Tools.annotationCreateEllipse];
 ```
 
+#### annotationsListEditingEnabled
+bool, optional, default value is true
+
+If document editing is enabled, then this value determines if the annotation list is editable. 
+
+```dart
+config.annotationsListEditingEnabled = false;
+```
+
+#### excludedAnnotationListTypes
+array of [`Config.Tools`](./src/Config/Config.ts) constants, optional, defaults to none
+
+Defines types to be excluded from the annotation list.
+Example use:
+
+```dart
+config.excludedAnnotationListTypes=[Tools.annotationCreateEllipse, Tools.annotationCreateRedaction];
+```
+
 ### Annotation Menu
 
 #### hideAnnotationMenu
@@ -1394,6 +1497,17 @@ Defines actions that should skip default behavior, such as external link click. 
 
 ```dart
 config.overrideBehavior = [Behaviors.linkPress];
+```
+
+### Navigation
+
+#### showQuickNavigationButton
+bool, defaults to true.
+
+Defines whether the quick navigation buttons will appear in the viewer.
+
+```dart
+config.showQuickNavigationButton = false;
 ```
 
 ### Multi-tab
@@ -1499,12 +1613,21 @@ config.hideViewModeItems=[ViewModePickerItem.ColorMode, ViewModePickerItem.Crop]
 ### Others
 
 #### autoSaveEnabled
-bool, dafaults to true.
+bool, defaults to true.
 
 Defines whether document is automatically saved by the viewer.
 
 ```dart
 config.autoSaveEnabled = true;
+```
+
+#### showDocumentSavedToast
+bool, defaults to true, Android only.
+
+Defines whether a toast indicating that the document has been successfully or unsuccessfully saved will appear.
+
+```dart
+config.showDocumentSavedToast = false;
 ```
 
 #### useStylusAsPen
@@ -1523,4 +1646,39 @@ Defines whether the UI will appear in a dark color when the system is dark mode.
 
 ```dart
 config.followSystemDarkMode = false;
+```
+
+#### annotationManagerEnabled
+bool, defaults to false.
+
+Defines whether the annotation manager is enabled. 
+
+When [`annotationManagerEnabled`](#annotationManagerEnabled) is true, and [`userId`](#userId) is not null, then [`startExportAnnotationCommandListener`](#startExportAnnotationCommandListener) will be raised when the state of the current document's undo/redo stack has been changed.
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Bob123";
+```
+
+#### userId
+String.
+
+The unique identifier of the current user.
+
+When [`annotationManagerEnabled`](#annotationManagerEnabled) is true, and [`userId`](#userId) is not null, then [`startExportAnnotationCommandListener`](#startExportAnnotationCommandListener) will be raised when the state of the current document's undo/redo stack has been changed.
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Bob123";
+```
+
+#### userName
+String, Android only.
+
+The name of the current user. Used in the annotation manager when [`annotationManagerEnabled`](#annotationManagerEnabled) is true.
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Bob123";
+config.userName = "Bob";
 ```
