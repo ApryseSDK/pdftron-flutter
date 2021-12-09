@@ -35,6 +35,7 @@ class Config {
   var _showQuickNavigationButton;
   var _followSystemDarkMode;
   var _downloadDialogEnabled;
+  var _singleLineToolbar;
   var _annotationToolbars;
   var _hideDefaultAnnotationToolbars;
   var _hideAnnotationToolbarSwitcher;
@@ -141,6 +142,8 @@ class Config {
 
   set downloadDialogEnabled(bool value) => _downloadDialogEnabled = value;
 
+  set singleLineToolbar(bool value) => _singleLineToolbar = value;
+
   set annotationToolbars(List value) => _annotationToolbars = value;
 
   set hideDefaultAnnotationToolbars(List value) =>
@@ -246,6 +249,7 @@ class Config {
         _showQuickNavigationButton = json['showQuickNavigationButton'],
         _followSystemDarkMode = json['followSystemDarkMode'],
         _downloadDialogEnabled = json['downloadDialogEnabled'],
+        _singleLineToolbar = json['_singleLineToolbar'],
         _annotationToolbars = json['annotationToolbars'],
         _hideDefaultAnnotationToolbars = json['hideDefaultAnnotationToolbars'],
         _hideAnnotationToolbarSwitcher = json['hideAnnotationToolbarSwitcher'],
@@ -314,6 +318,7 @@ class Config {
         'showQuickNavigationButton': _showQuickNavigationButton,
         'followSystemDarkMode': _followSystemDarkMode,
         'downloadDialogEnabled': _downloadDialogEnabled,
+        'singleLineToolbar': _singleLineToolbar,
         'annotationToolbars': _annotationToolbars,
         'hideDefaultAnnotationToolbars': _hideDefaultAnnotationToolbars,
         'hideAnnotationToolbarSwitcher': _hideAnnotationToolbarSwitcher,
