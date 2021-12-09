@@ -1298,7 +1298,7 @@ config.bottomToolbar = [Buttons.reflowModeButton, Buttons.thumbnailsButton];
 ```
 
 #### singleLineToolbar
-bool, default to false.
+bool, default to false. Android only.
 
 Sets whether to use 2-line toolbar or 1-line toolbar.
 
