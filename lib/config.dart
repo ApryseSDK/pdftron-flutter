@@ -27,6 +27,7 @@ class Config {
   var _showDocumentSavedToast;
   var _pageChangeOnTap;
   var _showSavedSignatures;
+  var _signaturePhotoPickerEnabled;
   var _useStylusAsPen;
   var _signSignatureFieldWithStamps;
   var _selectAnnotationAfterCreation;
@@ -121,6 +122,8 @@ class Config {
   set pageChangeOnTap(bool value) => _pageChangeOnTap = value;
 
   set showSavedSignatures(bool value) => _showSavedSignatures = value;
+
+  set signaturePhotoPickerEnabled(bool value) => _signaturePhotoPickerEnabled = value;
 
   set useStylusAsPen(bool value) => _useStylusAsPen;
 
@@ -235,6 +238,7 @@ class Config {
         _showDocumentSavedToast = json['showDocumentSavedToast'],
         _pageChangeOnTap = json['pageChangeOnTap'],
         _showSavedSignatures = json['showSavedSignatures'],
+        _signaturePhotoPickerEnabled = json['signaturePhotoPickerEnabled'],
         _useStylusAsPen = json['useStylusAsPen'],
         _signSignatureFieldWithStamps = json['signSignatureFieldWithStamps'],
         _selectAnnotationAfterCreation = json['selectAnnotationAfterCreation'],
@@ -302,6 +306,7 @@ class Config {
         'showDocumentSavedToast': _showDocumentSavedToast,
         'pageChangeOnTap': _pageChangeOnTap,
         'showSavedSignatures': _showSavedSignatures,
+        'signaturePhotoPickerEnabled': _signaturePhotoPickerEnabled,
         'useStylusAsPen': _useStylusAsPen,
         'signSignatureFieldWithStamps': _signSignatureFieldWithStamps,
         'selectAnnotationAfterCreation': _selectAnnotationAfterCreation,
