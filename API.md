@@ -1675,7 +1675,7 @@ config.userName = "Bob";
 ```
 
 #### annotationManagerEditMode
-one of the [`AnnotationManagerEditMode`](./lib/constants.dart) constants, optional, default value is `AnnotationManagerEditMode.Others`
+one of the [`AnnotationManagerEditMode`](./lib/constants.dart) constants, optional, default value is `AnnotationManagerEditMode.All`
 
 Sets annotation manager edit mode when [`annotationManagerEnabled`](#annotationManagerEnabled) is true and [`userId`](#userId) is not null.
 
@@ -1691,7 +1691,7 @@ config.annotationManagerEditMode = AnnotationManagerEditMode.Own;
 ```
 
 #### annotationManagerUndoMode
-one of the [`AnnotationManagerUndoMode`](./lib/constants.dart) constants, optional, default value is `AnnotationManagerUndoMode.Others`
+one of the [`AnnotationManagerUndoMode`](./lib/constants.dart) constants, optional, default value is `AnnotationManagerUndoMode.All`
 
 Sets annotation manager undo mode when [`annotationManagerEnabled`](#annotationManagerEnabled) is true and [`userId`](#userId) is not null.
 
