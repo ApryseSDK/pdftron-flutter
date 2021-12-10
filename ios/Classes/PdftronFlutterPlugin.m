@@ -1334,6 +1334,10 @@
     } else if ([call.method isEqualToString:PTGetPageRotationKey]) {
         NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self getPageRotation:pageNumber resultToken:result];
+    } else if ([call.method isEqualToString:PTRotateClockwiseKey]) {
+        [self rotateClockwise:result];
+    } else if ([call.method isEqualToString:PTRotateCounterClockwiseKey]) {
+        [self rotateCounterClockwise:result];
     } else if ([call.method isEqualToString:PTSetCurrentPageKey]) {
         NSNumber* pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self setCurrentPage:pageNumber resultToken:result];
@@ -2334,6 +2338,18 @@
         NSLog(@"Error: There was an error while trying to get the page rotation for page number. %@", error.localizedDescription);
     }
     flutterResult(pageRotation);
+}
+
+- (void)rotateClockwise:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    [documentController.pdfViewCtrl RotateClockwise];
+    flutterResult(nil);
+}
+
+- (void)rotateCounterClockwise:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    [documentController.pdfViewCtrl RotateCounterClockwise];
+    flutterResult(nil);
 }
 
 - (void)setCurrentPage:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult {
