@@ -160,6 +160,14 @@ class DocumentViewController {
     return pageRotation;
   }
 
+  Future<void> rotateClockwise() {
+    return _channel.invokeMethod(Functions.rotateClockwise);
+  }
+
+  Future<void> rotateCounterClockwise() {
+    return _channel.invokeMethod(Functions.rotateCounterClockwise);
+  }
+
   Future<bool> setCurrentPage(int pageNumber) {
     return _channel.invokeMethod(Functions.setCurrentPage,
         <String, dynamic>{Parameters.pageNumber: pageNumber});

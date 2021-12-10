@@ -407,6 +407,24 @@ var pageRotation = await PdftronFlutter.getPageRotation(1);
 print("The rotation value of page 1 is $pageRotation");
 ```
 
+#### rotateClockwise
+Rotates all pages in the current document in clockwise direction (by 90 degrees).
+
+Returns a Promise.
+
+```dart
+PdftronFlutter.rotateClockwise();
+```
+
+#### rotateCounterClockwise
+Rotates all pages in the current document in counter-clockwise direction (by 90 degrees).
+
+Returns a Promise.
+
+```dart
+PdftronFlutter.rotateCounterClockwise();
+```
+
 #### gotoPreviousPage
 Go to the previous page of the document. If on first page, it will stay on first page.
 
