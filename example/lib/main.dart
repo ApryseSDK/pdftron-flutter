@@ -82,6 +82,7 @@ class _ViewerState extends State<Viewer> {
     // await PdftronFlutter.openDocument(_document);
 
     var config = Config();
+    config.readOnly=true;
     // How to disable functionality:
     //      config.disabledElements = [Buttons.shareButton, Buttons.searchButton];
     //      config.disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
