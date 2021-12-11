@@ -946,6 +946,9 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_READ_ONLY)) {
                     boolean readOnly = configJson.getBoolean(KEY_CONFIG_READ_ONLY);
                     builder.documentEditingEnabled(!readOnly);
+                    if (readOnly) {
+                        builder.skipReadOnlyCheck(false);
+                    }
                 }
                 if (!configJson.isNull(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED)) {
                     boolean thumbnailViewEditingEnabled = configJson.getBoolean(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED);
