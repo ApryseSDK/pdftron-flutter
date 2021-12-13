@@ -354,12 +354,12 @@ static NSString * const PTInkEraserModeAllKey = @"annotationEraser";
 static NSString * const PTInkEraserModePointsKey = @"hybrideEraser";
 
 // Annotation Mananger Edit Mode
-static NSString * const PTAnnotationManagerEditModeOwnKey = @"own";
-static NSString * const PTAnnotationManagerEditModeAllKey = @"all";
+static NSString * const PTAnnotationManagerEditModeOwnKey = @"editModeOwn";
+static NSString * const PTAnnotationManagerEditModeAllKey = @"editModeAll";
 
 // Annotation Mananger Undo Mode
-static NSString * const PTAnnotationManagerUndoModeOwnKey = @"own";
-static NSString * const PTAnnotationManagerUndoModeAllKey = @"all";
+static NSString * const PTAnnotationManagerUndoModeOwnKey = @"undoModeOwn";
+static NSString * const PTAnnotationManagerUndoModeAllKey = @"undoModeAll";
 
 // Default annotation toolbar names.
 typedef NSString * PTDefaultAnnotationToolbarKey;

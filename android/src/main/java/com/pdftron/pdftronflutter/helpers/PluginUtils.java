@@ -480,12 +480,12 @@ public class PluginUtils {
     public static final String DEFAULT_ERASER_TYPE_INK = "inkEraser";
 
     // Annotation Manager Edit Mode
-    public static final String ANNOTATION_MANAGER_EDIT_MODE_OWN = "own";
-    public static final String ANNOTATION_MANAGER_EDIT_MODE_ALL = "all";
+    public static final String ANNOTATION_MANAGER_EDIT_MODE_OWN = "editModeOwn";
+    public static final String ANNOTATION_MANAGER_EDIT_MODE_ALL = "editModeAll";
 
     // Annotation Manager Undo Mode
-    public static final String ANNOTATION_MANAGER_UNDO_MODE_OWN = "own";
-    public static final String ANNOTATION_MANAGER_UNDO_MODE_ALL = "all";
+    public static final String ANNOTATION_MANAGER_UNDO_MODE_OWN = "undoModeOwn";
+    public static final String ANNOTATION_MANAGER_UNDO_MODE_ALL = "undoModeAll";
 
     // Navigation List visibility
     public static boolean isBookmarkListVisible = true;

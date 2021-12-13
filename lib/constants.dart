@@ -344,11 +344,11 @@ class DefaultEraserType {
 }
 
 class AnnotationManagerEditMode {
-  static const Own = "own";
-  static const All = "all";
+  static const Own = "editModeOwn";
+  static const All = "editModeAll";
 }
 
 class AnnotationManagerUndoMode {
-  static const Own = "own";
-  static const All = "all";
+  static const Own = "undoModeOwn";
+  static const All = "unodModeAll";
 }
