@@ -124,6 +124,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_SHOW_DOCUMENT_SAVED_TOAST = "showDocumentSavedToast";
     public static final String KEY_CONFIG_PAGE_CHANGE_ON_TAP = "pageChangeOnTap";
     public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
+    public static final String KEY_CONFIG_SIGNATURE_PHOTO_PICKER_ENABLED = "signaturePhotoPickerEnabled";
     public static final String KEY_CONFIG_USE_STYLUS_AS_PEN = "useStylusAsPen";
     public static final String KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS = "signSignatureFieldWithStamps";
     public static final String KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION = "selectAnnotationAfterCreation";
@@ -131,6 +132,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_SHOW_QUICK_NAVIGATION_BUTTON = "showQuickNavigationButton";
     public static final String KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE = "followSystemDarkMode";
     public static final String KEY_CONFIG_DOWNLOAD_DIALOG_ENABLED = "downloadDialogEnabled";
+    public static final String KEY_CONFIG_SINGLE_LINE_TOOLBAR = "singleLineToolbar";
     public static final String KEY_CONFIG_ANNOTATION_TOOLBARS = "annotationToolbars";
     public static final String KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS = "hideDefaultAnnotationToolbars";
     public static final String KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER = "hideAnnotationToolbarSwitcher";
@@ -861,6 +863,10 @@ public class PluginUtils {
                     boolean showSavedSignatures = configJson.getBoolean(KEY_CONFIG_SHOW_SAVED_SIGNATURES);
                     toolManagerBuilder = toolManagerBuilder.setShowSavedSignatures(showSavedSignatures);
                 }
+                if (!configJson.isNull(KEY_CONFIG_SIGNATURE_PHOTO_PICKER_ENABLED)) {
+                    boolean signaturePhotoPickerEnabled = configJson.getBoolean(KEY_CONFIG_SIGNATURE_PHOTO_PICKER_ENABLED);
+                    toolManagerBuilder = toolManagerBuilder.setShowSignatureFromImage(signaturePhotoPickerEnabled);
+                }
                 if (!configJson.isNull(KEY_CONFIG_USE_STYLUS_AS_PEN)) {
                     boolean useStylusAsPen = configJson.getBoolean(KEY_CONFIG_USE_STYLUS_AS_PEN);
                     configInfo.setUseStylusAsPen(useStylusAsPen);
@@ -888,6 +894,10 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_DOWNLOAD_DIALOG_ENABLED)) {
                     boolean downloadDialogEnabled = configJson.getBoolean(KEY_CONFIG_DOWNLOAD_DIALOG_ENABLED);
                     builder.showDownloadDialog(downloadDialogEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SINGLE_LINE_TOOLBAR)) {
+                    boolean singleLineToolbar = configJson.getBoolean(KEY_CONFIG_SINGLE_LINE_TOOLBAR);
+                    builder.useCompactViewer(singleLineToolbar);
                 }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_TOOLBARS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_ANNOTATION_TOOLBARS);
@@ -949,6 +959,9 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_READ_ONLY)) {
                     boolean readOnly = configJson.getBoolean(KEY_CONFIG_READ_ONLY);
                     builder.documentEditingEnabled(!readOnly);
+                    if (readOnly) {
+                        builder.skipReadOnlyCheck(false);
+                    }
                 }
                 if (!configJson.isNull(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED)) {
                     boolean thumbnailViewEditingEnabled = configJson.getBoolean(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED);

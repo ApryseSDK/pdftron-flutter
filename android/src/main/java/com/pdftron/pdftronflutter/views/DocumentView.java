@@ -21,6 +21,7 @@ import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
+import com.pdftron.pdftronflutter.R;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
@@ -159,7 +160,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
                 .usingConfig(mViewerConfig)
                 .usingNavIcon(mShowNavIcon ? mNavIconRes : 0)
                 .usingCustomHeaders(mCustomHeaders)
-                .usingTabTitle(mTabTitle);
+                .usingTabTitle(mTabTitle)
+                .usingTheme(R.style.FlutterAppTheme);
     }
 
     @Override

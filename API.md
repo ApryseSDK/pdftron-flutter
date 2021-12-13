@@ -1297,6 +1297,17 @@ Below is the list of supported buttons for each platform:
 config.bottomToolbar = [Buttons.reflowModeButton, Buttons.thumbnailsButton];
 ```
 
+#### singleLineToolbar
+bool, default to false. Android only.
+
+Sets whether to use 2-line toolbar or 1-line toolbar.
+
+```dart
+config.singleLineToolbar = true;
+```
+
+
+
 ### Layout
 
 #### fitMode
@@ -1569,6 +1580,15 @@ Defines whether to show saved signatures for re-use when using the signing tool.
 
 ```dart
 config.showSavedSignatures = true;
+```
+
+#### signaturePhotoPickerEnabled
+bool, optional, defaults to true. Android only.
+
+Defines whether to show the option to pick images in the signature dialog.
+
+```dart
+config.signaturePhotoPickerEnabled = true;
 ```
 
 ### Thumbnail Browser

@@ -27,6 +27,7 @@ class Config {
   var _showDocumentSavedToast;
   var _pageChangeOnTap;
   var _showSavedSignatures;
+  var _signaturePhotoPickerEnabled;
   var _useStylusAsPen;
   var _signSignatureFieldWithStamps;
   var _selectAnnotationAfterCreation;
@@ -34,6 +35,7 @@ class Config {
   var _showQuickNavigationButton;
   var _followSystemDarkMode;
   var _downloadDialogEnabled;
+  var _singleLineToolbar;
   var _annotationToolbars;
   var _hideDefaultAnnotationToolbars;
   var _hideAnnotationToolbarSwitcher;
@@ -124,6 +126,8 @@ class Config {
 
   set showSavedSignatures(bool value) => _showSavedSignatures = value;
 
+  set signaturePhotoPickerEnabled(bool value) => _signaturePhotoPickerEnabled = value;
+
   set useStylusAsPen(bool value) => _useStylusAsPen;
 
   set signSignatureFieldWithStamps(bool value) =>
@@ -139,6 +143,8 @@ class Config {
   set followSystemDarkMode(bool value) => _followSystemDarkMode = value;
 
   set downloadDialogEnabled(bool value) => _downloadDialogEnabled = value;
+
+  set singleLineToolbar(bool value) => _singleLineToolbar = value;
 
   set annotationToolbars(List value) => _annotationToolbars = value;
 
@@ -241,6 +247,7 @@ class Config {
         _showDocumentSavedToast = json['showDocumentSavedToast'],
         _pageChangeOnTap = json['pageChangeOnTap'],
         _showSavedSignatures = json['showSavedSignatures'],
+        _signaturePhotoPickerEnabled = json['signaturePhotoPickerEnabled'],
         _useStylusAsPen = json['useStylusAsPen'],
         _signSignatureFieldWithStamps = json['signSignatureFieldWithStamps'],
         _selectAnnotationAfterCreation = json['selectAnnotationAfterCreation'],
@@ -248,6 +255,7 @@ class Config {
         _showQuickNavigationButton = json['showQuickNavigationButton'],
         _followSystemDarkMode = json['followSystemDarkMode'],
         _downloadDialogEnabled = json['downloadDialogEnabled'],
+        _singleLineToolbar = json['_singleLineToolbar'],
         _annotationToolbars = json['annotationToolbars'],
         _hideDefaultAnnotationToolbars = json['hideDefaultAnnotationToolbars'],
         _hideAnnotationToolbarSwitcher = json['hideAnnotationToolbarSwitcher'],
@@ -310,6 +318,7 @@ class Config {
         'showDocumentSavedToast': _showDocumentSavedToast,
         'pageChangeOnTap': _pageChangeOnTap,
         'showSavedSignatures': _showSavedSignatures,
+        'signaturePhotoPickerEnabled': _signaturePhotoPickerEnabled,
         'useStylusAsPen': _useStylusAsPen,
         'signSignatureFieldWithStamps': _signSignatureFieldWithStamps,
         'selectAnnotationAfterCreation': _selectAnnotationAfterCreation,
@@ -317,6 +326,7 @@ class Config {
         'showQuickNavigationButton': _showQuickNavigationButton,
         'followSystemDarkMode': _followSystemDarkMode,
         'downloadDialogEnabled': _downloadDialogEnabled,
+        'singleLineToolbar': _singleLineToolbar,
         'annotationToolbars': _annotationToolbars,
         'hideDefaultAnnotationToolbars': _hideDefaultAnnotationToolbars,
         'hideAnnotationToolbarSwitcher': _hideAnnotationToolbarSwitcher,

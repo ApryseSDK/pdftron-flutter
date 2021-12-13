@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="FlutterAppTheme" parent="FlutterAppThemeBase">
+    </style>
+
+    <style name="FlutterAppThemeBase" parent="PDFTronAppTheme">
+        <item name="search_toolbar">@style/FlutterSearchToolbarStyle</item>
+    </style>
+
+    <style name="BaseSearchToolbarStyle">
+        <item name="showSearchWeb">false</item>
+    </style>
+
+    <style name="FlutterSearchToolbarStyle" parent="BaseSearchToolbarStyle">
+    </style>
+
+</resources>
