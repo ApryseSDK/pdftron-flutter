@@ -1693,3 +1693,35 @@ config.annotationManagerEnabled = true;
 config.userId = "Bob123";
 config.userName = "Bob";
 ```
+
+#### annotationManagerEditMode
+one of the [`AnnotationManagerEditMode`](./lib/constants.dart) constants, optional, default value is `AnnotationManagerEditMode.All`
+
+Sets annotation manager edit mode when [`annotationManagerEnabled`](#annotationManagerEnabled) is true and [`userId`](#userId) is not null.
+
+Mode | Description
+--- | ---
+`AnnotationManagerEditMode.Own` | In this mode, you can edit only your own changes 
+`AnnotationManagerEditMode.All` | In this mode, you can edit everyone's changes 
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Sam";
+config.annotationManagerEditMode = AnnotationManagerEditMode.Own;
+```
+
+#### annotationManagerUndoMode
+one of the [`AnnotationManagerUndoMode`](./lib/constants.dart) constants, optional, default value is `AnnotationManagerUndoMode.All`
+
+Sets annotation manager undo mode when [`annotationManagerEnabled`](#annotationManagerEnabled) is true and [`userId`](#userId) is not null.
+
+Mode | Description
+--- | ---
+`AnnotationManagerUndoMode.Own` | In this mode, you can undo only your own changes 
+`AnnotationManagerUndoMode.All` | In this mode, you can undo everyone's changes 
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Sam";
+config.annotationManagerUndoMode = AnnotationManagerUndoMode.Own;
+```
