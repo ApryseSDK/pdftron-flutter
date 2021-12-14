@@ -248,6 +248,8 @@ public class PluginUtils {
     public static final String FUNCTION_CLOSE_ALL_TABS = "closeAllTabs";
     public static final String FUNCTION_DELETE_ALL_ANNOTATIONS = "deleteAllAnnotations";
     public static final String FUNCTION_GET_PAGE_ROTATION = "getPageRotation";
+    public static final String FUNCTION_ROTATE_CLOCKWISE = "rotateClockwise";
+    public static final String FUNCTION_ROTATE_COUNTER_CLOCKWISE = "rotateCounterClockwise";
     public static final String FUNCTION_EXPORT_AS_IMAGE = "exportAsImage";
     public static final String FUNCTION_EXPORT_AS_IMAGE_FROM_FILE_PATH = "exportAsImageFromFilePath";
     public static final String FUNCTION_OPEN_ANNOTATION_LIST = "openAnnotationList";
@@ -2129,6 +2131,16 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_ROTATE_CLOCKWISE: {
+                checkFunctionPrecondition(component);
+                rotateClockwise(result, component);
+                break;
+            }
+            case FUNCTION_ROTATE_COUNTER_CLOCKWISE: {
+                checkFunctionPrecondition(component);
+                rotateCounterClockwise(result, component);
+                break;
+            }
             case FUNCTION_EXPORT_AS_IMAGE: {
                 checkFunctionPrecondition(component);
                 Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
@@ -3017,6 +3029,26 @@ public class PluginUtils {
             }
         }
         result.success(pageRotation);
+    }
+
+    private static void rotateClockwise(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+        }
+
+        pdfViewCtrl.rotateClockwise();
+        result.success(null);
+    }
+
+    private static void rotateCounterClockwise(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+        }
+
+        pdfViewCtrl.rotateCounterClockwise();
+        result.success(null);
     }
 
     private static void exportAsImage(int pageNumber, int dpi, String exportFormat, MethodChannel.Result result, ViewerComponent component) {

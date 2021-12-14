@@ -21,6 +21,8 @@ class Functions {
   static const handleBackButton = "handleBackButton";
   static const getPageCropBox = "getPageCropBox";
   static const getPageRotation = "getPageRotation";
+  static const rotateClockwise = "rotateClockwise";
+  static const rotateCounterClockwise = "rotateCounterClockwise";
   static const setCurrentPage = "setCurrentPage";
   static const getDocumentPath = "getDocumentPath";
   static const setToolMode = "setToolMode";
