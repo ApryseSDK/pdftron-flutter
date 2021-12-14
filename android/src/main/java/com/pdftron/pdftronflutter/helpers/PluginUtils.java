@@ -2511,17 +2511,18 @@ public class PluginUtils {
         PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
         if (pdfViewCtrlTabHostFragment2 == null) {
             result.error("InvalidState", "Activity not attached", null);
+            return;
         }
 
         pdfViewCtrlTabHostFragment2.addNewPage();
         result.success(null);
-        return;
     }
 
     private static void openViewSettings(MethodChannel.Result result, ViewerComponent component) {
         PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
         if (pdfViewCtrlTabHostFragment2 == null) {
             result.error("InvalidState", "Activity not attached", null);
+            return;
         }
 
         pdfViewCtrlTabHostFragment2.onViewModeOptionSelected();
@@ -2532,6 +2533,7 @@ public class PluginUtils {
         PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
         if (pdfViewCtrlTabHostFragment2 == null) {
             result.error("InvalidState", "Activity not attached", null);
+            return;
         }
 
         pdfViewCtrlTabHostFragment2.onViewModeSelected(
@@ -2543,6 +2545,7 @@ public class PluginUtils {
         PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
         if (pdfViewCtrlTabHostFragment2 == null) {
             result.error("InvalidState", "Activity not attached", null);
+            return;
         }
 
         pdfViewCtrlTabHostFragment2.onSearchOptionSelected();
@@ -2553,6 +2556,7 @@ public class PluginUtils {
         PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
         if (pdfViewCtrlTabHostFragment2 == null) {
             result.error("InvalidState", "Activity not attached", null);
+            return;
         }
 
         pdfViewCtrlTabHostFragment2.onOpenTabSwitcher();
@@ -2564,6 +2568,7 @@ public class PluginUtils {
         final PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
         if (pdfViewCtrl == null || pdfViewCtrlTabFragment == null) {
             result.error("InvalidState", "Activity not attached", null);
+            return;
         }
 
         DialogGoToPage dlgGotoPage = new DialogGoToPage(pdfViewCtrl.getContext(), pdfViewCtrl, new DialogGoToPage.DialogGoToPageListener() {
