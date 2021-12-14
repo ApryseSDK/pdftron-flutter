@@ -826,6 +826,56 @@ resultImagePath | String | the temp path of the created image, user is responsib
 var resultImagePath = await PdftronFlutter.exportAsImage(1, 92, ExportFormat.BMP);
 ```
 
+### Undo/Redo
+
+#### undo
+Undo the last modification.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.undo();
+```
+
+#### redo
+Redo the last modification.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.redo();
+```
+
+#### canUndo
+Checks whether an undo operation can be performed from the current snapshot.
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+canUndo | bool | whether it is possible to undo from the current snapshot
+
+```dart
+PdftronFlutter.canUndo().then((canUndo) => {
+  print("undo possible: $canUndo")
+});
+```
+
+#### canRedo
+Checks whether a redo operation can be perfromed from the current snapshot.
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+canRedo | bool | whether it is possible to redo from the current snapshot
+
+```dart
+PdftronFlutter.canRedo().then((canRedo) => {
+  print("redo possible: $canRedo")
+});
+```
+
 ## Events
 This section contains all the event listeners you could attach to the viewer.
 
