@@ -738,7 +738,7 @@ public class PluginUtils {
                 JSONObject configJson = new JSONObject(configStr);
                 if (!configJson.isNull(KEY_CONFIG_DISABLED_ELEMENTS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_DISABLED_ELEMENTS);
-                    disabledTools.addAll(disableElements(builder, array));
+                    disabledTools.addAll(disableElements(builder, toolManagerBuilder, array));
                 }
                 if (!configJson.isNull(KEY_CONFIG_DISABLED_TOOLS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_DISABLED_TOOLS);
@@ -1233,7 +1233,7 @@ public class PluginUtils {
         return null;
     }
 
-    private static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
+    private static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, ToolManagerBuilder toolManagerBuilder, JSONArray args) throws JSONException {
 
         ArrayList<ViewModePickerDialogFragment.ViewModePickerItems> viewModePickerItems = new ArrayList<>();
         ArrayList<Integer> saveCopyOptions = new ArrayList<>();
@@ -1298,6 +1298,10 @@ public class PluginUtils {
                 builder = builder.showEditMenuOption(false);
             } else if (BUTTON_CROP_PAGE.equals(item)) {
                 viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_USERCROP);
+            } else if (BUTTON_UNDO.equals(item)) {
+                toolManagerBuilder.setShowUndoRedo(false);
+            } else if (BUTTON_REDO.equals(item)) {
+                toolManagerBuilder.setShowUndoRedo(false);
             } else if (BUTTON_MORE_ITEMS.equals(item)) {
                 builder = builder
                         .showEditPagesOption(false)
