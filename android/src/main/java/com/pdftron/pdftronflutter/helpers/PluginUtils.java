@@ -2526,7 +2526,6 @@ public class PluginUtils {
 
         pdfViewCtrlTabHostFragment2.onViewModeOptionSelected();
         result.success(null);
-        return;
     }
 
     private static void openCrop(MethodChannel.Result result, ViewerComponent component) {
@@ -2538,7 +2537,6 @@ public class PluginUtils {
         pdfViewCtrlTabHostFragment2.onViewModeSelected(
                 PdfViewCtrlSettingsManager.KEY_PREF_VIEWMODE_USERCROP_VALUE);
         result.success(null);
-        return;
     }
 
     private static void openSearch(MethodChannel.Result result, ViewerComponent component) {
@@ -2549,7 +2547,6 @@ public class PluginUtils {
 
         pdfViewCtrlTabHostFragment2.onSearchOptionSelected();
         result.success(null);
-        return;
     }
 
     private static void openTabSwitcher(MethodChannel.Result result, ViewerComponent component) {
@@ -2560,7 +2557,6 @@ public class PluginUtils {
 
         pdfViewCtrlTabHostFragment2.onOpenTabSwitcher();
         result.success(null);
-        return;
     }
 
     private static void openGoToPageView(MethodChannel.Result result, ViewerComponent component) {
@@ -2585,7 +2581,6 @@ public class PluginUtils {
         });
         dlgGotoPage.show();
         result.success(null);
-        return;
     }
 
     private static void openNavigationLists(MethodChannel.Result result, ViewerComponent component) {
