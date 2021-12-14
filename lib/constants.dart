@@ -19,8 +19,14 @@ class Functions {
   static const commitTool = "commitTool";
   static const getPageCount = "getPageCount";
   static const handleBackButton = "handleBackButton";
+  static const undo = "undo";
+  static const redo = "redo";
+  static const canUndo = "canUndo";
+  static const canRedo = "canRedo";
   static const getPageCropBox = "getPageCropBox";
   static const getPageRotation = "getPageRotation";
+  static const rotateClockwise = "rotateClockwise";
+  static const rotateCounterClockwise = "rotateCounterClockwise";
   static const setCurrentPage = "setCurrentPage";
   static const getDocumentPath = "getDocumentPath";
   static const setToolMode = "setToolMode";

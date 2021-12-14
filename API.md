@@ -407,6 +407,24 @@ var pageRotation = await PdftronFlutter.getPageRotation(1);
 print("The rotation value of page 1 is $pageRotation");
 ```
 
+#### rotateClockwise
+Rotates all pages in the current document in clockwise direction (by 90 degrees).
+
+Returns a Promise.
+
+```dart
+PdftronFlutter.rotateClockwise();
+```
+
+#### rotateCounterClockwise
+Rotates all pages in the current document in counter-clockwise direction (by 90 degrees).
+
+Returns a Promise.
+
+```dart
+PdftronFlutter.rotateCounterClockwise();
+```
+
 #### gotoPreviousPage
 Go to the previous page of the document. If on first page, it will stay on first page.
 
@@ -806,6 +824,56 @@ resultImagePath | String | the temp path of the created image, user is responsib
 
 ```dart
 var resultImagePath = await PdftronFlutter.exportAsImage(1, 92, ExportFormat.BMP);
+```
+
+### Undo/Redo
+
+#### undo
+Undo the last modification.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.undo();
+```
+
+#### redo
+Redo the last modification.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.redo();
+```
+
+#### canUndo
+Checks whether an undo operation can be performed from the current snapshot.
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+canUndo | bool | whether it is possible to undo from the current snapshot
+
+```dart
+PdftronFlutter.canUndo().then((canUndo) => {
+  print("undo possible: $canUndo")
+});
+```
+
+#### canRedo
+Checks whether a redo operation can be perfromed from the current snapshot.
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+canRedo | bool | whether it is possible to redo from the current snapshot
+
+```dart
+PdftronFlutter.canRedo().then((canRedo) => {
+  print("redo possible: $canRedo")
+});
 ```
 
 ## Events

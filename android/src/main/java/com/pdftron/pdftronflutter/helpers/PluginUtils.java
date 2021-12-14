@@ -35,6 +35,7 @@ import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.tools.UndoRedoManager;
 import com.pdftron.pdf.tools.AnnotManager;
 import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.BookmarkManager;
@@ -231,6 +232,10 @@ public class PluginUtils {
     public static final String FUNCTION_COMMIT_TOOL = "commitTool";
     public static final String FUNCTION_GET_PAGE_COUNT = "getPageCount";
     public static final String FUNCTION_HANDLE_BACK_BUTTON = "handleBackButton";
+    public static final String FUNCTION_UNDO = "undo";
+    public static final String FUNCTION_REDO = "redo";
+    public static final String FUNCTION_CAN_UNDO = "canUndo";
+    public static final String FUNCTION_CAN_REDO = "canRedo";
     public static final String FUNCTION_GET_PAGE_CROP_BOX = "getPageCropBox";
     public static final String FUNCTION_SET_CURRENT_PAGE = "setCurrentPage";
     public static final String FUNCTION_GET_DOCUMENT_PATH = "getDocumentPath";
@@ -248,6 +253,8 @@ public class PluginUtils {
     public static final String FUNCTION_CLOSE_ALL_TABS = "closeAllTabs";
     public static final String FUNCTION_DELETE_ALL_ANNOTATIONS = "deleteAllAnnotations";
     public static final String FUNCTION_GET_PAGE_ROTATION = "getPageRotation";
+    public static final String FUNCTION_ROTATE_CLOCKWISE = "rotateClockwise";
+    public static final String FUNCTION_ROTATE_COUNTER_CLOCKWISE = "rotateCounterClockwise";
     public static final String FUNCTION_EXPORT_AS_IMAGE = "exportAsImage";
     public static final String FUNCTION_EXPORT_AS_IMAGE_FROM_FILE_PATH = "exportAsImageFromFilePath";
     public static final String FUNCTION_OPEN_ANNOTATION_LIST = "openAnnotationList";
@@ -2065,6 +2072,26 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_UNDO: {
+                checkFunctionPrecondition(component);
+                undo(result, component);
+                break;
+            }
+            case FUNCTION_REDO: {
+                checkFunctionPrecondition(component);
+                redo(result, component);
+                break;
+            }
+            case FUNCTION_CAN_UNDO: {
+                checkFunctionPrecondition(component);
+                canUndo(result, component);
+                break;
+            }
+            case FUNCTION_CAN_REDO: {
+                checkFunctionPrecondition(component);
+                canRedo(result, component);
+                break;
+            }
             case FUNCTION_SET_CURRENT_PAGE: {
                 checkFunctionPrecondition(component);
                 Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
@@ -2131,6 +2158,16 @@ public class PluginUtils {
                 if (pageNumber != null) {
                     getPageRotation(pageNumber, result, component);
                 }
+                break;
+            }
+            case FUNCTION_ROTATE_CLOCKWISE: {
+                checkFunctionPrecondition(component);
+                rotateClockwise(result, component);
+                break;
+            }
+            case FUNCTION_ROTATE_COUNTER_CLOCKWISE: {
+                checkFunctionPrecondition(component);
+                rotateCounterClockwise(result, component);
                 break;
             }
             case FUNCTION_EXPORT_AS_IMAGE: {
@@ -2830,6 +2867,44 @@ public class PluginUtils {
         result.success(jsonObject.toString());
     }
 
+    private static void undo(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
+        if (pdfViewCtrlTabFragment != null) {
+            pdfViewCtrlTabFragment.undo();
+            result.success(null);
+        } else {
+            result.error("InvalidState", "Activity not attached", null);
+        }
+    }
+
+    private static void redo(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
+        if (pdfViewCtrlTabFragment != null) {
+            pdfViewCtrlTabFragment.redo();
+            result.success(null);
+        } else {
+            result.error("InvalidState", "Activity not attached", null);
+        }
+    }
+
+    private static void canUndo(MethodChannel.Result result, ViewerComponent component) {
+        ToolManager toolManager = component.getToolManager();
+        if (toolManager != null && toolManager.getUndoRedoManger() != null) {
+            result.success(toolManager.getUndoRedoManger().canUndo());
+        } else {
+            result.error("InvalidState", "Tool manager or undoRedo manager not found", null);
+        }
+    }
+
+    private static void canRedo(MethodChannel.Result result, ViewerComponent component) {
+        ToolManager toolManager = component.getToolManager();
+        if (toolManager != null && toolManager.getUndoRedoManger() != null) {
+            result.success(toolManager.getUndoRedoManger().canRedo());
+        } else {
+            result.error("InvalidState", "Tool manager or undoRedo manager not found", null);
+        }
+    }
+
     private static void setCurrentPage(int pageNumber, MethodChannel.Result result, ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         result.success(pdfViewCtrl != null && pdfViewCtrl.setCurrentPage(pageNumber));
@@ -3021,6 +3096,26 @@ public class PluginUtils {
             }
         }
         result.success(pageRotation);
+    }
+
+    private static void rotateClockwise(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+        }
+
+        pdfViewCtrl.rotateClockwise();
+        result.success(null);
+    }
+
+    private static void rotateCounterClockwise(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+        }
+
+        pdfViewCtrl.rotateCounterClockwise();
+        result.success(null);
     }
 
     private static void exportAsImage(int pageNumber, int dpi, String exportFormat, MethodChannel.Result result, ViewerComponent component) {
