@@ -994,6 +994,14 @@
             ^{
                 documentController.settingsViewController.cropPagesHidden = YES;
             },
+        PTUndoKey:
+            ^{
+                [documentController.toolManager.undoManager disableUndoRegistration];
+            },
+        PTRedoKey:
+            ^{
+                [documentController.toolManager.undoManager disableUndoRegistration];
+            },
         PTMoreItemsButtonKey:
             ^{
                 documentController.moreItemsButtonHidden = YES;

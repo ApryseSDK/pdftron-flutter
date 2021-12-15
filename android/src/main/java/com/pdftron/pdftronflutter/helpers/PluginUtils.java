@@ -154,6 +154,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED = "annotationPermissionCheckEnabled";
     public static final String KEY_CONFIG_ANNOTATIONS_LIST_EDITING_ENABLED = "annotationsListEditingEnabled";
     public static final String KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED = "userBookmarksListEditingEnabled";
+    public static final String KEY_CONFIG_OUTLINE_LIST_EDITING_ENABLED = "outlineListEditingEnabled";
     public static final String KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES = "showNavigationListAsSidePanelOnLargeDevices";
     public static final String KEY_CONFIG_OVERRIDE_BEHAVIOR = "overrideBehavior";
     public static final String KEY_CONFIG_TAB_TITLE = "tabTitle";
@@ -752,7 +753,7 @@ public class PluginUtils {
                 JSONObject configJson = new JSONObject(configStr);
                 if (!configJson.isNull(KEY_CONFIG_DISABLED_ELEMENTS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_DISABLED_ELEMENTS);
-                    disabledTools.addAll(disableElements(builder, array));
+                    disabledTools.addAll(disableElements(builder, toolManagerBuilder, array));
                 }
                 if (!configJson.isNull(KEY_CONFIG_DISABLED_TOOLS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_DISABLED_TOOLS);
@@ -1003,6 +1004,10 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED)) {
                     boolean userBookmarksListEditingEnabled = configJson.getBoolean(KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED);
                     builder.userBookmarksListEditingEnabled(userBookmarksListEditingEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_OUTLINE_LIST_EDITING_ENABLED)) {
+                    boolean outlineListEditingEnabled = configJson.getBoolean(KEY_CONFIG_OUTLINE_LIST_EDITING_ENABLED);
+                    builder.outlineListEditingEnabled(outlineListEditingEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES)) {
                     boolean showNavigationListAsSidePanelOnLargeDevices = configJson.getBoolean(KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES);
@@ -1259,7 +1264,7 @@ public class PluginUtils {
         return null;
     }
 
-    private static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
+    private static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, ToolManagerBuilder toolManagerBuilder, JSONArray args) throws JSONException {
 
         ArrayList<ViewModePickerDialogFragment.ViewModePickerItems> viewModePickerItems = new ArrayList<>();
         ArrayList<Integer> saveCopyOptions = new ArrayList<>();
@@ -1324,6 +1329,10 @@ public class PluginUtils {
                 builder = builder.showEditMenuOption(false);
             } else if (BUTTON_CROP_PAGE.equals(item)) {
                 viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_USERCROP);
+            } else if (BUTTON_UNDO.equals(item)) {
+                toolManagerBuilder.setShowUndoRedo(false);
+            } else if (BUTTON_REDO.equals(item)) {
+                toolManagerBuilder.setShowUndoRedo(false);
             } else if (BUTTON_MORE_ITEMS.equals(item)) {
                 builder = builder
                         .showEditPagesOption(false)

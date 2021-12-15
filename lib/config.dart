@@ -56,6 +56,7 @@ class Config {
   var _annotationPermissionCheckEnabled;
   var _annotationsListEditingEnabled;
   var _userBookmarksListEditingEnabled;
+  var _outlineListEditingEnabled;
   var _showNavigationListAsSidePanelOnLargeDevices;
   var _overrideBehavior;
   var _tabTitle;
@@ -195,6 +196,9 @@ class Config {
   set userBookmarksListEditingEnabled(bool value) =>
       _userBookmarksListEditingEnabled = value;
 
+  set outlineListEditingEnabled(bool value) =>
+      _outlineListEditingEnabled = value;
+
   set showNavigationListAsSidePanelOnLargeDevices(bool value) =>
       _showNavigationListAsSidePanelOnLargeDevices = value;
 
@@ -296,7 +300,8 @@ class Config {
         _userId = json['userId'],
         _userName = json['userName'],
         _annotationManagerEditMode = json['annotationManagerEditMode'],
-        _annotationManagerUndoMode = json['annotationManagerUndoMode'];
+        _annotationManagerUndoMode = json['annotationManagerUndoMode'],
+        _outlineListEditingEnabled = json['outlineListEditingEnabled'];
 
 
   Map<String, dynamic> toJson() => {
@@ -369,5 +374,6 @@ class Config {
         'userName' : _userName,
         'annotationManagerEditMode': _annotationManagerEditMode,
         'annotationManagerUndoMode': _annotationManagerUndoMode,
+        'outlineListEditingEnabled': _outlineListEditingEnabled,
       };
 }
