@@ -19,8 +19,14 @@ class Functions {
   static const commitTool = "commitTool";
   static const getPageCount = "getPageCount";
   static const handleBackButton = "handleBackButton";
+  static const undo = "undo";
+  static const redo = "redo";
+  static const canUndo = "canUndo";
+  static const canRedo = "canRedo";
   static const getPageCropBox = "getPageCropBox";
   static const getPageRotation = "getPageRotation";
+  static const rotateClockwise = "rotateClockwise";
+  static const rotateCounterClockwise = "rotateCounterClockwise";
   static const setCurrentPage = "setCurrentPage";
   static const getDocumentPath = "getDocumentPath";
   static const setToolMode = "setToolMode";
@@ -135,6 +141,9 @@ class Buttons {
 
   // Android only
   static const editAnnotationToolbarButton = 'editAnnotationToolButton';
+  static const saveReducedCopyButton = 'saveReducedCopyButton';
+  static const saveCroppedCopyButton = 'saveCroppedCopyButton';
+  static const savePasswordCopyButton = 'savePasswordCopyButton';
 }
 
 // Tools define the various kinds of tools for the viewer
@@ -334,8 +343,25 @@ class ViewModePickerItem {
   static const ColorMode = "viewModeColorMode";
 }
 
+// DefaultEraserType defines the default behaviour of the eraser tool.
 class DefaultEraserType {
   static const annotationEraser = "annotationEraser";
   static const hybrideEraser = "hybrideEraser";
-  static const inkEraser = "inkEraser";
+  static const inkEraser = "inkEraser"; // Android only
+}
+
+// ReflowOrientation defines the scrolling direction of the viewer while in reflow mode. Android only.
+class ReflowOrientation {
+  static const horizontal = "horizontal";
+  static const vertical = "vertical";
+}
+
+class AnnotationManagerEditMode {
+  static const Own = "editModeOwn";
+  static const All = "editModeAll";
+}
+
+class AnnotationManagerUndoMode {
+  static const Own = "undoModeOwn";
+  static const All = "unodModeAll";
 }
