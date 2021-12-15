@@ -669,7 +669,6 @@
                     NSNumber *imageInReflowModeEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTImageInReflowModeEnabledKey class:[NSNumber class] error:&error];
                     
                     if (!error && imageInReflowModeEnabledNumber) {
-                        // TODO: When support is added, use the code below
                         [documentController setImageInReflowModeEnabled:[imageInReflowModeEnabledNumber boolValue]];
                     }
                 }
