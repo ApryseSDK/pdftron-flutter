@@ -407,6 +407,24 @@ var pageRotation = await PdftronFlutter.getPageRotation(1);
 print("The rotation value of page 1 is $pageRotation");
 ```
 
+#### rotateClockwise
+Rotates all pages in the current document in clockwise direction (by 90 degrees).
+
+Returns a Promise.
+
+```dart
+PdftronFlutter.rotateClockwise();
+```
+
+#### rotateCounterClockwise
+Rotates all pages in the current document in counter-clockwise direction (by 90 degrees).
+
+Returns a Promise.
+
+```dart
+PdftronFlutter.rotateCounterClockwise();
+```
+
 #### gotoPreviousPage
 Go to the previous page of the document. If on first page, it will stay on first page.
 
@@ -808,6 +826,56 @@ resultImagePath | String | the temp path of the created image, user is responsib
 var resultImagePath = await PdftronFlutter.exportAsImage(1, 92, ExportFormat.BMP);
 ```
 
+### Undo/Redo
+
+#### undo
+Undo the last modification.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.undo();
+```
+
+#### redo
+Redo the last modification.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.redo();
+```
+
+#### canUndo
+Checks whether an undo operation can be performed from the current snapshot.
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+canUndo | bool | whether it is possible to undo from the current snapshot
+
+```dart
+PdftronFlutter.canUndo().then((canUndo) => {
+  print("undo possible: $canUndo")
+});
+```
+
+#### canRedo
+Checks whether a redo operation can be perfromed from the current snapshot.
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+canRedo | bool | whether it is possible to redo from the current snapshot
+
+```dart
+PdftronFlutter.canRedo().then((canRedo) => {
+  print("redo possible: $canRedo")
+});
+```
+
 ## Events
 This section contains all the event listeners you could attach to the viewer.
 
@@ -898,6 +966,8 @@ var pageMovedCancel = startPageMovedListener((previousPageNumber, pageNumber) {
 
 #### startExportAnnotationCommandListener
 Event is raised when local annotation changes committed to the document.
+
+To also raise this event upon undo/redo, [`annotationManagerEnabled`](#annotationManagerEnabled) must be true, and [`userId`](#userId) must not be null.
 
 Event Parameters:
 
@@ -1143,6 +1213,10 @@ String, defaults to `.pdf`, required if using base64 string of a non-pdf file.
 
 Defines the file extension for the base64 string in document, if [`isBase64String`](#isBase64String) is true.
 
+```dart
+config.base64FileExtension = '.jpeg';
+```
+
 ### UI Customization
 
 #### disabledElements
@@ -1172,6 +1246,15 @@ Defines whether to show the leading navigation button.
 
 ```dart
 config.showLeadingNavButton = true;
+```
+
+#### downloadDialogEnabled
+bool, defaults to true, Android only.
+
+Defines whether the download dialog should be shown.
+
+```dart
+config.downloadDialogEnabled = false;
 ```
 
 ### Toolbar Customization
@@ -1207,6 +1290,15 @@ Defines whether to show the toolbar switcher in the top toolbar.
 config.hideAnnotationToolbarSwitcher = true;
 ```
 
+#### initialToolbar
+one of the [`DefaultToolbars`](./lib/constants.dart) constants or the `id` of a custom toolbar object, optional, defaults to none.
+
+Defines which [`annotationToolbar`](#annotationToolbars) should be selected when the document is opened.
+
+```dart
+config.initialToolbar = DefaultToolbars.view;
+```
+
 #### hideTopToolbars
 bool, defaults to false.
 
@@ -1214,6 +1306,15 @@ Defines whether to hide both the top app nav bar and the annotation toolbar.
 
 ```dart
 config.hideTopToolbars = true;
+```
+
+#### hideToolbarsOnTap
+bool, defaults to true.
+
+Defines whether an unhandled tap in the viewer should toggle the visibility of the top and bottom toolbars. When false, the top and bottom toolbar visibility will not be toggled and the page content will fit between the bars, if any.
+
+```dart
+config.hideToolbarsOnTap = false;
 ```
 
 #### hideTopAppNavBar
@@ -1225,6 +1326,15 @@ Defines whether to hide the top navigation app bar.
 config.hideTopAppNavBar = true;
 ```
 
+#### topAppNavBarRightBar
+array of [`Buttons`](./lib/constants.dart) constants, iOS only
+
+Customizes the right bar section of the top app nav bar. If passed in, the default right bar section will not be used.
+
+```dart
+config.topAppNavBarRightBar = [Buttons.searchButton, Buttons.moreItemsButton];
+```
+
 #### hideBottomToolbar
 bool, default to false.
 
@@ -1233,6 +1343,38 @@ Defines whether to hide the bottom toolbar for the current viewer.
 ```dart
 config.hideBottomToolbar = true;
 ```
+
+#### bottomToolbar
+array of [`Buttons`](./lib/constants.dart) constants, defaults to none.
+
+Defines a custom bottom toolbar. If passed in, the default bottom toolbar will not be used. 
+
+Below is the list of supported buttons for each platform:
+
+| `Button` | Android | iOS |
+| :----- | :-----: | :-----: |
+| `listsButton` | ✅ | ✅ |
+| `thumbnailsButton` | ✅ | ✅ |
+| `shareButton` | ✅ | ✅ |
+| `viewControlsButton` | ✅ | ✅ |
+| `reflowModeButton` | ✅ | ✅ |
+| `searchButton` | ✅ | ✅ |
+| `moreItemsButton` | ❌ | ✅ |
+
+```dart
+config.bottomToolbar = [Buttons.reflowModeButton, Buttons.thumbnailsButton];
+```
+
+#### singleLineToolbar
+bool, default to false. Android only.
+
+Sets whether to use 2-line toolbar or 1-line toolbar.
+
+```dart
+config.singleLineToolbar = true;
+```
+
+
 
 ### Layout
 
@@ -1528,6 +1670,15 @@ Defines whether to show saved signatures for re-use when using the signing tool.
 config.showSavedSignatures = true;
 ```
 
+#### signaturePhotoPickerEnabled
+bool, optional, defaults to true. Android only.
+
+Defines whether to show the option to pick images in the signature dialog.
+
+```dart
+config.signaturePhotoPickerEnabled = true;
+```
+
 ### Thumbnail Browser
 
 #### thumbnailViewEditingEnabled
@@ -1561,12 +1712,21 @@ config.hideViewModeItems=[ViewModePickerItem.ColorMode, ViewModePickerItem.Crop]
 ### Others
 
 #### autoSaveEnabled
-bool, dafaults to true.
+bool, defaults to true.
 
 Defines whether document is automatically saved by the viewer.
 
 ```dart
 config.autoSaveEnabled = true;
+```
+
+#### showDocumentSavedToast
+bool, defaults to true, Android only.
+
+Defines whether a toast indicating that the document has been successfully or unsuccessfully saved will appear.
+
+```dart
+config.showDocumentSavedToast = false;
 ```
 
 #### useStylusAsPen
@@ -1585,4 +1745,71 @@ Defines whether the UI will appear in a dark color when the system is dark mode.
 
 ```dart
 config.followSystemDarkMode = false;
+```
+
+#### annotationManagerEnabled
+bool, defaults to false.
+
+Defines whether the annotation manager is enabled. 
+
+When [`annotationManagerEnabled`](#annotationManagerEnabled) is true, and [`userId`](#userId) is not null, then [`startExportAnnotationCommandListener`](#startExportAnnotationCommandListener) will be raised when the state of the current document's undo/redo stack has been changed.
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Bob123";
+```
+
+#### userId
+String.
+
+The unique identifier of the current user.
+
+When [`annotationManagerEnabled`](#annotationManagerEnabled) is true, and [`userId`](#userId) is not null, then [`startExportAnnotationCommandListener`](#startExportAnnotationCommandListener) will be raised when the state of the current document's undo/redo stack has been changed.
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Bob123";
+```
+
+#### userName
+String, Android only.
+
+The name of the current user. Used in the annotation manager when [`annotationManagerEnabled`](#annotationManagerEnabled) is true.
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Bob123";
+config.userName = "Bob";
+```
+
+#### annotationManagerEditMode
+one of the [`AnnotationManagerEditMode`](./lib/constants.dart) constants, optional, default value is `AnnotationManagerEditMode.All`
+
+Sets annotation manager edit mode when [`annotationManagerEnabled`](#annotationManagerEnabled) is true and [`userId`](#userId) is not null.
+
+Mode | Description
+--- | ---
+`AnnotationManagerEditMode.Own` | In this mode, you can edit only your own changes 
+`AnnotationManagerEditMode.All` | In this mode, you can edit everyone's changes 
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Sam";
+config.annotationManagerEditMode = AnnotationManagerEditMode.Own;
+```
+
+#### annotationManagerUndoMode
+one of the [`AnnotationManagerUndoMode`](./lib/constants.dart) constants, optional, default value is `AnnotationManagerUndoMode.All`
+
+Sets annotation manager undo mode when [`annotationManagerEnabled`](#annotationManagerEnabled) is true and [`userId`](#userId) is not null.
+
+Mode | Description
+--- | ---
+`AnnotationManagerUndoMode.Own` | In this mode, you can undo only your own changes 
+`AnnotationManagerUndoMode.All` | In this mode, you can undo everyone's changes 
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Sam";
+config.annotationManagerUndoMode = AnnotationManagerUndoMode.Own;
 ```

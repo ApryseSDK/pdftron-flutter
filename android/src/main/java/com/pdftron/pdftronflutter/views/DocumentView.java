@@ -21,6 +21,7 @@ import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
+import com.pdftron.pdftronflutter.R;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
@@ -61,6 +62,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private boolean mAutoSaveEnabled;
     private boolean mUseStylusAsPen;
     private boolean mSignSignatureFieldWithStamps;
+
+    private static boolean mAnnotationManagerEnabled;
+    private static String mUserId;
+    private static String mUserName;
 
     private EventChannel.EventSink sExportAnnotationCommandEventEmitter;
     private EventChannel.EventSink sExportBookmarkEventEmitter;
@@ -139,6 +144,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
         mTabTitle = configInfo.getTabTitle();
 
+        mAnnotationManagerEnabled = configInfo.isAnnotationManagerEnabled();
+        mUserId = configInfo.getUserId();
+        mUserName = configInfo.getUserName();
+
         mFromAttach = false;
         mDetached = false;
         prepView();
@@ -151,7 +160,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
                 .usingConfig(mViewerConfig)
                 .usingNavIcon(mShowNavIcon ? mNavIconRes : 0)
                 .usingCustomHeaders(mCustomHeaders)
-                .usingTabTitle(mTabTitle);
+                .usingTabTitle(mTabTitle)
+                .usingTheme(R.style.FlutterAppTheme);
     }
 
     @Override
@@ -289,6 +299,12 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     public boolean isAutoSaveEnabled() {
         return mAutoSaveEnabled;
     }
+
+    public boolean isAnnotationManagerEnabled() { return mAnnotationManagerEnabled; };
+
+    public String getUserId() { return mUserId; };
+
+    public String getUserName() { return mUserName; };
 
     public boolean isUseStylusAsPen() {
         return mUseStylusAsPen;

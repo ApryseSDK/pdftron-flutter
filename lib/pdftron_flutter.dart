@@ -126,6 +126,22 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.handleBackButton);
   }
 
+  static Future<void> undo() {
+    return _channel.invokeMethod(Functions.undo);
+  }
+  
+  static Future<void> redo() {
+    return _channel.invokeMethod(Functions.redo);
+  }
+
+  static Future<bool> canUndo() {
+    return _channel.invokeMethod(Functions.canUndo);
+  }
+  
+  static Future<bool> canRedo() {
+    return _channel.invokeMethod(Functions.canRedo);
+  }
+
   static Future<Rect> getPageCropBox(int pageNumber) async {
     String cropBoxString = await _channel.invokeMethod(Functions.getPageCropBox,
         <String, dynamic>{Parameters.pageNumber: pageNumber});
@@ -136,6 +152,14 @@ class PdftronFlutter {
     int pageRotation = await _channel.invokeMethod(Functions.getPageRotation,
         <String, dynamic>{Parameters.pageNumber: pageNumber});
     return pageRotation;
+  }
+
+  static Future<void> rotateClockwise() {
+    return _channel.invokeMethod(Functions.rotateClockwise);
+  }
+
+  static Future<void> rotateCounterClockwise() {
+    return _channel.invokeMethod(Functions.rotateCounterClockwise);
   }
 
   static Future<bool> setCurrentPage(int pageNumber) {

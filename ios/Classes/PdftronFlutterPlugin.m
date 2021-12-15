@@ -480,12 +480,28 @@
                         documentController.annotationToolbarSwitcherHidden = [hideAnnotationToolbarSwitcherNumber boolValue];
                     }
                 }
+                else if ([key isEqualToString:PTInitialToolbarKey]) {
+                    
+                    NSString *initialToolbar = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTInitialToolbarKey class:[NSString class] error:&error];
+                    
+                    if (!error && initialToolbar) {
+                        documentController.initialToolbar = initialToolbar;
+                    }
+                }
                 else if ([key isEqualToString:PTHideTopToolbarsKey]) {
                     
                     NSNumber* hideTopToolbarsNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideTopToolbarsKey class:[NSNumber class] error:&error];
                     
                     if (!error && hideTopToolbarsNumber) {
                         documentController.topToolbarsHidden = [hideTopToolbarsNumber boolValue];
+                    }
+                }
+                else if ([key isEqualToString:PTHideToolbarsOnTapKey]) {
+                    
+                    NSNumber* hideToolbarsOnTapNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideToolbarsOnTapKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && hideToolbarsOnTapNumber) {
+                        documentController.toolbarsHiddenOnTap = [hideToolbarsOnTapNumber boolValue];
                     }
                 }
                 else if ([key isEqualToString:PTHideTopAppNavBarKey]) {
@@ -496,12 +512,27 @@
                         documentController.topAppNavBarHidden = [hideTopAppNavBarNumber boolValue];
                     }
                 }
+                else if ([key isEqualToString:PTTopAppNavBarRightBarKey]) {
+                    
+                    NSArray *topAppNavBarRightBar = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTTopAppNavBarRightBarKey class:[NSArray class] error:&error];
+                    
+                    if (!error && topAppNavBarRightBar) {
+                        documentController.topAppNavBarRightBar = topAppNavBarRightBar;
+                    }
+                }
                 else if ([key isEqualToString:PTHideBottomToolbarKey]) {
                     
                     NSNumber* hideBottomToolbarNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideBottomToolbarKey class:[NSNumber class] error:&error];
                     
                     if (!error && hideBottomToolbarNumber) {
                         documentController.bottomToolbarHidden = [hideBottomToolbarNumber boolValue];
+                    }
+                }
+                else if ([key isEqualToString:PTBottomToolbarKey]) {
+                    NSArray *bottomToolbar = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTBottomToolbarKey class:[NSArray class] error:&error];
+                    
+                    if (!error && bottomToolbar) {
+                        documentController.bottomToolbar = bottomToolbar;
                     }
                 }
                 else if ([key isEqualToString:PTShowLeadingNavButtonKey]) {
@@ -623,7 +654,8 @@
                         [documentController setDefaultEraserType:defaultEraserType];
                     }
                 }
-                else if ([key isEqualToString:PTReflowOrientationKey]) {
+                else if ([key isEqualToString:PTReflowOrientationKey]) 
+                {
                     
                     NSString *reflowOrientation = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTReflowOrientationKey class:[NSString class] error:&error];
                     
@@ -635,13 +667,54 @@
                         }
                     }
                 }
-                else if ([key isEqualToString:PTImageInReflowModeEnabledKey]) {
+                else if ([key isEqualToString:PTImageInReflowModeEnabledKey]) 
+                {
                     
                     NSNumber *imageInReflowModeEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTImageInReflowModeEnabledKey class:[NSNumber class] error:&error];
                     
                     if (!error && imageInReflowModeEnabledNumber) {
                         // TODO: When support is added, use the code below
                         // documentController.reflowViewController.reflowManager.includeImages = [imageInReflowModeEnabledNumber boolValue];
+                    }
+                }
+                else if ([key isEqualToString:PTAnnotationManagerEnabledKey])
+                {
+                    NSNumber* annotationManagerEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationManagerEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && annotationManagerEnabledNumber) {
+                        [documentController setAnnotationManagerEnabled:[annotationManagerEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTUserIdKey])
+                {
+                    NSString* userId = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUserIdKey class:[NSString class] error:&error];
+                    
+                    if (!error && userId) {
+                        [documentController setUserId:userId];
+                    }
+                }
+                else if ([key isEqualToString:PTUserNameKey])
+                {
+                    NSString* userName = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUserNameKey class:[NSString class] error:&error];
+                    
+                    if (!error && userName) {
+                        [documentController setUserName:userName];
+                    }
+                }
+                else if ([key isEqualToString:PTAnnotationManagerEditModeKey])
+                {
+                    NSString *editMode = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationManagerEditModeKey class:[NSString class] error:&error];
+                    
+                    if (!error && editMode) {
+                        documentController.annotationManagerEditMode = [editMode copy];
+                    }
+                }
+                else if ([key isEqualToString:PTAnnotationManagerUndoModeKey])
+                {
+                    NSString *undoMode = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationManagerUndoModeKey class:[NSString class] error:&error];
+                    
+                    if (!error && undoMode) {
+                        documentController.annotationManagerUndoMode = [undoMode copy];
                     }
                 }
                 else
@@ -1296,12 +1369,24 @@
         [self commitTool:result];
     } else if ([call.method isEqualToString:PTGetPageCountKey]) {
         [self getPageCount:result];
+    } else if ([call.method isEqualToString:PTUndoKey]) {
+        [self undo:result];
+    } else if ([call.method isEqualToString:PTRedoKey]) {
+        [self redo:result];
+    } else if ([call.method isEqualToString:PTCanUndoKey]) {
+        [self canUndo:result];
+    } else if ([call.method isEqualToString:PTCanRedoKey]) {
+        [self canRedo:result];
     } else if ([call.method isEqualToString:PTGetPageCropBoxKey]) {
         NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self getPageCropBox:pageNumber resultToken:result];
     } else if ([call.method isEqualToString:PTGetPageRotationKey]) {
         NSNumber *pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self getPageRotation:pageNumber resultToken:result];
+    } else if ([call.method isEqualToString:PTRotateClockwiseKey]) {
+        [self rotateClockwise:result];
+    } else if ([call.method isEqualToString:PTRotateCounterClockwiseKey]) {
+        [self rotateCounterClockwise:result];
     } else if ([call.method isEqualToString:PTSetCurrentPageKey]) {
         NSNumber* pageNumber = [PdftronFlutterPlugin PT_idAsNSNumber:call.arguments[PTPageNumberArgumentKey]];
         [self setCurrentPage:pageNumber resultToken:result];
@@ -2239,6 +2324,57 @@
     flutterResult([NSNumber numberWithInt:documentController.pdfViewCtrl.pageCount]);
 }
 
+- (void)undo:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if (documentController.undoManager == Nil) {
+        NSLog(@"Error: The document view controller has no undo manager.");
+        flutterResult([FlutterError errorWithCode:@"undo" message:@"Failed to undo" details:@"Error: The document view controller has no undo manager."]);
+        return;
+    }
+    
+    [documentController.undoManager undo];
+    flutterResult(nil);
+}
+
+- (void)redo:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if (documentController.undoManager == Nil) {
+        NSLog(@"Error: The document view controller has no undo manager.");
+        flutterResult([FlutterError errorWithCode:@"redo" message:@"Failed to redo" details:@"Error: The document view controller has no undo manager."]);
+        return;
+    }
+    
+    [documentController.undoManager redo];
+    flutterResult(nil);
+}
+
+- (void)canUndo:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if (documentController.undoManager == Nil) {
+        NSLog(@"Error: The document view controller has no undo manager.");
+        flutterResult([FlutterError errorWithCode:@"undo" message:@"Failed to get canUndo" details:@"Error: The document view controller has no undo manager."]);
+        return;
+    }
+    bool canUndo = [documentController.undoManager canUndo];
+    flutterResult([NSNumber numberWithBool:canUndo]);
+}
+
+- (void)canRedo:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if (documentController.undoManager == Nil) {
+        NSLog(@"Error: The document view controller has no undo manager.");
+        flutterResult([FlutterError errorWithCode:@"redo" message:@"Failed to get canRedo" details:@"Error: The document view controller has no undo manager."]);
+        return;
+    }
+    
+    bool canRedo = [documentController.undoManager canRedo];
+    flutterResult([NSNumber numberWithBool:canRedo]);
+}
+
 - (void)getPageCropBox:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult
 {
     PTDocumentController *documentController = [self getDocumentController];
@@ -2302,6 +2438,18 @@
         NSLog(@"Error: There was an error while trying to get the page rotation for page number. %@", error.localizedDescription);
     }
     flutterResult(pageRotation);
+}
+
+- (void)rotateClockwise:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    [documentController.pdfViewCtrl RotateClockwise];
+    flutterResult(nil);
+}
+
+- (void)rotateCounterClockwise:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    [documentController.pdfViewCtrl RotateCounterClockwise];
+    flutterResult(nil);
 }
 
 - (void)setCurrentPage:(NSNumber *)pageNumber resultToken:(FlutterResult)flutterResult {
