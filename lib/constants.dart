@@ -343,10 +343,17 @@ class ViewModePickerItem {
   static const ColorMode = "viewModeColorMode";
 }
 
+// DefaultEraserType defines the default behaviour of the eraser tool.
 class DefaultEraserType {
   static const annotationEraser = "annotationEraser";
   static const hybrideEraser = "hybrideEraser";
-  static const inkEraser = "inkEraser";
+  static const inkEraser = "inkEraser"; // Android only
+}
+
+// ReflowOrientation defines the scrolling direction of the viewer while in reflow mode. Android only.
+class ReflowOrientation {
+  static const horizontal = "horizontal";
+  static const vertical = "vertical";
 }
 
 class AnnotationManagerEditMode {

@@ -654,6 +654,24 @@
                         [documentController setDefaultEraserType:defaultEraserType];
                     }
                 }
+                else if ([key isEqualToString:PTReflowOrientationKey]) 
+                {
+                    
+                    NSString *reflowOrientation = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTReflowOrientationKey class:[NSString class] error:&error];
+                    
+                    if (!error && reflowOrientation) {
+                        [documentController setReflowOrientation:reflowOrientation];
+                    }
+                }
+                else if ([key isEqualToString:PTImageInReflowModeEnabledKey]) 
+                {
+                    
+                    NSNumber *imageInReflowModeEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTImageInReflowModeEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && imageInReflowModeEnabledNumber) {
+                        [documentController setImageInReflowModeEnabled:[imageInReflowModeEnabledNumber boolValue]];
+                    }
+                }
                 else if ([key isEqualToString:PTAnnotationManagerEnabledKey])
                 {
                     NSNumber* annotationManagerEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationManagerEnabledKey class:[NSNumber class] error:&error];

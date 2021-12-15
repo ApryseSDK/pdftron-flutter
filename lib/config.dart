@@ -64,6 +64,8 @@ class Config {
   var _disableEditingByAnnotationType;
   var _hideViewModeItems;
   var _defaultEraserType;
+  var _reflowOrientation;
+  var _imageInReflowModeEnabled;
   var _annotationManagerEnabled;
   var _userId;
   var _userName;
@@ -213,6 +215,10 @@ class Config {
 
   set defaultEraserType(String value) => _defaultEraserType = value;
 
+  set reflowOrientation(String value) => _reflowOrientation = value;
+
+  set imageInReflowModeEnabled(bool value) => _imageInReflowModeEnabled = value;
+  
   set annotationManagerEnabled(bool value) => _annotationManagerEnabled = value;
 
   set userId(String value) => _userId = value;
@@ -288,6 +294,8 @@ class Config {
         _disableEditingByAnnotationType = json['disableEditingByAnnotationType'],
         _hideViewModeItems = json['hideViewModeItems'],
         _defaultEraserType = json['defaultEraserType'],
+        _reflowOrientation = json['reflowOrientation'],
+        _imageInReflowModeEnabled = json['imageInReflowModeEnabled'],
         _annotationManagerEnabled = json['annotationManagerEnabled'],
         _userId = json['userId'],
         _userName = json['userName'],
@@ -359,6 +367,8 @@ class Config {
         'disableEditingByAnnotationType': _disableEditingByAnnotationType,
         'hideViewModeItems': _hideViewModeItems,
         'defaultEraserType' : _defaultEraserType,
+        'reflowOrientation': _reflowOrientation,
+        'imageInReflowModeEnabled': _imageInReflowModeEnabled,
         'annotationManagerEnabled' : _annotationManagerEnabled,
         'userId' : _userId,
         'userName' : _userName,

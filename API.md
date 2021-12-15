@@ -1520,6 +1520,26 @@ Example use:
 config.excludedAnnotationListTypes=[Tools.annotationCreateEllipse, Tools.annotationCreateRedaction];
 ```
 
+### Reflow
+
+#### reflowOrientation
+one of [`ReflowOrientation`](./lib/constants.dart) constants, defaults to the viewer's scroll direction.
+
+Sets the scrolling direction of the reflow control.
+
+```dart
+config.reflowOrientation = ReflowOrientation.horizontal;
+```
+
+#### imageInReflowModEnabled
+bool, defaults to true.
+
+Whether to show images in reflow mode.
+
+```dart
+config.imageInReflowModeEnabled = false;
+```
+
 ### Annotation Menu
 
 #### hideAnnotationMenu

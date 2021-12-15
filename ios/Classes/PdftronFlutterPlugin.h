@@ -58,6 +58,8 @@ static NSString * const PTMaxTabCountKey = @"maxTabCount";
 static NSString * const PTDisableEditingByAnnotationTypeKey = @"disableEditingByAnnotationType";
 static NSString * const PTHideViewModeItemsKey = @"hideViewModeItems";
 static NSString * const PTDefaultEraserTypeKey = @"defaultEraserType";
+static NSString * const PTReflowOrientationKey = @"reflowOrientation";
+static NSString * const PTImageInReflowModeEnabledKey = @"imageInReflowModeEnabled";
 static NSString * const PTAnnotationManagerEnabledKey = @"annotationManagerEnabled";
 static NSString * const PTUserIdKey = @"userId";
 static NSString * const PTUserNameKey = @"userName";
@@ -358,6 +360,10 @@ static NSString * const PTViewModeColorModeKey = @"viewModeColorMode";
 // DefaultEraserType keys
 static NSString * const PTInkEraserModeAllKey = @"annotationEraser";
 static NSString * const PTInkEraserModePointsKey = @"hybrideEraser";
+
+// ReflowOrientation
+static NSString * const PTReflowOrientationHorizontalKey = @"horizontal";
+static NSString * const PTReflowOrientationVerticalKey = @"vertical";
 
 // Annotation Mananger Edit Mode
 static NSString * const PTAnnotationManagerEditModeOwnKey = @"editModeOwn";
