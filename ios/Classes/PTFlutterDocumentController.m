@@ -973,6 +973,8 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     _annotationsListEditingEnabled = YES;
     _userBookmarksListEditingEnabled = YES;
     _showNavigationListAsSidePanelOnLargeDevices = YES;
+    
+    _imageInReflowModeEnabled = YES;
 }
 
 - (void)applyViewerSettings
@@ -1029,6 +1031,16 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         
         PTExternalAnnotManager* annotManager = [self.pdfViewCtrl EnableAnnotationManager:self.userId mode:undoMode];
     }
+    
+    // Reflow Orientation
+    if ([PTReflowOrientationHorizontalKey isEqualToString:self.reflowOrientation]) {
+        self.reflowViewController.scrollingDirection = PTReflowViewControllerScrollingDirectionHorizontal;
+    } else if ([PTReflowOrientationVerticalKey isEqualToString:self.reflowOrientation]) {
+        self.reflowViewController.scrollingDirection = PTReflowViewControllerScrollingDirectionVertical;
+    }
+    
+    // Image in Reflow mode
+    self.reflowViewController.reflowManager.includeImages = self.imageInReflowModeEnabled;
     
     [self applyToolGroupSettings];
     

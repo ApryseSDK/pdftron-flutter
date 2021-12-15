@@ -1512,7 +1512,7 @@ config.excludedAnnotationListTypes=[Tools.annotationCreateEllipse, Tools.annotat
 ### Reflow
 
 #### reflowOrientation
-one of [`ReflowOrientation`](./lib/constants.dart) constants, defaults to `ReflowOrientation.vertical`.
+one of [`ReflowOrientation`](./lib/constants.dart) constants, defaults to the viewer's scroll direction.
 
 Sets the scrolling direction of the reflow control.
 
@@ -1521,7 +1521,7 @@ config.reflowOrientation = ReflowOrientation.horizontal;
 ```
 
 #### imageInReflowModEnabled
-bool, defaults to true, will be available on iOS in version 9.1.2 and greater.
+bool, defaults to true.
 
 Whether to show images in reflow mode.
 

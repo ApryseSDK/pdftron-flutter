@@ -660,11 +660,7 @@
                     NSString *reflowOrientation = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTReflowOrientationKey class:[NSString class] error:&error];
                     
                     if (!error && reflowOrientation) {
-                        if ([PTReflowOrientationHorizontalKey isEqualToString:reflowOrientation]) {
-                            documentController.reflowViewController.scrollingDirection = PTReflowViewControllerScrollingDirectionHorizontal;
-                        } else {
-                            documentController.reflowViewController.scrollingDirection = PTReflowViewControllerScrollingDirectionVertical;
-                        }
+                        [documentController setReflowOrientation:reflowOrientation];
                     }
                 }
                 else if ([key isEqualToString:PTImageInReflowModeEnabledKey]) 
@@ -674,7 +670,7 @@
                     
                     if (!error && imageInReflowModeEnabledNumber) {
                         // TODO: When support is added, use the code below
-                        // documentController.reflowViewController.reflowManager.includeImages = [imageInReflowModeEnabledNumber boolValue];
+                        [documentController setImageInReflowModeEnabled:[imageInReflowModeEnabledNumber boolValue]];
                     }
                 }
                 else if ([key isEqualToString:PTAnnotationManagerEnabledKey])
