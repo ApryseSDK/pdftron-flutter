@@ -781,6 +781,17 @@ still editable but are saved to the device rather than the PDF.
 config.userBookmarksListEditingEnabled = false;
 ```
 
+#### Outline
+
+#### outlineListEditingEnabled
+bool, optional, default value is true
+
+Defines whether the outline list can be edited.
+
+```dart
+config.outlineListEditingEnabled = false;
+```
+
 ### Navigation
 
 #### showNavigationListAsSidePanelOnLargeDevices
