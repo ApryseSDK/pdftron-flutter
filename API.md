@@ -1758,6 +1758,24 @@ Defines whether the UI will appear in a dark color when the system is dark mode.
 config.followSystemDarkMode = false;
 ```
 
+#### autoResizeFreeTextEnabled
+bool, defaults to false.
+
+Defines whether to automatically resize the bounding box of free text annotations when editing.
+
+```dart
+config.autoResizeFreeTextEnabled = true;
+```
+
+#### restrictDownloadUsage
+bool, defaults to false.
+
+Defines whether to restrict data usage when viewing online PDFs.
+
+```dart
+config.restrictDownloadUsage = false;
+```
+
 #### annotationManagerEnabled
 bool, defaults to false.
 

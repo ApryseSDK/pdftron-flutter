@@ -64,6 +64,8 @@ class Config {
   var _disableEditingByAnnotationType;
   var _hideViewModeItems;
   var _defaultEraserType;
+  var _autoResizeFreeTextEnabled;
+  var _restrictDownloadUsage;
   var _reflowOrientation;
   var _imageInReflowModeEnabled;
   var _annotationManagerEnabled;
@@ -215,6 +217,10 @@ class Config {
 
   set defaultEraserType(String value) => _defaultEraserType = value;
 
+  set autoResizeFreeTextEnabled(bool value) => _autoResizeFreeTextEnabled = value;
+
+  set restrictDownloadUsage(bool value) => _restrictDownloadUsage = value;
+  
   set reflowOrientation(String value) => _reflowOrientation = value;
 
   set imageInReflowModeEnabled(bool value) => _imageInReflowModeEnabled = value;
@@ -294,6 +300,8 @@ class Config {
         _disableEditingByAnnotationType = json['disableEditingByAnnotationType'],
         _hideViewModeItems = json['hideViewModeItems'],
         _defaultEraserType = json['defaultEraserType'],
+        _autoResizeFreeTextEnabled = json['autoResizeFreeTextEnabled'],
+        _restrictDownloadUsage = json['restrictDownloadUsage'],
         _reflowOrientation = json['reflowOrientation'],
         _imageInReflowModeEnabled = json['imageInReflowModeEnabled'],
         _annotationManagerEnabled = json['annotationManagerEnabled'],
@@ -367,6 +375,8 @@ class Config {
         'disableEditingByAnnotationType': _disableEditingByAnnotationType,
         'hideViewModeItems': _hideViewModeItems,
         'defaultEraserType' : _defaultEraserType,
+        'autoResizeFreeTextEnabled': _autoResizeFreeTextEnabled,
+        'restrictDownloadUsage': _restrictDownloadUsage,
         'reflowOrientation': _reflowOrientation,
         'imageInReflowModeEnabled': _imageInReflowModeEnabled,
         'annotationManagerEnabled' : _annotationManagerEnabled,
