@@ -62,6 +62,7 @@ class Config {
   var _tabTitle;
   var _pageNumberIndicatorAlwaysVisible;
   var _disableEditingByAnnotationType;
+  var _annotationsListFilterEnabled;
   var _hideViewModeItems;
   var _defaultEraserType;
   var _autoResizeFreeTextEnabled;
@@ -213,6 +214,8 @@ class Config {
 
   set disableEditingByAnnotationType(List value) => _disableEditingByAnnotationType = value;
 
+  set annotationsListFilterEnabled(bool value) => _annotationsListFilterEnabled = value;
+
   set hideViewModeItems(List value) => _hideViewModeItems = value;
 
   set defaultEraserType(String value) => _defaultEraserType = value;
@@ -298,6 +301,7 @@ class Config {
         _tabTitle = json['tabTitle'],
         _pageNumberIndicatorAlwaysVisible = json['pageNumberIndicatorAlwaysVisible'],
         _disableEditingByAnnotationType = json['disableEditingByAnnotationType'],
+        _annotationsListFilterEnabled = json['annotationsListFilterEnabled'],
         _hideViewModeItems = json['hideViewModeItems'],
         _defaultEraserType = json['defaultEraserType'],
         _autoResizeFreeTextEnabled = json['autoResizeFreeTextEnabled'],
@@ -373,6 +377,7 @@ class Config {
         'tabTitle': _tabTitle,
         'pageNumberIndicatorAlwaysVisible': _pageNumberIndicatorAlwaysVisible,
         'disableEditingByAnnotationType': _disableEditingByAnnotationType,
+        'annotationsListFilterEnabled': _annotationsListFilterEnabled,
         'hideViewModeItems': _hideViewModeItems,
         'defaultEraserType' : _defaultEraserType,
         'autoResizeFreeTextEnabled': _autoResizeFreeTextEnabled,
