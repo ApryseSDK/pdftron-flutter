@@ -1502,12 +1502,21 @@ config.disableEditingByAnnotationType = [Tools.annotationCreateTextSquiggly, Too
 ```
 
 #### annotationsListEditingEnabled
-bool, optional, default value is true
+bool, optional, default value is true.
 
 If document editing is enabled, then this value determines if the annotation list is editable. 
 
 ```dart
 config.annotationsListEditingEnabled = false;
+```
+
+#### annotationsListFilterEnabled
+bool, optional, default value is true, Android only.
+
+Defines whether filtering the annotation list is possible.
+
+```dart
+config.annotationsListFilterEnabled = true;
 ```
 
 #### excludedAnnotationListTypes

@@ -160,6 +160,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_TAB_TITLE = "tabTitle";
     public static final String KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR = "pageNumberIndicatorAlwaysVisible";
     public static final String KEY_CONFIG_DISABLE_EDITING_BY_ANNOTATION_TYPE = "disableEditingByAnnotationType";
+    public static final String KEY_CONFIG_ANNOTATIONS_LIST_FILTER_ENABLED = "annotationsListFilterEnabled";
     public static final String KEY_CONFIG_HIDE_VIEW_MODE_ITEMS = "hideViewModeItems";
     public static final String KEY_CONFIG_DEFAULT_ERASER_TYPE = "defaultEraserType";
     public static final String KEY_CONFIG_AUTO_RESIZE_FREE_TEXT_ENABLED = "autoResizeFreeTextEnabled";
@@ -1051,6 +1052,10 @@ public class PluginUtils {
                         annotTypes[i] = convStringToAnnotType(items.get(i));
                     }
                     toolManagerBuilder.disableAnnotEditing(annotTypes);
+                }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATIONS_LIST_FILTER_ENABLED)) {
+                    boolean annotationsListFilterEnabled = configJson.getBoolean(KEY_CONFIG_ANNOTATIONS_LIST_FILTER_ENABLED);
+                    builder.annotationsListFilterEnabled(annotationsListFilterEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_VIEW_MODE_ITEMS)) {
                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_HIDE_VIEW_MODE_ITEMS);
