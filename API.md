@@ -271,7 +271,7 @@ PdftronFlutter.openViewSettings({'x1': 10.0, 'y1': 10.0, 'x2': 20.0, 'y2': 20.0}
 ```
 
 #### openCrop
-Displays the page crop option. Android only.
+Displays the page crop option.
 
 Returns a Future.
 

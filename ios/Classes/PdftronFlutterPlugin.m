@@ -1393,6 +1393,8 @@
     } else if ([call.method isEqualToString:PTOpenViewSettingsKey]) {
         NSDictionary* rect = [PdftronFlutterPlugin PT_idAsNSDict:call.arguments[PTSourceRectArgumentKey]];
         [self openViewSettings:result rect:rect];
+    } else if ([call.method isEqualToString:PTOpenCropKey]) {
+        [self openCrop:result];
     } else if ([call.method isEqualToString:PTOpenSearchKey]) {
         [self openSearch:result];
     } else if ([call.method isEqualToString:PTOpenTabSwitcherKey]) {
@@ -2725,50 +2727,85 @@
 -(void)openThumbnailsView:(FlutterResult)flutterResult
 {
     PTDocumentController *documentController = [self getDocumentController];
-    if (documentController) {
-        [documentController showThumbnailsController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"open_thumbnails_view" message:@"Failed to open thumbnails view" details:@"Error: The document view controller is not initialized."]);
+        return;
     }
-
+    
+    [documentController showThumbnailsController];
     flutterResult(nil);
 }
 
 -(void)openAddPagesView:(FlutterResult)flutterResult rect:(NSDictionary *)rect
 {
     PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"open_add_pages_view" message:@"Failed to open add pages view" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+    
     NSNumber *rectX1 = rect[PTRectX1Key];
     NSNumber *rectY1 = rect[PTRectY1Key];
     NSNumber *rectX2 = rect[PTRectX2Key];
     NSNumber *rectY2 = rect[PTRectY2Key];
     CGRect screenRect = CGRectMake([rectX1 doubleValue], [rectY1 doubleValue], [rectX2 doubleValue]-[rectX1 doubleValue], [rectY2 doubleValue]-[rectY1 doubleValue]);
-    if (documentController) {
-        [documentController showAddPagesViewFromScreenRect:screenRect];
-    }
-
+    
+    [documentController showAddPagesViewFromScreenRect:screenRect];
     flutterResult(nil);
 }
 
 -(void)openViewSettings:(FlutterResult)flutterResult rect:(NSDictionary *)rect
 {
     PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"open_view_settings" message:@"Failed to open view settings" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+    
     NSNumber *rectX1 = rect[PTRectX1Key];
     NSNumber *rectY1 = rect[PTRectY1Key];
     NSNumber *rectX2 = rect[PTRectX2Key];
     NSNumber *rectY2 = rect[PTRectY2Key];
     CGRect screenRect = CGRectMake([rectX1 doubleValue], [rectY1 doubleValue], [rectX2 doubleValue]-[rectX1 doubleValue], [rectY2 doubleValue]-[rectY1 doubleValue]);
-    if (documentController) {
-        [documentController showSettingsFromScreenRect:screenRect];
-    }
+    [documentController showSettingsFromScreenRect:screenRect];
+    flutterResult(nil);
+}
 
+-(void)openCrop:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"open_crop" message:@"Failed to open crop" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+    [documentController showPageCropViewController];
     flutterResult(nil);
 }
 
 -(void)openSearch:(FlutterResult)flutterResult
 {
     PTDocumentController *documentController = [self getDocumentController];
-    if (documentController) {
-        [documentController showSearchViewController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"open_search" message:@"Failed to open search" details:@"Error: The document view controller is not initialized."]);
+        return;
     }
-
+    
+    [documentController showSearchViewController];
     flutterResult(nil);
 }
 
@@ -2776,9 +2813,12 @@
 {
     if (self.tabbedDocumentViewController) {
         [self.tabbedDocumentViewController showTabsList:self.tabbedDocumentViewController.tabBar];
+        flutterResult(nil);
+        return;
+    } else {
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"open_tab_switcher" message:@"Failed to open tab switcher" details:@"Error: The document view controller is not initialized."]);
     }
-
-    flutterResult(nil);
 }
 
 -(void)openGoToPageView:(FlutterResult)flutterResult
@@ -2787,9 +2827,13 @@
     if (documentController && documentController.pageIndicatorViewController) {
         PTPageIndicatorViewController * pageIndicator = documentController.pageIndicatorViewController;
         [pageIndicator presentGoToPageController];
+        flutterResult(nil);
+        return;
+    } else {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"open_go_to_page_view" message:@"Failed to set open go to page view" details:@"Error: The document view controller is not initialized."]);
     }
-
-    flutterResult(nil);
 }
 
 -(void)openNavigationLists:(FlutterResult)flutterResult
