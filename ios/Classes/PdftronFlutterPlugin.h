@@ -223,6 +223,7 @@ static NSString * const PTOpenThumbnailsViewKey = @"openThumbnailsView";
 static NSString * const PTOpenAddPagesViewKey = @"openAddPagesView";
 static NSString * const PTOpenViewSettingsKey = @"openViewSettings";
 static NSString * const PTOpenCropKey = @"openCrop";
+static NSString * const PTOpenManualCropKey = @"openManualCrop";
 static NSString * const PTOpenSearchKey = @"openSearch";
 static NSString * const PTOpenTabSwitcherKey = @"openTabSwitcher";
 static NSString * const PTOpenGoToPageViewKey = @"openGoToPageView";

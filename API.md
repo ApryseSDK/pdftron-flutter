@@ -271,12 +271,21 @@ PdftronFlutter.openViewSettings({'x1': 10.0, 'y1': 10.0, 'x2': 20.0, 'y2': 20.0}
 ```
 
 #### openCrop
-Displays the page crop option.
+Displays the page crop options dialog.
 
 Returns a Future.
 
 ```dart
 PdftronFlutter.openCrop();
+```
+
+#### openManualCrop
+Displays the manual page crop dialog.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.openManualCrop();
 ```
 
 #### openSearch

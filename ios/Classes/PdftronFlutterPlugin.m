@@ -1395,6 +1395,8 @@
         [self openViewSettings:result rect:rect];
     } else if ([call.method isEqualToString:PTOpenCropKey]) {
         [self openCrop:result];
+    } else if ([call.method isEqualToString:PTOpenManualCropKey]) {
+        [self openManualCrop:result];
     } else if ([call.method isEqualToString:PTOpenSearchKey]) {
         [self openSearch:result];
     } else if ([call.method isEqualToString:PTOpenTabSwitcherKey]) {
@@ -2788,6 +2790,20 @@
         // something is wrong, document view controller is not present
         NSLog(@"Error: The document view controller is not initialized.");
         flutterResult([FlutterError errorWithCode:@"open_crop" message:@"Failed to open crop" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+    [documentController showPageCropOptions:nil];
+    flutterResult(nil);
+}
+
+-(void)openManualCrop:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"open_manual_crop" message:@"Failed to open manual crop" details:@"Error: The document view controller is not initialized."]);
         return;
     }
     [documentController showPageCropViewController];
