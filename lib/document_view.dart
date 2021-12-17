@@ -247,6 +247,10 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.openCrop);
   }
 
+  Future<void> openManualCrop() {
+    return _channel.invokeMethod(Functions.openManualCrop);
+  }
+
   Future<void> openSearch() {
     return _channel.invokeMethod(Functions.openSearch);
   }

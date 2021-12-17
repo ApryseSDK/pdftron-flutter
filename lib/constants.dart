@@ -46,6 +46,7 @@ class Functions {
   static const openAddPagesView = "openAddPagesView";
   static const openViewSettings = "openViewSettings";
   static const openCrop = "openCrop";
+  static const openManualCrop = "openManualCrop";
   static const openSearch = "openSearch";
   static const openTabSwitcher = "openTabSwitcher";
   static const openGoToPageView = "openGoToPageView";

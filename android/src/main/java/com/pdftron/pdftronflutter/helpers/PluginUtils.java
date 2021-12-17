@@ -27,6 +27,7 @@ import com.pdftron.pdf.controls.PdfViewCtrlTabBaseFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.controls.ThumbnailsViewFragment;
+import com.pdftron.pdf.controls.UserCropSelectionDialogFragment;
 import com.pdftron.pdf.dialog.RotateDialogFragment;
 import com.pdftron.pdf.dialog.ViewModePickerDialogFragment;
 import com.pdftron.pdf.dialog.pdflayer.PdfLayerDialog;
@@ -266,6 +267,7 @@ public class PluginUtils {
     public static final String FUNCTION_OPEN_ADD_PAGES_VIEW = "openAddPagesView";
     public static final String FUNCTION_OPEN_VIEW_SETTINGS = "openViewSettings";
     public static final String FUNCTION_OPEN_CROP = "openCrop";
+    public static final String FUNCTION_OPEN_MANUAL_CROP = "openManualCrop";
     public static final String FUNCTION_OPEN_SEARCH = "openSearch";
     public static final String FUNCTION_OPEN_TAB_SWITCHER = "openTabSwitcher";
     public static final String FUNCTION_OPEN_GO_TO_PAGE_VIEW = "openGoToPageView";
@@ -2194,6 +2196,11 @@ public class PluginUtils {
                 openCrop(result, component);
                 break;
             }
+            case FUNCTION_OPEN_MANUAL_CROP: {
+                checkFunctionPrecondition(component);
+                openManualCrop(result, component);
+                break;
+            }
             case FUNCTION_OPEN_SEARCH: {
                 checkFunctionPrecondition(component);
                 openSearch(result, component);
@@ -2538,6 +2545,17 @@ public class PluginUtils {
 
         pdfViewCtrlTabHostFragment2.onViewModeSelected(
                 PdfViewCtrlSettingsManager.KEY_PREF_VIEWMODE_USERCROP_VALUE);
+        result.success(null);
+    }
+
+    private static void openManualCrop(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment2 == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        pdfViewCtrlTabHostFragment2.onUserCropMethodSelected(UserCropSelectionDialogFragment.MODE_MANUAL_CROP);
         result.success(null);
     }
 

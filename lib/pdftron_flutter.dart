@@ -234,6 +234,10 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.openCrop);
   }
 
+  static Future<void> openManualCrop() {
+    return _channel.invokeMethod(Functions.openManualCrop);
+  }
+
   static Future<void> openSearch() {
     return _channel.invokeMethod(Functions.openSearch);
   }
