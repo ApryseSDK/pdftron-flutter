@@ -45,6 +45,7 @@ class Config {
   var _hideTopAppNavBar;
   var _topAppNavBarRighBar;
   var _hideBottomToolbar;
+  var _hidePresetBar;
   var _bottomToolbar;
   var _showLeadingNavButton;
   var _documentSliderEnabled;
@@ -172,6 +173,8 @@ class Config {
 
   set hideBottomToolbar(bool value) => _hideBottomToolbar = value;
 
+  set hidePresetBar(bool value) => _hidePresetBar = value;
+
   set bottomToolbar(List value) => _bottomToolbar = value;
 
   set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
@@ -284,6 +287,7 @@ class Config {
         _hideTopAppNavBar = json['hideTopAppNavBar'],
         _topAppNavBarRighBar = json['topAppNavBarRightBar'],
         _hideBottomToolbar = json['hideBottomToolbar'],
+        _hidePresetBar = json['hidePresetBar'],
         _bottomToolbar = json['bottomToolbar'],
         _showLeadingNavButton = json['showLeadingNavButton'],
         _documentSliderEnabled = json['documentSliderEnabled'],
@@ -361,6 +365,7 @@ class Config {
         'hideTopAppNavBar': _hideTopAppNavBar,
         'topAppNavBarRightBar': _topAppNavBarRighBar,
         'hideBottomToolbar': _hideBottomToolbar,
+        'hidePresetBar': _hidePresetBar,
         'bottomToolbar': _bottomToolbar,
         'showLeadingNavButton': _showLeadingNavButton,
         'documentSliderEnabled': _documentSliderEnabled,
