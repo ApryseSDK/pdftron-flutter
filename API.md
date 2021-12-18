@@ -1376,6 +1376,15 @@ Below is the list of supported buttons for each platform:
 config.bottomToolbar = [Buttons.reflowModeButton, Buttons.thumbnailsButton];
 ```
 
+#### hidePresetBar
+bool, default to false.
+
+Defines whether to hide the preset bar for the current viewer.
+
+```dart
+config.hidePresetBar = true;
+```
+
 #### singleLineToolbar
 bool, default to false. Android only.
 

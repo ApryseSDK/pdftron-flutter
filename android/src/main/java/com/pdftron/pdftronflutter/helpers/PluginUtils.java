@@ -143,6 +143,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_HIDE_TOOLBARS_ON_TAP = "hideToolbarsOnTap";
     public static final String KEY_CONFIG_HIDE_TOP_APP_NAV_BAR = "hideTopAppNavBar";
     public static final String KEY_CONFIG_HIDE_BOTTOM_TOOLBAR = "hideBottomToolbar";
+    public static final String KEY_CONFIG_HIDE_PRESET_BAR = "hidePresetBar";
     public static final String KEY_CONFIG_BOTTOM_TOOLBAR = "bottomToolbar";
     public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
     public static final String KEY_CONFIG_REMEMBER_LAST_USED_TOOL = "rememberLastUsedTool";
@@ -957,6 +958,66 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_HIDE_BOTTOM_TOOLBAR)) {
                     boolean hideBottomToolbar = configJson.getBoolean(KEY_CONFIG_HIDE_BOTTOM_TOOLBAR);
                     builder.showBottomToolbar(!hideBottomToolbar);
+                }
+                if (!configJson.isNull(KEY_CONFIG_HIDE_PRESET_BAR)) {
+                    boolean hidePresetBar = configJson.getBoolean(KEY_CONFIG_HIDE_PRESET_BAR);
+                    if (hidePresetBar) {
+                        builder.hidePresetBars(new ToolbarButtonType[]{
+                                ToolbarButtonType.STICKY_NOTE,
+                                ToolbarButtonType.SOUND,
+                                ToolbarButtonType.TEXT_HIGHLIGHT,
+                                ToolbarButtonType.TEXT_UNDERLINE,
+                                ToolbarButtonType.SIGNATURE,
+                                ToolbarButtonType.INK,
+                                ToolbarButtonType.FREE_TEXT,
+                                ToolbarButtonType.CALLOUT,
+                                ToolbarButtonType.FREE_HIGHLIGHT,
+                                ToolbarButtonType.TEXT_STRIKEOUT,
+                                ToolbarButtonType.TEXT_SQUIGGLY,
+                                ToolbarButtonType.ERASER,
+                                ToolbarButtonType.LINE,
+                                ToolbarButtonType.ARROW,
+                                ToolbarButtonType.POLYLINE,
+                                ToolbarButtonType.RULER,
+                                ToolbarButtonType.PERIMETER,
+                                ToolbarButtonType.SQUARE,
+                                ToolbarButtonType.CIRCLE,
+                                ToolbarButtonType.POLYGON,
+                                ToolbarButtonType.POLY_CLOUD,
+                                ToolbarButtonType.AREA,
+                                ToolbarButtonType.RECT_AREA,
+                                ToolbarButtonType.DATE,
+                                ToolbarButtonType.FREE_TEXT_SPACING,
+                                ToolbarButtonType.RADIO_BUTTON,
+                                ToolbarButtonType.LIST_BOX,
+                                ToolbarButtonType.TEXT_FIELD,
+                                ToolbarButtonType.LINK,
+                                ToolbarButtonType.ATTACHMENT,
+                                ToolbarButtonType.TEXT_REDACTION,
+                                ToolbarButtonType.RECT_REDACTION,
+                                ToolbarButtonType.PAGE_REDACTION,
+                                ToolbarButtonType.SEARCH_REDACTION,
+                                ToolbarButtonType.PAN,
+                                ToolbarButtonType.MULTI_SELECT,
+                                ToolbarButtonType.LASSO_SELECT,
+                                ToolbarButtonType.IMAGE,
+                                ToolbarButtonType.STAMP,
+                                ToolbarButtonType.CHECKMARK,
+                                ToolbarButtonType.CROSS,
+                                ToolbarButtonType.DOT,
+                                ToolbarButtonType.CHECKBOX,
+                                ToolbarButtonType.COMBO_BOX,
+                                ToolbarButtonType.SIGNATURE_FIELD,
+                                ToolbarButtonType.UNDO,
+                                ToolbarButtonType.REDO,
+                                ToolbarButtonType.EDIT_TOOLBAR,
+                                ToolbarButtonType.SMART_PEN,
+                                ToolbarButtonType.ADD_PAGE,
+                                ToolbarButtonType.CUSTOM_UNCHECKABLE,
+                                ToolbarButtonType.CUSTOM_CHECKABLE,
+                                ToolbarButtonType.NAVIGATION
+                        });
+                    }
                 }
                 if (!configJson.isNull(KEY_CONFIG_BOTTOM_TOOLBAR)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_BOTTOM_TOOLBAR);
