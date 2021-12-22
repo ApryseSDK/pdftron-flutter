@@ -2784,6 +2784,7 @@
 
 -(void)openCrop:(FlutterResult)flutterResult
 {
+    // TODO: add a source rect option to the native API (similar to the openAddPagesView call)
     PTDocumentController *documentController = [self getDocumentController];
     if(documentController == Nil)
     {
@@ -2792,7 +2793,11 @@
         flutterResult([FlutterError errorWithCode:@"open_crop" message:@"Failed to open crop" details:@"Error: The document view controller is not initialized."]);
         return;
     }
-    [documentController showPageCropOptions:nil];
+    if (documentController.moreItemsButtonHidden == NO) {
+       [documentController showPageCropOptions:documentController.moreItemsButtonItem];
+    } else if (documentController.navigationItem.rightBarButtonItem != nil) {
+       [documentController showPageCropOptions:documentController.navigationItem.rightBarButtonItem];
+    }
     flutterResult(nil);
 }
 
