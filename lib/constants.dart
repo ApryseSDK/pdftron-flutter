@@ -47,6 +47,15 @@ class Functions {
   static const openBookmarkList = "openBookmarkList";
   static const openOutlineList = "openOutlineList";
   static const openLayersList = "openLayersList";
+  static const openThumbnailsView = "openThumbnailsView";
+  static const openRotateDialog = "openRotateDialog";
+  static const openAddPagesView = "openAddPagesView";
+  static const openViewSettings = "openViewSettings";
+  static const openCrop = "openCrop";
+  static const openManualCrop = "openManualCrop";
+  static const openSearch = "openSearch";
+  static const openTabSwitcher = "openTabSwitcher";
+  static const openGoToPageView = "openGoToPageView";
   static const openNavigationLists = "openNavigationLists";
   static const getCurrentPage = "getCurrentPage";
 }
@@ -73,6 +82,7 @@ class Parameters {
   static const annotationsWithFlags = "annotationsWithFlags";
   static const annotationProperties = "annotationProperties";
   static const leadingNavButtonIcon = "leadingNavButtonIcon";
+  static const sourceRect = "sourceRect";
   static const path = "path";
   static const exportFormat = "exportFormat";
   static const dpi = "dpi";

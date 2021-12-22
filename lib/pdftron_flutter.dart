@@ -236,6 +236,44 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.openLayersList);
   }
 
+  static Future<void> openThumbnailsView() {
+    return _channel.invokeMethod(Functions.openThumbnailsView);
+  }
+  
+  static Future<void> openRotateDialog() {
+    return _channel.invokeMethod(Functions.openRotateDialog);
+  }
+
+  static Future<void> openAddPagesView(Map<String, double> sourceRect) {
+    return _channel.invokeMethod(Functions.openAddPagesView,
+        <String, dynamic>{Parameters.sourceRect: sourceRect});
+  }
+
+  static Future<void> openViewSettings(Map<String, double> sourceRect) {
+    return _channel.invokeMethod(Functions.openViewSettings,
+        <String, dynamic>{Parameters.sourceRect: sourceRect});
+  }
+
+  static Future<void> openCrop() {
+    return _channel.invokeMethod(Functions.openCrop);
+  }
+
+  static Future<void> openManualCrop() {
+    return _channel.invokeMethod(Functions.openManualCrop);
+  }
+
+  static Future<void> openSearch() {
+    return _channel.invokeMethod(Functions.openSearch);
+  }
+
+  static Future<void> openTabSwitcher() {
+    return _channel.invokeMethod(Functions.openTabSwitcher);
+  }
+  
+  static Future<void> openGoToPageView() {
+    return _channel.invokeMethod(Functions.openGoToPageView);
+  }
+
   static Future<void> openNavigationLists() {
     return _channel.invokeMethod(Functions.openNavigationLists);
   }

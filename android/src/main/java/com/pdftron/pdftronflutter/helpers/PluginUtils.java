@@ -7,6 +7,7 @@ import android.util.Base64;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.fdf.FDFDoc;
@@ -22,10 +23,13 @@ import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
+import com.pdftron.pdf.controls.PdfViewCtrlTabBaseFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.controls.ReflowControl;
 import com.pdftron.pdf.controls.ThumbnailsViewFragment;
+import com.pdftron.pdf.controls.UserCropSelectionDialogFragment;
+import com.pdftron.pdf.dialog.RotateDialogFragment;
 import com.pdftron.pdf.dialog.ViewModePickerDialogFragment;
 import com.pdftron.pdf.dialog.pdflayer.PdfLayerDialog;
 import com.pdftron.pdf.model.AnnotStyle;
@@ -38,8 +42,10 @@ import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.tools.UndoRedoManager;
 import com.pdftron.pdf.tools.AnnotManager;
+import com.pdftron.pdf.utils.AnalyticsHandlerAdapter;
 import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.BookmarkManager;
+import com.pdftron.pdf.utils.DialogGoToPage;
 import com.pdftron.pdf.utils.CommonToast;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
@@ -275,6 +281,15 @@ public class PluginUtils {
     public static final String FUNCTION_OPEN_BOOKMARK_LIST = "openBookmarkList";
     public static final String FUNCTION_OPEN_OUTLINE_LIST = "openOutlineList";
     public static final String FUNCTION_OPEN_LAYERS_LIST = "openLayersList";
+    public static final String FUNCTION_OPEN_THUMBNAILS_VIEW = "openThumbnailsView";
+    public static final String FUNCTION_OPEN_ROTATE_DIALOG = "openRotateDialog";
+    public static final String FUNCTION_OPEN_ADD_PAGES_VIEW = "openAddPagesView";
+    public static final String FUNCTION_OPEN_VIEW_SETTINGS = "openViewSettings";
+    public static final String FUNCTION_OPEN_CROP = "openCrop";
+    public static final String FUNCTION_OPEN_MANUAL_CROP = "openManualCrop";
+    public static final String FUNCTION_OPEN_SEARCH = "openSearch";
+    public static final String FUNCTION_OPEN_TAB_SWITCHER = "openTabSwitcher";
+    public static final String FUNCTION_OPEN_GO_TO_PAGE_VIEW = "openGoToPageView";
     public static final String FUNCTION_OPEN_NAVIGATION_LISTS = "openNavigationLists";
     public static final String FUNCTION_GET_CURRENT_PAGE = "getCurrentPage";
 
@@ -2279,6 +2294,51 @@ public class PluginUtils {
                 openOutlineList(result, component);
                 break;
             }
+            case FUNCTION_OPEN_THUMBNAILS_VIEW: {
+                checkFunctionPrecondition(component);
+                openThumbnailsView(result, component);
+                break;
+            }
+            case FUNCTION_OPEN_ROTATE_DIALOG: {
+                checkFunctionPrecondition(component);
+                openRotateDialog(result, component);
+                break;
+            }
+            case FUNCTION_OPEN_ADD_PAGES_VIEW: {
+                checkFunctionPrecondition(component);
+                openAddPagesView(result, component);
+                break;
+            }
+            case FUNCTION_OPEN_VIEW_SETTINGS: {
+                checkFunctionPrecondition(component);
+                openViewSettings(result, component);
+                break;
+            }
+            case FUNCTION_OPEN_CROP: {
+                checkFunctionPrecondition(component);
+                openCrop(result, component);
+                break;
+            }
+            case FUNCTION_OPEN_MANUAL_CROP: {
+                checkFunctionPrecondition(component);
+                openManualCrop(result, component);
+                break;
+            }
+            case FUNCTION_OPEN_SEARCH: {
+                checkFunctionPrecondition(component);
+                openSearch(result, component);
+                break;
+            }
+            case FUNCTION_OPEN_TAB_SWITCHER: {
+                checkFunctionPrecondition(component);
+                openTabSwitcher(result, component);
+                break;
+            }
+            case FUNCTION_OPEN_GO_TO_PAGE_VIEW: {
+                checkFunctionPrecondition(component);
+                openGoToPageView(result, component);
+                break;
+            }
             case FUNCTION_OPEN_NAVIGATION_LISTS: {
                 checkFunctionPrecondition(component);
                 openNavigationLists(result, component);
@@ -2550,6 +2610,123 @@ public class PluginUtils {
 
         PdfLayerDialog pdfLayerDialog = new PdfLayerDialog(pdfViewCtrl.getContext(), pdfViewCtrl);
         pdfLayerDialog.show();
+    }
+
+    private static void openThumbnailsView(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment2 == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        pdfViewCtrlTabHostFragment2.onPageThumbnailOptionSelected(false, null);
+        result.success(null);
+    }
+
+    private static void openRotateDialog(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrl != null && pdfViewCtrlTabHostFragment2 != null) {
+            RotateDialogFragment.newInstance()
+                    .setPdfViewCtrl(pdfViewCtrl)
+                    .show(pdfViewCtrlTabHostFragment2.getChildFragmentManager(), "rotate_dialog");
+            result.success(null);
+            return;
+        }
+
+        result.error("InvalidState", "Activity not attached", null);
+    }
+
+    private static void openAddPagesView(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment2 == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        pdfViewCtrlTabHostFragment2.addNewPage();
+        result.success(null);
+    }
+
+    private static void openViewSettings(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment2 == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        pdfViewCtrlTabHostFragment2.onViewModeOptionSelected();
+        result.success(null);
+    }
+
+    private static void openCrop(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment2 == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        pdfViewCtrlTabHostFragment2.onViewModeSelected(
+                PdfViewCtrlSettingsManager.KEY_PREF_VIEWMODE_USERCROP_VALUE);
+        result.success(null);
+    }
+
+    private static void openManualCrop(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment2 == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        pdfViewCtrlTabHostFragment2.onUserCropMethodSelected(UserCropSelectionDialogFragment.MODE_MANUAL_CROP);
+        result.success(null);
+    }
+
+    private static void openSearch(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment2 == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        pdfViewCtrlTabHostFragment2.onSearchOptionSelected();
+        result.success(null);
+    }
+
+    private static void openTabSwitcher(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment2 = component.getPdfViewCtrlTabHostFragment();
+        if (pdfViewCtrlTabHostFragment2 == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        pdfViewCtrlTabHostFragment2.onOpenTabSwitcher();
+        result.success(null);
+    }
+
+    private static void openGoToPageView(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        final PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
+        if (pdfViewCtrl == null || pdfViewCtrlTabFragment == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        DialogGoToPage dlgGotoPage = new DialogGoToPage(pdfViewCtrl.getContext(), pdfViewCtrl, new DialogGoToPage.DialogGoToPageListener() {
+            @Override
+            public void onPageSet(int pageNum) {
+                pdfViewCtrlTabFragment.setCurrentPageHelper(pageNum, true);
+                if (pdfViewCtrlTabFragment.getReflowControl() != null) {
+                    try {
+                        pdfViewCtrlTabFragment.getReflowControl().setCurrentPage(pageNum);
+                    } catch (Exception e) {
+                        AnalyticsHandlerAdapter.getInstance().sendException(e);
+                    }
+                }
+            }
+        });
+        dlgGotoPage.show();
+        result.success(null);
     }
 
     private static void openNavigationLists(MethodChannel.Result result, ViewerComponent component) {

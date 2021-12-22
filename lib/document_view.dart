@@ -249,6 +249,44 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.openLayersList);
   }
 
+  Future<void> openThumbnailsView() {
+    return _channel.invokeMethod(Functions.openThumbnailsView);
+  }
+  
+  Future<void> openRotateDialog() {
+    return _channel.invokeMethod(Functions.openRotateDialog);
+  }
+
+  Future<void> openAddPagesView(Map<String, double> sourceRect) {
+    return _channel.invokeMethod(Functions.openAddPagesView,
+        <String, dynamic>{Parameters.sourceRect: sourceRect});
+  }
+
+  Future<void> openViewSettings(Map<String, double> sourceRect) {
+    return _channel.invokeMethod(Functions.openViewSettings,
+        <String, dynamic>{Parameters.sourceRect: sourceRect});
+  }
+
+  Future<void> openCrop() {
+    return _channel.invokeMethod(Functions.openCrop);
+  }
+
+  Future<void> openManualCrop() {
+    return _channel.invokeMethod(Functions.openManualCrop);
+  }
+
+  Future<void> openSearch() {
+    return _channel.invokeMethod(Functions.openSearch);
+  }
+
+  Future<void> openTabSwitcher() {
+    return _channel.invokeMethod(Functions.openTabSwitcher);
+  }
+  
+  Future<void> openGoToPageView() {
+    return _channel.invokeMethod(Functions.openGoToPageView);
+  }
+
   Future<void> openNavigationLists() {
     return _channel.invokeMethod(Functions.openNavigationLists);
   }
