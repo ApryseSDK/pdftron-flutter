@@ -26,6 +26,7 @@ import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabBaseFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
+import com.pdftron.pdf.controls.ReflowControl;
 import com.pdftron.pdf.controls.ThumbnailsViewFragment;
 import com.pdftron.pdf.controls.UserCropSelectionDialogFragment;
 import com.pdftron.pdf.dialog.RotateDialogFragment;
@@ -39,6 +40,7 @@ import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.tools.UndoRedoManager;
 import com.pdftron.pdf.tools.AnnotManager;
 import com.pdftron.pdf.utils.AnalyticsHandlerAdapter;
 import com.pdftron.pdf.utils.AnnotUtils;
@@ -130,6 +132,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_SHOW_DOCUMENT_SAVED_TOAST = "showDocumentSavedToast";
     public static final String KEY_CONFIG_PAGE_CHANGE_ON_TAP = "pageChangeOnTap";
     public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
+    public static final String KEY_CONFIG_SIGNATURE_PHOTO_PICKER_ENABLED = "signaturePhotoPickerEnabled";
     public static final String KEY_CONFIG_USE_STYLUS_AS_PEN = "useStylusAsPen";
     public static final String KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS = "signSignatureFieldWithStamps";
     public static final String KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION = "selectAnnotationAfterCreation";
@@ -137,6 +140,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_SHOW_QUICK_NAVIGATION_BUTTON = "showQuickNavigationButton";
     public static final String KEY_CONFIG_FOLLOW_SYSTEM_DARK_MODE = "followSystemDarkMode";
     public static final String KEY_CONFIG_DOWNLOAD_DIALOG_ENABLED = "downloadDialogEnabled";
+    public static final String KEY_CONFIG_SINGLE_LINE_TOOLBAR = "singleLineToolbar";
     public static final String KEY_CONFIG_ANNOTATION_TOOLBARS = "annotationToolbars";
     public static final String KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS = "hideDefaultAnnotationToolbars";
     public static final String KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER = "hideAnnotationToolbarSwitcher";
@@ -145,6 +149,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_HIDE_TOOLBARS_ON_TAP = "hideToolbarsOnTap";
     public static final String KEY_CONFIG_HIDE_TOP_APP_NAV_BAR = "hideTopAppNavBar";
     public static final String KEY_CONFIG_HIDE_BOTTOM_TOOLBAR = "hideBottomToolbar";
+    public static final String KEY_CONFIG_HIDE_PRESET_BAR = "hidePresetBar";
     public static final String KEY_CONFIG_BOTTOM_TOOLBAR = "bottomToolbar";
     public static final String KEY_CONFIG_SHOW_LEADING_NAV_BUTTON = "showLeadingNavButton";
     public static final String KEY_CONFIG_REMEMBER_LAST_USED_TOOL = "rememberLastUsedTool";
@@ -156,16 +161,24 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED = "annotationPermissionCheckEnabled";
     public static final String KEY_CONFIG_ANNOTATIONS_LIST_EDITING_ENABLED = "annotationsListEditingEnabled";
     public static final String KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED = "userBookmarksListEditingEnabled";
+    public static final String KEY_CONFIG_OUTLINE_LIST_EDITING_ENABLED = "outlineListEditingEnabled";
     public static final String KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES = "showNavigationListAsSidePanelOnLargeDevices";
     public static final String KEY_CONFIG_OVERRIDE_BEHAVIOR = "overrideBehavior";
     public static final String KEY_CONFIG_TAB_TITLE = "tabTitle";
     public static final String KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR = "pageNumberIndicatorAlwaysVisible";
     public static final String KEY_CONFIG_DISABLE_EDITING_BY_ANNOTATION_TYPE = "disableEditingByAnnotationType";
+    public static final String KEY_CONFIG_ANNOTATIONS_LIST_FILTER_ENABLED = "annotationsListFilterEnabled";
     public static final String KEY_CONFIG_HIDE_VIEW_MODE_ITEMS = "hideViewModeItems";
     public static final String KEY_CONFIG_DEFAULT_ERASER_TYPE = "defaultEraserType";
+    public static final String KEY_CONFIG_AUTO_RESIZE_FREE_TEXT_ENABLED = "autoResizeFreeTextEnabled";
+    public static final String KEY_CONFIG_RESTRICT_DOWNLOAD_USAGE = "restrictDownloadUsage";
+    public static final String KEY_CONFIG_REFLOW_ORIENTATION = "reflowOrientation";
+    public static final String KEY_CONFIG_IMAGE_IN_REFLOW_MODE_ENABLED = "imageInReflowModeEnabled";
     public static final String KEY_CONFIG_ANNOTATION_MANAGER_ENABLED = "annotationManagerEnabled";
     public static final String KEY_CONFIG_USER_ID = "userId";
     public static final String KEY_CONFIG_USER_NAME = "userName";
+    public static final String KEY_CONFIG_ANNOTATION_MANAGER_UNDO_MODE = "annotationManagerUndoMode";
+    public static final String KEY_CONFIG_ANNOTATION_MANAGER_EDIT_MODE = "annotationManagerEditMode";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -233,6 +246,10 @@ public class PluginUtils {
     public static final String FUNCTION_COMMIT_TOOL = "commitTool";
     public static final String FUNCTION_GET_PAGE_COUNT = "getPageCount";
     public static final String FUNCTION_HANDLE_BACK_BUTTON = "handleBackButton";
+    public static final String FUNCTION_UNDO = "undo";
+    public static final String FUNCTION_REDO = "redo";
+    public static final String FUNCTION_CAN_UNDO = "canUndo";
+    public static final String FUNCTION_CAN_REDO = "canRedo";
     public static final String FUNCTION_GET_PAGE_CROP_BOX = "getPageCropBox";
     public static final String FUNCTION_SET_CURRENT_PAGE = "setCurrentPage";
     public static final String FUNCTION_GET_DOCUMENT_PATH = "getDocumentPath";
@@ -250,6 +267,8 @@ public class PluginUtils {
     public static final String FUNCTION_CLOSE_ALL_TABS = "closeAllTabs";
     public static final String FUNCTION_DELETE_ALL_ANNOTATIONS = "deleteAllAnnotations";
     public static final String FUNCTION_GET_PAGE_ROTATION = "getPageRotation";
+    public static final String FUNCTION_ROTATE_CLOCKWISE = "rotateClockwise";
+    public static final String FUNCTION_ROTATE_COUNTER_CLOCKWISE = "rotateCounterClockwise";
     public static final String FUNCTION_EXPORT_AS_IMAGE = "exportAsImage";
     public static final String FUNCTION_EXPORT_AS_IMAGE_FROM_FILE_PATH = "exportAsImageFromFilePath";
     public static final String FUNCTION_OPEN_ANNOTATION_LIST = "openAnnotationList";
@@ -492,10 +511,25 @@ public class PluginUtils {
     public static final String DEFAULT_ERASER_TYPE_HYBRID = "hybrideEraser";
     public static final String DEFAULT_ERASER_TYPE_INK = "inkEraser";
 
+    // Reflow Orientation
+    public static final String REFLOW_ORIENTATION_HORIZONTAL = "horizontal";
+    public static final String REFLOW_ORIENTATION_VERTICAL = "vertical";
+    
+    // Annotation Manager Edit Mode
+    public static final String ANNOTATION_MANAGER_EDIT_MODE_OWN = "editModeOwn";
+    public static final String ANNOTATION_MANAGER_EDIT_MODE_ALL = "editModeAll";
+
+    // Annotation Manager Undo Mode
+    public static final String ANNOTATION_MANAGER_UNDO_MODE_OWN = "undoModeOwn";
+    public static final String ANNOTATION_MANAGER_UNDO_MODE_ALL = "undoModeAll";
+
     // Navigation List visibility
     public static boolean isBookmarkListVisible = true;
     public static boolean isOutlineListVisible = true;
     public static boolean isAnnotationListVisible = true;
+
+    private static AnnotManager.EditPermissionMode mAnnotationManagerEditMode = AnnotManager.EditPermissionMode.EDIT_OTHERS;
+    private static PDFViewCtrl.AnnotationManagerMode mAnnotationManagerUndoMode = PDFViewCtrl.AnnotationManagerMode.ADMIN_UNDO_OTHERS;
 
     public static class ConfigInfo {
         private int initialPageNumber;
@@ -738,7 +772,7 @@ public class PluginUtils {
                 JSONObject configJson = new JSONObject(configStr);
                 if (!configJson.isNull(KEY_CONFIG_DISABLED_ELEMENTS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_DISABLED_ELEMENTS);
-                    disabledTools.addAll(disableElements(builder, array));
+                    disabledTools.addAll(disableElements(builder, toolManagerBuilder, array));
                 }
                 if (!configJson.isNull(KEY_CONFIG_DISABLED_TOOLS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_DISABLED_TOOLS);
@@ -863,6 +897,10 @@ public class PluginUtils {
                     boolean showSavedSignatures = configJson.getBoolean(KEY_CONFIG_SHOW_SAVED_SIGNATURES);
                     toolManagerBuilder = toolManagerBuilder.setShowSavedSignatures(showSavedSignatures);
                 }
+                if (!configJson.isNull(KEY_CONFIG_SIGNATURE_PHOTO_PICKER_ENABLED)) {
+                    boolean signaturePhotoPickerEnabled = configJson.getBoolean(KEY_CONFIG_SIGNATURE_PHOTO_PICKER_ENABLED);
+                    toolManagerBuilder = toolManagerBuilder.setShowSignatureFromImage(signaturePhotoPickerEnabled);
+                }
                 if (!configJson.isNull(KEY_CONFIG_USE_STYLUS_AS_PEN)) {
                     boolean useStylusAsPen = configJson.getBoolean(KEY_CONFIG_USE_STYLUS_AS_PEN);
                     configInfo.setUseStylusAsPen(useStylusAsPen);
@@ -890,6 +928,10 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_DOWNLOAD_DIALOG_ENABLED)) {
                     boolean downloadDialogEnabled = configJson.getBoolean(KEY_CONFIG_DOWNLOAD_DIALOG_ENABLED);
                     builder.showDownloadDialog(downloadDialogEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SINGLE_LINE_TOOLBAR)) {
+                    boolean singleLineToolbar = configJson.getBoolean(KEY_CONFIG_SINGLE_LINE_TOOLBAR);
+                    builder.useCompactViewer(singleLineToolbar);
                 }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_TOOLBARS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_ANNOTATION_TOOLBARS);
@@ -932,6 +974,10 @@ public class PluginUtils {
                     boolean hideBottomToolbar = configJson.getBoolean(KEY_CONFIG_HIDE_BOTTOM_TOOLBAR);
                     builder.showBottomToolbar(!hideBottomToolbar);
                 }
+                if (!configJson.isNull(KEY_CONFIG_HIDE_PRESET_BAR)) {
+                    boolean hidePresetBar = configJson.getBoolean(KEY_CONFIG_HIDE_PRESET_BAR);
+                    builder.hidePresetBar(hidePresetBar);
+                }
                 if (!configJson.isNull(KEY_CONFIG_BOTTOM_TOOLBAR)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_BOTTOM_TOOLBAR);
                     setBottomToolbar(array, builder);
@@ -951,6 +997,9 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_READ_ONLY)) {
                     boolean readOnly = configJson.getBoolean(KEY_CONFIG_READ_ONLY);
                     builder.documentEditingEnabled(!readOnly);
+                    if (readOnly) {
+                        builder.skipReadOnlyCheck(false);
+                    }
                 }
                 if (!configJson.isNull(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED)) {
                     boolean thumbnailViewEditingEnabled = configJson.getBoolean(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED);
@@ -978,6 +1027,10 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED)) {
                     boolean userBookmarksListEditingEnabled = configJson.getBoolean(KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED);
                     builder.userBookmarksListEditingEnabled(userBookmarksListEditingEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_OUTLINE_LIST_EDITING_ENABLED)) {
+                    boolean outlineListEditingEnabled = configJson.getBoolean(KEY_CONFIG_OUTLINE_LIST_EDITING_ENABLED);
+                    builder.outlineListEditingEnabled(outlineListEditingEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES)) {
                     boolean showNavigationListAsSidePanelOnLargeDevices = configJson.getBoolean(KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES);
@@ -1020,6 +1073,10 @@ public class PluginUtils {
                     }
                     toolManagerBuilder.disableAnnotEditing(annotTypes);
                 }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATIONS_LIST_FILTER_ENABLED)) {
+                    boolean annotationsListFilterEnabled = configJson.getBoolean(KEY_CONFIG_ANNOTATIONS_LIST_FILTER_ENABLED);
+                    builder.annotationsListFilterEnabled(annotationsListFilterEnabled);
+                }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_VIEW_MODE_ITEMS)) {
                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_HIDE_VIEW_MODE_ITEMS);
                    for (int i = 0; i < array.length(); i++) {
@@ -1044,6 +1101,26 @@ public class PluginUtils {
                         toolManagerBuilder = toolManagerBuilder.setEraserType(Eraser.EraserType.INK_ERASER);
                     }
                 }
+                if (!configJson.isNull(KEY_CONFIG_AUTO_RESIZE_FREE_TEXT_ENABLED)) {
+                    boolean autoResizeFreeTextEnabled = configJson.getBoolean(KEY_CONFIG_AUTO_RESIZE_FREE_TEXT_ENABLED);
+                    toolManagerBuilder = toolManagerBuilder.setAutoResizeFreeText(autoResizeFreeTextEnabled);
+                }
+                if (!configJson.isNull(KEY_CONFIG_RESTRICT_DOWNLOAD_USAGE)) {
+                    boolean restrictDownloadUsage = configJson.getBoolean(KEY_CONFIG_RESTRICT_DOWNLOAD_USAGE);
+                    builder.restrictDownloadUsage(restrictDownloadUsage);
+                }
+                if (!configJson.isNull(KEY_CONFIG_REFLOW_ORIENTATION)) {
+                    int orientation = ReflowControl.HORIZONTAL;
+                    String reflowOrientation = configJson.getString(KEY_CONFIG_REFLOW_ORIENTATION);
+                    if (REFLOW_ORIENTATION_VERTICAL.equals(reflowOrientation)) {
+                        orientation = ReflowControl.VERTICAL;
+                    }
+                    builder.reflowOrientation(orientation);
+                }
+                if (!configJson.isNull(KEY_CONFIG_IMAGE_IN_REFLOW_MODE_ENABLED)) {
+                    boolean imageInReflowModeEnabled = configJson.getBoolean(KEY_CONFIG_IMAGE_IN_REFLOW_MODE_ENABLED);
+                    builder.imageInReflowEnabled(imageInReflowModeEnabled);
+                }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_MANAGER_ENABLED)) {
                     boolean annotationManagerEnabled = configJson.getBoolean(KEY_CONFIG_ANNOTATION_MANAGER_ENABLED);
                     configInfo.setAnnotationManagerEnabled(annotationManagerEnabled);
@@ -1058,6 +1135,18 @@ public class PluginUtils {
                     String userName = configJson.getString(KEY_CONFIG_USER_NAME);
                     if (!userName.isEmpty()) {
                         configInfo.setUserName(userName);
+                    }
+                }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_MANAGER_EDIT_MODE)) {
+                    String editMode = configJson.getString(KEY_CONFIG_ANNOTATION_MANAGER_EDIT_MODE);
+                    if (ANNOTATION_MANAGER_EDIT_MODE_OWN.equals(editMode)) {
+                        mAnnotationManagerEditMode = AnnotManager.EditPermissionMode.EDIT_OWN;
+                    }
+                }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_MANAGER_UNDO_MODE)) {
+                    String undoMode = configJson.getString(KEY_CONFIG_ANNOTATION_MANAGER_UNDO_MODE);
+                    if (ANNOTATION_MANAGER_UNDO_MODE_OWN.equals(undoMode)) {
+                        mAnnotationManagerUndoMode = PDFViewCtrl.AnnotationManagerMode.ADMIN_UNDO_OWN;
                     }
                 }
             } catch (Exception ex) {
@@ -1210,7 +1299,7 @@ public class PluginUtils {
         return null;
     }
 
-    private static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, JSONArray args) throws JSONException {
+    private static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, ToolManagerBuilder toolManagerBuilder, JSONArray args) throws JSONException {
 
         ArrayList<ViewModePickerDialogFragment.ViewModePickerItems> viewModePickerItems = new ArrayList<>();
         ArrayList<Integer> saveCopyOptions = new ArrayList<>();
@@ -1275,6 +1364,10 @@ public class PluginUtils {
                 builder = builder.showEditMenuOption(false);
             } else if (BUTTON_CROP_PAGE.equals(item)) {
                 viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_USERCROP);
+            } else if (BUTTON_UNDO.equals(item)) {
+                toolManagerBuilder.setShowUndoRedo(false);
+            } else if (BUTTON_REDO.equals(item)) {
+                toolManagerBuilder.setShowUndoRedo(false);
             } else if (BUTTON_MORE_ITEMS.equals(item)) {
                 builder = builder
                         .showEditPagesOption(false)
@@ -2038,6 +2131,26 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_UNDO: {
+                checkFunctionPrecondition(component);
+                undo(result, component);
+                break;
+            }
+            case FUNCTION_REDO: {
+                checkFunctionPrecondition(component);
+                redo(result, component);
+                break;
+            }
+            case FUNCTION_CAN_UNDO: {
+                checkFunctionPrecondition(component);
+                canUndo(result, component);
+                break;
+            }
+            case FUNCTION_CAN_REDO: {
+                checkFunctionPrecondition(component);
+                canRedo(result, component);
+                break;
+            }
             case FUNCTION_SET_CURRENT_PAGE: {
                 checkFunctionPrecondition(component);
                 Integer pageNumber = call.argument(KEY_PAGE_NUMBER);
@@ -2104,6 +2217,16 @@ public class PluginUtils {
                 if (pageNumber != null) {
                     getPageRotation(pageNumber, result, component);
                 }
+                break;
+            }
+            case FUNCTION_ROTATE_CLOCKWISE: {
+                checkFunctionPrecondition(component);
+                rotateClockwise(result, component);
+                break;
+            }
+            case FUNCTION_ROTATE_COUNTER_CLOCKWISE: {
+                checkFunctionPrecondition(component);
+                rotateCounterClockwise(result, component);
                 break;
             }
             case FUNCTION_EXPORT_AS_IMAGE: {
@@ -2965,6 +3088,44 @@ public class PluginUtils {
         result.success(jsonObject.toString());
     }
 
+    private static void undo(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
+        if (pdfViewCtrlTabFragment != null) {
+            pdfViewCtrlTabFragment.undo();
+            result.success(null);
+        } else {
+            result.error("InvalidState", "Activity not attached", null);
+        }
+    }
+
+    private static void redo(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
+        if (pdfViewCtrlTabFragment != null) {
+            pdfViewCtrlTabFragment.redo();
+            result.success(null);
+        } else {
+            result.error("InvalidState", "Activity not attached", null);
+        }
+    }
+
+    private static void canUndo(MethodChannel.Result result, ViewerComponent component) {
+        ToolManager toolManager = component.getToolManager();
+        if (toolManager != null && toolManager.getUndoRedoManger() != null) {
+            result.success(toolManager.getUndoRedoManger().canUndo());
+        } else {
+            result.error("InvalidState", "Tool manager or undoRedo manager not found", null);
+        }
+    }
+
+    private static void canRedo(MethodChannel.Result result, ViewerComponent component) {
+        ToolManager toolManager = component.getToolManager();
+        if (toolManager != null && toolManager.getUndoRedoManger() != null) {
+            result.success(toolManager.getUndoRedoManger().canRedo());
+        } else {
+            result.error("InvalidState", "Tool manager or undoRedo manager not found", null);
+        }
+    }
+
     private static void setCurrentPage(int pageNumber, MethodChannel.Result result, ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         result.success(pdfViewCtrl != null && pdfViewCtrl.setCurrentPage(pageNumber));
@@ -3158,6 +3319,26 @@ public class PluginUtils {
         result.success(pageRotation);
     }
 
+    private static void rotateClockwise(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+        }
+
+        pdfViewCtrl.rotateClockwise();
+        result.success(null);
+    }
+
+    private static void rotateCounterClockwise(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+        }
+
+        pdfViewCtrl.rotateCounterClockwise();
+        result.success(null);
+    }
+
     private static void exportAsImage(int pageNumber, int dpi, String exportFormat, MethodChannel.Result result, ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
@@ -3322,8 +3503,8 @@ public class PluginUtils {
             component.getToolManager().enableAnnotManager(
                     component.getUserId(),
                     component.getUserName(),
-                    PDFViewCtrl.AnnotationManagerMode.ADMIN_UNDO_OTHERS,
-                    AnnotManager.EditPermissionMode.EDIT_OTHERS,
+                    mAnnotationManagerUndoMode,
+                    mAnnotationManagerEditMode,
                     new AnnotManager.AnnotationSyncingListener() {
                         @Override
                         public void onLocalChange(String action, String xfdfCommand, String xfdfJSON) {

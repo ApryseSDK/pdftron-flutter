@@ -58,9 +58,15 @@ static NSString * const PTMaxTabCountKey = @"maxTabCount";
 static NSString * const PTDisableEditingByAnnotationTypeKey = @"disableEditingByAnnotationType";
 static NSString * const PTHideViewModeItemsKey = @"hideViewModeItems";
 static NSString * const PTDefaultEraserTypeKey = @"defaultEraserType";
-static NSString * const PTAnnotationManagerEnabedKey = @"annotationManagerEnabled";
+static NSString * const PTAutoResizeFreeTextEnabledKey = @"autoResizeFreeTextEnabled";
+static NSString * const PTRestrictDownloadUsageKey = @"restrictDownloadUsage";
+static NSString * const PTReflowOrientationKey = @"reflowOrientation";
+static NSString * const PTImageInReflowModeEnabledKey = @"imageInReflowModeEnabled";
+static NSString * const PTAnnotationManagerEnabledKey = @"annotationManagerEnabled";
 static NSString * const PTUserIdKey = @"userId";
 static NSString * const PTUserNameKey = @"userName";
+static NSString * const PTAnnotationManagerEditModeKey = @"annotationManagerEditMode";
+static NSString * const PTAnnotationManagerUndoModeKey = @"annotationManagerUndoMode";
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";
@@ -199,8 +205,14 @@ static NSString * const PTAddBookmarkKey = @"addBookmark";
 static NSString * const PTSaveDocumentKey = @"saveDocument";
 static NSString * const PTCommitToolKey = @"commitTool";
 static NSString * const PTGetPageCountKey = @"getPageCount";
+static NSString * const PTUndoKey = @"undo";
+static NSString * const PTRedoKey = @"redo";
+static NSString * const PTCanUndoKey = @"canUndo";
+static NSString * const PTCanRedoKey = @"canRedo";
 static NSString * const PTGetPageCropBoxKey = @"getPageCropBox";
 static NSString * const PTGetPageRotationKey = @"getPageRotation";
+static NSString * const PTRotateClockwiseKey = @"rotateClockwise";
+static NSString * const PTRotateCounterClockwiseKey = @"rotateCounterClockwise";
 static NSString * const PTSetCurrentPageKey = @"setCurrentPage";
 static NSString * const PTGotoPreviousPageKey = @"gotoPreviousPage";
 static NSString * const PTGotoNextPageKey = @"gotoNextPage";
@@ -364,6 +376,18 @@ static NSString * const PTViewModeColorModeKey = @"viewModeColorMode";
 // DefaultEraserType keys
 static NSString * const PTInkEraserModeAllKey = @"annotationEraser";
 static NSString * const PTInkEraserModePointsKey = @"hybrideEraser";
+
+// ReflowOrientation
+static NSString * const PTReflowOrientationHorizontalKey = @"horizontal";
+static NSString * const PTReflowOrientationVerticalKey = @"vertical";
+
+// Annotation Mananger Edit Mode
+static NSString * const PTAnnotationManagerEditModeOwnKey = @"editModeOwn";
+static NSString * const PTAnnotationManagerEditModeAllKey = @"editModeAll";
+
+// Annotation Mananger Undo Mode
+static NSString * const PTAnnotationManagerUndoModeOwnKey = @"undoModeOwn";
+static NSString * const PTAnnotationManagerUndoModeAllKey = @"undoModeAll";
 
 // Default annotation toolbar names.
 typedef NSString * PTDefaultAnnotationToolbarKey;

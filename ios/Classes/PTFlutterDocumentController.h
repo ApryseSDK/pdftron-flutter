@@ -41,6 +41,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL selectAnnotationAfterCreation;
 @property (nonatomic, assign, getter=isBottomToolbarOn) BOOL bottomToolbarOn;
 @property (nonatomic, copy, nullable) NSString* defaultEraserType;
+@property (nonatomic, copy, nullable) NSString *reflowOrientation;
+@property (nonatomic, assign) BOOL imageInReflowModeEnabled;
 
 @property (nonatomic, copy, nullable) NSArray<NSString *> * annotationToolbars;
 @property (nonatomic, copy, nullable) NSArray<NSString *> * hideDefaultAnnotationToolbars;
@@ -76,6 +78,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign) int maxTabCount;
 
+@property (nonatomic, assign) BOOL autoResizeFreeTextEnabled;
+
+@property (nonatomic, assign) BOOL restrictDownloadUsage;
+
 @property (nonatomic, copy, nullable) NSArray<NSString*>* uneditableAnnotTypes;
 
 @property (nonatomic, assign, getter=isAnnotationManagerEnabled) BOOL annotationManagerEnabled;
@@ -83,6 +89,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString* userId;
 
 @property (nonatomic, copy, nullable) NSString* userName;
+
+@property (nonatomic, copy, nullable) NSString *annotationManagerEditMode;
+
+@property (nonatomic, copy, nullable) NSString *annotationManagerUndoMode;
 
 @property (nonatomic, assign, getter=isDocCtrlrConfigured) BOOL docCtrlrConfigured;
 

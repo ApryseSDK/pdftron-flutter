@@ -973,6 +973,8 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     _annotationsListEditingEnabled = YES;
     _userBookmarksListEditingEnabled = YES;
     _showNavigationListAsSidePanelOnLargeDevices = YES;
+    
+    _imageInReflowModeEnabled = YES;
 }
 
 - (void)applyViewerSettings
@@ -1009,8 +1011,36 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     
     // Annotation Manager
     if (self.isAnnotationManagerEnabled && self.userId) {
-        PTExternalAnnotManager* annotManager = [self.pdfViewCtrl EnableAnnotationManager:self.userId mode:e_ptadmin_undo_others];
+        // Edit Mode
+        if ([PTAnnotationManagerEditModeOwnKey isEqualToString:self.annotationManagerEditMode]) {
+            self.toolManager.annotationManager.annotationEditMode = PTAnnotationModeEditOwn;
+        } else if ([PTAnnotationManagerEditModeAllKey isEqualToString:self.annotationManagerEditMode]) {
+            self.toolManager.annotationManager.annotationEditMode = PTAnnotationModeEditAll;
+        }
+        
+        self.toolManager.annotationAuthor = self.userId;
+        self.toolManager.annotationManager.annotationAuthorIdentifier = self.userId;
+        self.toolManager.annotationPermissionCheckEnabled = YES;
+        self.toolManager.annotationAuthorCheckEnabled = YES;
+        
+        // Undo Mode
+        PTExternalAnnotManagerMode undoMode = e_ptadmin_undo_others;
+        if ([PTAnnotationManagerUndoModeOwnKey isEqualToString:self.annotationManagerUndoMode]) {
+            undoMode = e_ptadmin_undo_own;
+        }
+        
+        PTExternalAnnotManager* annotManager = [self.pdfViewCtrl EnableAnnotationManager:self.userId mode:undoMode];
     }
+    
+    // Reflow Orientation
+    if ([PTReflowOrientationHorizontalKey isEqualToString:self.reflowOrientation]) {
+        self.reflowViewController.scrollingDirection = PTReflowViewControllerScrollingDirectionHorizontal;
+    } else if ([PTReflowOrientationVerticalKey isEqualToString:self.reflowOrientation]) {
+        self.reflowViewController.scrollingDirection = PTReflowViewControllerScrollingDirectionVertical;
+    }
+    
+    // Image in Reflow mode
+    self.reflowViewController.reflowManager.includeImages = self.imageInReflowModeEnabled;
     
     [self applyToolGroupSettings];
     
@@ -1018,6 +1048,15 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     self.navigationListsViewController.bookmarkViewController.readonly = !self.userBookmarksListEditingEnabled;
     [self excludeAnnotationListTypes:self.excludedAnnotationListTypes];
     self.alwaysShowNavigationListsAsModal = !self.showNavigationListAsSidePanelOnLargeDevices;
+    
+    // Auto Resize Free Text
+    self.toolManager.autoResizeFreeTextEnabled = self.autoResizeFreeTextEnabled;
+    
+    // Restrict Download Usage
+    [self.httpRequestOptions RestrictDownloadUsage:self.restrictDownloadUsage];
+    
+    // Quick Navigation Button
+    self.navigationHistoryEnabled = self.showQuickNavigationButton;
 }
 
 - (void)excludeAnnotationListTypes:(NSArray<NSString*> *)excludedAnnotationListTypes

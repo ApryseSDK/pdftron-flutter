@@ -492,6 +492,24 @@ var pageRotation = await PdftronFlutter.getPageRotation(1);
 print("The rotation value of page 1 is $pageRotation");
 ```
 
+#### rotateClockwise
+Rotates all pages in the current document in clockwise direction (by 90 degrees).
+
+Returns a Promise.
+
+```dart
+PdftronFlutter.rotateClockwise();
+```
+
+#### rotateCounterClockwise
+Rotates all pages in the current document in counter-clockwise direction (by 90 degrees).
+
+Returns a Promise.
+
+```dart
+PdftronFlutter.rotateCounterClockwise();
+```
+
 #### gotoPreviousPage
 Go to the previous page of the document. If on first page, it will stay on first page.
 
@@ -857,6 +875,17 @@ still editable but are saved to the device rather than the PDF.
 config.userBookmarksListEditingEnabled = false;
 ```
 
+#### Outline
+
+#### outlineListEditingEnabled
+bool, optional, default value is true
+
+Defines whether the outline list can be edited.
+
+```dart
+config.outlineListEditingEnabled = false;
+```
+
 ### Navigation
 
 #### showNavigationListAsSidePanelOnLargeDevices
@@ -909,6 +938,56 @@ resultImagePath | String | the temp path of the created image, user is responsib
 
 ```dart
 var resultImagePath = await PdftronFlutter.exportAsImage(1, 92, ExportFormat.BMP);
+```
+
+### Undo/Redo
+
+#### undo
+Undo the last modification.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.undo();
+```
+
+#### redo
+Redo the last modification.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.redo();
+```
+
+#### canUndo
+Checks whether an undo operation can be performed from the current snapshot.
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+canUndo | bool | whether it is possible to undo from the current snapshot
+
+```dart
+PdftronFlutter.canUndo().then((canUndo) => {
+  print("undo possible: $canUndo")
+});
+```
+
+#### canRedo
+Checks whether a redo operation can be perfromed from the current snapshot.
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+canRedo | bool | whether it is possible to redo from the current snapshot
+
+```dart
+PdftronFlutter.canRedo().then((canRedo) => {
+  print("redo possible: $canRedo")
+});
 ```
 
 ## Events
@@ -1400,6 +1479,26 @@ Below is the list of supported buttons for each platform:
 config.bottomToolbar = [Buttons.reflowModeButton, Buttons.thumbnailsButton];
 ```
 
+#### hidePresetBar
+bool, default to false.
+
+Defines whether to hide the preset bar for the current viewer.
+
+```dart
+config.hidePresetBar = true;
+```
+
+#### singleLineToolbar
+bool, default to false. Android only.
+
+Sets whether to use 2-line toolbar or 1-line toolbar.
+
+```dart
+config.singleLineToolbar = true;
+```
+
+
+
 ### Layout
 
 #### fitMode
@@ -1515,12 +1614,21 @@ config.disableEditingByAnnotationType = [Tools.annotationCreateTextSquiggly, Too
 ```
 
 #### annotationsListEditingEnabled
-bool, optional, default value is true
+bool, optional, default value is true.
 
 If document editing is enabled, then this value determines if the annotation list is editable. 
 
 ```dart
 config.annotationsListEditingEnabled = false;
+```
+
+#### annotationsListFilterEnabled
+bool, optional, default value is true, Android only.
+
+Defines whether filtering the annotation list is possible.
+
+```dart
+config.annotationsListFilterEnabled = true;
 ```
 
 #### excludedAnnotationListTypes
@@ -1531,6 +1639,26 @@ Example use:
 
 ```dart
 config.excludedAnnotationListTypes=[Tools.annotationCreateEllipse, Tools.annotationCreateRedaction];
+```
+
+### Reflow
+
+#### reflowOrientation
+one of [`ReflowOrientation`](./lib/constants.dart) constants, defaults to the viewer's scroll direction.
+
+Sets the scrolling direction of the reflow control.
+
+```dart
+config.reflowOrientation = ReflowOrientation.horizontal;
+```
+
+#### imageInReflowModEnabled
+bool, defaults to true.
+
+Whether to show images in reflow mode.
+
+```dart
+config.imageInReflowModeEnabled = false;
 ```
 
 ### Annotation Menu
@@ -1674,6 +1802,15 @@ Defines whether to show saved signatures for re-use when using the signing tool.
 config.showSavedSignatures = true;
 ```
 
+#### signaturePhotoPickerEnabled
+bool, optional, defaults to true. Android only.
+
+Defines whether to show the option to pick images in the signature dialog.
+
+```dart
+config.signaturePhotoPickerEnabled = true;
+```
+
 ### Thumbnail Browser
 
 #### thumbnailViewEditingEnabled
@@ -1742,6 +1879,24 @@ Defines whether the UI will appear in a dark color when the system is dark mode.
 config.followSystemDarkMode = false;
 ```
 
+#### autoResizeFreeTextEnabled
+bool, defaults to false.
+
+Defines whether to automatically resize the bounding box of free text annotations when editing.
+
+```dart
+config.autoResizeFreeTextEnabled = true;
+```
+
+#### restrictDownloadUsage
+bool, defaults to false.
+
+Defines whether to restrict data usage when viewing online PDFs.
+
+```dart
+config.restrictDownloadUsage = false;
+```
+
 #### annotationManagerEnabled
 bool, defaults to false.
 
@@ -1775,4 +1930,36 @@ The name of the current user. Used in the annotation manager when [`annotationMa
 config.annotationManagerEnabled = true;
 config.userId = "Bob123";
 config.userName = "Bob";
+```
+
+#### annotationManagerEditMode
+one of the [`AnnotationManagerEditMode`](./lib/constants.dart) constants, optional, default value is `AnnotationManagerEditMode.All`
+
+Sets annotation manager edit mode when [`annotationManagerEnabled`](#annotationManagerEnabled) is true and [`userId`](#userId) is not null.
+
+Mode | Description
+--- | ---
+`AnnotationManagerEditMode.Own` | In this mode, you can edit only your own changes 
+`AnnotationManagerEditMode.All` | In this mode, you can edit everyone's changes 
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Sam";
+config.annotationManagerEditMode = AnnotationManagerEditMode.Own;
+```
+
+#### annotationManagerUndoMode
+one of the [`AnnotationManagerUndoMode`](./lib/constants.dart) constants, optional, default value is `AnnotationManagerUndoMode.All`
+
+Sets annotation manager undo mode when [`annotationManagerEnabled`](#annotationManagerEnabled) is true and [`userId`](#userId) is not null.
+
+Mode | Description
+--- | ---
+`AnnotationManagerUndoMode.Own` | In this mode, you can undo only your own changes 
+`AnnotationManagerUndoMode.All` | In this mode, you can undo everyone's changes 
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Sam";
+config.annotationManagerUndoMode = AnnotationManagerUndoMode.Own;
 ```
