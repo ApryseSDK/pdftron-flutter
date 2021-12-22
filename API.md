@@ -271,7 +271,9 @@ PdftronFlutter.openViewSettings({'x1': 10.0, 'y1': 10.0, 'x2': 20.0, 'y2': 20.0}
 ```
 
 #### openCrop
-Displays the page crop options dialog.
+Displays the page crop options dialog. 
+
+On iOS, this has no effect if [`hideTopToolbars`](#hideTopToolbars) is false.
 
 Returns a Future.
 

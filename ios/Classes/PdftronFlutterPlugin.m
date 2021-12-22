@@ -2793,9 +2793,11 @@
         flutterResult([FlutterError errorWithCode:@"open_crop" message:@"Failed to open crop" details:@"Error: The document view controller is not initialized."]);
         return;
     }
-    if (documentController.moreItemsButtonHidden == NO) {
-       [documentController showPageCropOptions:documentController.moreItemsButtonItem];
-    } else if (documentController.navigationItem.rightBarButtonItem != nil) {
+    PTFlutterDocumentController *flutterDocumentController = (PTFlutterDocumentController *) documentController;
+    if (flutterDocumentController.isTopToolbarsHidden) {
+        return;
+    };
+    if (documentController.navigationItem.rightBarButtonItem != nil) {
        [documentController showPageCropOptions:documentController.navigationItem.rightBarButtonItem];
     }
     flutterResult(nil);
