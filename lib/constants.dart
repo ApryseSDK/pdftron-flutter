@@ -148,6 +148,7 @@ class Buttons {
   static const eraserButton = 'eraserButton';
   static const undo = 'undo';
   static const redo = 'redo';
+  static const showFileAttachmentButton = 'showFileAttachmentButton';
 
   // Android only
   static const editAnnotationToolbarButton = 'editAnnotationToolButton';
