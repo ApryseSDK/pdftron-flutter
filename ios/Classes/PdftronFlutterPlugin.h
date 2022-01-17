@@ -199,6 +199,7 @@ static NSString * const PTDeleteAnnotationsKey = @"deleteAnnotations";
 static NSString * const PTSelectAnnotationKey = @"selectAnnotation";
 static NSString * const PTSetFlagsForAnnotationsKey = @"setFlagsForAnnotations";
 static NSString * const PTSetPropertiesForAnnotationKey = @"setPropertiesForAnnotation";
+static NSString * const PTGroupAnnotationsKey = @"groupAnnotations";
 static NSString * const PTImportAnnotationCommandKey = @"importAnnotationCommand";
 static NSString * const PTImportBookmarksKey = @"importBookmarkJson";
 static NSString * const PTAddBookmarkKey = @"addBookmark";
