@@ -775,6 +775,25 @@ property.rotation = 90;
 PdftronFlutter.setPropertiesForAnnotation(pdf, property);
 ```
 
+#### groupAnnotations
+Sets properties for specified annotation in the current document.
+
+Parameters:
+Name | Type | Description
+--- | --- | ---
+primaryAnnotation | [`Annot`](./lib/options.dart) | the primary annotation of the group
+subAnnotations | List of [`Annot`](./lib/options.dart) | the list of annotations to group with the primary annotation
+
+```dart
+Annot primaryAnnotation = new Annot(_id1, 1);
+
+List<Annot> subAnnotations = new List<Annot>();
+subAnnotations.add(new Annot(_id2, 1));
+subAnnotations.add(new Annot(_id3, 1));
+
+PdftronFlutter.groupAnnotations(primaryAnnotation, subAnnotations);
+```
+
 #### setFlagForFields
 Sets a field flag value on one or more form fields.
 
