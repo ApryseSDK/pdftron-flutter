@@ -2391,12 +2391,13 @@ public class PluginUtils {
             if (null != annotationList && annotation != null) {
 
                 JSONObject annotationJson = new JSONObject(annotation);
-                String annotationId = annotationJson.getString(KEY_ANNOTATION_ID);
-                int annotationPageNumber = annotationJson.getInt(KEY_PAGE_NUMBER);
-                Annot primaryAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, annotationId, annotationPageNumber);
+                String primaryAnnotationId = annotationJson.getString(KEY_ANNOTATION_ID);
+                int primaryAnnotPageNum = annotationJson.getInt(KEY_PAGE_NUMBER);
+                Annot primaryAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, primaryAnnotationId, primaryAnnotPageNum);
 
                 JSONArray annotationJsonArray = new JSONArray(annotationList);
-                ArrayList<Annot> subAnnotations = new ArrayList<>(annotationJsonArray.length());
+                ArrayList<Annot> allAnnotations = new ArrayList<>(annotationJsonArray.length());
+                boolean containsPrimary = false;
                 for (int i = 0; i < annotationJsonArray.length(); i++) {
                     JSONObject currAnnot = annotationJsonArray.getJSONObject(i);
                     if (currAnnot != null) {
@@ -2405,12 +2406,18 @@ public class PluginUtils {
                         if (!Utils.isNullOrEmpty(currAnnotId)) {
                             Annot validAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, currAnnotId, currAnnotPageNumber);
                             if (validAnnotation != null && validAnnotation.isValid()) {
-                                subAnnotations.add(validAnnotation);
+                                allAnnotations.add(validAnnotation);
+                                if (!containsPrimary) {
+                                    containsPrimary = currAnnotId.equals(primaryAnnotationId);
+                                }
                             }
                         }
                     }
                 }
-                AnnotUtils.createAnnotationGroup(pdfViewCtrl, primaryAnnotation, subAnnotations);
+                if (!containsPrimary && primaryAnnotation != null) {
+                    allAnnotations.add(primaryAnnotation);
+                }
+                AnnotUtils.createAnnotationGroup(pdfViewCtrl, primaryAnnotation, allAnnotations);
             }
         } finally {
             if (shouldUnlock) {
