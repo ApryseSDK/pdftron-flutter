@@ -2395,6 +2395,11 @@ public class PluginUtils {
                 int primaryAnnotPageNum = annotationJson.getInt(KEY_PAGE_NUMBER);
                 Annot primaryAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, primaryAnnotationId, primaryAnnotPageNum);
 
+                if (primaryAnnotation == null || !primaryAnnotation.isValid()) {
+                    result.error("InvalidState", "Thew primary annotation cannot be null", null);
+                    return;
+                }
+
                 JSONArray annotationJsonArray = new JSONArray(annotationList);
                 ArrayList<Annot> allAnnotations = new ArrayList<>(annotationJsonArray.length());
                 boolean containsPrimary = false;
