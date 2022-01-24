@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
@@ -179,6 +180,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_USER_NAME = "userName";
     public static final String KEY_CONFIG_ANNOTATION_MANAGER_UNDO_MODE = "annotationManagerUndoMode";
     public static final String KEY_CONFIG_ANNOTATION_MANAGER_EDIT_MODE = "annotationManagerEditMode";
+    public static final String KEY_CONFIG_ANNOTATION_TOOLBAR_GRAVITY = "annotationToolbarAlignment";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -220,6 +222,9 @@ public class PluginUtils {
     public static final String KEY_LONG_PRESS_TEXT = "longPressText";
 
     public static final String KEY_PATH = "path";
+
+    public static final String KEY_GRAVITY_START = "GravityStart";
+    public static final String KEY_GRAVITY_END = "GravityEnd";
 
     public static final String EVENT_EXPORT_ANNOTATION_COMMAND = "export_annotation_command_event";
     public static final String EVENT_EXPORT_BOOKMARK = "export_bookmark_event";
@@ -514,7 +519,7 @@ public class PluginUtils {
     // Reflow Orientation
     public static final String REFLOW_ORIENTATION_HORIZONTAL = "horizontal";
     public static final String REFLOW_ORIENTATION_VERTICAL = "vertical";
-    
+
     // Annotation Manager Edit Mode
     public static final String ANNOTATION_MANAGER_EDIT_MODE_OWN = "editModeOwn";
     public static final String ANNOTATION_MANAGER_EDIT_MODE_ALL = "editModeAll";
@@ -1056,7 +1061,7 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_MAX_TAB_COUNT)) {
                     int maxTabCount = configJson.getInt(KEY_CONFIG_MAX_TAB_COUNT);
                     builder.maximumTabCount(maxTabCount);
-                } 
+                }
                 if (!configJson.isNull(KEY_CONFIG_OPEN_URL_PATH)) {
                     String openUrlPath = configJson.getString(KEY_CONFIG_OPEN_URL_PATH);
                     configInfo.setOpenUrlPath(openUrlPath);
@@ -1078,18 +1083,18 @@ public class PluginUtils {
                     builder.annotationsListFilterEnabled(annotationsListFilterEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_VIEW_MODE_ITEMS)) {
-                   JSONArray array = configJson.getJSONArray(KEY_CONFIG_HIDE_VIEW_MODE_ITEMS);
-                   for (int i = 0; i < array.length(); i++) {
-                       if (VIEW_MODE_COLOR_MODE.equals(array.getString(i))) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_HIDE_VIEW_MODE_ITEMS);
+                    for (int i = 0; i < array.length(); i++) {
+                        if (VIEW_MODE_COLOR_MODE.equals(array.getString(i))) {
                             viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_COLORMODE);
-                       }
-                       if (VIEW_MODE_CROP.equals(array.getString(i))) {
+                        }
+                        if (VIEW_MODE_CROP.equals(array.getString(i))) {
                             viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_USERCROP);
-                       }
-                       if (VIEW_MODE_ROTATION.equals(array.getString(i))) {
-                           viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_ROTATION);
-                       }
-                   }
+                        }
+                        if (VIEW_MODE_ROTATION.equals(array.getString(i))) {
+                            viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_ROTATION);
+                        }
+                    }
                 }
                 if (!configJson.isNull(KEY_CONFIG_DEFAULT_ERASER_TYPE)) {
                     String eraserType = configJson.getString(KEY_CONFIG_DEFAULT_ERASER_TYPE);
@@ -1148,6 +1153,14 @@ public class PluginUtils {
                     if (ANNOTATION_MANAGER_UNDO_MODE_OWN.equals(undoMode)) {
                         mAnnotationManagerUndoMode = PDFViewCtrl.AnnotationManagerMode.ADMIN_UNDO_OWN;
                     }
+                }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_TOOLBAR_GRAVITY)) {
+                    String gravityStr = configJson.getString(KEY_CONFIG_ANNOTATION_TOOLBAR_GRAVITY);
+                    int gravity = Gravity.END;
+                    if (KEY_GRAVITY_START.equals(gravityStr)) {
+                        gravity = Gravity.START;
+                    }
+                    builder.toolbarItemGravity(gravity);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -1234,7 +1247,7 @@ public class PluginUtils {
         }
     }
 
-    private static void setBottomToolbar(JSONArray array, ViewerConfig.Builder builder) throws JSONException{
+    private static void setBottomToolbar(JSONArray array, ViewerConfig.Builder builder) throws JSONException {
         BottomBarBuilder customBottomBar = BottomBarBuilder.withTag("CustomBottomBar");
 
         for (int i = 0; i < array.length(); i++) {
@@ -3397,7 +3410,7 @@ public class PluginUtils {
             }
         }
     }
-    
+
     private static void gotoPreviousPage(MethodChannel.Result result, ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         if (pdfViewCtrl == null) {
@@ -3441,7 +3454,7 @@ public class PluginUtils {
     private static void addBookmark(String title, Integer pageNumber, MethodChannel.Result result, ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
-        if (pdfViewCtrl == null || pdfDoc == null ) {
+        if (pdfViewCtrl == null || pdfDoc == null) {
             result.error("InvalidState", "PDFViewCtrl not found", null);
             return;
         }
@@ -3623,7 +3636,7 @@ public class PluginUtils {
     }
 
     public static void emitExportAnnotationCommandEvent(String action, Map<Annot, Integer> map, ViewerComponent component) {
-        if (component.getToolManager() != null && component.getToolManager().getAnnotManager() != null ) {
+        if (component.getToolManager() != null && component.getToolManager().getAnnotManager() != null) {
             return;
         } else {
             ArrayList<Annot> annots = new ArrayList<>(map.keySet());

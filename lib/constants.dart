@@ -381,3 +381,8 @@ class AnnotationManagerUndoMode {
   static const Own = "undoModeOwn";
   static const All = "unodModeAll";
 }
+
+class ToolbarAlignment {
+  static const Start = "GravityStart";
+  static const End = "GravityEnd";
+}
