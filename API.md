@@ -1449,6 +1449,15 @@ Customizes the right bar section of the top app nav bar. If passed in, the defau
 config.topAppNavBarRightBar = [Buttons.searchButton, Buttons.moreItemsButton];
 ```
 
+#### annotationToolbarAlignment
+string, one of ToolbarAlignment.Start or ToolbarAlignment.End
+
+Customizes the alignment of the annotation toolbars.
+
+```dart
+config.annotationToolbarAlignment = ToolbarAlignment.Start;
+```
+
 #### hideBottomToolbar
 bool, default to false.
 
