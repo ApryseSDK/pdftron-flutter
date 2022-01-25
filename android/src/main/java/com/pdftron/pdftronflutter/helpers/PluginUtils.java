@@ -293,6 +293,7 @@ public class PluginUtils {
     public static final String FUNCTION_OPEN_NAVIGATION_LISTS = "openNavigationLists";
     public static final String FUNCTION_GET_CURRENT_PAGE = "getCurrentPage";
     public static final String FUNCTION_GROUP_ANNOTATIONS = "groupAnnotations";
+    public static final String FUNCTION_UNGROUP_ANNOTATIONS = "ungroupAnnotations";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2363,6 +2364,19 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_UNGROUP_ANNOTATIONS: {
+                checkFunctionPrecondition(component);
+                try {
+                    ungroupAnnotations(call, result, component);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                    result.error(Integer.toString(ex.hashCode()), "JSONException Error: " + ex, null);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -2371,6 +2385,46 @@ public class PluginUtils {
     }
 
     // Methods
+
+    private static void ungroupAnnotations(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
+        String annotationList = call.argument(KEY_ANNOTATION_LIST);
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        PDFDoc pdfDoc = component.getPdfDoc();
+
+        if (null == pdfViewCtrl || null == pdfDoc) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        boolean shouldUnlock = false;
+        try {
+            pdfViewCtrl.docLock(true);
+            shouldUnlock = true;
+
+            if (null != annotationList) {
+                JSONArray annotationJsonArray = new JSONArray(annotationList);
+                ArrayList<Annot> validAnnotations = new ArrayList<>(annotationJsonArray.length());
+                for (int i = 0; i < annotationJsonArray.length(); i++) {
+                    JSONObject currAnnot = annotationJsonArray.getJSONObject(i);
+                    if (currAnnot != null) {
+                        String currAnnotId = currAnnot.getString(KEY_ANNOTATION_ID);
+                        int currAnnotPageNumber = currAnnot.getInt(KEY_PAGE_NUMBER);
+                        if (!Utils.isNullOrEmpty(currAnnotId)) {
+                            Annot annotation = ViewerUtils.getAnnotById(pdfViewCtrl, currAnnotId, currAnnotPageNumber);
+                            if (annotation != null && annotation.isValid()) {
+                                validAnnotations.add(annotation);
+                            }
+                        }
+                    }
+                }
+                AnnotUtils.ungroupAnnotations(pdfViewCtrl, validAnnotations);
+            }
+        } finally {
+            if (shouldUnlock) {
+                pdfViewCtrl.docUnlock();
+            }
+        }
+    }
 
     private static void groupAnnotations(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
         String annotation = call.argument(KEY_ANNOTATION);
