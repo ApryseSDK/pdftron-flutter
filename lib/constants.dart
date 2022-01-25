@@ -14,6 +14,7 @@ class Functions {
   static const setFlagsForAnnotations = "setFlagsForAnnotations";
   static const setPropertiesForAnnotation = "setPropertiesForAnnotation";
   static const groupAnnotations = "groupAnnotations";
+  static const ungroupAnnotations = "ungroupAnnotations";
   static const importAnnotationCommand = "importAnnotationCommand";
   static const importBookmarkJson = "importBookmarkJson";
   static const saveDocument = "saveDocument";

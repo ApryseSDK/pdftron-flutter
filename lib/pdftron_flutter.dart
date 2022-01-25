@@ -100,6 +100,13 @@ class PdftronFlutter {
         });
   }
 
+  static Future<void> ungroupAnnotations(List<Annot> annotations) {
+    return _channel.invokeMethod(Functions.ungroupAnnotations,
+        <String, dynamic>{
+        Parameters.annotations: jsonEncode(annotations)
+        });
+  }
+
   static Future<void> importAnnotationCommand(String xfdfCommand) {
     return _channel.invokeMethod(Functions.importAnnotationCommand,
         <String, dynamic>{Parameters.xfdfCommand: xfdfCommand});
