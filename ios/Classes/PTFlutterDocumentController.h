@@ -5,7 +5,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PTFlutterDocumentController : PTDocumentController
+@interface PTFlutterDocumentController : PTDocumentController <PTOverridable>
 
 @property (nonatomic, strong) FlutterResult openResult;
 @property (nonatomic, weak) PdftronFlutterPlugin* plugin;
