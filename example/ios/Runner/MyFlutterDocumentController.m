@@ -14,9 +14,12 @@
 // Do the conversion on the new page when the page number changes
 - (void)pdfViewCtrl:(PTPDFViewCtrl *)pdfViewCtrl pageNumberChangedFrom:(int)oldPageNumber To:(int)newPageNumber
 {
+    /* Uncomment this to do it when the page changes instead of over the whole doc in `didOpenDocument`
+     * You will also need to remove the code in `didOpenDocument`
     [self.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
         [self convertActionsToGoToForDocument:doc onPageNumber:newPageNumber];
     } error:nil];
+     */
 }
 
 
