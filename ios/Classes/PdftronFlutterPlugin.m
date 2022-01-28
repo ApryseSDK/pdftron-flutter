@@ -738,7 +738,7 @@
                         if ([alignmentString isEqualToString:PTAnnotationToolbarAlignmentEndKey]) {
                             documentController.toolGroupToolbar.itemsAlignment = PTToolGroupToolbarAlignmentTrailing;
                         } else {
-                            documentController.toolGroupToolbar.itemsAlignment = PTToolGroupToolbarAlignmentLeft;
+                            documentController.toolGroupToolbar.itemsAlignment = PTToolGroupToolbarAlignmentLeading;
                         }
                     }
                 }
