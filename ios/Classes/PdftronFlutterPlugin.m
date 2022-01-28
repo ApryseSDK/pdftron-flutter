@@ -736,7 +736,7 @@
 
                     if (!error && alignmentString) {
                         if ([alignmentString isEqualToString:PTAnnotationToolbarAlignmentEndKey]) {
-                            documentController.toolGroupToolbar.itemsAlignment = PTToolGroupToolbarAlignmentRight;
+                            documentController.toolGroupToolbar.itemsAlignment = PTToolGroupToolbarAlignmentTrailing;
                         } else {
                             documentController.toolGroupToolbar.itemsAlignment = PTToolGroupToolbarAlignmentLeft;
                         }
