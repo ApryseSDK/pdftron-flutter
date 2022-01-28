@@ -5,6 +5,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
@@ -179,6 +180,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_USER_NAME = "userName";
     public static final String KEY_CONFIG_ANNOTATION_MANAGER_UNDO_MODE = "annotationManagerUndoMode";
     public static final String KEY_CONFIG_ANNOTATION_MANAGER_EDIT_MODE = "annotationManagerEditMode";
+    public static final String KEY_CONFIG_ANNOTATION_TOOLBAR_GRAVITY = "annotationToolbarAlignment";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -220,6 +222,9 @@ public class PluginUtils {
     public static final String KEY_LONG_PRESS_TEXT = "longPressText";
 
     public static final String KEY_PATH = "path";
+
+    public static final String KEY_GRAVITY_START = "GravityStart";
+    public static final String KEY_GRAVITY_END = "GravityEnd";
 
     public static final String EVENT_EXPORT_ANNOTATION_COMMAND = "export_annotation_command_event";
     public static final String EVENT_EXPORT_BOOKMARK = "export_bookmark_event";
@@ -1150,6 +1155,14 @@ public class PluginUtils {
                     if (ANNOTATION_MANAGER_UNDO_MODE_OWN.equals(undoMode)) {
                         mAnnotationManagerUndoMode = PDFViewCtrl.AnnotationManagerMode.ADMIN_UNDO_OWN;
                     }
+                }
+                if (!configJson.isNull(KEY_CONFIG_ANNOTATION_TOOLBAR_GRAVITY)) {
+                    String gravityStr = configJson.getString(KEY_CONFIG_ANNOTATION_TOOLBAR_GRAVITY);
+                    int gravity = Gravity.END;
+                    if (KEY_GRAVITY_START.equals(gravityStr)) {
+                        gravity = Gravity.START;
+                    }
+                    builder.toolbarItemGravity(gravity);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

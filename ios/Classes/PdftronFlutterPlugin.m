@@ -730,6 +730,18 @@
                         documentController.annotationManagerUndoMode = [undoMode copy];
                     }
                 }
+                else if ([key isEqualToString:PTAnnotationToolbarAlignmentKey])
+                {
+                    NSString *alignmentString = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationToolbarAlignmentKey class:[NSString class] error:&error];
+
+                    if (!error && alignmentString) {
+                        if ([alignmentString isEqualToString:PTAnnotationToolbarAlignmentEndKey]) {
+                            documentController.toolGroupToolbar.itemsAlignment = PTToolGroupToolbarAlignmentTrailing;
+                        } else {
+                            documentController.toolGroupToolbar.itemsAlignment = PTToolGroupToolbarAlignmentLeading;
+                        }
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
