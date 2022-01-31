@@ -7,6 +7,9 @@ import 'package:pdftron_flutter/pdftron_flutter.dart';
 // Uncomment this if you are using local files
 // import 'package:permission_handler/permission_handler.dart';
 
+//set this value to view document via Widget
+var enableWidget = true;
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
@@ -33,17 +36,18 @@ class _ViewerState extends State<Viewer> {
   void initState() {
     super.initState();
     initPlatformState();
-
-    showViewer();
+    if (!enableWidget) {
+      showViewer();
+    }
 
     // If you are using local files delete the line above, change the _document field
     // appropriately and uncomment the section below.
     // if (Platform.isIOS) {
-      // // Open the document for iOS, no need for permission.
-      // showViewer();
+    // // Open the document for iOS, no need for permission.
+    // showViewer();
     // } else {
-      // // Request permission for Android before opening document.
-      // launchWithPermission();
+    // // Request permission for Android before opening document.
+    // launchWithPermission();
     // }
   }
 
@@ -124,7 +128,7 @@ class _ViewerState extends State<Viewer> {
     var annotCancel = startExportAnnotationCommandListener((xfdfCommand) async {
       String command = xfdfCommand;
       print("flutter xfdfCommand:\n");
-      // Dart limits how many characters are printed onto the console. 
+      // Dart limits how many characters are printed onto the console.
       // The code below ensures that all of the XFDF command is printed.
       if (command.length > 1024) {
         int start = 0;
@@ -159,26 +163,27 @@ class _ViewerState extends State<Viewer> {
   Widget build(BuildContext context) {
     // If using Android Widget, uncomment one of the following:
     // If using Flutter v2.3.0-17.0.pre or earlier.
-    // SystemChrome.setEnabledSystemUIOverlays(
-    //   SystemUiOverlay.values
-    // );
+    if (enableWidget) {
+      SystemChrome.setEnabledSystemUIOverlays(SystemUiOverlay.values);
+    }
     // If using later Flutter versions.
     // SystemChrome.setEnabledSystemUIMode(
     //   SystemUiMode.edgeToEdge,
     // );
-    
+    Widget documentChild = Container();
+    if (enableWidget) {
+      documentChild = _showViewer
+          ? SafeArea(
+              child: DocumentView(
+              onCreated: _onDocumentViewCreated,
+            ))
+          : Container();
+    }
     return Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        child:
-            // Uncomment this to use Widget version of the viewer.
-            // _showViewer
-            // ? SafeArea (
-            //   child: DocumentView(
-            //     onCreated: _onDocumentViewCreated,
-            //   )):
-            Container(),
+        child: documentChild,
       ),
     );
   }
