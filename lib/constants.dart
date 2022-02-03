@@ -6,6 +6,7 @@ class Functions {
   static const getVersion = "getVersion";
   static const initialize = "initialize";
   static const openDocument = "openDocument";
+  static const getSavedSignatures = "getSavedSignatures";
   static const importAnnotations = "importAnnotations";
   static const exportAnnotations = "exportAnnotations";
   static const flattenAnnotations = "flattenAnnotations";
