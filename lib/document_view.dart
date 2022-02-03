@@ -138,17 +138,15 @@ class DocumentViewController {
 
   /// Groups specified annotations in the current document.
   Future<void> groupAnnotations(
-      Annot primaryAnnotation, List<Annot> subAnnotations) {
-    return _channel
-        .invokeMethod(Functions.groupAnnotations, <String, dynamic>{
+      Annot primaryAnnotation, List<Annot>? subAnnotations) {
+    return _channel.invokeMethod(Functions.groupAnnotations, <String, dynamic>{
       Parameters.annotation: jsonEncode(primaryAnnotation),
       Parameters.annotations: jsonEncode(subAnnotations),
     });
   }
 
   /// Ungroups specified annotations in the current documen
-  Future<void> ungroupAnnotations(
-      List<Annot> annotations) {
+  Future<void> ungroupAnnotations(List<Annot>? annotations) {
     return _channel
         .invokeMethod(Functions.ungroupAnnotations, <String, dynamic>{
       Parameters.annotations: jsonEncode(annotations),
@@ -262,7 +260,7 @@ class DocumentViewController {
   /// Sets current page of the document.
   ///
   /// [pageNumber] is 1-indexed.
-  Future<bool> setCurrentPage(int pageNumber) {
+  Future<bool?> setCurrentPage(int pageNumber) {
     return _channel.invokeMethod(Functions.setCurrentPage,
         <String, dynamic>{Parameters.pageNumber: pageNumber});
   }
@@ -328,11 +326,25 @@ class DocumentViewController {
 
   /// Export a PDF page to an image format defined in ExportFormat.
   /// The page is taken from the PDF at the given filepath.
-  Future<String?> exportAsImage(int? pageNumber, int? dpi, String? exportFormat) {
+  Future<String?> exportAsImage(
+      int? pageNumber, int? dpi, String? exportFormat) {
     return _channel.invokeMethod(Functions.exportAsImage, <String, dynamic>{
       Parameters.pageNumber: pageNumber,
       Parameters.dpi: dpi,
       Parameters.exportFormat: exportFormat
+    });
+  }
+
+  // Export a PDF page to an image format defined in ExportFormat.
+  // The page is taken from the PDF at the given filepath.
+  Future<String?> exportAsImageFromFilePath(
+      int? pageNumber, int? dpi, String? exportFormat, String? filePath) {
+    return _channel
+        .invokeMethod(Functions.exportAsImageFromFilePath, <String, dynamic>{
+      Parameters.pageNumber: pageNumber,
+      Parameters.dpi: dpi,
+      Parameters.exportFormat: exportFormat,
+      Parameters.path: filePath
     });
   }
 

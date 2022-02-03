@@ -114,19 +114,19 @@ class PdftronFlutter {
     });
   }
 
-  static Future<void> groupAnnotations(Annot primaryAnnotation, List<Annot> subAnnotations) {
-    return _channel.invokeMethod(Functions.groupAnnotations,
-        <String, dynamic>{
-        Parameters.annotation: jsonEncode(primaryAnnotation),
-        Parameters.annotations: jsonEncode(subAnnotations)
-        });
+  /// Groups specified annotations in the current document.
+  static Future<void> groupAnnotations(
+      Annot primaryAnnotation, List<Annot>? subAnnotations) {
+    return _channel.invokeMethod(Functions.groupAnnotations, <String, dynamic>{
+      Parameters.annotation: jsonEncode(primaryAnnotation),
+      Parameters.annotations: jsonEncode(subAnnotations)
+    });
   }
 
-  static Future<void> ungroupAnnotations(List<Annot> annotations) {
+  /// Ungroups specified annotations in the current documen
+  static Future<void> ungroupAnnotations(List<Annot>? annotations) {
     return _channel.invokeMethod(Functions.ungroupAnnotations,
-        <String, dynamic>{
-        Parameters.annotations: jsonEncode(annotations)
-        });
+        <String, dynamic>{Parameters.annotations: jsonEncode(annotations)});
   }
 
   /// Imports remote annotation command to local document.
@@ -178,7 +178,6 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.getPageCount);
   }
 
-
   /// Handles the back button in search mode.
   ///
   /// Android only.
@@ -186,19 +185,23 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.handleBackButton);
   }
 
+  /// Undo the last modification.
   static Future<void> undo() {
     return _channel.invokeMethod(Functions.undo);
   }
 
+  /// Redo the last modification.
   static Future<void> redo() {
     return _channel.invokeMethod(Functions.redo);
   }
 
-  static Future<bool> canUndo() {
+  /// Checks whether an undo operation can be performed from the current snapshot.
+  static Future<bool?> canUndo() {
     return _channel.invokeMethod(Functions.canUndo);
   }
 
-  static Future<bool> canRedo() {
+  /// Checks whether a redo operation can be perfromed from the current snapshot.
+  static Future<bool?> canRedo() {
     return _channel.invokeMethod(Functions.canRedo);
   }
 
@@ -220,10 +223,12 @@ class PdftronFlutter {
     return pageRotation;
   }
 
+  /// Rotates all pages in the current document in clockwise direction (by 90 degrees).
   static Future<void> rotateClockwise() {
     return _channel.invokeMethod(Functions.rotateClockwise);
   }
 
+  /// Rotates all pages in the current document in counter-clockwise direction (by 90 degrees).
   static Future<void> rotateCounterClockwise() {
     return _channel.invokeMethod(Functions.rotateCounterClockwise);
   }
@@ -231,7 +236,7 @@ class PdftronFlutter {
   /// Sets current page of the document.
   ///
   /// [pageNumber] is 1-indexed.
-  static Future<bool> setCurrentPage(int pageNumber) {
+  static Future<bool?> setCurrentPage(int pageNumber) {
     return _channel.invokeMethod(Functions.setCurrentPage,
         <String, dynamic>{Parameters.pageNumber: pageNumber});
   }
@@ -294,7 +299,10 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.deleteAllAnnotations);
   }
 
-  static Future<String> exportAsImage(int pageNumber, int dpi, String exportFormat) {
+  /// Export a PDF page to an image format defined in ExportFormat.
+  /// The page is taken from the PDF at the given filepath.
+  static Future<String?> exportAsImage(
+      int? pageNumber, int? dpi, String? exportFormat) {
     return _channel.invokeMethod(Functions.exportAsImage, <String, dynamic>{
       Parameters.pageNumber: pageNumber,
       Parameters.dpi: dpi,
@@ -302,8 +310,12 @@ class PdftronFlutter {
     });
   }
 
-  static Future<String> exportAsImageFromFilePath(int pageNumber, int dpi, String exportFormat, String filePath) {
-    return _channel.invokeMethod(Functions.exportAsImageFromFilePath, <String, dynamic>{
+  // Export a PDF page to an image format defined in ExportFormat.
+  // The page is taken from the PDF at the given filepath.
+  static Future<String?> exportAsImageFromFilePath(
+      int? pageNumber, int? dpi, String? exportFormat, String? filePath) {
+    return _channel
+        .invokeMethod(Functions.exportAsImageFromFilePath, <String, dynamic>{
       Parameters.pageNumber: pageNumber,
       Parameters.dpi: dpi,
       Parameters.exportFormat: exportFormat,
@@ -339,40 +351,61 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.openLayersList);
   }
 
+  /// This view allows users to navigate pages of a document.
+  /// If thumbnailViewEditingEnabled is true, the user can also manipulate the document, including add, remove, re-arrange, rotate and duplicate pages
   static Future<void> openThumbnailsView() {
     return _channel.invokeMethod(Functions.openThumbnailsView);
   }
 
+  /// The dialog allows users to rotate pages of the opened document by 90, 180 and 270 degrees.
+  /// It also displays a thumbnail of the current page at the selected rotation angle.
+  ///
+  /// Android only
   static Future<void> openRotateDialog() {
     return _channel.invokeMethod(Functions.openRotateDialog);
   }
 
-  static Future<void> openAddPagesView(Map<String, double> sourceRect) {
+  /// Displays the add pages view.
+  ///
+  /// Requires a source rect in screen co-ordinates.
+  /// On iOS this rect will be the anchor point for the view.
+  /// The rect is ignored on Android.
+  static Future<void> openAddPagesView(Map<String, double>? sourceRect) {
     return _channel.invokeMethod(Functions.openAddPagesView,
         <String, dynamic>{Parameters.sourceRect: sourceRect});
   }
 
-  static Future<void> openViewSettings(Map<String, double> sourceRect) {
+  /// Displays the view settings.
+  ///
+  /// Requires a source rect in screen co-ordinates.
+  /// On iOS this rect will be the anchor point for the view.
+  /// The rect is ignored on Android.
+  static Future<void> openViewSettings(Map<String, double>? sourceRect) {
     return _channel.invokeMethod(Functions.openViewSettings,
         <String, dynamic>{Parameters.sourceRect: sourceRect});
   }
 
+  /// Displays the page crop options dialog.
   static Future<void> openCrop() {
     return _channel.invokeMethod(Functions.openCrop);
   }
 
+  /// Displays the manual page crop dialog.
   static Future<void> openManualCrop() {
     return _channel.invokeMethod(Functions.openManualCrop);
   }
 
+  /// Displays a search bar that allows the user to enter and search text within a document.
   static Future<void> openSearch() {
     return _channel.invokeMethod(Functions.openSearch);
   }
 
+  /// Opens the tab switcher in a multi-tab environment.
   static Future<void> openTabSwitcher() {
     return _channel.invokeMethod(Functions.openTabSwitcher);
   }
 
+  /// Opens a go-to page dialog. If the user inputs a valid page number into the dialog, the viewer will go to that page.
   static Future<void> openGoToPageView() {
     return _channel.invokeMethod(Functions.openGoToPageView);
   }
