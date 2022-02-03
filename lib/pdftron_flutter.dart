@@ -114,6 +114,21 @@ class PdftronFlutter {
     });
   }
 
+  static Future<void> groupAnnotations(Annot primaryAnnotation, List<Annot> subAnnotations) {
+    return _channel.invokeMethod(Functions.groupAnnotations,
+        <String, dynamic>{
+        Parameters.annotation: jsonEncode(primaryAnnotation),
+        Parameters.annotations: jsonEncode(subAnnotations)
+        });
+  }
+
+  static Future<void> ungroupAnnotations(List<Annot> annotations) {
+    return _channel.invokeMethod(Functions.ungroupAnnotations,
+        <String, dynamic>{
+        Parameters.annotations: jsonEncode(annotations)
+        });
+  }
+
   /// Imports remote annotation command to local document.
   ///
   /// The XFDF needs to be in a valid command format with `<add>`
@@ -163,11 +178,28 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.getPageCount);
   }
 
+
   /// Handles the back button in search mode.
   ///
   /// Android only.
   static Future<bool?> handleBackButton() {
     return _channel.invokeMethod(Functions.handleBackButton);
+  }
+
+  static Future<void> undo() {
+    return _channel.invokeMethod(Functions.undo);
+  }
+
+  static Future<void> redo() {
+    return _channel.invokeMethod(Functions.redo);
+  }
+
+  static Future<bool> canUndo() {
+    return _channel.invokeMethod(Functions.canUndo);
+  }
+
+  static Future<bool> canRedo() {
+    return _channel.invokeMethod(Functions.canRedo);
   }
 
   /// Gets a map object of the crop box for the specified page.
@@ -188,10 +220,18 @@ class PdftronFlutter {
     return pageRotation;
   }
 
+  static Future<void> rotateClockwise() {
+    return _channel.invokeMethod(Functions.rotateClockwise);
+  }
+
+  static Future<void> rotateCounterClockwise() {
+    return _channel.invokeMethod(Functions.rotateCounterClockwise);
+  }
+
   /// Sets current page of the document.
   ///
   /// [pageNumber] is 1-indexed.
-  static Future<bool?> setCurrentPage(int pageNumber) {
+  static Future<bool> setCurrentPage(int pageNumber) {
     return _channel.invokeMethod(Functions.setCurrentPage,
         <String, dynamic>{Parameters.pageNumber: pageNumber});
   }
@@ -254,6 +294,23 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.deleteAllAnnotations);
   }
 
+  static Future<String> exportAsImage(int pageNumber, int dpi, String exportFormat) {
+    return _channel.invokeMethod(Functions.exportAsImage, <String, dynamic>{
+      Parameters.pageNumber: pageNumber,
+      Parameters.dpi: dpi,
+      Parameters.exportFormat: exportFormat
+    });
+  }
+
+  static Future<String> exportAsImageFromFilePath(int pageNumber, int dpi, String exportFormat, String filePath) {
+    return _channel.invokeMethod(Functions.exportAsImageFromFilePath, <String, dynamic>{
+      Parameters.pageNumber: pageNumber,
+      Parameters.dpi: dpi,
+      Parameters.exportFormat: exportFormat,
+      Parameters.path: filePath
+    });
+  }
+
   /// Displays the annotation tab of the existing list container.
   ///
   /// If this tab has been disabled, the method does nothing.
@@ -280,6 +337,44 @@ class PdftronFlutter {
   /// If this tab has been disabled or there are no layers in the document, the method does nothing.
   static Future<void> openLayersList() {
     return _channel.invokeMethod(Functions.openLayersList);
+  }
+
+  static Future<void> openThumbnailsView() {
+    return _channel.invokeMethod(Functions.openThumbnailsView);
+  }
+
+  static Future<void> openRotateDialog() {
+    return _channel.invokeMethod(Functions.openRotateDialog);
+  }
+
+  static Future<void> openAddPagesView(Map<String, double> sourceRect) {
+    return _channel.invokeMethod(Functions.openAddPagesView,
+        <String, dynamic>{Parameters.sourceRect: sourceRect});
+  }
+
+  static Future<void> openViewSettings(Map<String, double> sourceRect) {
+    return _channel.invokeMethod(Functions.openViewSettings,
+        <String, dynamic>{Parameters.sourceRect: sourceRect});
+  }
+
+  static Future<void> openCrop() {
+    return _channel.invokeMethod(Functions.openCrop);
+  }
+
+  static Future<void> openManualCrop() {
+    return _channel.invokeMethod(Functions.openManualCrop);
+  }
+
+  static Future<void> openSearch() {
+    return _channel.invokeMethod(Functions.openSearch);
+  }
+
+  static Future<void> openTabSwitcher() {
+    return _channel.invokeMethod(Functions.openTabSwitcher);
+  }
+
+  static Future<void> openGoToPageView() {
+    return _channel.invokeMethod(Functions.openGoToPageView);
   }
 
   /// Displays the existing list container.

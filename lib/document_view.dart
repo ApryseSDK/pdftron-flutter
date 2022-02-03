@@ -51,6 +51,9 @@ class _DocumentViewState extends State<DocumentView> {
   }
 
   void _onPlatformViewCreated(int id) {
+    if (widget.onCreated == null) {
+      return;
+    }
     widget.onCreated(new DocumentViewController._(id));
   }
 }
@@ -133,6 +136,25 @@ class DocumentViewController {
     });
   }
 
+  /// Groups specified annotations in the current document.
+  Future<void> groupAnnotations(
+      Annot primaryAnnotation, List<Annot> subAnnotations) {
+    return _channel
+        .invokeMethod(Functions.groupAnnotations, <String, dynamic>{
+      Parameters.annotation: jsonEncode(primaryAnnotation),
+      Parameters.annotations: jsonEncode(subAnnotations),
+    });
+  }
+
+  /// Ungroups specified annotations in the current documen
+  Future<void> ungroupAnnotations(
+      List<Annot> annotations) {
+    return _channel
+        .invokeMethod(Functions.ungroupAnnotations, <String, dynamic>{
+      Parameters.annotations: jsonEncode(annotations),
+    });
+  }
+
   /// Imports remote annotation command to local document.
   ///
   /// The XFDF needs to be in a valid command format with `<add>`
@@ -189,6 +211,26 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.handleBackButton);
   }
 
+  /// Undo the last modification.
+  Future<void> undo() {
+    return _channel.invokeMethod(Functions.undo);
+  }
+
+  /// Redo the last modification.
+  Future<void> redo() {
+    return _channel.invokeMethod(Functions.redo);
+  }
+
+  /// Checks whether an undo operation can be performed from the current snapshot.
+  Future<bool?> canUndo() {
+    return _channel.invokeMethod(Functions.canUndo);
+  }
+
+  /// Checks whether a redo operation can be perfromed from the current snapshot.
+  Future<bool?> canRedo() {
+    return _channel.invokeMethod(Functions.canRedo);
+  }
+
   /// Gets a map object of the crop box for the specified page.
   ///
   /// [pageNumber] is 1-indexed.
@@ -207,10 +249,20 @@ class DocumentViewController {
     return pageRotation;
   }
 
+  /// Rotates all pages in the current document in clockwise direction (by 90 degrees).
+  Future<void> rotateClockwise() {
+    return _channel.invokeMethod(Functions.rotateClockwise);
+  }
+
+  /// Rotates all pages in the current document in counter-clockwise direction (by 90 degrees).
+  Future<void> rotateCounterClockwise() {
+    return _channel.invokeMethod(Functions.rotateCounterClockwise);
+  }
+
   /// Sets current page of the document.
   ///
   /// [pageNumber] is 1-indexed.
-  Future<bool?> setCurrentPage(int pageNumber) {
+  Future<bool> setCurrentPage(int pageNumber) {
     return _channel.invokeMethod(Functions.setCurrentPage,
         <String, dynamic>{Parameters.pageNumber: pageNumber});
   }
@@ -274,6 +326,16 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.deleteAllAnnotations);
   }
 
+  /// Export a PDF page to an image format defined in ExportFormat.
+  /// The page is taken from the PDF at the given filepath.
+  Future<String?> exportAsImage(int? pageNumber, int? dpi, String? exportFormat) {
+    return _channel.invokeMethod(Functions.exportAsImage, <String, dynamic>{
+      Parameters.pageNumber: pageNumber,
+      Parameters.dpi: dpi,
+      Parameters.exportFormat: exportFormat
+    });
+  }
+
   /// Displays the annotation tab of the existing list container.
   ///
   /// If this tab has been disabled, the method does nothing.
@@ -300,6 +362,65 @@ class DocumentViewController {
   /// If this tab has been disabled or there are no layers in the document, the method does nothing.
   Future<void> openLayersList() {
     return _channel.invokeMethod(Functions.openLayersList);
+  }
+
+  /// This view allows users to navigate pages of a document.
+  /// If thumbnailViewEditingEnabled is true, the user can also manipulate the document, including add, remove, re-arrange, rotate and duplicate pages
+  Future<void> openThumbnailsView() {
+    return _channel.invokeMethod(Functions.openThumbnailsView);
+  }
+
+  /// The dialog allows users to rotate pages of the opened document by 90, 180 and 270 degrees.
+  /// It also displays a thumbnail of the current page at the selected rotation angle.
+  ///
+  /// Android only
+  Future<void> openRotateDialog() {
+    return _channel.invokeMethod(Functions.openRotateDialog);
+  }
+
+  /// Displays the add pages view.
+  ///
+  /// Requires a source rect in screen co-ordinates.
+  /// On iOS this rect will be the anchor point for the view.
+  /// The rect is ignored on Android.
+  Future<void> openAddPagesView(Map<String, double>? sourceRect) {
+    return _channel.invokeMethod(Functions.openAddPagesView,
+        <String, dynamic>{Parameters.sourceRect: sourceRect});
+  }
+
+  /// Displays the view settings.
+  ///
+  /// Requires a source rect in screen co-ordinates.
+  /// On iOS this rect will be the anchor point for the view.
+  /// The rect is ignored on Android.
+  Future<void> openViewSettings(Map<String, double>? sourceRect) {
+    return _channel.invokeMethod(Functions.openViewSettings,
+        <String, dynamic>{Parameters.sourceRect: sourceRect});
+  }
+
+  /// Displays the page crop options dialog.
+  Future<void> openCrop() {
+    return _channel.invokeMethod(Functions.openCrop);
+  }
+
+  /// Displays the manual page crop dialog.
+  Future<void> openManualCrop() {
+    return _channel.invokeMethod(Functions.openManualCrop);
+  }
+
+  /// Displays a search bar that allows the user to enter and search text within a document.
+  Future<void> openSearch() {
+    return _channel.invokeMethod(Functions.openSearch);
+  }
+
+  /// Opens the tab switcher in a multi-tab environment.
+  Future<void> openTabSwitcher() {
+    return _channel.invokeMethod(Functions.openTabSwitcher);
+  }
+
+  /// Opens a go-to page dialog. If the user inputs a valid page number into the dialog, the viewer will go to that page.
+  Future<void> openGoToPageView() {
+    return _channel.invokeMethod(Functions.openGoToPageView);
   }
 
   /// Displays the existing list container.

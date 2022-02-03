@@ -51,6 +51,28 @@ Using commercial license key:
 PdftronFlutter.initialize('your_license_key');
 ```
 
+### exportAsImageFromFilePath
+Export a PDF page to an image format defined in [`ExportFormat`](./lib/constants.dart). The page is taken from the PDF at the given filepath.
+
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pageNumber | int | the page to be converted
+dpi | double | the output image resolution
+exportFormat | String | one of [`ExportFormat`](./lib/constants.dart) constants
+filePath | String | local file path to pdf
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+resultImagePath | String | the temp path of the created image, user is responsible for clean up the cache
+
+```dart
+var resultImagePath = await PdftronFlutter.exportAsImageFromFilePath(1, 92, ExportFormat.BMP, "/sdcard/Download/red.pdf");
+```
+
 ### setRequestedOrientation
 
 Changes the orientation of this activity. Android only. 
@@ -192,6 +214,91 @@ Returns a Future that resolves when the view has loaded.
 await PdftronFlutter.openLayersList();
 ```
 
+#### openThumbnailsView
+Display a page thumbnails view.
+
+This view allows users to navigate pages of a document. If [`thumbnailViewEditingEnabled`](#thumbnailViewEditingEnabled) is true, the user can also manipulate the document, including add, remove, re-arrange, rotate and duplicate pages.
+
+Returns a Future.
+
+```dart
+await PdftronFlutter.openThumbnailsView();
+```
+
+#### openRotateDialog
+Displays a rotate dialog. Android only.
+
+The dialog allows users to rotate pages of the opened document by 90, 180 and 270 degrees. It also displays a thumbnail of the current page at the selected rotation angle.
+
+Returns a Future.
+
+```dart
+await PdftronFlutter.openRotateDialog();
+```
+
+#### openAddPagesView
+Displays the add pages view.
+
+Requires a source rect in screen co-ordinates. On iOS this rect will be the anchor point for the view. The rect is ignored on Android.
+
+Returns a Future.
+
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+rect | map | The rectangular area in screen co-ordinates with keys x1 (left), y1(bottom), y1(right), y2(top). Coordinates are in double format.
+
+```dart
+await PdftronFlutter.openAddPagesView({'x1': 10.0, 'y1': 10.0, 'x2': 20.0, 'y2': 20.0});
+```
+
+#### openViewSettings
+Displays the view settings.
+
+Requires a source rect in screen co-ordinates. On iOS this rect will be the anchor point for the view. The rect is ignored on Android.
+
+Returns a Future.
+
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+rect | map | The rectangular area in screen co-ordinates with keys x1 (left), y1(bottom), y1(right), y2(top). Coordinates are in double format.
+
+```dart
+PdftronFlutter.openViewSettings({'x1': 10.0, 'y1': 10.0, 'x2': 20.0, 'y2': 20.0});
+```
+
+#### openCrop
+Displays the page crop options dialog.
+
+On iOS, this has no effect if [`hideTopToolbars`](#hideTopToolbars) is false.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.openCrop();
+```
+
+#### openManualCrop
+Displays the manual page crop dialog.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.openManualCrop();
+```
+
+#### openSearch
+Displays a search bar that allows the user to enter and search text within a document.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.openSearch();
+```
+
 #### openNavigationLists
 Displays the existing list container. Its current tab will be the one last opened. 
 
@@ -238,6 +345,17 @@ PdftronFlutter.setLeadingNavButtonIcon(Platform.isIOS ? 'ic_close_black_24px.png
 <img alt='demo-ios' src='https://pdftron.s3.amazonaws.com/custom/websitefiles/flutter/ios_add_resources.png'/>
 
 2. Now you can use the image in the viewer. For example, if you add `button_open.png` to the bundle, you could use `'button_open.png'` in leadingNavButtonIcon.
+
+#### rememberLastUsedTool
+boolean, optional, defaults to true, Android only
+
+Defines whether the last tool used in the current viewer session will be the tool selected upon starting a new viewer session.
+
+Example:
+
+```dart
+config.rememberLastUsedTool = false;
+```
 
 ### Annotation Tools
 
@@ -374,6 +492,24 @@ var pageRotation = await PdftronFlutter.getPageRotation(1);
 print("The rotation value of page 1 is $pageRotation");
 ```
 
+#### rotateClockwise
+Rotates all pages in the current document in clockwise direction (by 90 degrees).
+
+Returns a Promise.
+
+```dart
+await PdftronFlutter.rotateClockwise();
+```
+
+#### rotateCounterClockwise
+Rotates all pages in the current document in counter-clockwise direction (by 90 degrees).
+
+Returns a Promise.
+
+```dart
+await PdftronFlutter.rotateCounterClockwise();
+```
+
 #### gotoPreviousPage
 Go to the previous page of the document. If on first page, it will stay on first page.
 
@@ -421,7 +557,7 @@ Name | Type | Description
 --- | --- | ---
 pageChanged | bool | whether the setting process was successful
 
-```js
+```dart
 var pageChanged = await PdftronFlutter.gotoFirstPage();
 if (pageChanged) {
   print("Successfully went to first page");
@@ -439,11 +575,20 @@ Name | Type | Description
 --- | --- | ---
 success | bool | whether the setting process was successful
 
-```js
+```dart
 var pageChanged = await PdftronFlutter.gotoLastPage();
 if (pageChanged) {
   print("Successfully went to last page");
 }
+```
+
+#### openGoToPageView
+Opens a go-to page dialog. If the user inputs a valid page number into the dialog, the viewer will go to that page.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.openGoToPageView();
 ```
 
 ### Import/Export Annotations
@@ -630,6 +775,41 @@ property.rotation = 90;
 PdftronFlutter.setPropertiesForAnnotation(pdf, property);
 ```
 
+#### groupAnnotations
+Groups specified annotations in the current document.
+
+Parameters:
+Name | Type | Description
+--- | --- | ---
+primaryAnnotation | [`Annot`](./lib/options.dart) | the primary annotation of the group
+subAnnotations | List of [`Annot`](./lib/options.dart) | the list of annotations to group with the primary annotation
+
+```dart
+Annot primaryAnnotation = new Annot(_id1, 1);
+
+List<Annot> subAnnotations = new List<Annot>();
+subAnnotations.add(new Annot(_id2, 1));
+subAnnotations.add(new Annot(_id3, 1));
+
+PdftronFlutter.groupAnnotations(primaryAnnotation, subAnnotations);
+```
+
+#### ungroupAnnotations
+Ungroups specified annotations in the current document.
+
+Parameters:
+Name | Type | Description
+--- | --- | ---
+annotations | List of [`Annot`](./lib/options.dart) | the list of annotations to ungroup
+
+```dart
+List<Annot> annotations = new List<Annot>();
+subAnnotations.add(new Annot(_id1, 1));
+subAnnotations.add(new Annot(_id2, 1));
+
+PdftronFlutter.ungroupAnnotations(annotations);
+```
+
 #### setFlagForFields
 Sets a field flag value on one or more form fields.
 
@@ -720,6 +900,38 @@ Returns a Future.
 PdftronFlutter.addBookmark("Page 7", 6);
 ```
 
+#### userBookmarksListEditingEnabled
+bool, optional, default value is true
+
+Defines whether the bookmark list can be edited. If the viewer is readonly then bookmarks on Android are
+still editable but are saved to the device rather than the PDF.
+
+```dart
+config.userBookmarksListEditingEnabled = false;
+```
+
+#### Outline
+
+#### outlineListEditingEnabled
+bool, optional, default value is true
+
+Defines whether the outline list can be edited.
+
+```dart
+config.outlineListEditingEnabled = false;
+```
+
+### Navigation
+
+#### showNavigationListAsSidePanelOnLargeDevices
+bool, optional, defaults to true
+
+Defines whether the navigation list will be displayed as a side panel on large devices such as iPads and tablets.
+
+```dart
+config.showNavigationListAsSidePanelOnLargeDevices = true;
+```
+
 ### Multi-tab
 
 #### closeAllTabs
@@ -731,6 +943,87 @@ Returns a Future.
 PdftronFlutter.closeAllTabs();
 ```
 
+#### openTabSwitcher
+Opens the tab switcher in a multi-tab environment.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.openTabSwitcher();
+```
+
+### Export Images
+
+#### exportAsImage
+Export a PDF page to an image format defined in [`ExportFormat`](./lib/constants.dart). The page is taken from the currently opened document in the viewer.
+
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pageNumber | int | the page to be converted
+dpi | double | the output image resolution
+exportFormat | String | one of [`ExportFormat`](./lib/constants.dart) constants
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+resultImagePath | String | the temp path of the created image, user is responsible for clean up the cache
+
+```dart
+var resultImagePath = await PdftronFlutter.exportAsImage(1, 92, ExportFormat.BMP);
+```
+
+### Undo/Redo
+
+#### undo
+Undo the last modification.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.undo();
+```
+
+#### redo
+Redo the last modification.
+
+Returns a Future.
+
+```dart
+PdftronFlutter.redo();
+```
+
+#### canUndo
+Checks whether an undo operation can be performed from the current snapshot.
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+canUndo | bool | whether it is possible to undo from the current snapshot
+
+```dart
+PdftronFlutter.canUndo().then((canUndo) => {
+  print("undo possible: $canUndo")
+});
+```
+
+#### canRedo
+Checks whether a redo operation can be perfromed from the current snapshot.
+
+Returns a Future.
+
+Name | Type | Description
+--- | --- | ---
+canRedo | bool | whether it is possible to redo from the current snapshot
+
+```dart
+PdftronFlutter.canRedo().then((canRedo) => {
+  print("redo possible: $canRedo")
+});
+```
 
 ## Events
 This section contains all the event listeners you could attach to the viewer.
@@ -774,6 +1067,15 @@ var navPressedCancel = startLeadingNavButtonPressedListener(()
 });
 ```
 
+#### documentSliderEnabled
+bool, optional, defaults to true
+
+Defines whether the document slider of the viewer is enabled.
+
+```dart
+config.documentSliderEnabled = false;
+```
+
 ### Page
 
 #### startPageChangedListener
@@ -813,6 +1115,8 @@ var pageMovedCancel = startPageMovedListener((previousPageNumber, pageNumber) {
 
 #### startExportAnnotationCommandListener
 Event is raised when local annotation changes are committed to the document.
+
+To also raise this event upon undo/redo, [`annotationManagerEnabled`](#annotationManagerEnabled) must be true, and [`userId`](#userId) must not be null.
 
 Event Parameters:
 
@@ -1024,6 +1328,24 @@ Eraser Type | Description
 config.defaultEraserType = DefaultEraserType.inkEraser;
 ```
 
+#### exportPath
+string, optional
+Sets the folder path for all save options, this defaults to the app cache path. Android only.
+Example:
+```dart
+config.exportPath = "/data/data/com.pdftron.pdftronflutterexample/cache/test/";
+```
+
+#### openUrlPath
+string, optional
+
+Sets the cache folder used to cache PDF files opened using a http/https link, this defaults to the app cache path. Android only.
+Example:
+
+```dart
+config.openUrlPath = "/data/data/com.pdftron.pdftronflutterexample/cache/test/";
+```
+
 #### isBase64String
 bool, defaults to false.
 
@@ -1039,6 +1361,10 @@ config.isBase64String = true;
 String, defaults to `.pdf`, required if using base64 string of a non-pdf file.
 
 Defines the file extension for the base64 string in document, if [`isBase64String`](#isBase64String) is true.
+
+```dart
+config.base64FileExtension = '.jpeg';
+```
 
 ### UI Customization
 
@@ -1069,6 +1395,15 @@ Defines whether to show the leading navigation button.
 
 ```dart
 config.showLeadingNavButton = true;
+```
+
+#### downloadDialogEnabled
+bool, defaults to true, Android only.
+
+Defines whether the download dialog should be shown.
+
+```dart
+config.downloadDialogEnabled = false;
 ```
 
 ### Toolbar Customization
@@ -1104,6 +1439,15 @@ Defines whether to show the toolbar switcher in the top toolbar.
 config.hideAnnotationToolbarSwitcher = true;
 ```
 
+#### initialToolbar
+one of the [`DefaultToolbars`](./lib/constants.dart) constants or the `id` of a custom toolbar object, optional, defaults to none.
+
+Defines which [`annotationToolbar`](#annotationToolbars) should be selected when the document is opened.
+
+```dart
+config.initialToolbar = DefaultToolbars.view;
+```
+
 #### hideTopToolbars
 bool, defaults to false.
 
@@ -1111,6 +1455,15 @@ Defines whether to hide both the top app nav bar and the annotation toolbar.
 
 ```dart
 config.hideTopToolbars = true;
+```
+
+#### hideToolbarsOnTap
+bool, defaults to true.
+
+Defines whether an unhandled tap in the viewer should toggle the visibility of the top and bottom toolbars. When false, the top and bottom toolbar visibility will not be toggled and the page content will fit between the bars, if any.
+
+```dart
+config.hideToolbarsOnTap = false;
 ```
 
 #### hideTopAppNavBar
@@ -1122,6 +1475,24 @@ Defines whether to hide the top navigation app bar.
 config.hideTopAppNavBar = true;
 ```
 
+#### topAppNavBarRightBar
+array of [`Buttons`](./lib/constants.dart) constants, iOS only
+
+Customizes the right bar section of the top app nav bar. If passed in, the default right bar section will not be used.
+
+```dart
+config.topAppNavBarRightBar = [Buttons.searchButton, Buttons.moreItemsButton];
+```
+
+#### annotationToolbarAlignment
+string, one of ToolbarAlignment.Start or ToolbarAlignment.End
+
+Customizes the alignment of the annotation toolbars.
+
+```dart
+config.annotationToolbarAlignment = ToolbarAlignment.Start;
+```
+
 #### hideBottomToolbar
 bool, default to false.
 
@@ -1130,6 +1501,47 @@ Defines whether to hide the bottom toolbar for the current viewer.
 ```dart
 config.hideBottomToolbar = true;
 ```
+
+#### bottomToolbar
+array of [`Buttons`](./lib/constants.dart) constants, defaults to none.
+
+Defines a custom bottom toolbar. If passed in, the default bottom toolbar will not be used.
+
+Below is the list of supported buttons for each platform:
+
+| `Button` | Android | iOS |
+| :----- | :-----: | :-----: |
+| `listsButton` | ✅ | ✅ |
+| `thumbnailsButton` | ✅ | ✅ |
+| `shareButton` | ✅ | ✅ |
+| `viewControlsButton` | ✅ | ✅ |
+| `reflowModeButton` | ✅ | ✅ |
+| `searchButton` | ✅ | ✅ |
+| `moreItemsButton` | ❌ | ✅ |
+
+```dart
+config.bottomToolbar = [Buttons.reflowModeButton, Buttons.thumbnailsButton];
+```
+
+#### hidePresetBar
+bool, default to false.
+
+Defines whether to hide the preset bar for the current viewer.
+
+```dart
+config.hidePresetBar = true;
+```
+
+#### singleLineToolbar
+bool, default to false. Android only.
+
+Sets whether to use 2-line toolbar or 1-line toolbar.
+
+```dart
+config.singleLineToolbar = true;
+```
+
+
 
 ### Layout
 
@@ -1149,6 +1561,15 @@ Defines the layout mode of the viewer.
 
 ```dart
 config.layoutMode = LayoutModes.facingCover;
+```
+
+#### tabletLayoutEnabled
+bool, optional, defaults to true, Android only.
+
+Defines whether the tablet layout should be used on tablets. Otherwise uses the same layout as phones.
+
+```dart
+config.tabletLayoutEnabled = true;
 ```
 
 ### Page
@@ -1236,6 +1657,54 @@ Defines annotation types that cannot be edited after creation.
 config.disableEditingByAnnotationType = [Tools.annotationCreateTextSquiggly, Tools.annotationCreateTextHighlight, Tools.annotationCreateEllipse];
 ```
 
+#### annotationsListEditingEnabled
+bool, optional, default value is true.
+
+If document editing is enabled, then this value determines if the annotation list is editable.
+
+```dart
+config.annotationsListEditingEnabled = false;
+```
+
+#### annotationsListFilterEnabled
+bool, optional, default value is true, Android only.
+
+Defines whether filtering the annotation list is possible.
+
+```dart
+config.annotationsListFilterEnabled = true;
+```
+
+#### excludedAnnotationListTypes
+array of [`Config.Tools`](./src/Config/Config.ts) constants, optional, defaults to none
+
+Defines types to be excluded from the annotation list.
+Example use:
+
+```dart
+config.excludedAnnotationListTypes=[Tools.annotationCreateEllipse, Tools.annotationCreateRedaction];
+```
+
+### Reflow
+
+#### reflowOrientation
+one of [`ReflowOrientation`](./lib/constants.dart) constants, defaults to the viewer's scroll direction.
+
+Sets the scrolling direction of the reflow control.
+
+```dart
+config.reflowOrientation = ReflowOrientation.horizontal;
+```
+
+#### imageInReflowModEnabled
+bool, defaults to true.
+
+Whether to show images in reflow mode.
+
+```dart
+config.imageInReflowModeEnabled = false;
+```
+
 ### Annotation Menu
 
 #### hideAnnotationMenu
@@ -1305,6 +1774,17 @@ Defines actions that should skip default behavior, such as external link click. 
 config.overrideBehavior = [Behaviors.linkPress];
 ```
 
+### Navigation
+
+#### showQuickNavigationButton
+bool, defaults to true.
+
+Defines whether the quick navigation buttons will appear in the viewer.
+
+```dart
+config.showQuickNavigationButton = false;
+```
+
 ### Multi-tab
 
 #### multiTabEnabled
@@ -1325,6 +1805,27 @@ Sets the tab title if [`multiTabEnabled`](#multiTabEnabled) is true. (For Androi
 config.tabTitle = 'tab1';
 ```
 
+#### openSavedCopyInNewTab
+bool, optional, default to true, Android only.
+
+Sets whether the new saved file should open after saving.
+Example:
+
+```dart
+config.multiTabEnabled = true;
+config.openSavedCopyInNewTab = false;
+```
+
+#### maxTabCount
+number, optional, defaults to unlimited
+
+Sets the limit on the maximum number of tabs that the viewer could have at a time. Open more documents after reaching this limit will overwrite the old tabs.
+
+```dart
+config.multiTabEnabled = true;
+config.maxTabCount={5}
+```
+
 ### Signature
 
 #### signSignatureFieldsWithStamps
@@ -1343,6 +1844,15 @@ Defines whether to show saved signatures for re-use when using the signing tool.
 
 ```dart
 config.showSavedSignatures = true;
+```
+
+#### signaturePhotoPickerEnabled
+bool, optional, defaults to true. Android only.
+
+Defines whether to show the option to pick images in the signature dialog.
+
+```dart
+config.signaturePhotoPickerEnabled = true;
 ```
 
 ### Thumbnail Browser
@@ -1386,6 +1896,15 @@ Defines whether document is automatically saved by the viewer.
 config.autoSaveEnabled = true;
 ```
 
+#### showDocumentSavedToast
+bool, defaults to true, Android only.
+
+Defines whether a toast indicating that the document has been successfully or unsuccessfully saved will appear.
+
+```dart
+config.showDocumentSavedToast = false;
+```
+
 #### useStylusAsPen
 bool, defaults to true.
 
@@ -1402,6 +1921,91 @@ Defines whether the UI will appear in a dark color when the system is dark mode.
 
 ```dart
 config.followSystemDarkMode = false;
+```
+
+#### autoResizeFreeTextEnabled
+bool, defaults to false.
+
+Defines whether to automatically resize the bounding box of free text annotations when editing.
+
+```dart
+config.autoResizeFreeTextEnabled = true;
+```
+
+#### restrictDownloadUsage
+bool, defaults to false.
+
+Defines whether to restrict data usage when viewing online PDFs.
+
+```dart
+config.restrictDownloadUsage = false;
+```
+
+#### annotationManagerEnabled
+bool, defaults to false.
+
+Defines whether the annotation manager is enabled.
+
+When [`annotationManagerEnabled`](#annotationManagerEnabled) is true, and [`userId`](#userId) is not null, then [`startExportAnnotationCommandListener`](#startExportAnnotationCommandListener) will be raised when the state of the current document's undo/redo stack has been changed.
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Bob123";
+```
+
+#### userId
+String.
+
+The unique identifier of the current user.
+
+When [`annotationManagerEnabled`](#annotationManagerEnabled) is true, and [`userId`](#userId) is not null, then [`startExportAnnotationCommandListener`](#startExportAnnotationCommandListener) will be raised when the state of the current document's undo/redo stack has been changed.
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Bob123";
+```
+
+#### userName
+String, Android only.
+
+The name of the current user. Used in the annotation manager when [`annotationManagerEnabled`](#annotationManagerEnabled) is true.
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Bob123";
+config.userName = "Bob";
+```
+
+#### annotationManagerEditMode
+one of the [`AnnotationManagerEditMode`](./lib/constants.dart) constants, optional, default value is `AnnotationManagerEditMode.All`
+
+Sets annotation manager edit mode when [`annotationManagerEnabled`](#annotationManagerEnabled) is true and [`userId`](#userId) is not null.
+
+Mode | Description
+--- | ---
+`AnnotationManagerEditMode.Own` | In this mode, you can edit only your own changes
+`AnnotationManagerEditMode.All` | In this mode, you can edit everyone's changes
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Sam";
+config.annotationManagerEditMode = AnnotationManagerEditMode.Own;
+```
+
+#### annotationManagerUndoMode
+one of the [`AnnotationManagerUndoMode`](./lib/constants.dart) constants, optional, default value is `AnnotationManagerUndoMode.All`
+
+Sets annotation manager undo mode when [`annotationManagerEnabled`](#annotationManagerEnabled) is true and [`userId`](#userId) is not null.
+
+Mode | Description
+--- | ---
+`AnnotationManagerUndoMode.Own` | In this mode, you can undo only your own changes
+`AnnotationManagerUndoMode.All` | In this mode, you can undo everyone's changes
+
+```dart
+config.annotationManagerEnabled = true;
+config.userId = "Sam";
+config.annotationManagerUndoMode = AnnotationManagerUndoMode.Own;
 ```
 
 #### exportPath

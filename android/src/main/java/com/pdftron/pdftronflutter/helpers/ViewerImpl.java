@@ -2,7 +2,6 @@ package com.pdftron.pdftronflutter.helpers;
 
 import android.os.Bundle;
 import android.view.View;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -13,13 +12,15 @@ import com.pdftron.pdf.Field;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.annots.Widget;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdf.tools.Pan;
 import com.pdftron.pdf.tools.QuickMenu;
 import com.pdftron.pdf.tools.QuickMenuItem;
+import com.pdftron.pdf.tools.TextSelect;
 import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.ActionUtils;
-import com.pdftron.sdf.Obj;
 import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.ViewerUtils;
+import com.pdftron.sdf.Obj;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,10 +35,10 @@ import io.flutter.plugin.common.EventChannel;
 
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.BEHAVIOR_LINK_PRESS;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_ACTION;
-import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_DATA;
-import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LINK_BEHAVIOR_DATA;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_ANNOTATION_LIST;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_ANNOTATION_MENU_ITEM;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_DATA;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LINK_BEHAVIOR_DATA;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LONG_PRESS_MENU_ITEM;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LONG_PRESS_TEXT;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PAGE_NUMBER;
@@ -87,7 +88,6 @@ public class ViewerImpl {
     public void setActionInterceptCallback() {
         ActionUtils.getInstance().setActionInterceptCallback(mActionInterceptCallback);
     }
-
 
     private ToolManager.AnnotationModificationListener mAnnotationModificationListener = new ToolManager.AnnotationModificationListener() {
         @Override
@@ -369,7 +369,8 @@ public class ViewerImpl {
             }
 
             // remove unwanted items
-            if (mViewerComponent.getAnnotationMenuItems() != null && annot != null) {
+            ToolManager.Tool currentTool = mViewerComponent.getToolManager() != null ? mViewerComponent.getToolManager().getTool() : null;
+            if (mViewerComponent.getAnnotationMenuItems() != null && !(currentTool instanceof Pan) && !(currentTool instanceof TextSelect)) {
                 List<QuickMenuItem> removeList = new ArrayList<>();
                 checkQuickMenu(quickMenu.getFirstRowMenuItems(), mViewerComponent.getAnnotationMenuItems(), removeList);
                 checkQuickMenu(quickMenu.getSecondRowMenuItems(), mViewerComponent.getAnnotationMenuItems(), removeList);
@@ -380,7 +381,7 @@ public class ViewerImpl {
                     quickMenu.setDividerVisibility(View.GONE);
                 }
             }
-            if (mViewerComponent.getLongPressMenuItems() != null && null == annot) {
+            if (mViewerComponent.getLongPressMenuItems() != null && (currentTool instanceof Pan || currentTool instanceof TextSelect)) {
                 List<QuickMenuItem> removeList = new ArrayList<>();
                 checkQuickMenu(quickMenu.getFirstRowMenuItems(), mViewerComponent.getLongPressMenuItems(), removeList);
                 checkQuickMenu(quickMenu.getSecondRowMenuItems(), mViewerComponent.getLongPressMenuItems(), removeList);

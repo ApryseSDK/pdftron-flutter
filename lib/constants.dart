@@ -13,14 +13,22 @@ class Functions {
   static const selectAnnotation = "selectAnnotation";
   static const setFlagsForAnnotations = "setFlagsForAnnotations";
   static const setPropertiesForAnnotation = "setPropertiesForAnnotation";
+  static const groupAnnotations = "groupAnnotations";
+  static const ungroupAnnotations = "ungroupAnnotations";
   static const importAnnotationCommand = "importAnnotationCommand";
   static const importBookmarkJson = "importBookmarkJson";
   static const saveDocument = "saveDocument";
   static const commitTool = "commitTool";
   static const getPageCount = "getPageCount";
   static const handleBackButton = "handleBackButton";
+  static const undo = "undo";
+  static const redo = "redo";
+  static const canUndo = "canUndo";
+  static const canRedo = "canRedo";
   static const getPageCropBox = "getPageCropBox";
   static const getPageRotation = "getPageRotation";
+  static const rotateClockwise = "rotateClockwise";
+  static const rotateCounterClockwise = "rotateCounterClockwise";
   static const setCurrentPage = "setCurrentPage";
   static const getDocumentPath = "getDocumentPath";
   static const setToolMode = "setToolMode";
@@ -29,6 +37,8 @@ class Functions {
   static const setLeadingNavButtonIcon = "setLeadingNavButtonIcon";
   static const closeAllTabs = "closeAllTabs";
   static const deleteAllAnnotations = "deleteAllAnnotations";
+  static const exportAsImage = "exportAsImage";
+  static const exportAsImageFromFilePath = "exportAsImageFromFilePath";
   static const openAnnotationList = "openAnnotationList";
   static const setRequestedOrientation = "setRequestedOrientation";
   static const gotoPreviousPage = "gotoPreviousPage";
@@ -39,6 +49,15 @@ class Functions {
   static const openBookmarkList = "openBookmarkList";
   static const openOutlineList = "openOutlineList";
   static const openLayersList = "openLayersList";
+  static const openThumbnailsView = "openThumbnailsView";
+  static const openRotateDialog = "openRotateDialog";
+  static const openAddPagesView = "openAddPagesView";
+  static const openViewSettings = "openViewSettings";
+  static const openCrop = "openCrop";
+  static const openManualCrop = "openManualCrop";
+  static const openSearch = "openSearch";
+  static const openTabSwitcher = "openTabSwitcher";
+  static const openGoToPageView = "openGoToPageView";
   static const openNavigationLists = "openNavigationLists";
   static const getCurrentPage = "getCurrentPage";
 }
@@ -65,6 +84,10 @@ class Parameters {
   static const annotationsWithFlags = "annotationsWithFlags";
   static const annotationProperties = "annotationProperties";
   static const leadingNavButtonIcon = "leadingNavButtonIcon";
+  static const sourceRect = "sourceRect";
+  static const path = "path";
+  static const exportFormat = "exportFormat";
+  static const dpi = "dpi";
   static const requestedOrientation = "requestedOrientation";
 }
 
@@ -108,6 +131,8 @@ class Buttons {
   static const listsButton = 'listsButton';
   static const thumbnailSlider = 'thumbnailSlider';
   static const saveCopyButton = 'saveCopyButton';
+  static const saveIdenticalCopyButton = 'saveIdenticalCopyButton';
+  static const saveFlattenedCopyButton = 'saveFlattenedCopyButton';
   static const editPagesButton = 'editPagesButton';
   static const printButton = 'printButton';
   static const closeButton = 'closeButton';
@@ -116,6 +141,8 @@ class Buttons {
   static const outlineListButton = 'outlineListButton';
   static const annotationListButton = 'annotationListButton';
   static const userBookmarkListButton = 'userBookmarkListButton';
+  static const viewLayersButton = 'viewLayersButton';
+  static const editToolButton = 'editToolButton';
   static const reflowModeButton = 'reflowModeButton';
   static const editMenuButton = 'editMenuButton';
   static const cropPageButton = 'cropPageButton';
@@ -123,9 +150,13 @@ class Buttons {
   static const eraserButton = 'eraserButton';
   static const undo = 'undo';
   static const redo = 'redo';
+  static const showFileAttachmentButton = 'showFileAttachmentButton';
 
   /// Android only.
   static const editAnnotationToolbarButton = 'editAnnotationToolButton';
+  static const saveReducedCopyButton = 'saveReducedCopyButton';
+  static const saveCroppedCopyButton = 'saveCroppedCopyButton';
+  static const savePasswordCopyButton = 'savePasswordCopyButton';
 }
 
 /// Defines the various kinds of tools for the viewer.
@@ -134,6 +165,7 @@ class Tools {
   static const textSelect = 'TextSelect';
   static const annotationCreateSticky = 'AnnotationCreateSticky';
   static const annotationCreateFreeHand = 'AnnotationCreateFreeHand';
+  static const multiSelect = 'MultiSelect';
   static const annotationCreateTextHighlight = 'AnnotationCreateTextHighlight';
   static const annotationCreateTextUnderline = 'AnnotationCreateTextUnderline';
   static const annotationCreateTextSquiggly = 'AnnotationCreateTextSquiggly';
@@ -280,6 +312,8 @@ class AnnotationMenuItems {
   static const playSound = "playSound";
   static const openAttachment = "openAttachment";
   static const calibrate = "calibrate";
+  static const group = "group";
+  static const ungroup = "ungroup";
 }
 
 /// Defines a set of pre-designed toolbars for easier customization.
@@ -308,6 +342,13 @@ class ToolbarIcons {
   static const pens = "PDFTron_Pens";
   static const redaction = "PDFTron_Redact";
   static const favorite = "PDFTron_Favorite";
+}
+
+/// Defines the export format for pdf image
+class ExportFormat {
+  static const BMP = "BMP";
+  static const JPEG = "JPEG";
+  static const PNG = "PNG";
 }
 
 /// Defines the screen orientations for the viewer.
@@ -343,4 +384,25 @@ class DefaultEraserType {
 
   /// Android only.
   static const inkEraser = "inkEraser";
+}
+
+// ReflowOrientation defines the scrolling direction of the viewer while in reflow mode. Android only.
+class ReflowOrientation {
+  static const horizontal = "horizontal";
+  static const vertical = "vertical";
+}
+
+class AnnotationManagerEditMode {
+  static const Own = "editModeOwn";
+  static const All = "editModeAll";
+}
+
+class AnnotationManagerUndoMode {
+  static const Own = "undoModeOwn";
+  static const All = "unodModeAll";
+}
+
+class ToolbarAlignment {
+  static const Start = "GravityStart";
+  static const End = "GravityEnd";
 }
