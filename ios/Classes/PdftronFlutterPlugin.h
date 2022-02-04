@@ -242,6 +242,7 @@ static NSString *const PTOpenGoToPageViewKey = @"openGoToPageView";
 static NSString *const PTOpenNavigationListsKey = @"openNavigationLists";
 static NSString *const PTGetCurrentPageKey = @"getCurrentPage";
 static NSString *const PTGetSavedSignaturesKey = @"getSavedSignatures";
+static NSString *const PTGetSavedSignaturesFolderKey = @"getSavedSignaturesFolder";
 
 // argument
 static NSString *const PTDocumentArgumentKey = @"document";

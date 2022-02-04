@@ -294,6 +294,7 @@ public class PluginUtils {
     public static final String FUNCTION_OPEN_NAVIGATION_LISTS = "openNavigationLists";
     public static final String FUNCTION_GET_CURRENT_PAGE = "getCurrentPage";
     public static final String FUNCTION_GET_SAVED_SIGNATURES = "getSavedSignatures";
+    public static final String FUNCTION_GET_SAVED_SIGNATURES_FOLDER = "getSavedSignaturesFolder";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2378,6 +2379,11 @@ public class PluginUtils {
                 getSavedSignatures(result, component);
                 break;
             }
+            case FUNCTION_GET_SAVED_SIGNATURES_FOLDER: {
+                checkFunctionPrecondition(component);
+                getSavedSignaturesFolder(result, component);
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -2785,7 +2791,7 @@ public class PluginUtils {
         result.success(pdfViewCtrl.getCurrentPage());
     }
 
-    private static void getSavedSignatures(MethodChannel.Result result, ViewerComponent component) {
+    private static void getSavedSignatures(MethodChannel.Result result, @NonNull ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         if (pdfViewCtrl == null) {
             result.error("InvalidState", "Activity not attached", null);
@@ -2800,6 +2806,21 @@ public class PluginUtils {
             }
         }
         result.success(signatures);
+    }
+
+    private static void getSavedSignaturesFolder(MethodChannel.Result result, @NonNull ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        String filePath = "";
+        Context context = pdfViewCtrl.getContext();
+        if (context != null) {
+            File file = StampManager.getInstance().getSavedSignatureFolder(context);
+            filePath = file.getAbsolutePath();
+        }
+        result.success(filePath);
     }
 
     private static void setFlagsForAnnotations(String annotationsWithFlags, MethodChannel.Result result,

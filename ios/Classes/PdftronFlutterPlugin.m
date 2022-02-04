@@ -1483,7 +1483,9 @@
         [self getCurrentPage:result];
     } else if ([call.method isEqualToString:PTGetSavedSignaturesKey]) {
         [self getSavedSignatures:result];
-    }  else {
+    } else if ([call.method isEqualToString:PTGetSavedSignaturesFolderKey]) {
+        [self getSavedSignaturesFolder:result];
+    } else {
         result(FlutterMethodNotImplemented);
     }
 }
@@ -2533,6 +2535,14 @@
     }
 
     flutterResult(signatures);
+}
+
+- (void)getSavedSignaturesFolder:(FlutterResult)flutterResult {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+    NSString *libraryDirectory = paths[0];
+
+    NSString* fullPath = [libraryDirectory stringByAppendingPathComponent:@"PTSignaturesManager_signatureDirectory"];
+    flutterResult(fullPath);
 }
 
 - (void)getDocumentPath:(FlutterResult)flutterResult {

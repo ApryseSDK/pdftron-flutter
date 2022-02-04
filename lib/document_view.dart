@@ -314,7 +314,11 @@ class DocumentViewController {
 
   Future<List<String>> getSavedSignatures() {
     return _channel
-        .invokeMethod(Functions.getSavedSignatures)
-        .then((value) => jsonDecode(value));
+        .invokeMethod(Functions.getSavedSignatures);
+  }
+
+  Future<String> getSavedSignaturesFolder() {
+    return _channel
+        .invokeMethod(Functions.getSavedSignaturesFolder);
   }
 }
