@@ -1481,7 +1481,9 @@
         [self openNavigationLists:result];
     } else if ([call.method isEqualToString:PTGetCurrentPageKey]) {
         [self getCurrentPage:result];
-    } else {
+    } else if ([call.method isEqualToString:PTGetSavedSignaturesKey]) {
+        [self getSavedSignatures:result];
+    }  else {
         result(FlutterMethodNotImplemented);
     }
 }
@@ -2519,6 +2521,18 @@
 - (void)getCurrentPage:(FlutterResult)flutterResult {
     PTDocumentController *documentController = [self getDocumentController];
     flutterResult([NSNumber numberWithInt:documentController.pdfViewCtrl.currentPage]);
+}
+
+- (void)getSavedSignatures:(FlutterResult)flutterResult {
+    PTSignaturesManager *signaturesManager = [[PTSignaturesManager alloc] init];
+    NSUInteger numOfSignatures = [signaturesManager numberOfSavedSignatures];
+    NSMutableArray<NSString*> *signatures = [[NSMutableArray alloc] initWithCapacity:numOfSignatures];
+    
+    for (NSInteger i = 0; i < numOfSignatures; i++) {
+        signatures[i] = [[signaturesManager savedSignatureAtIndex:i] GetFileName];
+    }
+
+    flutterResult(signatures);
 }
 
 - (void)getDocumentPath:(FlutterResult)flutterResult {
