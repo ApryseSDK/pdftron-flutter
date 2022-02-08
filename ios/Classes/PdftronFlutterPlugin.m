@@ -730,6 +730,18 @@
                         documentController.annotationManagerUndoMode = [undoMode copy];
                     }
                 }
+                else if ([key isEqualToString:PTAnnotationToolbarAlignmentKey])
+                {
+                    NSString *alignmentString = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTAnnotationToolbarAlignmentKey class:[NSString class] error:&error];
+
+                    if (!error && alignmentString) {
+                        if ([alignmentString isEqualToString:PTAnnotationToolbarAlignmentEndKey]) {
+                            documentController.toolGroupToolbar.itemsAlignment = PTToolGroupToolbarAlignmentTrailing;
+                        } else {
+                            documentController.toolGroupToolbar.itemsAlignment = PTToolGroupToolbarAlignmentLeading;
+                        }
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
@@ -1374,6 +1386,13 @@
         NSString *annotation = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationArgumentKey]];
         NSString *properties = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationPropertiesArgumentKey]];
         [self setPropertiesForAnnotation:annotation properties:properties resultToken:result];
+    } else if ([call.method isEqualToString:PTGroupAnnotationsKey]) {
+        NSString *primaryAnnotation = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationArgumentKey]];
+        NSString *subAnnotations = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationListArgumentKey]];
+        [self groupAnnotations:primaryAnnotation subAnnotations:subAnnotations resultToken:result];
+    } else if ([call.method isEqualToString:PTUngroupAnnotationsKey]) {
+        NSString *annotations = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationListArgumentKey]];
+        [self ungroupAnnotations:annotations resultToken:result];
     } else if ([call.method isEqualToString:PTImportAnnotationCommandKey]) {
         NSString *xfdfCommand = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTXfdfCommandArgumentKey]];
         [self importAnnotationCommand:xfdfCommand resultToken:result];
@@ -2178,6 +2197,143 @@
     if (error) {
         NSLog(@"Error: Failed to set properties for annotation from doc. %@", error.localizedDescription);
         flutterResult([FlutterError errorWithCode:@"set_properties_for_annotation" message:@"Failed to set properties for annotation" details:@"Error: Failed to set properties for annotation from doc."]);
+    } else {
+        flutterResult(nil);
+    }
+}
+
+- (void)groupAnnotations:(NSString *)primaryAnnotation subAnnotations:(NSString *)subAnnotations resultToken:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"group_annotations" message:@"Failed to group annotations" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+
+    NSDictionary *annotationMap = [PdftronFlutterPlugin PT_idAsNSDict:[PdftronFlutterPlugin PT_JSONStringToId:primaryAnnotation]];
+
+    NSString *annotId = [PdftronFlutterPlugin PT_idAsNSString:annotationMap[PTAnnotIdKey]];
+    int pageNumber = [[PdftronFlutterPlugin PT_idAsNSNumber:annotationMap[PTAnnotPageNumberKey]] intValue];
+
+    NSError* error;
+
+    // parent annotation
+    PTAnnot *mainAnnot = [PdftronFlutterPlugin findAnnotWithUniqueID:annotId onPageNumber:pageNumber documentController:documentController error:&error];
+
+    if (error) {
+        NSLog(@"Error: Failed to find annotation with unique id. %@", error.localizedDescription);
+
+        flutterResult([FlutterError errorWithCode:@"group_annotations" message:@"Failed to group annotations" details:@"Error: Failed to find main annotation with unique id."]);
+        return;
+    } else if (![mainAnnot IsValid]) {
+        NSLog(@"Error: Failed to find main annotation with unique id. The requested annotation does not exist");
+
+        flutterResult([FlutterError errorWithCode:@"group_annotations" message:@"Failed to set properties for annotation" details:@"Error: Failed to find main annotation with unique id."]);
+        return;
+    }
+
+    // child annotations
+    NSArray *annotArray = [PdftronFlutterPlugin PT_idAsArray:[PdftronFlutterPlugin PT_JSONStringToId:subAnnotations]];
+
+    NSArray <PTAnnot *> *matchingAnnots = [PdftronFlutterPlugin findAnnotsWithUniqueIDs:annotArray documentController:documentController error:&error];
+
+    if (error) {
+        NSLog(@"Error: Failed to get annotations from doc. %@", error.localizedDescription);
+
+        flutterResult([FlutterError errorWithCode:@"group_annotations" message:@"Failed to group annotations" details:@"Error: Failed to get child annotations from doc."]);
+        return;
+    }
+
+    if (matchingAnnots.count == 0) {
+        flutterResult(@"");
+    }
+
+    // group the annotations
+
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        NSString *mainAnnotID = [mainAnnot GetUniqueIDAsString];
+        if (mainAnnotID == nil) {
+            mainAnnotID = [NSUUID UUID].UUIDString;
+            int bytes = (int)[mainAnnotID lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+            [mainAnnot SetUniqueID:mainAnnotID id_buf_sz:bytes];
+        }
+        for (PTAnnot *annot in matchingAnnots) {
+            [documentController.toolManager willModifyAnnotation:annot onPageNumber:pageNumber];
+
+            PTObj *annotSDFObj = [annot GetSDFObj];
+            [annotSDFObj EraseDictElementWithKey:@"RT"];
+            [annotSDFObj EraseDictElementWithKey:@"IRT"];
+            if (![annot isEqualTo:mainAnnot]) {
+                [annotSDFObj PutName:@"RT" name:@"Group"];
+                [annotSDFObj Put:@"IRT" obj:[mainAnnot GetSDFObj]];
+            }
+            [documentController.toolManager annotationModified:annot onPageNumber:(int)pageNumber];
+        }
+    } error:&error];
+
+    if (error) {
+        NSLog(@"Error: Failed to group annotations from doc. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"group_annotations" message:@"Failed to group annotations" details:@"Error: Failed to group annotations from doc."]);
+    } else {
+        flutterResult(nil);
+    }
+}
+
+- (void)ungroupAnnotations:(NSString *)annotations resultToken:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController.document == Nil)
+    {
+        // something is wrong, no document.
+        NSLog(@"Error: The document view controller has no document.");
+        flutterResult([FlutterError errorWithCode:@"ungroup_annotations" message:@"Failed to ungroup annotations" details:@"Error: The document view controller has no document."]);
+        return;
+    }
+
+    // annotations
+    NSArray *annotArray = [PdftronFlutterPlugin PT_idAsArray:[PdftronFlutterPlugin PT_JSONStringToId:annotations]];
+
+    NSError* error;
+    NSArray <PTAnnot *> *matchingAnnots = [PdftronFlutterPlugin findAnnotsWithUniqueIDs:annotArray documentController:documentController error:&error];
+
+    if (error) {
+        NSLog(@"Error: Failed to get annotations from doc. %@", error.localizedDescription);
+
+        flutterResult([FlutterError errorWithCode:@"ungroup_annotations" message:@"Failed to ungroup annotations" details:@"Error: Failed to get annotations from doc."]);
+        return;
+    }
+
+    if (matchingAnnots.count == 0) {
+        flutterResult(@"");
+    }
+
+    [documentController.pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        for (NSDictionary *currentAnnotation in annotArray)
+        {
+            NSString *currentAnnotationId = [PdftronFlutterPlugin PT_idAsNSString:currentAnnotation[PTAnnotIdKey]];
+            int pageNumber = [[PdftronFlutterPlugin PT_idAsNSNumber:currentAnnotation[PTAnnotPageNumberKey]] intValue];
+
+            NSError* findAnnotError;
+            PTAnnot *annot = [PdftronFlutterPlugin findAnnotWithUniqueID:currentAnnotationId onPageNumber:pageNumber documentController:documentController error:&findAnnotError];
+            if (findAnnotError) {
+                NSLog(@"Error: Failed to find annotation with unique id. %@", findAnnotError.localizedDescription);
+                continue;
+            }
+
+            PTObj *annotSDFObj = [annot GetSDFObj];
+            [documentController.toolManager willModifyAnnotation:annot onPageNumber:(int)pageNumber];
+            [annotSDFObj EraseDictElementWithKey:@"RT"];
+            [annotSDFObj EraseDictElementWithKey:@"IRT"];
+            [documentController.toolManager annotationModified:annot onPageNumber:(int)pageNumber];
+        }
+    } error:&error];
+
+    if (error) {
+        NSLog(@"Error: Failed to ungroup annotations from doc. %@", error.localizedDescription);
+        flutterResult([FlutterError errorWithCode:@"ungroup_annotations" message:@"Failed to ungroup annotations" details:@"Error: Failed to ungroup annotations from doc."]);
     } else {
         flutterResult(nil);
     }

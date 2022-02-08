@@ -92,6 +92,21 @@ class PdftronFlutter {
     });
   }
 
+  static Future<void> groupAnnotations(Annot primaryAnnotation, List<Annot> subAnnotations) {
+    return _channel.invokeMethod(Functions.groupAnnotations,
+        <String, dynamic>{
+        Parameters.annotation: jsonEncode(primaryAnnotation),
+        Parameters.annotations: jsonEncode(subAnnotations)
+        });
+  }
+
+  static Future<void> ungroupAnnotations(List<Annot> annotations) {
+    return _channel.invokeMethod(Functions.ungroupAnnotations,
+        <String, dynamic>{
+        Parameters.annotations: jsonEncode(annotations)
+        });
+  }
+
   static Future<void> importAnnotationCommand(String xfdfCommand) {
     return _channel.invokeMethod(Functions.importAnnotationCommand,
         <String, dynamic>{Parameters.xfdfCommand: xfdfCommand});
