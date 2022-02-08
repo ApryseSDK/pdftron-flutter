@@ -203,7 +203,7 @@ class _ViewerState extends State<Viewer> {
       _showMyDialog();
     });
 
-    controller.openDocument(_document, config: config);
+    await controller.openDocument(_document, config: config);
   }
 
   Future<void> _showMyDialog() async {
