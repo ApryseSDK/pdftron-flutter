@@ -328,8 +328,13 @@ class PdftronFlutter {
         .invokeMethod(Functions.getSavedSignatures);
   }
 
-  static Future<String> getSavedSignaturesFolder() {
+  static Future<String> getSavedSignatureFolder() {
     return _channel
-        .invokeMethod(Functions.getSavedSignaturesFolder);
+        .invokeMethod(Functions.getSavedSignatureFolder);
+  }
+
+  static Future<String> getSavedSignatureJpgFolder() {
+    return _channel
+        .invokeMethod(Functions.getSavedSignatureJpgFolder);
   }
 }

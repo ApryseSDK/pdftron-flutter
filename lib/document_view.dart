@@ -334,8 +334,13 @@ class DocumentViewController {
         .invokeMethod(Functions.getSavedSignatures);
   }
 
-  Future<String> getSavedSignaturesFolder() {
+  Future<String> getSavedSignatureFolder() {
     return _channel
-        .invokeMethod(Functions.getSavedSignaturesFolder);
+        .invokeMethod(Functions.getSavedSignatureFolder);
+  }
+
+  Future<String> getSavedSignatureJpgFolder() {
+    return _channel
+        .invokeMethod(Functions.getSavedSignatureJpgFolder);
   }
 }

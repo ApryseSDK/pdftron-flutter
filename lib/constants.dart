@@ -7,7 +7,8 @@ class Functions {
   static const initialize = "initialize";
   static const openDocument = "openDocument";
   static const getSavedSignatures = "getSavedSignatures";
-  static const getSavedSignaturesFolder = "getSavedSignaturesFolder";
+  static const getSavedSignatureFolder = "getSavedSignatureFolder";
+  static const getSavedSignatureJpgFolder = "getSavedSignatureJpgFolder";
   static const importAnnotations = "importAnnotations";
   static const exportAnnotations = "exportAnnotations";
   static const flattenAnnotations = "flattenAnnotations";

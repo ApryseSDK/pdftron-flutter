@@ -301,7 +301,8 @@ public class PluginUtils {
     public static final String FUNCTION_GROUP_ANNOTATIONS = "groupAnnotations";
     public static final String FUNCTION_UNGROUP_ANNOTATIONS = "ungroupAnnotations";
     public static final String FUNCTION_GET_SAVED_SIGNATURES = "getSavedSignatures";
-    public static final String FUNCTION_GET_SAVED_SIGNATURES_FOLDER = "getSavedSignaturesFolder";
+    public static final String FUNCTION_GET_SAVED_SIGNATURE_FOLDER = "getSavedSignatureFolder";
+    public static final String FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER = "getSavedSignatureJpgFolder";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2373,9 +2374,14 @@ public class PluginUtils {
                 getSavedSignatures(result, component);
                 break;
             }
-            case FUNCTION_GET_SAVED_SIGNATURES_FOLDER: {
+            case FUNCTION_GET_SAVED_SIGNATURE_FOLDER: {
                 checkFunctionPrecondition(component);
-                getSavedSignaturesFolder(result, component);
+                getSavedSignatureFolder(result, component);
+                break;
+            }
+            case FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER: {
+                checkFunctionPrecondition(component);
+                getSavedSignatureJpgFolder(result, component);
                 break;
             }
             case FUNCTION_GROUP_ANNOTATIONS: {
@@ -2920,7 +2926,7 @@ public class PluginUtils {
         result.success(signatures);
     }
 
-    private static void getSavedSignaturesFolder(MethodChannel.Result result, @NonNull ViewerComponent component) {
+    private static void getSavedSignatureFolder(MethodChannel.Result result, @NonNull ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         if (pdfViewCtrl == null) {
             result.error("InvalidState", "Activity not attached", null);
@@ -2930,6 +2936,21 @@ public class PluginUtils {
         Context context = pdfViewCtrl.getContext();
         if (context != null) {
             File file = StampManager.getInstance().getSavedSignatureFolder(context);
+            filePath = file.getAbsolutePath();
+        }
+        result.success(filePath);
+    }
+
+    private static void getSavedSignatureJpgFolder(MethodChannel.Result result, @NonNull ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        String filePath = "";
+        Context context = pdfViewCtrl.getContext();
+        if (context != null) {
+            File file = StampManager.getInstance().getSavedSignatureJpgFolder(context);
             filePath = file.getAbsolutePath();
         }
         result.success(filePath);

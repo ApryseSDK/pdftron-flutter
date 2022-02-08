@@ -1502,8 +1502,8 @@
         [self getCurrentPage:result];
     } else if ([call.method isEqualToString:PTGetSavedSignaturesKey]) {
         [self getSavedSignatures:result];
-    } else if ([call.method isEqualToString:PTGetSavedSignaturesFolderKey]) {
-        [self getSavedSignaturesFolder:result];
+    } else if ([call.method isEqualToString:PTGetSavedSignatureFolderKey]) {
+        [self getSavedSignatureFolder:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -2693,7 +2693,7 @@
     flutterResult(signatures);
 }
 
-- (void)getSavedSignaturesFolder:(FlutterResult)flutterResult {
+- (void)getSavedSignatureFolder:(FlutterResult)flutterResult {
     NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
     NSString *libraryDirectory = paths[0];
 
