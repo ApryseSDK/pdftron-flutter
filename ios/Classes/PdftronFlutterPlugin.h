@@ -67,6 +67,7 @@ static NSString * const PTUserIdKey = @"userId";
 static NSString * const PTUserNameKey = @"userName";
 static NSString * const PTAnnotationManagerEditModeKey = @"annotationManagerEditMode";
 static NSString * const PTAnnotationManagerUndoModeKey = @"annotationManagerUndoMode";
+static NSString * const PTAnnotationToolbarAlignmentKey = @"annotationToolbarAlignment";
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";
@@ -199,6 +200,8 @@ static NSString * const PTDeleteAnnotationsKey = @"deleteAnnotations";
 static NSString * const PTSelectAnnotationKey = @"selectAnnotation";
 static NSString * const PTSetFlagsForAnnotationsKey = @"setFlagsForAnnotations";
 static NSString * const PTSetPropertiesForAnnotationKey = @"setPropertiesForAnnotation";
+static NSString * const PTGroupAnnotationsKey = @"groupAnnotations";
+static NSString * const PTUngroupAnnotationsKey = @"ungroupAnnotations";
 static NSString * const PTImportAnnotationCommandKey = @"importAnnotationCommand";
 static NSString * const PTImportBookmarksKey = @"importBookmarkJson";
 static NSString * const PTAddBookmarkKey = @"addBookmark";
@@ -388,6 +391,10 @@ static NSString * const PTAnnotationManagerEditModeAllKey = @"editModeAll";
 // Annotation Mananger Undo Mode
 static NSString * const PTAnnotationManagerUndoModeOwnKey = @"undoModeOwn";
 static NSString * const PTAnnotationManagerUndoModeAllKey = @"undoModeAll";
+
+// Annotation Toolbar Alignment
+static NSString * const PTAnnotationToolbarAlignmentStartKey = @"GravityStart";
+static NSString * const PTAnnotationToolbarAlignmentEndKey = @"GravityEnd";
 
 // Default annotation toolbar names.
 typedef NSString * PTDefaultAnnotationToolbarKey;

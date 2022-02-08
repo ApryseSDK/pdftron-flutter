@@ -75,6 +75,7 @@ class Config {
   var _userName;
   var _annotationManagerEditMode;
   var _annotationManagerUndoMode;
+  var _annotationToolbarAlignment;
 
   Config();
 
@@ -114,7 +115,7 @@ class Config {
   set overrideAnnotationMenuBehavior(List value) =>
       _overrideAnnotationMenuBehavior = value;
 
-  set excludedAnnotationListTypes(List value) => 
+  set excludedAnnotationListTypes(List value) =>
       _excludedAnnotationListTypes = value;
 
   set exportPath(String value) => _exportPath = value;
@@ -133,7 +134,8 @@ class Config {
 
   set showSavedSignatures(bool value) => _showSavedSignatures = value;
 
-  set signaturePhotoPickerEnabled(bool value) => _signaturePhotoPickerEnabled = value;
+  set signaturePhotoPickerEnabled(bool value) =>
+      _signaturePhotoPickerEnabled = value;
 
   set useStylusAsPen(bool value) => _useStylusAsPen;
 
@@ -145,7 +147,8 @@ class Config {
 
   set pageIndicatorEnabled(bool value) => _pageIndicatorEnabled = value;
 
-  set showQuickNavigationButton(bool value) => _showQuickNavigationButton = value;
+  set showQuickNavigationButton(bool value) =>
+      _showQuickNavigationButton = value;
 
   set followSystemDarkMode(bool value) => _followSystemDarkMode = value;
 
@@ -161,7 +164,7 @@ class Config {
   set hideAnnotationToolbarSwitcher(bool value) =>
       _hideAnnotationToolbarSwitcher = value;
 
-  set initialToolbar(String value) => _initialToolbar = value;    
+  set initialToolbar(String value) => _initialToolbar = value;
 
   set hideTopToolbars(bool value) => _hideTopToolbars = value;
 
@@ -180,7 +183,7 @@ class Config {
   set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
 
   set documentSliderEnabled(bool value) => _documentSliderEnabled = value;
-  
+
   set rememberLastUsedTool(bool value) => _rememberLastUsedTool = value;
 
   set readOnly(bool value) => _readOnly = value;
@@ -215,31 +218,39 @@ class Config {
   set pageNumberIndicatorAlwaysVisible(bool value) =>
       _pageNumberIndicatorAlwaysVisible = value;
 
-  set disableEditingByAnnotationType(List value) => _disableEditingByAnnotationType = value;
+  set disableEditingByAnnotationType(List value) =>
+      _disableEditingByAnnotationType = value;
 
-  set annotationsListFilterEnabled(bool value) => _annotationsListFilterEnabled = value;
+  set annotationsListFilterEnabled(bool value) =>
+      _annotationsListFilterEnabled = value;
 
   set hideViewModeItems(List value) => _hideViewModeItems = value;
 
   set defaultEraserType(String value) => _defaultEraserType = value;
 
-  set autoResizeFreeTextEnabled(bool value) => _autoResizeFreeTextEnabled = value;
+  set autoResizeFreeTextEnabled(bool value) =>
+      _autoResizeFreeTextEnabled = value;
 
   set restrictDownloadUsage(bool value) => _restrictDownloadUsage = value;
-  
+
   set reflowOrientation(String value) => _reflowOrientation = value;
 
   set imageInReflowModeEnabled(bool value) => _imageInReflowModeEnabled = value;
-  
+
   set annotationManagerEnabled(bool value) => _annotationManagerEnabled = value;
 
   set userId(String value) => _userId = value;
-  
+
   set userName(String value) => _userName = value;
 
-  set annotationManagerEditMode(String value) => _annotationManagerEditMode = value;
+  set annotationManagerEditMode(String value) =>
+      _annotationManagerEditMode = value;
 
-  set annotationManagerUndoMode(String value) => _annotationManagerUndoMode = value;
+  set annotationManagerUndoMode(String value) =>
+      _annotationManagerUndoMode = value;
+
+  set annotationToolbarAlignment(String value) =>
+      _annotationToolbarAlignment = value;
 
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
@@ -299,12 +310,16 @@ class Config {
         _annotationPermissionCheckEnabled =
             json['annotationPermissionCheckEnabled'],
         _annotationsListEditingEnabled = json['annotationsListEditingEnabled'],
-        _userBookmarksListEditingEnabled = json['userBookmarksListEditingEnabled'],
-        _showNavigationListAsSidePanelOnLargeDevices = json['showNavigationListAsSidePanelOnLargeDevices'],
+        _userBookmarksListEditingEnabled =
+            json['userBookmarksListEditingEnabled'],
+        _showNavigationListAsSidePanelOnLargeDevices =
+            json['showNavigationListAsSidePanelOnLargeDevices'],
         _overrideBehavior = json['overrideBehavior'],
         _tabTitle = json['tabTitle'],
-        _pageNumberIndicatorAlwaysVisible = json['pageNumberIndicatorAlwaysVisible'],
-        _disableEditingByAnnotationType = json['disableEditingByAnnotationType'],
+        _pageNumberIndicatorAlwaysVisible =
+            json['pageNumberIndicatorAlwaysVisible'],
+        _disableEditingByAnnotationType =
+            json['disableEditingByAnnotationType'],
         _annotationsListFilterEnabled = json['annotationsListFilterEnabled'],
         _hideViewModeItems = json['hideViewModeItems'],
         _defaultEraserType = json['defaultEraserType'],
@@ -317,8 +332,8 @@ class Config {
         _userName = json['userName'],
         _annotationManagerEditMode = json['annotationManagerEditMode'],
         _annotationManagerUndoMode = json['annotationManagerUndoMode'],
+        _annotationToolbarAlignment = json['annotationToolbarAlignment'],
         _outlineListEditingEnabled = json['outlineListEditingEnabled'];
-
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -377,23 +392,25 @@ class Config {
         'annotationPermissionCheckEnabled': _annotationPermissionCheckEnabled,
         'annotationsListEditingEnabled': _annotationsListEditingEnabled,
         'userBookmarksListEditingEnabled': _userBookmarksListEditingEnabled,
-        'showNavigationListAsSidePanelOnLargeDevices': _showNavigationListAsSidePanelOnLargeDevices,
+        'showNavigationListAsSidePanelOnLargeDevices':
+            _showNavigationListAsSidePanelOnLargeDevices,
         'overrideBehavior': _overrideBehavior,
         'tabTitle': _tabTitle,
         'pageNumberIndicatorAlwaysVisible': _pageNumberIndicatorAlwaysVisible,
         'disableEditingByAnnotationType': _disableEditingByAnnotationType,
         'annotationsListFilterEnabled': _annotationsListFilterEnabled,
         'hideViewModeItems': _hideViewModeItems,
-        'defaultEraserType' : _defaultEraserType,
+        'defaultEraserType': _defaultEraserType,
         'autoResizeFreeTextEnabled': _autoResizeFreeTextEnabled,
         'restrictDownloadUsage': _restrictDownloadUsage,
         'reflowOrientation': _reflowOrientation,
         'imageInReflowModeEnabled': _imageInReflowModeEnabled,
-        'annotationManagerEnabled' : _annotationManagerEnabled,
-        'userId' : _userId,
-        'userName' : _userName,
+        'annotationManagerEnabled': _annotationManagerEnabled,
+        'userId': _userId,
+        'userName': _userName,
         'annotationManagerEditMode': _annotationManagerEditMode,
         'annotationManagerUndoMode': _annotationManagerUndoMode,
+        'annotationToolbarAlignment': _annotationToolbarAlignment,
         'outlineListEditingEnabled': _outlineListEditingEnabled,
       };
 }
