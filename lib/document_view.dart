@@ -14,17 +14,19 @@ class DocumentView extends StatefulWidget {
 class _DocumentViewState extends State<DocumentView> {
   @override
   Widget build(BuildContext context) {
-  final String viewType = 'pdftron_flutter/documentview';
+    final String viewType = 'pdftron_flutter/documentview';
 
     if (Platform.isAndroid) {
       return PlatformViewLink(
           viewType: viewType,
-          surfaceFactory: (BuildContext context, PlatformViewController controller) {
+          surfaceFactory:
+              (BuildContext context, PlatformViewController controller) {
             return AndroidViewSurface(
-              controller: controller as AndroidViewController, 
-              hitTestBehavior: PlatformViewHitTestBehavior.opaque, 
-              gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>[].toSet());
-          }, 
+                controller: controller as AndroidViewController,
+                hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+                gestureRecognizers:
+                    const <Factory<OneSequenceGestureRecognizer>>[].toSet());
+          },
           onCreatePlatformView: (PlatformViewCreationParams params) {
             return PlatformViewsService.initSurfaceAndroidView(
               id: params.id,
@@ -116,15 +118,13 @@ class DocumentViewController {
 
   Future<void> groupAnnotations(
       Annot primaryAnnotation, List<Annot> subAnnotations) {
-    return _channel
-        .invokeMethod(Functions.groupAnnotations, <String, dynamic>{
+    return _channel.invokeMethod(Functions.groupAnnotations, <String, dynamic>{
       Parameters.annotation: jsonEncode(primaryAnnotation),
       Parameters.annotations: jsonEncode(subAnnotations),
     });
   }
 
-  Future<void> ungroupAnnotations(
-      List<Annot> annotations) {
+  Future<void> ungroupAnnotations(List<Annot> annotations) {
     return _channel
         .invokeMethod(Functions.ungroupAnnotations, <String, dynamic>{
       Parameters.annotations: jsonEncode(annotations),
@@ -142,8 +142,7 @@ class DocumentViewController {
   }
 
   Future<void> addBookmark(String title, int pageNumber) {
-    return _channel
-        .invokeMethod(Functions.addBookmark, <String, dynamic>{
+    return _channel.invokeMethod(Functions.addBookmark, <String, dynamic>{
       Parameters.title: title,
       Parameters.pageNumber: pageNumber
     });
@@ -168,7 +167,7 @@ class DocumentViewController {
   Future<void> undo() {
     return _channel.invokeMethod(Functions.undo);
   }
-  
+
   Future<void> redo() {
     return _channel.invokeMethod(Functions.redo);
   }
@@ -176,7 +175,7 @@ class DocumentViewController {
   Future<bool> canUndo() {
     return _channel.invokeMethod(Functions.canUndo);
   }
-  
+
   Future<bool> canRedo() {
     return _channel.invokeMethod(Functions.canRedo);
   }
@@ -269,7 +268,7 @@ class DocumentViewController {
   Future<void> openThumbnailsView() {
     return _channel.invokeMethod(Functions.openThumbnailsView);
   }
-  
+
   Future<void> openRotateDialog() {
     return _channel.invokeMethod(Functions.openRotateDialog);
   }
@@ -299,7 +298,7 @@ class DocumentViewController {
   Future<void> openTabSwitcher() {
     return _channel.invokeMethod(Functions.openTabSwitcher);
   }
-  
+
   Future<void> openGoToPageView() {
     return _channel.invokeMethod(Functions.openGoToPageView);
   }
@@ -326,5 +325,18 @@ class DocumentViewController {
 
   Future<int> getCurrentPage() {
     return _channel.invokeMethod(Functions.getCurrentPage);
+  }
+
+  Future<void> startSearchMode(
+      String searchString, bool matchCase, bool matchWholeWord) {
+    return _channel.invokeMethod(Functions.startSearchMode, <String, dynamic>{
+      Parameters.searchString: searchString,
+      Parameters.matchCase: matchCase,
+      Parameters.matchWholeWord: matchWholeWord
+    });
+  }
+
+  Future<void> exitSearchMode() {
+    return _channel.invokeMethod(Functions.exitSearchMode);
   }
 }

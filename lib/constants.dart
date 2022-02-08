@@ -60,6 +60,8 @@ class Functions {
   static const openGoToPageView = "openGoToPageView";
   static const openNavigationLists = "openNavigationLists";
   static const getCurrentPage = "getCurrentPage";
+  static const startSearchMode = "startSearchMode";
+  static const exitSearchMode = "exitSearchMode";
 }
 
 // Parameters define the parameters of the functions
@@ -89,6 +91,9 @@ class Parameters {
   static const exportFormat = "exportFormat";
   static const dpi = "dpi";
   static const requestedOrientation = "requestedOrientation";
+  static const searchString = "searchString";
+  static const matchCase = "matchCase";
+  static const matchWholeWord = "matchWholeWord";
 }
 
 // Parameters define the parameters of the events

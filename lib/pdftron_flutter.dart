@@ -92,19 +92,17 @@ class PdftronFlutter {
     });
   }
 
-  static Future<void> groupAnnotations(Annot primaryAnnotation, List<Annot> subAnnotations) {
-    return _channel.invokeMethod(Functions.groupAnnotations,
-        <String, dynamic>{
-        Parameters.annotation: jsonEncode(primaryAnnotation),
-        Parameters.annotations: jsonEncode(subAnnotations)
-        });
+  static Future<void> groupAnnotations(
+      Annot primaryAnnotation, List<Annot> subAnnotations) {
+    return _channel.invokeMethod(Functions.groupAnnotations, <String, dynamic>{
+      Parameters.annotation: jsonEncode(primaryAnnotation),
+      Parameters.annotations: jsonEncode(subAnnotations)
+    });
   }
 
   static Future<void> ungroupAnnotations(List<Annot> annotations) {
     return _channel.invokeMethod(Functions.ungroupAnnotations,
-        <String, dynamic>{
-        Parameters.annotations: jsonEncode(annotations)
-        });
+        <String, dynamic>{Parameters.annotations: jsonEncode(annotations)});
   }
 
   static Future<void> importAnnotationCommand(String xfdfCommand) {
@@ -118,8 +116,7 @@ class PdftronFlutter {
   }
 
   static Future<void> addBookmark(String title, int pageNumber) {
-    return _channel
-        .invokeMethod(Functions.addBookmark, <String, dynamic>{
+    return _channel.invokeMethod(Functions.addBookmark, <String, dynamic>{
       Parameters.title: title,
       Parameters.pageNumber: pageNumber
     });
@@ -144,7 +141,7 @@ class PdftronFlutter {
   static Future<void> undo() {
     return _channel.invokeMethod(Functions.undo);
   }
-  
+
   static Future<void> redo() {
     return _channel.invokeMethod(Functions.redo);
   }
@@ -152,7 +149,7 @@ class PdftronFlutter {
   static Future<bool> canUndo() {
     return _channel.invokeMethod(Functions.canUndo);
   }
-  
+
   static Future<bool> canRedo() {
     return _channel.invokeMethod(Functions.canRedo);
   }
@@ -213,12 +210,13 @@ class PdftronFlutter {
   static Future<void> closeAllTabs() {
     return _channel.invokeMethod(Functions.closeAllTabs);
   }
-  
+
   static Future<void> deleteAllAnnotations() {
     return _channel.invokeMethod(Functions.deleteAllAnnotations);
   }
 
-  static Future<String> exportAsImage(int pageNumber, int dpi, String exportFormat) {
+  static Future<String> exportAsImage(
+      int pageNumber, int dpi, String exportFormat) {
     return _channel.invokeMethod(Functions.exportAsImage, <String, dynamic>{
       Parameters.pageNumber: pageNumber,
       Parameters.dpi: dpi,
@@ -226,15 +224,17 @@ class PdftronFlutter {
     });
   }
 
-  static Future<String> exportAsImageFromFilePath(int pageNumber, int dpi, String exportFormat, String filePath) {
-    return _channel.invokeMethod(Functions.exportAsImageFromFilePath, <String, dynamic>{
+  static Future<String> exportAsImageFromFilePath(
+      int pageNumber, int dpi, String exportFormat, String filePath) {
+    return _channel
+        .invokeMethod(Functions.exportAsImageFromFilePath, <String, dynamic>{
       Parameters.pageNumber: pageNumber,
       Parameters.dpi: dpi,
       Parameters.exportFormat: exportFormat,
       Parameters.path: filePath
     });
   }
-  
+
   static Future<void> openAnnotationList() {
     return _channel.invokeMethod(Functions.openAnnotationList);
   }
@@ -254,7 +254,7 @@ class PdftronFlutter {
   static Future<void> openThumbnailsView() {
     return _channel.invokeMethod(Functions.openThumbnailsView);
   }
-  
+
   static Future<void> openRotateDialog() {
     return _channel.invokeMethod(Functions.openRotateDialog);
   }
@@ -284,7 +284,7 @@ class PdftronFlutter {
   static Future<void> openTabSwitcher() {
     return _channel.invokeMethod(Functions.openTabSwitcher);
   }
-  
+
   static Future<void> openGoToPageView() {
     return _channel.invokeMethod(Functions.openGoToPageView);
   }
@@ -295,8 +295,10 @@ class PdftronFlutter {
 
   // Android only.
   static Future<void> setRequestedOrientation(int requestedOrientation) {
-    return _channel.invokeMethod(Functions.setRequestedOrientation,
-        <String, dynamic>{Parameters.requestedOrientation: requestedOrientation});
+    return _channel.invokeMethod(
+        Functions.setRequestedOrientation, <String, dynamic>{
+      Parameters.requestedOrientation: requestedOrientation
+    });
   }
 
   static Future<bool> gotoPreviousPage() {
@@ -317,5 +319,18 @@ class PdftronFlutter {
 
   static Future<int> getCurrentPage() {
     return _channel.invokeMethod(Functions.getCurrentPage);
+  }
+
+  static Future<void> startSearchMode(
+      String searchString, bool matchCase, bool matchWholeWord) {
+    return _channel.invokeMethod(Functions.startSearchMode, <String, dynamic>{
+      Parameters.searchString: searchString,
+      Parameters.matchCase: matchCase,
+      Parameters.matchWholeWord: matchWholeWord
+    });
+  }
+
+  static Future<void> exitSearchMode() {
+    return _channel.invokeMethod(Functions.exitSearchMode);
   }
 }

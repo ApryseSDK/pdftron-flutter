@@ -212,6 +212,12 @@ class _ViewerState extends State<Viewer> {
     });
 
     await controller.openDocument(_document, config: config);
+
+    await controller.startSearchMode("the", false, false);
+
+    await Future.delayed(Duration(seconds: 30));
+
+    await controller.exitSearchMode();
   }
 
   Future<void> _showMyDialog() async {
