@@ -29,6 +29,7 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_LONG_PRESS_ME
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_PAGE_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ZOOM_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_PAGE_MOVED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATION_TOOLBAR_ITEM_PRESSED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_OPEN_DOCUMENT;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SET_LEADING_NAV_BUTTON_ICON;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LEADING_NAV_BUTTON_ICON;
@@ -135,7 +136,8 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
             }
         });
 
-        final EventChannel formFieldValueChangedEventChannel = new EventChannel(messenger, EVENT_FORM_FIELD_VALUE_CHANGED);
+        final EventChannel formFieldValueChangedEventChannel = new EventChannel(messenger,
+                EVENT_FORM_FIELD_VALUE_CHANGED);
         formFieldValueChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -161,7 +163,8 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
             }
         });
 
-        final EventChannel longPressMenuPressedEventChannel = new EventChannel(messenger, EVENT_LONG_PRESS_MENU_PRESSED);
+        final EventChannel longPressMenuPressedEventChannel = new EventChannel(messenger,
+                EVENT_LONG_PRESS_MENU_PRESSED);
         longPressMenuPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -174,7 +177,8 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
             }
         });
 
-        final EventChannel annotationMenuPressedEventChannel = new EventChannel(messenger, EVENT_ANNOTATION_MENU_PRESSED);
+        final EventChannel annotationMenuPressedEventChannel = new EventChannel(messenger,
+                EVENT_ANNOTATION_MENU_PRESSED);
         annotationMenuPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -187,7 +191,8 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
             }
         });
 
-        final EventChannel leadingNavButtonPressedEventChannel = new EventChannel(messenger, EVENT_LEADING_NAV_BUTTON_PRESSED);
+        final EventChannel leadingNavButtonPressedEventChannel = new EventChannel(messenger,
+                EVENT_LEADING_NAV_BUTTON_PRESSED);
         leadingNavButtonPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -236,6 +241,20 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
             @Override
             public void onCancel(Object arguments) {
                 documentView.setPageMovedEventEmitter(null);
+            }
+        });
+
+        final EventChannel annotationItemToolbarPressedEventChannel = new EventChannel(messenger,
+                EVENT_ANNOTATION_TOOLBAR_ITEM_PRESSED);
+        annotationItemToolbarPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                documentView.setAnnotationItemToolbarPressedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                documentView.setAnnotationItemToolbarPressedEventEmitter(null);
             }
         });
     }

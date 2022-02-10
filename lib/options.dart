@@ -163,7 +163,7 @@ class CustomToolbar {
 
   String id;
   String name;
-  List<String> items;
+  List<Object> items;
   String icon;
 
   CustomToolbar(this.id, this.name, this.items, [this.icon]);

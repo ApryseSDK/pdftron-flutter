@@ -79,6 +79,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     private static AtomicReference<EventSink> sPageChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sZoomChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sPageMovedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sAnnotationToolbarItemPressedEventEmitter = new AtomicReference<>();
 
     private static HashMap<Annot, Integer> mSelectedAnnots;
 
@@ -88,7 +89,8 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
         ToolManagerBuilder toolManagerBuilder = ToolManagerBuilder.from();
         PDFViewCtrlConfig pdfViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(packageContext);
-        PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(builder, toolManagerBuilder, pdfViewCtrlConfig, document, packageContext, configStr);
+        PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(builder, toolManagerBuilder,
+                pdfViewCtrlConfig, document, packageContext, configStr);
 
         mTempFiles.add(configInfo.getTempFile());
 
@@ -112,17 +114,21 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         mUserName = configInfo.getUserName();
 
         if (mShowLeadingNavButton) {
-            openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build());
+            openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(),
+                    builder.build());
         } else {
-            openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(), builder.build(), 0);
+            openDocument(packageContext, configInfo.getFileUri(), password, configInfo.getCustomHeaderJson(),
+                    builder.build(), 0);
         }
     }
 
-    public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, ViewerConfig config) {
+    public static void openDocument(Context packageContext, Uri fileUri, String password,
+            @Nullable JSONObject customHeaders, ViewerConfig config) {
         openDocument(packageContext, fileUri, password, customHeaders, config, DEFAULT_NAV_ICON_ID);
     }
 
-    public static void openDocument(Context packageContext, Uri fileUri, String password, @Nullable JSONObject customHeaders, ViewerConfig config, @DrawableRes int navIconId) {
+    public static void openDocument(Context packageContext, Uri fileUri, String password,
+            @Nullable JSONObject customHeaders, ViewerConfig config, @DrawableRes int navIconId) {
 
         if (getCurrentActivity() != null && getCurrentActivity().getPdfViewCtrlTabHostFragment() != null) {
 
@@ -132,9 +138,11 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
                     .usingNavIcon(navIconId)
                     .usingTheme(R.style.FlutterAppTheme);
 
-            getCurrentActivity().getPdfViewCtrlTabHostFragment().onOpenAddNewTab(viewerBuilder.createBundle(packageContext));
+            getCurrentActivity().getPdfViewCtrlTabHostFragment()
+                    .onOpenAddNewTab(viewerBuilder.createBundle(packageContext));
         } else {
-            DocumentActivity.IntentBuilder intentBuilder = DocumentActivity.IntentBuilder.fromActivityClass(packageContext, FlutterDocumentActivity.class);
+            DocumentActivity.IntentBuilder intentBuilder = DocumentActivity.IntentBuilder
+                    .fromActivityClass(packageContext, FlutterDocumentActivity.class);
 
             if (null != fileUri) {
                 intentBuilder.withUri(fileUri);
@@ -179,7 +187,8 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
             PdfViewCtrlTabHostFragment2 pdfViewCtrlTabHostFragment = documentActivity.getPdfViewCtrlTabHostFragment();
             if (mShowLeadingNavButton && pdfViewCtrlTabHostFragment != null
                     && pdfViewCtrlTabHostFragment.getToolbar() != null) {
-                int res = Utils.getResourceDrawable(pdfViewCtrlTabHostFragment.getToolbar().getContext(), leadingNavButtonIcon);
+                int res = Utils.getResourceDrawable(pdfViewCtrlTabHostFragment.getToolbar().getContext(),
+                        leadingNavButtonIcon);
                 if (res != 0) {
                     pdfViewCtrlTabHostFragment.getToolbar().setNavigationIcon(res);
                 }
@@ -241,6 +250,10 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
     public static void setPageMovedEventEmitter(EventSink emitter) {
         sPageMovedEventEmitter.set(emitter);
+    }
+
+    public static void setAnnotationToolbarItemPressedEventEmitter(EventSink emitter) {
+        sAnnotationToolbarItemPressedEventEmitter.set(emitter);
     }
 
     public static void setFlutterLoadResult(Result result) {
@@ -316,7 +329,14 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     }
 
     @Override
-    public EventSink getPageMovedEventEmitter() { return sPageMovedEventEmitter.get(); }
+    public EventSink getPageMovedEventEmitter() {
+        return sPageMovedEventEmitter.get();
+    }
+
+    @Override
+    public EventSink getAnnotationToolbarItemPressedEventEmitter() {
+        return sAnnotationToolbarItemPressedEventEmitter.get();
+    }
 
     @Override
     public Result getFlutterLoadResult() {
@@ -384,6 +404,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sPageChangedEventEmitter.set(null);
         sZoomChangedEventEmitter.set(null);
         sPageMovedEventEmitter.set(null);
+        sAnnotationToolbarItemPressedEventEmitter.set(null);
 
         detachActivity();
     }
@@ -406,11 +427,17 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         return mAutoSaveEnabled;
     }
 
-    public boolean isAnnotationManagerEnabled() { return mAnnotationManagerEnabled; };
+    public boolean isAnnotationManagerEnabled() {
+        return mAnnotationManagerEnabled;
+    };
 
-    public String getUserId() { return mUserId; };
+    public String getUserId() {
+        return mUserId;
+    };
 
-    public String getUserName() { return mUserName; };
+    public String getUserName() {
+        return mUserName;
+    };
 
     public boolean isUseStylusAsPen() {
         return mUseStylusAsPen;

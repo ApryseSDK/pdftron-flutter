@@ -81,6 +81,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private EventChannel.EventSink sPageChangedEventEmitter;
     private EventChannel.EventSink sZoomChangedEventEmitter;
     private EventChannel.EventSink sPageMovedEventEmitter;
+    private EventChannel.EventSink sAnnotationToolbarItemPressedEventEmitter;
 
     private MethodChannel.Result sFlutterLoadResult;
 
@@ -113,7 +114,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
     public void openDocument(String document, String password, String configStr, MethodChannel.Result result) {
 
-        PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(mBuilder, mToolManagerBuilder, mPDFViewCtrlConfig, document, getContext(), configStr);
+        PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(mBuilder, mToolManagerBuilder,
+                mPDFViewCtrlConfig, document, getContext(), configStr);
 
         mInitialPageNumber = configInfo.getInitialPageNumber();
         mIsBase64 = configInfo.isBase64();
@@ -300,11 +302,17 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         return mAutoSaveEnabled;
     }
 
-    public boolean isAnnotationManagerEnabled() { return mAnnotationManagerEnabled; };
+    public boolean isAnnotationManagerEnabled() {
+        return mAnnotationManagerEnabled;
+    };
 
-    public String getUserId() { return mUserId; };
+    public String getUserId() {
+        return mUserId;
+    };
 
-    public String getUserName() { return mUserName; };
+    public String getUserName() {
+        return mUserName;
+    };
 
     public boolean isUseStylusAsPen() {
         return mUseStylusAsPen;
@@ -373,6 +381,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
     public void setPageMovedEventEmitter(EventChannel.EventSink emitter) {
         sPageMovedEventEmitter = emitter;
+    }
+
+    public void setAnnotationToolbarItemPressedEventEmitter(EventChannel.EventSink emitter) {
+        sAnnotationToolbarItemPressedEventEmitter = emitter;
     }
 
     public void setFlutterLoadResult(MethodChannel.Result result) {
@@ -448,7 +460,14 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     }
 
     @Override
-    public EventChannel.EventSink getPageMovedEventEmitter() { return sPageMovedEventEmitter; }
+    public EventChannel.EventSink getPageMovedEventEmitter() {
+        return sPageMovedEventEmitter;
+    }
+
+    @Override
+    public EventChannel.EventSink getAnnotationToolbarItemPressedEventEmitter() {
+        return sAnnotationToolbarItemPressedEventEmitter;
+    }
 
     @Override
     public MethodChannel.Result getFlutterLoadResult() {

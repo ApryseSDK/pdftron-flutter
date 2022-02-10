@@ -73,6 +73,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
@@ -240,6 +241,7 @@ public class PluginUtils {
     public static final String EVENT_PAGE_CHANGED = "page_changed_event";
     public static final String EVENT_ZOOM_CHANGED = "zoom_changed_event";
     public static final String EVENT_PAGE_MOVED = "page_moved_event";
+    public static final String EVENT_ANNOTATION_TOOLBAR_ITEM_PRESSED = "annotation_toolbar_item_pressed";
 
     public static final String FUNCTION_GET_PLATFORM_VERSION = "getPlatformVersion";
     public static final String FUNCTION_GET_VERSION = "getVersion";
@@ -535,6 +537,8 @@ public class PluginUtils {
     public static boolean isOutlineListVisible = true;
     public static boolean isAnnotationListVisible = true;
 
+    public static final AtomicInteger toolIdGenerator = new AtomicInteger(1000);
+
     private static AnnotManager.EditPermissionMode mAnnotationManagerEditMode = AnnotManager.EditPermissionMode.EDIT_OTHERS;
     private static PDFViewCtrl.AnnotationManagerMode mAnnotationManagerUndoMode = PDFViewCtrl.AnnotationManagerMode.ADMIN_UNDO_OTHERS;
 
@@ -754,7 +758,8 @@ public class PluginUtils {
         }
     }
 
-    public static ConfigInfo handleOpenDocument(@NonNull ViewerConfig.Builder builder, @NonNull ToolManagerBuilder toolManagerBuilder,
+    public static ConfigInfo handleOpenDocument(@NonNull ViewerConfig.Builder builder,
+            @NonNull ToolManagerBuilder toolManagerBuilder,
             @NonNull PDFViewCtrlConfig pdfViewCtrlConfig, @NonNull String document, @NonNull Context context,
             String configStr) {
 
@@ -887,13 +892,14 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_SHOW_DOCUMENT_SAVED_TOAST)) {
                     boolean showDocumentSavedToast = configJson.getBoolean(KEY_CONFIG_SHOW_DOCUMENT_SAVED_TOAST);
                     if (!showDocumentSavedToast) {
-                        CommonToast.CommonToastHandler.getInstance().setCommonToastListener(new CommonToast.CommonToastListener() {
-                            @Override
-                            public boolean canShowToast(int stringRes, @Nullable CharSequence text) {
-                                return stringRes != R.string.document_saved_toast_message &&
-                                        stringRes != R.string.document_save_error_toast_message;
-                            }
-                        });
+                        CommonToast.CommonToastHandler.getInstance()
+                                .setCommonToastListener(new CommonToast.CommonToastListener() {
+                                    @Override
+                                    public boolean canShowToast(int stringRes, @Nullable CharSequence text) {
+                                        return stringRes != R.string.document_saved_toast_message &&
+                                                stringRes != R.string.document_save_error_toast_message;
+                                    }
+                                });
                     }
                 }
                 if (!configJson.isNull(KEY_CONFIG_PAGE_CHANGE_ON_TAP)) {
@@ -905,7 +911,8 @@ public class PluginUtils {
                     toolManagerBuilder = toolManagerBuilder.setShowSavedSignatures(showSavedSignatures);
                 }
                 if (!configJson.isNull(KEY_CONFIG_SIGNATURE_PHOTO_PICKER_ENABLED)) {
-                    boolean signaturePhotoPickerEnabled = configJson.getBoolean(KEY_CONFIG_SIGNATURE_PHOTO_PICKER_ENABLED);
+                    boolean signaturePhotoPickerEnabled = configJson
+                            .getBoolean(KEY_CONFIG_SIGNATURE_PHOTO_PICKER_ENABLED);
                     toolManagerBuilder = toolManagerBuilder.setShowSignatureFromImage(signaturePhotoPickerEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_USE_STYLUS_AS_PEN)) {
@@ -913,11 +920,13 @@ public class PluginUtils {
                     configInfo.setUseStylusAsPen(useStylusAsPen);
                 }
                 if (!configJson.isNull(KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS)) {
-                    boolean signSignatureFieldWithStamps = configJson.getBoolean(KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS);
+                    boolean signSignatureFieldWithStamps = configJson
+                            .getBoolean(KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS);
                     configInfo.setSignSignatureFieldWithStamps(signSignatureFieldWithStamps);
                 }
                 if (!configJson.isNull(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION)) {
-                    boolean selectAnnotationAfterCreation = configJson.getBoolean(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION);
+                    boolean selectAnnotationAfterCreation = configJson
+                            .getBoolean(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION);
                     toolManagerBuilder.setAutoSelect(selectAnnotationAfterCreation);
                 }
                 if (!configJson.isNull(KEY_CONFIG_PAGE_INDICATOR_ENABLED)) {
@@ -942,7 +951,7 @@ public class PluginUtils {
                 }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_TOOLBARS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_ANNOTATION_TOOLBARS);
-                    setAnnotationBars(array, builder);
+                    setAnnotationBars(array, builder, context);
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS);
@@ -956,7 +965,8 @@ public class PluginUtils {
                     builder.hideToolbars(tagList.toArray(new String[tagList.size()]));
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER)) {
-                    boolean hideAnnotationToolbarSwitcher = configJson.getBoolean(KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER);
+                    boolean hideAnnotationToolbarSwitcher = configJson
+                            .getBoolean(KEY_CONFIG_HIDE_ANNOTATION_TOOLBAR_SWITCHER);
                     builder.showToolbarSwitcher(!hideAnnotationToolbarSwitcher);
                 }
                 if (!configJson.isNull(KEY_CONFIG_INITIAL_TOOLBAR)) {
@@ -1009,7 +1019,8 @@ public class PluginUtils {
                     }
                 }
                 if (!configJson.isNull(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED)) {
-                    boolean thumbnailViewEditingEnabled = configJson.getBoolean(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED);
+                    boolean thumbnailViewEditingEnabled = configJson
+                            .getBoolean(KEY_CONFIG_THUMBNAIL_VIEW_EDITING_ENABLED);
                     builder.thumbnailViewEditingEnabled(thumbnailViewEditingEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_AUTHOR)) {
@@ -1020,19 +1031,23 @@ public class PluginUtils {
                     }
                 }
                 if (!configJson.isNull(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING)) {
-                    boolean continuousAnnotationEditing = configJson.getBoolean(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING);
+                    boolean continuousAnnotationEditing = configJson
+                            .getBoolean(KEY_CONFIG_CONTINUOUS_ANNOTATION_EDITING);
                     PdfViewCtrlSettingsManager.setContinuousAnnotationEdit(context, continuousAnnotationEditing);
                 }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED)) {
-                    boolean annotationPermissionCheckEnabled = configJson.getBoolean(KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED);
+                    boolean annotationPermissionCheckEnabled = configJson
+                            .getBoolean(KEY_CONFIG_ANNOTATION_PERMISSION_CHECK_ENABLED);
                     toolManagerBuilder = toolManagerBuilder.setAnnotPermission(annotationPermissionCheckEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATIONS_LIST_EDITING_ENABLED)) {
-                    boolean annotationsListEditingEnabled = configJson.getBoolean(KEY_CONFIG_ANNOTATIONS_LIST_EDITING_ENABLED);
+                    boolean annotationsListEditingEnabled = configJson
+                            .getBoolean(KEY_CONFIG_ANNOTATIONS_LIST_EDITING_ENABLED);
                     builder.annotationsListEditingEnabled(annotationsListEditingEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED)) {
-                    boolean userBookmarksListEditingEnabled = configJson.getBoolean(KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED);
+                    boolean userBookmarksListEditingEnabled = configJson
+                            .getBoolean(KEY_CONFIG_USER_BOOKMARKS_LIST_EDITING_ENABLED);
                     builder.userBookmarksListEditingEnabled(userBookmarksListEditingEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_OUTLINE_LIST_EDITING_ENABLED)) {
@@ -1040,7 +1055,8 @@ public class PluginUtils {
                     builder.outlineListEditingEnabled(outlineListEditingEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES)) {
-                    boolean showNavigationListAsSidePanelOnLargeDevices = configJson.getBoolean(KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES);
+                    boolean showNavigationListAsSidePanelOnLargeDevices = configJson
+                            .getBoolean(KEY_CONFIG_SHOW_NAVIGATION_LIST_AS_SIDE_PANEL_ON_LARGE_DEVICES);
                     builder.navigationListAsSheetOnLargeDevice(showNavigationListAsSidePanelOnLargeDevices);
                 }
                 if (!configJson.isNull(KEY_CONFIG_OVERRIDE_BEHAVIOR)) {
@@ -1053,7 +1069,8 @@ public class PluginUtils {
                     configInfo.setTabTitle(tabTitle);
                 }
                 if (!configJson.isNull(KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR)) {
-                    boolean permanentPageNumberIndicator = configJson.getBoolean(KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR);
+                    boolean permanentPageNumberIndicator = configJson
+                            .getBoolean(KEY_CONFIG_PERMANENT_PAGE_NUMBER_INDICATOR);
                     builder.permanentPageNumberIndicator(permanentPageNumberIndicator);
                 }
                 if (!configJson.isNull(KEY_CONFIG_OPEN_SAVED_COPY_IN_NEW_TAB)) {
@@ -1081,7 +1098,8 @@ public class PluginUtils {
                     toolManagerBuilder.disableAnnotEditing(annotTypes);
                 }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATIONS_LIST_FILTER_ENABLED)) {
-                    boolean annotationsListFilterEnabled = configJson.getBoolean(KEY_CONFIG_ANNOTATIONS_LIST_FILTER_ENABLED);
+                    boolean annotationsListFilterEnabled = configJson
+                            .getBoolean(KEY_CONFIG_ANNOTATIONS_LIST_FILTER_ENABLED);
                     builder.annotationsListFilterEnabled(annotationsListFilterEnabled);
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_VIEW_MODE_ITEMS)) {
@@ -1183,7 +1201,8 @@ public class PluginUtils {
             }
 
             if (viewModePickerItems.size() > 0) {
-                builder = builder.hideViewModeItems(viewModePickerItems.toArray(new ViewModePickerDialogFragment.ViewModePickerItems[0]));
+                builder = builder.hideViewModeItems(
+                        viewModePickerItems.toArray(new ViewModePickerDialogFragment.ViewModePickerItems[0]));
             }
 
             if (isBase64 && fileUri.getPath() != null) {
@@ -1197,15 +1216,18 @@ public class PluginUtils {
         return configInfo;
     }
 
-    private static void setAnnotationBars(JSONArray array, ViewerConfig.Builder builder) throws JSONException {
+    private static void setAnnotationBars(JSONArray array, ViewerConfig.Builder builder, Context context)
+            throws JSONException {
+        if (context == null) {
+            return;
+        }
         for (int i = 0; i < array.length(); i++) {
             Object annotationBar = array.get(i);
             if (annotationBar instanceof String) {
                 String tag = (String) annotationBar;
                 if (isValidToolbarTag(tag)) {
                     builder = builder.addToolbarBuilder(
-                            DefaultToolbars.getDefaultAnnotationToolbarBuilderByTag(tag)
-                    );
+                            DefaultToolbars.getDefaultAnnotationToolbarBuilderByTag(tag));
                 }
             } else if (annotationBar instanceof JSONObject) {
                 JSONObject object = (JSONObject) annotationBar;
@@ -1231,15 +1253,40 @@ public class PluginUtils {
                             .setToolbarName(toolbarName)
                             .setIcon(convStringToToolbarDefaultIconRes(toolbarIcon));
                     for (int j = 0; j < toolbarItems.length(); j++) {
-                        String toolStr = toolbarItems.getString(j);
-                        ToolbarButtonType buttonType = convStringToToolbarType(toolStr);
-                        int buttonId = convStringToButtonId(toolStr);
-                        if (buttonType != null && buttonId != 0) {
-                            if (buttonType == ToolbarButtonType.UNDO ||
-                                    buttonType == ToolbarButtonType.REDO) {
-                                toolbarBuilder.addToolStickyButton(buttonType, buttonId);
-                            } else {
-                                toolbarBuilder.addToolButton(buttonType, buttonId);
+                        Object type = toolbarItems.get(j);
+                        if (type instanceof String) {
+                            String toolStr = toolbarItems.getString(j);
+                            ToolbarButtonType buttonType = convStringToToolbarType(toolStr);
+                            int buttonId = convStringToButtonId(toolStr);
+                            if (buttonType != null && buttonId != 0) {
+                                if (buttonType == ToolbarButtonType.UNDO ||
+                                        buttonType == ToolbarButtonType.REDO) {
+                                    toolbarBuilder.addToolStickyButton(buttonType, buttonId);
+                                } else {
+                                    toolbarBuilder.addToolButton(buttonType, buttonId);
+                                }
+                            }
+                        } else if (type instanceof JSONObject) {
+                            // custom buttons
+                            JSONObject item = toolbarItems.getJSONObject(j);
+                            String itemId = null, itemName = null, itemIcon = null;
+                            if (!item.isNull(TOOLBAR_KEY_ID)) {
+                                itemId = item.getString(TOOLBAR_KEY_ID);
+                            }
+                            if (!item.isNull(TOOLBAR_KEY_NAME)) {
+                                itemName = item.getString(TOOLBAR_KEY_NAME);
+                            }
+                            if (!item.isNull(TOOLBAR_KEY_ICON)) {
+                                itemIcon = item.getString(TOOLBAR_KEY_ICON);
+                            }
+
+                            if (!Utils.isNullOrEmpty(itemId) && itemName != null && !Utils.isNullOrEmpty(itemIcon)) {
+                                int res = Utils.getResourceDrawable(context, itemIcon);
+                                if (res != 0) {
+                                    int id = toolIdGenerator.getAndIncrement();
+                                    // mToolIdMap.put(id, itemId);
+                                    toolbarBuilder.addCustomButton(itemName, res, id);
+                                }
                             }
                         }
                     }
@@ -1256,17 +1303,23 @@ public class PluginUtils {
             String item = array.getString(i);
 
             if (BUTTON_THUMBNAILS.equals(item)) {
-                customBottomBar.addCustomButton(R.string.pref_viewmode_thumbnails, R.drawable.ic_thumbnails_grid_black_24dp, R.id.action_thumbnails);
+                customBottomBar.addCustomButton(R.string.pref_viewmode_thumbnails,
+                        R.drawable.ic_thumbnails_grid_black_24dp, R.id.action_thumbnails);
             } else if (BUTTON_LISTS.equals(item)) {
-                customBottomBar.addCustomButton(R.string.action_outline, R.drawable.ic_outline_white_24dp, R.id.action_outline);
+                customBottomBar.addCustomButton(R.string.action_outline, R.drawable.ic_outline_white_24dp,
+                        R.id.action_outline);
             } else if (BUTTON_SHARE.equals(item)) {
-                customBottomBar.addCustomButton(R.string.action_file_share, R.drawable.ic_share_black_24dp, R.id.action_share);
+                customBottomBar.addCustomButton(R.string.action_file_share, R.drawable.ic_share_black_24dp,
+                        R.id.action_share);
             } else if (BUTTON_VIEW_CONTROLS.equals(item)) {
-                customBottomBar.addCustomButton(R.string.action_view_mode, R.drawable.ic_viewing_mode_white_24dp, R.id.action_viewmode);
+                customBottomBar.addCustomButton(R.string.action_view_mode, R.drawable.ic_viewing_mode_white_24dp,
+                        R.id.action_viewmode);
             } else if (BUTTON_SEARCH.equals(item)) {
-                customBottomBar.addCustomButton(R.string.action_search, R.drawable.ic_search_white_24dp, R.id.action_search);
+                customBottomBar.addCustomButton(R.string.action_search, R.drawable.ic_search_white_24dp,
+                        R.id.action_search);
             } else if (BUTTON_REFLOW_MODE.equals(item)) {
-                customBottomBar.addCustomButton(R.string.pref_viewmode_reflow, R.drawable.ic_view_mode_reflow_black_24dp, R.id.action_reflow_mode);
+                customBottomBar.addCustomButton(R.string.pref_viewmode_reflow,
+                        R.drawable.ic_view_mode_reflow_black_24dp, R.id.action_reflow_mode);
             }
         }
 
@@ -1314,7 +1367,8 @@ public class PluginUtils {
         return null;
     }
 
-    private static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder, ToolManagerBuilder toolManagerBuilder, JSONArray args) throws JSONException {
+    private static ArrayList<ToolManager.ToolMode> disableElements(ViewerConfig.Builder builder,
+            ToolManagerBuilder toolManagerBuilder, JSONArray args) throws JSONException {
 
         ArrayList<ViewModePickerDialogFragment.ViewModePickerItems> viewModePickerItems = new ArrayList<>();
         ArrayList<Integer> saveCopyOptions = new ArrayList<>();
@@ -1589,7 +1643,8 @@ public class PluginUtils {
             annotType = Annot.e_FileAttachment;
         } else if (TOOL_ANNOTATION_CREATE_SOUND.equals(item)) {
             annotType = Annot.e_Sound;
-        } else if (TOOL_ANNOTATION_CREATE_REDACTION.equals(item) || TOOL_ANNOTATION_CREATE_REDACTION_TEXT.equals(item)) {
+        } else if (TOOL_ANNOTATION_CREATE_REDACTION.equals(item)
+                || TOOL_ANNOTATION_CREATE_REDACTION_TEXT.equals(item)) {
             annotType = Annot.e_Redact;
         } else if (TOOL_ANNOTATION_CREATE_LINK.equals(item) || TOOL_ANNOTATION_CREATE_LINK_TEXT.equals(item)) {
             annotType = Annot.e_Link;
@@ -2399,7 +2454,8 @@ public class PluginUtils {
 
     // Methods
 
-    private static void ungroupAnnotations(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
+    private static void ungroupAnnotations(MethodCall call, MethodChannel.Result result, ViewerComponent component)
+            throws PDFNetException, JSONException {
         String annotationList = call.argument(KEY_ANNOTATION_LIST);
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
@@ -2439,7 +2495,8 @@ public class PluginUtils {
         }
     }
 
-    private static void groupAnnotations(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
+    private static void groupAnnotations(MethodCall call, MethodChannel.Result result, ViewerComponent component)
+            throws PDFNetException, JSONException {
         String annotation = call.argument(KEY_ANNOTATION);
         String annotationList = call.argument(KEY_ANNOTATION_LIST);
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
@@ -2460,7 +2517,8 @@ public class PluginUtils {
                 JSONObject annotationJson = new JSONObject(annotation);
                 String primaryAnnotationId = annotationJson.getString(KEY_ANNOTATION_ID);
                 int primaryAnnotPageNum = annotationJson.getInt(KEY_PAGE_NUMBER);
-                Annot primaryAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, primaryAnnotationId, primaryAnnotPageNum);
+                Annot primaryAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, primaryAnnotationId,
+                        primaryAnnotPageNum);
 
                 if (primaryAnnotation == null || !primaryAnnotation.isValid()) {
                     result.error("InvalidState", "Thew primary annotation cannot be null", null);
@@ -2476,7 +2534,8 @@ public class PluginUtils {
                         String currAnnotId = currAnnot.getString(KEY_ANNOTATION_ID);
                         int currAnnotPageNumber = currAnnot.getInt(KEY_PAGE_NUMBER);
                         if (!Utils.isNullOrEmpty(currAnnotId)) {
-                            Annot validAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, currAnnotId, currAnnotPageNumber);
+                            Annot validAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, currAnnotId,
+                                    currAnnotPageNumber);
                             if (validAnnotation != null && validAnnotation.isValid()) {
                                 allAnnotations.add(validAnnotation);
                                 if (!containsPrimary) {
@@ -2498,7 +2557,8 @@ public class PluginUtils {
         }
     }
 
-    private static void importAnnotations(String xfdf, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+    private static void importAnnotations(String xfdf, MethodChannel.Result result, ViewerComponent component)
+            throws PDFNetException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         if (null == pdfViewCtrl || null == pdfDoc || null == xfdf) {
@@ -2540,7 +2600,8 @@ public class PluginUtils {
         }
     }
 
-    private static void exportAnnotations(String annotationList, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
+    private static void exportAnnotations(String annotationList, MethodChannel.Result result, ViewerComponent component)
+            throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
 
         if (null == pdfViewCtrl) {
@@ -2566,7 +2627,8 @@ public class PluginUtils {
                         String currAnnotId = currAnnot.getString(KEY_ANNOTATION_ID);
                         int currAnnotPageNumber = currAnnot.getInt(KEY_PAGE_NUMBER);
                         if (!Utils.isNullOrEmpty(currAnnotId)) {
-                            Annot validAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, currAnnotId, currAnnotPageNumber);
+                            Annot validAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, currAnnotId,
+                                    currAnnotPageNumber);
                             if (validAnnotation != null && validAnnotation.isValid()) {
                                 validAnnotationList.add(validAnnotation);
                             }
@@ -2588,7 +2650,8 @@ public class PluginUtils {
         }
     }
 
-    private static void flattenAnnotations(boolean formsOnly, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+    private static void flattenAnnotations(boolean formsOnly, MethodChannel.Result result, ViewerComponent component)
+            throws PDFNetException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         if (null == pdfViewCtrl || null == pdfDoc) {
@@ -2614,7 +2677,8 @@ public class PluginUtils {
         }
     }
 
-    private static void deleteAnnotations(String annotationList, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
+    private static void deleteAnnotations(String annotationList, MethodChannel.Result result, ViewerComponent component)
+            throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
 
@@ -2664,7 +2728,8 @@ public class PluginUtils {
         }
     }
 
-    private static void selectAnnotation(String annotation, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
+    private static void selectAnnotation(String annotation, MethodChannel.Result result, ViewerComponent component)
+            throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
 
@@ -2852,19 +2917,20 @@ public class PluginUtils {
             return;
         }
 
-        DialogGoToPage dlgGotoPage = new DialogGoToPage(pdfViewCtrl.getContext(), pdfViewCtrl, new DialogGoToPage.DialogGoToPageListener() {
-            @Override
-            public void onPageSet(int pageNum) {
-                pdfViewCtrlTabFragment.setCurrentPageHelper(pageNum, true);
-                if (pdfViewCtrlTabFragment.getReflowControl() != null) {
-                    try {
-                        pdfViewCtrlTabFragment.getReflowControl().setCurrentPage(pageNum);
-                    } catch (Exception e) {
-                        AnalyticsHandlerAdapter.getInstance().sendException(e);
+        DialogGoToPage dlgGotoPage = new DialogGoToPage(pdfViewCtrl.getContext(), pdfViewCtrl,
+                new DialogGoToPage.DialogGoToPageListener() {
+                    @Override
+                    public void onPageSet(int pageNum) {
+                        pdfViewCtrlTabFragment.setCurrentPageHelper(pageNum, true);
+                        if (pdfViewCtrlTabFragment.getReflowControl() != null) {
+                            try {
+                                pdfViewCtrlTabFragment.getReflowControl().setCurrentPage(pageNum);
+                            } catch (Exception e) {
+                                AnalyticsHandlerAdapter.getInstance().sendException(e);
+                            }
+                        }
                     }
-                }
-            }
-        });
+                });
         dlgGotoPage.show();
         result.success(null);
     }
@@ -2889,7 +2955,8 @@ public class PluginUtils {
         result.success(pdfViewCtrl.getCurrentPage());
     }
 
-    private static void setFlagsForAnnotations(String annotationsWithFlags, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
+    private static void setFlagsForAnnotations(String annotationsWithFlags, MethodChannel.Result result,
+            ViewerComponent component) throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         ToolManager toolManager = component.getToolManager();
@@ -2915,13 +2982,15 @@ public class PluginUtils {
                 int currentAnnotationPageNumber = currentAnnotation.getInt(KEY_PAGE_NUMBER);
 
                 if (!Utils.isNullOrEmpty(currentAnnotationId)) {
-                    Annot validAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, currentAnnotationId, currentAnnotationPageNumber);
+                    Annot validAnnotation = ViewerUtils.getAnnotById(pdfViewCtrl, currentAnnotationId,
+                            currentAnnotationPageNumber);
 
                     if (validAnnotation == null || !validAnnotation.isValid()) {
                         continue;
                     }
 
-                    JSONArray currentFlagArray = getJSONArrayFromJSONObject(currentAnnotationWithFlags, KEY_ANNOTATION_FLAG_LISTS);
+                    JSONArray currentFlagArray = getJSONArrayFromJSONObject(currentAnnotationWithFlags,
+                            KEY_ANNOTATION_FLAG_LISTS);
 
                     // for each flag
                     for (int j = 0; j < currentFlagArray.length(); j++) {
@@ -2998,7 +3067,8 @@ public class PluginUtils {
         return true;
     }
 
-    private static void setPropertiesForAnnotation(String annotation, String properties, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
+    private static void setPropertiesForAnnotation(String annotation, String properties, MethodChannel.Result result,
+            ViewerComponent component) throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         ToolManager toolManager = component.getToolManager();
 
@@ -3086,7 +3156,8 @@ public class PluginUtils {
         }
     }
 
-    private static void importAnnotationCommand(String xfdfCommand, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+    private static void importAnnotationCommand(String xfdfCommand, MethodChannel.Result result,
+            ViewerComponent component) throws PDFNetException {
         ToolManager toolManager = component.getToolManager();
         if (toolManager != null && toolManager.getAnnotManager() != null) {
             toolManager.getAnnotManager().onRemoteChange(xfdfCommand);
@@ -3136,7 +3207,8 @@ public class PluginUtils {
         }
     }
 
-    private static void importBookmarkJson(String bookmarkJson, MethodChannel.Result result, ViewerComponent component) throws JSONException {
+    private static void importBookmarkJson(String bookmarkJson, MethodChannel.Result result, ViewerComponent component)
+            throws JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         if (null == pdfViewCtrl || null == bookmarkJson) {
             result.error("InvalidState", "Activity not attached", null);
@@ -3156,7 +3228,8 @@ public class PluginUtils {
             pdfViewCtrlTabFragment.setSavingEnabled(component.isAutoSaveEnabled());
             pdfViewCtrlTabFragment.save(false, true, true);
 
-            // TODO if add auto save flag: getPdfViewCtrlTabFragment().setSavingEnabled(mAutoSaveEnabled);
+            // TODO if add auto save flag:
+            // getPdfViewCtrlTabFragment().setSavingEnabled(mAutoSaveEnabled);
             if (component.isBase64()) {
                 try {
                     byte[] data = FileUtils.readFileToByteArray(pdfViewCtrlTabFragment.getFile());
@@ -3211,7 +3284,8 @@ public class PluginUtils {
         result.success(pdfViewCtrlTabHostFragment.handleBackPressed());
     }
 
-    private static void getPageCropBox(int pageNumber, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
+    private static void getPageCropBox(int pageNumber, MethodChannel.Result result, ViewerComponent component)
+            throws PDFNetException, JSONException {
         JSONObject jsonObject = new JSONObject();
         PDFDoc pdfDoc = component.getPdfDoc();
         if (pdfDoc == null) {
@@ -3280,7 +3354,8 @@ public class PluginUtils {
         }
     }
 
-    private static void setFlagForFields(ArrayList<String> fieldNames, int flag, boolean flagValue, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+    private static void setFlagForFields(ArrayList<String> fieldNames, int flag, boolean flagValue,
+            MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfdoc = component.getPdfDoc();
         if (null == pdfViewCtrl || null == pdfdoc) {
@@ -3308,7 +3383,8 @@ public class PluginUtils {
         result.success(null);
     }
 
-    private static void setValuesForFields(String fieldsString, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
+    private static void setValuesForFields(String fieldsString, MethodChannel.Result result, ViewerComponent component)
+            throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         if (null == pdfViewCtrl || null == pdfDoc) {
@@ -3342,7 +3418,8 @@ public class PluginUtils {
     }
 
     // write lock required around this method
-    private static void setFieldValue(PDFViewCtrl pdfViewCtrl, Field field, Object value) throws PDFNetException, JSONException {
+    private static void setFieldValue(PDFViewCtrl pdfViewCtrl, Field field, Object value)
+            throws PDFNetException, JSONException {
         int fieldType = field.getType();
 
         if (value instanceof Boolean) {
@@ -3355,7 +3432,8 @@ public class PluginUtils {
                 ViewChangeCollection view_change = field.setValue((String) value);
                 pdfViewCtrl.refreshAndUpdate(view_change);
             }
-        } else if (value instanceof Integer || value instanceof Double || value instanceof Long || value instanceof Float) {
+        } else if (value instanceof Integer || value instanceof Double || value instanceof Long
+                || value instanceof Float) {
             if (Field.e_text == fieldType) {
                 ViewChangeCollection view_change = field.setValue(String.valueOf(value));
                 pdfViewCtrl.refreshAndUpdate(view_change);
@@ -3371,7 +3449,8 @@ public class PluginUtils {
             return;
         }
 
-        // For multi-select rect and lasso tool, we need to set the selection mode on tool manager
+        // For multi-select rect and lasso tool, we need to set the selection mode on
+        // tool manager
         if (TOOL_ANNOTATION_LASSO.equals(toolModeString)) {
             toolManager.setMultiSelectMode(AnnotEditRectGroup.SelectionMode.LASSO);
         } else if (TOOL_ANNOTATION_EDIT.equals(toolModeString)) {
@@ -3479,7 +3558,8 @@ public class PluginUtils {
         result.success(null);
     }
 
-    private static void exportAsImage(int pageNumber, int dpi, String exportFormat, MethodChannel.Result result, ViewerComponent component) {
+    private static void exportAsImage(int pageNumber, int dpi, String exportFormat, MethodChannel.Result result,
+            ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         if (pdfViewCtrl == null || pdfDoc == null) {
@@ -3493,7 +3573,8 @@ public class PluginUtils {
         }
     }
 
-    private static void exportAsImageFromFilePath(int pageNumber, int dpi, String exportFormat, String path, MethodChannel.Result result, ViewerComponent component) {
+    private static void exportAsImageFromFilePath(int pageNumber, int dpi, String exportFormat, String path,
+            MethodChannel.Result result, ViewerComponent component) {
         try {
             PDFDoc pdfDoc = new PDFDoc(path);
             String imagePath = exportAsImageHelper(pdfDoc, pageNumber, dpi, exportFormat);
@@ -3504,7 +3585,8 @@ public class PluginUtils {
         }
     }
 
-    private static String exportAsImageHelper(PDFDoc doc, int pageNumber, int dpi, String exportFormat) throws PDFNetException {
+    private static String exportAsImageHelper(PDFDoc doc, int pageNumber, int dpi, String exportFormat)
+            throws PDFNetException {
         PDFDraw draw = null;
         boolean shouldUnlockRead = false;
         try {
@@ -3578,7 +3660,8 @@ public class PluginUtils {
         result.success(pageChanged);
     }
 
-    private static void addBookmark(String title, Integer pageNumber, MethodChannel.Result result, ViewerComponent component) {
+    private static void addBookmark(String title, Integer pageNumber, MethodChannel.Result result,
+            ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         if (pdfViewCtrl == null || pdfDoc == null) {
@@ -3653,8 +3736,7 @@ public class PluginUtils {
                                 eventSink.success(xfdfCommand);
                             }
                         }
-                    }
-            );
+                    });
         }
     }
 
@@ -3762,7 +3844,8 @@ public class PluginUtils {
         }
     }
 
-    public static void emitExportAnnotationCommandEvent(String action, Map<Annot, Integer> map, ViewerComponent component) {
+    public static void emitExportAnnotationCommandEvent(String action, Map<Annot, Integer> map,
+            ViewerComponent component) {
         if (component.getToolManager() != null && component.getToolManager().getAnnotManager() != null) {
             return;
         } else {
@@ -3813,7 +3896,8 @@ public class PluginUtils {
     }
 
     @Nullable
-    private static String generateXfdfCommand(ArrayList<Annot> added, ArrayList<Annot> modified, ArrayList<Annot> removed, ViewerComponent component) throws PDFNetException {
+    private static String generateXfdfCommand(ArrayList<Annot> added, ArrayList<Annot> modified,
+            ArrayList<Annot> removed, ViewerComponent component) throws PDFNetException {
         PDFDoc pdfDoc = component.getPdfDoc();
         if (pdfDoc != null) {
             FDFDoc fdfDoc = pdfDoc.fdfExtract(added, modified, removed);
@@ -3831,7 +3915,8 @@ public class PluginUtils {
         return null;
     }
 
-    private static JSONObject getAnnotationData(Annot annot, int pageNumber, ViewerComponent component) throws JSONException {
+    private static JSONObject getAnnotationData(Annot annot, int pageNumber, ViewerComponent component)
+            throws JSONException {
 
         // try to obtain id
         String uid = null;
@@ -3884,7 +3969,8 @@ public class PluginUtils {
         return component.getSelectedAnnots() != null && !component.getSelectedAnnots().isEmpty();
     }
 
-    public static void checkQuickMenu(List<QuickMenuItem> menuItems, ArrayList<String> keepList, List<QuickMenuItem> removeList) {
+    public static void checkQuickMenu(List<QuickMenuItem> menuItems, ArrayList<String> keepList,
+            List<QuickMenuItem> removeList) {
         for (QuickMenuItem item : menuItems) {
             int menuId = item.getItemId();
             if (ToolConfig.getInstance().getToolModeByQMItemId(menuId) != null) {
@@ -3919,7 +4005,8 @@ public class PluginUtils {
     private static com.pdftron.pdf.Rect getRectFromObject(Object object) throws JSONException, PDFNetException {
         if (object instanceof String) {
             JSONObject rectJson = new JSONObject((String) object);
-            if (!rectJson.isNull(KEY_X1) && !rectJson.isNull(KEY_Y1) && !rectJson.isNull(KEY_X2) && !rectJson.isNull(KEY_Y2)) {
+            if (!rectJson.isNull(KEY_X1) && !rectJson.isNull(KEY_Y1) && !rectJson.isNull(KEY_X2)
+                    && !rectJson.isNull(KEY_Y2)) {
 
                 double rectX1 = rectJson.getDouble(KEY_X1);
                 double rectY1 = rectJson.getDouble(KEY_Y1);
