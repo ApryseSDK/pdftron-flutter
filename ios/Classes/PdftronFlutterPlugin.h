@@ -378,7 +378,7 @@ static NSString * const PTViewModeColorModeKey = @"viewModeColorMode";
 
 // DefaultEraserType keys
 static NSString * const PTInkEraserModeAllKey = @"annotationEraser";
-static NSString * const PTInkEraserModePointsKey = @"hybrideEraser";
+static NSString *const PTInkEraserModePointsKey = @"hybridEraser";
 
 // ReflowOrientation
 static NSString * const PTReflowOrientationHorizontalKey = @"horizontal";

@@ -364,7 +364,7 @@ class ViewModePickerItem {
 // DefaultEraserType defines the default behaviour of the eraser tool.
 class DefaultEraserType {
   static const annotationEraser = "annotationEraser";
-  static const hybrideEraser = "hybrideEraser";
+  static const hybridEraser = "hybridEraser";
   static const inkEraser = "inkEraser"; // Android only
 }
 
@@ -381,7 +381,7 @@ class AnnotationManagerEditMode {
 
 class AnnotationManagerUndoMode {
   static const Own = "undoModeOwn";
-  static const All = "unodModeAll";
+  static const All = "undoModeAll";
 }
 
 class ToolbarAlignment {
