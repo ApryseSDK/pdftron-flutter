@@ -114,8 +114,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
     public void openDocument(String document, String password, String configStr, MethodChannel.Result result) {
 
-        PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(mBuilder, mToolManagerBuilder,
-                mPDFViewCtrlConfig, document, getContext(), configStr);
+        PluginUtils.ConfigInfo configInfo = PluginUtils.handleOpenDocument(mBuilder, mToolManagerBuilder, mPDFViewCtrlConfig, document, getContext(), configStr);
 
         mInitialPageNumber = configInfo.getInitialPageNumber();
         mIsBase64 = configInfo.isBase64();
@@ -302,17 +301,11 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         return mAutoSaveEnabled;
     }
 
-    public boolean isAnnotationManagerEnabled() {
-        return mAnnotationManagerEnabled;
-    };
+    public boolean isAnnotationManagerEnabled() { return mAnnotationManagerEnabled; };
 
-    public String getUserId() {
-        return mUserId;
-    };
+    public String getUserId() { return mUserId; };
 
-    public String getUserName() {
-        return mUserName;
-    };
+    public String getUserName() { return mUserName; };
 
     public boolean isUseStylusAsPen() {
         return mUseStylusAsPen;

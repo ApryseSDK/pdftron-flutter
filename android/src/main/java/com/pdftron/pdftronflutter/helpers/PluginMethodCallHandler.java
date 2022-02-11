@@ -126,8 +126,7 @@ public class PluginMethodCallHandler implements MethodCallHandler {
             }
         });
 
-        final EventChannel formFieldValueChangedEventChannel = new EventChannel(messenger,
-                EVENT_FORM_FIELD_VALUE_CHANGED);
+        final EventChannel formFieldValueChangedEventChannel = new EventChannel(messenger, EVENT_FORM_FIELD_VALUE_CHANGED);
         formFieldValueChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -153,8 +152,7 @@ public class PluginMethodCallHandler implements MethodCallHandler {
             }
         });
 
-        final EventChannel longPressMenuPressedEventChannel = new EventChannel(messenger,
-                EVENT_LONG_PRESS_MENU_PRESSED);
+        final EventChannel longPressMenuPressedEventChannel = new EventChannel(messenger, EVENT_LONG_PRESS_MENU_PRESSED);
         longPressMenuPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -167,8 +165,7 @@ public class PluginMethodCallHandler implements MethodCallHandler {
             }
         });
 
-        final EventChannel leadingNavButtonPressedEventChannel = new EventChannel(messenger,
-                EVENT_LEADING_NAV_BUTTON_PRESSED);
+        final EventChannel leadingNavButtonPressedEventChannel = new EventChannel(messenger, EVENT_LEADING_NAV_BUTTON_PRESSED);
         leadingNavButtonPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -181,8 +178,7 @@ public class PluginMethodCallHandler implements MethodCallHandler {
             }
         });
 
-        final EventChannel annotationMenuPressedEventChannel = new EventChannel(messenger,
-                EVENT_ANNOTATION_MENU_PRESSED);
+        final EventChannel annotationMenuPressedEventChannel = new EventChannel(messenger, EVENT_ANNOTATION_MENU_PRESSED);
         annotationMenuPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
@@ -267,8 +263,7 @@ public class PluginMethodCallHandler implements MethodCallHandler {
             case FUNCTION_INITIALIZE:
                 try {
                     String licenseKey = call.argument(KEY_LICENSE_KEY);
-                    com.pdftron.pdf.utils.AppUtils.initializePDFNetApplication(mContext.getApplicationContext(),
-                            licenseKey);
+                    com.pdftron.pdf.utils.AppUtils.initializePDFNetApplication(mContext.getApplicationContext(), licenseKey);
                     result.success(null);
                 } catch (PDFNetException e) {
                     e.printStackTrace();
