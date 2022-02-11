@@ -1321,7 +1321,7 @@ Sets the default eraser tool type. Value only applied after a clean install.
 Eraser Type | Description
 --- | ---
 `annotationEraser` | Erases everything as an object; if you touch ink, the entire object is erased.
-`hybrideEraser` | Erases ink by pixel, but erases other annotation types as objects.
+`hybridEraser` | Erases ink by pixel, but erases other annotation types as objects.
 `inkEraser` | Erases ink by pixel only. Android only.
 
 ```dart
