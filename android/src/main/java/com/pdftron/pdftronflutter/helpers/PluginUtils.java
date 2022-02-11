@@ -515,7 +515,7 @@ public class PluginUtils {
 
     // Default Eraser Type
     public static final String DEFAULT_ERASER_TYPE_ANNOTATION = "annotationEraser";
-    public static final String DEFAULT_ERASER_TYPE_HYBRID = "hybrideEraser";
+    public static final String DEFAULT_ERASER_TYPE_HYBRID = "hybridEraser";
     public static final String DEFAULT_ERASER_TYPE_INK = "inkEraser";
 
     // Reflow Orientation
