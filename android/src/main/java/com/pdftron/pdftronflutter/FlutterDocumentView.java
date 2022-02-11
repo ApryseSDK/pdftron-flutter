@@ -245,12 +245,12 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         annotationItemToolbarPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                documentView.setAnnotationItemToolbarPressedEventEmitter(emitter);
+                documentView.setAnnotationToolbarItemPressedEventEmitter(emitter);
             }
 
             @Override
             public void onCancel(Object arguments) {
-                documentView.setAnnotationItemToolbarPressedEventEmitter(null);
+                documentView.setAnnotationToolbarItemPressedEventEmitter(null);
             }
         });
     }

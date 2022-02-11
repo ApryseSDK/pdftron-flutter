@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -35,6 +36,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.MethodChannel.Result;
 
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleAnnotationCustomToolbarItemPressed;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleLeadingNavButtonPressed;
 
 public class FlutterDocumentActivity extends DocumentActivity implements ViewerComponent {
@@ -301,7 +303,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         return sLongPressMenuPressedEventEmitter.get();
     }
 
-    @Override
     public EventSink getAnnotationMenuPressedEventEmitter() {
         return sAnnotationMenuPressedEventEmitter.get();
     }
@@ -438,6 +439,12 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         handleLeadingNavButtonPressed(this);
 
         super.onNavButtonPressed();
+    }
+
+    @Override
+    public boolean onToolbarOptionsItemSelected(MenuItem item) {
+        handleAnnotationCustomToolbarItemPressed(this, item);
+        return super.onToolbarOptionsItemSelected(item);
     }
 
     private void attachActivity() {

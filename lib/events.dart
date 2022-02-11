@@ -22,7 +22,8 @@ const _leadingNavButtonPressedChannel =
 const _pageChangedChannel = const EventChannel('page_changed_event');
 const _zoomChangedChannel = const EventChannel('zoom_changed_event');
 const _pageMovedChannel = const EventChannel('page_moved_event');
-const _onAnnotationToolbarItemPress = const EventChannel('annotation_toolbar_item_pressed_event');
+const _annotationToolbarItemPressedChannel =
+    const EventChannel('annotation_toolbar_item_pressed_event');
 
 typedef void ExportAnnotationCommandListener(dynamic xfdfCommand);
 typedef void ExportBookmarkListener(dynamic bookmarkJson);
@@ -270,7 +271,8 @@ CancelListener startPageMovedListener(PageMovedListener listener) {
   };
 }
 
-CancelListener startAnnotationToolbarItemPressedListener(ZoomChangedListener listener) {
+CancelListener startAnnotationToolbarItemPressedListener(
+    AnnotationToolbarItemPressedListener listener) {
   var subscription = _annotationToolbarItemPressedChannel
       .receiveBroadcastStream(eventSinkId.annotationToolbarItemPressedId.index)
       .listen(listener, cancelOnError: true);

@@ -2,6 +2,7 @@ package com.pdftron.pdftronflutter.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -33,6 +34,7 @@ import java.util.HashMap;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleAnnotationCustomToolbarItemPressed;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleDocumentLoaded;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleLeadingNavButtonPressed;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOnDetach;
@@ -320,6 +322,13 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         handleLeadingNavButtonPressed(this);
     }
 
+    @Override
+    public boolean onToolbarOptionsItemSelected(MenuItem item) {
+        handleAnnotationCustomToolbarItemPressed(this, item);
+        return super.onToolbarOptionsItemSelected(item);
+    }
+
+
     public void setExportAnnotationCommandEventEmitter(EventChannel.EventSink emitter) {
         sExportAnnotationCommandEventEmitter = emitter;
     }
@@ -457,7 +466,6 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         return sPageMovedEventEmitter;
     }
 
-    @Override
     public EventChannel.EventSink getAnnotationToolbarItemPressedEventEmitter() {
         return sAnnotationToolbarItemPressedEventEmitter;
     }

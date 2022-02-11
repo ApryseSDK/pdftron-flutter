@@ -235,12 +235,12 @@ public class PluginMethodCallHandler implements MethodCallHandler {
         annotationItemToolbarPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                documentView.setAnnotationItemToolbarPressedEventEmitter(emitter);
+                FlutterDocumentActivity.setAnnotationToolbarItemPressedEventEmitter(emitter);
             }
 
             @Override
             public void onCancel(Object arguments) {
-                documentView.setAnnotationItemToolbarPressedEventEmitter(null);
+                FlutterDocumentActivity.setAnnotationToolbarItemPressedEventEmitter(null);
             }
         });
     }

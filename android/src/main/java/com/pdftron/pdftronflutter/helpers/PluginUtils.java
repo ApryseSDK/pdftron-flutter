@@ -5,7 +5,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Gravity;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
@@ -26,6 +29,7 @@ import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabBaseFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostBaseFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.controls.ReflowControl;
 import com.pdftron.pdf.controls.ThumbnailsViewFragment;
@@ -241,7 +245,7 @@ public class PluginUtils {
     public static final String EVENT_PAGE_CHANGED = "page_changed_event";
     public static final String EVENT_ZOOM_CHANGED = "zoom_changed_event";
     public static final String EVENT_PAGE_MOVED = "page_moved_event";
-    public static final String EVENT_ANNOTATION_TOOLBAR_ITEM_PRESSED = "annotation_toolbar_item_pressed";
+    public static final String EVENT_ANNOTATION_TOOLBAR_ITEM_PRESSED = "annotation_toolbar_item_pressed_event";
 
     public static final String FUNCTION_GET_PLATFORM_VERSION = "getPlatformVersion";
     public static final String FUNCTION_GET_VERSION = "getVersion";
@@ -538,6 +542,7 @@ public class PluginUtils {
     public static boolean isAnnotationListVisible = true;
 
     public static final AtomicInteger toolIdGenerator = new AtomicInteger(1000);
+    public static final SparseArray<String> mToolIdMap = new SparseArray<>();
 
     private static AnnotManager.EditPermissionMode mAnnotationManagerEditMode = AnnotManager.EditPermissionMode.EDIT_OTHERS;
     private static PDFViewCtrl.AnnotationManagerMode mAnnotationManagerUndoMode = PDFViewCtrl.AnnotationManagerMode.ADMIN_UNDO_OTHERS;
@@ -946,7 +951,7 @@ public class PluginUtils {
                 }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_TOOLBARS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_ANNOTATION_TOOLBARS);
-                    setAnnotationBars(array, builder);
+                    setAnnotationBars(array, builder,context);
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS);
@@ -1270,7 +1275,7 @@ public class PluginUtils {
                                 int res = Utils.getResourceDrawable(context, itemIcon);
                                 if (res != 0) {
                                     int id = toolIdGenerator.getAndIncrement();
-                                    // mToolIdMap.put(id, itemId);
+                                    mToolIdMap.put(id, itemId);
                                     toolbarBuilder.addCustomButton(itemName, res, id);
                                 }
                             }
@@ -3741,6 +3746,16 @@ public class PluginUtils {
         EventChannel.EventSink leadingNavButtonPressedEventSink = component.getLeadingNavButtonPressedEventEmitter();
         if (leadingNavButtonPressedEventSink != null) {
             leadingNavButtonPressedEventSink.success(null);
+        }
+    }
+
+    public static void handleAnnotationCustomToolbarItemPressed(ViewerComponent component, MenuItem item) {
+        EventChannel.EventSink annotationCustomToolbarItemPressedEventSink = component.getAnnotationToolbarItemPressedEventEmitter();
+        int itemId = item.getItemId();
+        String itemKey = mToolIdMap.get(itemId);
+        if (itemKey != null && annotationCustomToolbarItemPressedEventSink != null) {
+            // this is a custom button
+            annotationCustomToolbarItemPressedEventSink.success(itemId);
         }
     }
 

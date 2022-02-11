@@ -80,7 +80,7 @@ public interface ViewerComponent {
 
     EventChannel.EventSink getPageMovedEventEmitter();
 
-    EventChannel.EventSink annotationToolbarItemPressedEventEmitter();
+    EventChannel.EventSink getAnnotationToolbarItemPressedEventEmitter();
 
     MethodChannel.Result getFlutterLoadResult();
 
