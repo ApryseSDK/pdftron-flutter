@@ -1,6 +1,6 @@
 # 1.0.0-beta.5 - Februrary 22, 2021
 
-- Toggle widget and plugin 
+- Toggle widget and plugin (internal sample)
 - Remove Jcenter (Android)
 
 

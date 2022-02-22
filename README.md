@@ -38,10 +38,10 @@ API documentation is available on:
 - Flutter >= 2.0.0
 
 ## Null Safety
-Dart now supports [sound null safety](https://dart.dev/null-safety), which is available starting from Dart 2.12.0 and Flutter 2.0.0.  Upgrading may cause breaking changes, so if you are not ready to change versions, refer to our [master branch](https://github.com/PDFTron/pdftron-flutter).
+Dart now supports [sound null safety](https://dart.dev/null-safety), which is available starting from Dart 2.12.0 and Flutter 2.0.0.
 
 If you would like to use our null safe SDK, it is available in the following places:
-- [GitHub](https://github.com/PDFTron/pdftron-flutter/tree/publish-prep) (You are currently on this branch)
+- [GitHub](https://github.com/PDFTron/pdftron-flutter)
 - [pub.dev](https://pub.dev/packages/pdftron_flutter)
 
 The rest of this README.md contains documentation, installation instructions, and information for the null safe version of our SDK.
