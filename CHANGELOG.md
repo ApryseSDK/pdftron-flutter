@@ -1,4 +1,10 @@
-# 1.0.0-beta.4 - Februray 3, 2021
+# 1.0.0-beta.5 - Februrary 22, 2021
+
+- Toggle widget and plugin 
+- Remove Jcenter (Android)
+
+
+# 1.0.0-beta.4 - Februrary 3, 2021
 
 - Added sound null safety support for new API's
 - Updated API.md files to reflect changes
