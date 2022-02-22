@@ -380,7 +380,7 @@ class ViewModePickerItem {
 /// Defines the type of eraser used in the viewer.
 class DefaultEraserType {
   static const annotationEraser = "annotationEraser";
-  static const hybrideEraser = "hybrideEraser";
+  static const hybrideEraser = "hybridEraser";
 
   /// Android only.
   static const inkEraser = "inkEraser";
@@ -399,7 +399,7 @@ class AnnotationManagerEditMode {
 
 class AnnotationManagerUndoMode {
   static const Own = "undoModeOwn";
-  static const All = "unodModeAll";
+  static const All = "undoModeAll";
 }
 
 class ToolbarAlignment {
