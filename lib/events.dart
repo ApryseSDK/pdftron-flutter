@@ -1,3 +1,8 @@
+/// The functions are simply used to facilitate communication between
+/// Flutter and the native implementations.
+
+/// To acquire a deeper understanding of how events are handled, look at the
+/// native implementations.
 part of pdftron;
 
 const _exportAnnotationCommandChannel =
@@ -42,6 +47,7 @@ typedef void ZoomChangedListener(dynamic zoom);
 typedef void PageMovedListener(dynamic previousPageNumber, dynamic pageNumber);
 typedef void CancelListener();
 
+/// Used to identify listeners for the EventChannel.
 enum eventSinkId {
   exportAnnotationId,
   exportBookmarkId,
@@ -59,6 +65,9 @@ enum eventSinkId {
   pageMovedId,
 }
 
+/// Listens for when a local annotation changes have been committed to the document.
+///
+/// Returns a function that can cancel the listener.
 CancelListener startExportAnnotationCommandListener(
     ExportAnnotationCommandListener listener) {
   var subscription = _exportAnnotationCommandChannel
@@ -70,6 +79,9 @@ CancelListener startExportAnnotationCommandListener(
   };
 }
 
+/// Listens for when user bookmarks are committed to the document.
+///
+/// Returns a function that can cancel the listener.
 CancelListener startExportBookmarkListener(ExportBookmarkListener listener) {
   var subscription = _exportBookmarkChannel
       .receiveBroadcastStream(eventSinkId.exportBookmarkId.index)
@@ -80,6 +92,9 @@ CancelListener startExportBookmarkListener(ExportBookmarkListener listener) {
   };
 }
 
+/// Listens for when [PdftronFlutter.openDocument(document)] has loaded the file.
+///
+/// Returns a function that can cancel the listener.
 CancelListener startDocumentLoadedListener(DocumentLoadedListener listener) {
   var subscription = _documentLoadedChannel
       .receiveBroadcastStream(eventSinkId.documentLoadedId.index)
@@ -90,6 +105,9 @@ CancelListener startDocumentLoadedListener(DocumentLoadedListener listener) {
   };
 }
 
+/// Listens for errors that could occur when [PdftronFlutter.openDocument(document)] is called.
+///
+/// Returns a function that can cancel the listener.
 CancelListener startDocumentErrorListener(DocumentErrorListener listener) {
   var subscription = _documentErrorChannel
       .receiveBroadcastStream(eventSinkId.documentErrorId.index)
@@ -102,6 +120,9 @@ CancelListener startDocumentErrorListener(DocumentErrorListener listener) {
   };
 }
 
+/// Listens for annotation changes and gets the associated action.
+///
+/// Returns a function that can cancel the listener.
 CancelListener startAnnotationChangedListener(
     AnnotationChangedListener listener) {
   var subscription = _annotationChangedChannel
@@ -109,10 +130,10 @@ CancelListener startAnnotationChangedListener(
       .listen((annotationsWithActionString) {
     dynamic annotationsWithAction = jsonDecode(annotationsWithActionString);
     String action = annotationsWithAction[EventParameters.action];
-    List<dynamic> annotations = Platform.isIOS ? 
-        jsonDecode(annotationsWithAction[EventParameters.annotations]) :
-        annotationsWithAction[EventParameters.annotations];
-    List<Annot> annotList = new List<Annot>();
+    List<dynamic> annotations = Platform.isIOS
+        ? jsonDecode(annotationsWithAction[EventParameters.annotations])
+        : annotationsWithAction[EventParameters.annotations];
+    List<Annot> annotList = new List<Annot>.empty(growable: true);
     for (dynamic annotation in annotations) {
       annotList.add(new Annot.fromJson(annotation));
     }
@@ -124,13 +145,17 @@ CancelListener startAnnotationChangedListener(
   };
 }
 
+/// Listens for when an annotation is selected.
+///
+/// Returns a function that can cancel the listener.
 CancelListener startAnnotationsSelectedListener(
     AnnotationsSelectedListener listener) {
   var subscription = _annotationsSelectedChannel
       .receiveBroadcastStream(eventSinkId.annotationsSelectedId.index)
       .listen((annotationWithRectsString) {
     List<dynamic> annotationWithRects = jsonDecode(annotationWithRectsString);
-    List<AnnotWithRect> annotWithRectList = new List<AnnotWithRect>();
+    List<AnnotWithRect> annotWithRectList =
+        new List<AnnotWithRect>.empty(growable: true);
     for (dynamic annotationWithRect in annotationWithRects) {
       annotWithRectList.add(new AnnotWithRect.fromJson(annotationWithRect));
     }
@@ -142,13 +167,16 @@ CancelListener startAnnotationsSelectedListener(
   };
 }
 
+/// Listens for changes to the value of form fields.
+///
+/// Returns a function that can cancel the listener.
 CancelListener startFormFieldValueChangedListener(
     FormFieldValueChangedListener listener) {
   var subscription = _formFieldValueChangedChannel
       .receiveBroadcastStream(eventSinkId.formFieldValueChangedId.index)
       .listen((fieldsString) {
     List<dynamic> fields = jsonDecode(fieldsString);
-    List<Field> fieldList = new List<Field>();
+    List<Field> fieldList = new List<Field>.empty(growable: true);
     for (dynamic field in fields) {
       fieldList.add(new Field.fromJson(field));
     }
@@ -160,6 +188,9 @@ CancelListener startFormFieldValueChangedListener(
   };
 }
 
+/// Listens for start of certain behaviours, if [Config.overrideBehavior] is not null.
+///
+/// Returns a function that can cancel the listener.
 CancelListener startBehaviorActivatedListener(
     BehaviorActivatedListener listener) {
   var subscription = _behaviorActivatedChannel
@@ -176,6 +207,10 @@ CancelListener startBehaviorActivatedListener(
   };
 }
 
+/// Listens for presses on the long press menu,
+/// if [Config.overrideLongPressMenuBehavior] is not null.
+///
+/// Returns a function that can cancel the listener.
 CancelListener startLongPressMenuPressedListener(
     LongPressMenuPressedChannelListener listener) {
   var subscription = _longPressMenuPressedChannel
@@ -192,6 +227,10 @@ CancelListener startLongPressMenuPressedListener(
   };
 }
 
+/// Listens for presses on the annotation menu,
+/// if [Config.overrideAnnotationMenuBehavior] is not null.
+///
+/// Returns a function that can cancel the listener.
 CancelListener startAnnotationMenuPressedListener(
     AnnotationMenuPressedChannelListener listener) {
   var subscription = _annotationMenuPressedChannel
@@ -201,7 +240,7 @@ CancelListener startAnnotationMenuPressedListener(
     dynamic annotationMenuItem =
         annotationMenuObject[EventParameters.annotationMenuItem];
     dynamic annotations = annotationMenuObject[EventParameters.annotations];
-    List<Annot> annotList = new List<Annot>();
+    List<Annot> annotList = new List<Annot>.empty(growable: true);
     for (dynamic annotation in annotations) {
       annotList.add(Annot.fromJson(annotation));
     }
@@ -213,6 +252,9 @@ CancelListener startAnnotationMenuPressedListener(
   };
 }
 
+/// Listens for when the leading navigation button is pressed.
+///
+/// Returns a function that can cancel the listener.
 CancelListener startLeadingNavButtonPressedListener(
     LeadingNavbuttonPressedlistener listener) {
   var subscription = _leadingNavButtonPressedChannel
@@ -226,6 +268,9 @@ CancelListener startLeadingNavButtonPressedListener(
   };
 }
 
+/// Listens for when a page is changed in the viewer.
+///
+/// Returns a function that can cancel the listener.
 CancelListener startPageChangedListener(PageChangedListener listener) {
   var subscription = _pageChangedChannel
       .receiveBroadcastStream(eventSinkId.pageChangedId.index)
@@ -242,6 +287,9 @@ CancelListener startPageChangedListener(PageChangedListener listener) {
   };
 }
 
+/// Listens for if the document's zoom ratio is changed.
+///
+/// Returns a function that can cancel the listener.
 CancelListener startZoomChangedListener(ZoomChangedListener listener) {
   var subscription = _zoomChangedChannel
       .receiveBroadcastStream(eventSinkId.zoomChangedId.index)
@@ -254,12 +302,13 @@ CancelListener startZoomChangedListener(ZoomChangedListener listener) {
 
 CancelListener startPageMovedListener(PageMovedListener listener) {
   var subscription = _pageMovedChannel
-    .receiveBroadcastStream(eventSinkId.pageMovedId.index)
-    .listen((pagesString) {
-      dynamic pagesObject = jsonDecode(pagesString);
-      dynamic previousPageNumber = pagesObject[EventParameters.previousPageNumber];
-      dynamic pageNumber = pagesObject[EventParameters.pageNumber];
-      listener(previousPageNumber, pageNumber);
+      .receiveBroadcastStream(eventSinkId.pageMovedId.index)
+      .listen((pagesString) {
+    dynamic pagesObject = jsonDecode(pagesString);
+    dynamic previousPageNumber =
+        pagesObject[EventParameters.previousPageNumber];
+    dynamic pageNumber = pagesObject[EventParameters.pageNumber];
+    listener(previousPageNumber, pageNumber);
   }, cancelOnError: true);
 
   return () {
