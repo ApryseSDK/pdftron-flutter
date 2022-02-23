@@ -3,7 +3,20 @@
 
 /// To acquire a deeper understanding of how events are handled, look at the
 /// native implementations.
-part of pdftron;
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/rendering.dart';
+
+import 'options.dart';
+import 'document_view.dart';
+import 'config.dart';
+import 'constants.dart';
 
 const _exportAnnotationCommandChannel =
     const EventChannel('export_annotation_command_event');

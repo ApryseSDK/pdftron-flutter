@@ -1,4 +1,4 @@
-part of pdftron;
+
 
 /// Defines the names of the functions.
 class Functions {
