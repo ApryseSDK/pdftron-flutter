@@ -38,7 +38,7 @@ API documentation is available on:
 - Flutter >= 2.0.0
 
 ## Null Safety
-Dart now supports [sound null safety](https://dart.dev/null-safety), which is available starting from Dart 2.12.0 and Flutter 2.0.0.
+Dart now supports [sound null safety](https://dart.dev/null-safety), which is available starting from Dart 2.12.0 and Flutter 2.0.0. Here is a guide to migrate to [null safety](https://dart.dev/null-safety/migration-guide)
 
 If you would like to use our null safe SDK, it is available in the following places:
 - [GitHub](https://github.com/PDFTron/pdftron-flutter)
