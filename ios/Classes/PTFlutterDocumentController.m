@@ -107,6 +107,8 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     self.needsRemoteDocumentLoaded = NO;
 
     [super openDocumentWithURL:url password:password];
+    
+    [self applyLayoutMode];
 }
 
 - (void)openDocumentWithPDFDoc:(PTPDFDoc *)document
@@ -117,6 +119,8 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     self.needsRemoteDocumentLoaded = NO;
 
     [super openDocumentWithPDFDoc:document];
+    
+    [self applyLayoutMode];
 }
 
 - (BOOL)isTopToolbarEnabled
