@@ -210,6 +210,8 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
             self.settingsViewController.pageRotationHidden = value;
         } else if ([viewModeItemString isEqualToString:PTViewModeCropKey]) {
             self.settingsViewController.cropPagesHidden = value;
+        } else if ([viewModeItemString isEqualToString:PTViewModeVerticalScrollingKey]) {
+            self.settingsViewController.viewModeContinuousHidden = value;
         }
     }
 }

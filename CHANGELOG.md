@@ -1,3 +1,6 @@
+# 1.0.0-beta.7 - March 4, 2021
+
+- Add additional viewMode hiding options (vertical scrolling)
 # 1.0.0-beta.5 - Februrary 22, 2021
 
 - Toggle widget and plugin (internal sample)

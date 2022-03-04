@@ -375,6 +375,7 @@ class ViewModePickerItem {
   static const Crop = "viewModeCrop";
   static const Rotation = "viewModeRotation";
   static const ColorMode = "viewModeColorMode";
+  static const VerticalScrolling = "viewModeVerticalScrolling";
 }
 
 /// Defines the type of eraser used in the viewer.
