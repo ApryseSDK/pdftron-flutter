@@ -512,6 +512,7 @@ public class PluginUtils {
     public static final String VIEW_MODE_CROP = "viewModeCrop";
     public static final String VIEW_MODE_ROTATION = "viewModeRotation";
     public static final String VIEW_MODE_COLOR_MODE = "viewModeColorMode";
+    public static final String VIEW_MODE_VERTICAL_SCROLLING = "viewModeVerticalScrolling";
 
     // Default Eraser Type
     public static final String DEFAULT_ERASER_TYPE_ANNOTATION = "annotationEraser";
@@ -1095,6 +1096,10 @@ public class PluginUtils {
                         }
                         if (VIEW_MODE_ROTATION.equals(array.getString(i))) {
                             viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_ROTATION);
+                        }
+                        if (VIEW_MODE_VERTICAL_SCROLLING.equals(array.getString(i))) {
+                            viewModePickerItems
+                                    .add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_CONTINUOUS);
                         }
                     }
                 }
