@@ -16,6 +16,7 @@ import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.Field;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
+import com.pdftron.pdf.PDFNet;
 import com.pdftron.pdf.Page;
 import com.pdftron.pdf.Rect;
 import com.pdftron.pdf.ViewChangeCollection;
@@ -299,6 +300,7 @@ public class PluginUtils {
     public static final String FUNCTION_GET_CURRENT_PAGE = "getCurrentPage";
     public static final String FUNCTION_GROUP_ANNOTATIONS = "groupAnnotations";
     public static final String FUNCTION_UNGROUP_ANNOTATIONS = "ungroupAnnotations";
+    public static final String FUNCTION_GET_SYSTEM_FONT_LIST = "getSystemFontList";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2385,10 +2387,20 @@ public class PluginUtils {
             case FUNCTION_UNGROUP_ANNOTATIONS: {
                 checkFunctionPrecondition(component);
                 try {
-                    ungroupAnnotations(call, result, component);
+                    ungroupAnnotations(result, component);
                 } catch (JSONException ex) {
                     ex.printStackTrace();
                     result.error(Integer.toString(ex.hashCode()), "JSONException Error: " + ex, null);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+                break;
+            }
+            case FUNCTION_GET_SYSTEM_FONT_LIST: {
+                checkFunctionPrecondition(component);
+                try {
+                    getSystemFontList(call, result, component);
                 } catch (PDFNetException ex) {
                     ex.printStackTrace();
                     result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
@@ -2892,6 +2904,10 @@ public class PluginUtils {
         }
 
         result.success(pdfViewCtrl.getCurrentPage());
+    }
+
+    private static void getSystemFontList(MethodChannel.Result result, ViewerComponent component) {
+        result.success(PDFNet.getSystemFontList());
     }
 
     private static void setFlagsForAnnotations(String annotationsWithFlags, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {

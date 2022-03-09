@@ -458,4 +458,9 @@ class PdftronFlutter {
   static Future<int?> getCurrentPage() {
     return _channel.invokeMethod(Functions.getCurrentPage);
   }
+
+  /// Gets font List for the OS (Android only)
+  static Future<String?> getSystemFontList() {
+    return _channel.invokeMethod(Functions.getSystemFontList);
+  }
 }
