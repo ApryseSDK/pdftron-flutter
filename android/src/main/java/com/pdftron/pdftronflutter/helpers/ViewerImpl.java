@@ -12,6 +12,7 @@ import com.pdftron.pdf.Field;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.annots.Widget;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdf.model.UserBookmarkItem;
 import com.pdftron.pdf.tools.Pan;
 import com.pdftron.pdf.tools.QuickMenu;
 import com.pdftron.pdf.tools.QuickMenuItem;
@@ -184,6 +185,11 @@ public class ViewerImpl {
             if (eventSink != null) {
                 eventSink.success(bookmarkJson);
             }
+        }
+
+        @Override
+        public void onBookmarkModified(@NonNull List<UserBookmarkItem> bookmarkItems) {
+
         }
 
         @Override

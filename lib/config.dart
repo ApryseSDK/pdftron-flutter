@@ -81,6 +81,7 @@ class Config {
   var _annotationManagerEditMode;
   var _annotationManagerUndoMode;
   var _annotationToolbarAlignment;
+  var _quickBookmarkCreation;
 
   Config();
 
@@ -497,6 +498,9 @@ class Config {
   set annotationToolbarAlignment(String value) =>
       _annotationToolbarAlignment = value;
 
+  /// Sets the bookmark creation as a part of the toolbar
+  set quickBookmarkCreation(bool value) => _quickBookmarkCreation = value;
+
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
         _disabledTools = json['disabledTools'],
@@ -578,7 +582,8 @@ class Config {
         _annotationManagerEditMode = json['annotationManagerEditMode'],
         _annotationManagerUndoMode = json['annotationManagerUndoMode'],
         _annotationToolbarAlignment = json['annotationToolbarAlignment'],
-        _outlineListEditingEnabled = json['outlineListEditingEnabled'];
+        _outlineListEditingEnabled = json['outlineListEditingEnabled'],
+        _quickBookmarkCreation = json['quickBookmarkCreation'];
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -657,5 +662,6 @@ class Config {
         'annotationManagerUndoMode': _annotationManagerUndoMode,
         'annotationToolbarAlignment': _annotationToolbarAlignment,
         'outlineListEditingEnabled': _outlineListEditingEnabled,
+        'quickBookmarkCreation': _quickBookmarkCreation,
       };
 }

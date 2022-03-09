@@ -181,6 +181,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_MANAGER_UNDO_MODE = "annotationManagerUndoMode";
     public static final String KEY_CONFIG_ANNOTATION_MANAGER_EDIT_MODE = "annotationManagerEditMode";
     public static final String KEY_CONFIG_ANNOTATION_TOOLBAR_GRAVITY = "annotationToolbarAlignment";
+    public static final String KEY_CONFIG_QUICK_BOOKMARK_CREATION = "quickBookmarkCreation";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -1168,6 +1169,10 @@ public class PluginUtils {
                         gravity = Gravity.START;
                     }
                     builder.toolbarItemGravity(gravity);
+                }
+                if (!configJson.isNull(KEY_CONFIG_QUICK_BOOKMARK_CREATION)) {
+                    Boolean quickBookmark = configJson.getBoolean(KEY_CONFIG_QUICK_BOOKMARK_CREATION);
+                    builder.quickBookmarkCreation(quickBookmark);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
