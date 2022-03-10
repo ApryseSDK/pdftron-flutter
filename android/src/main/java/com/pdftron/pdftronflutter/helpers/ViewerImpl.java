@@ -174,6 +174,11 @@ public class ViewerImpl {
     private ToolManager.PdfDocModificationListener mPdfDocModificationListener = new ToolManager.PdfDocModificationListener() {
         @Override
         public void onBookmarkModified() {
+
+        }
+
+        @Override
+        public void onBookmarkModified(@NonNull List<UserBookmarkItem> bookmarkItems) {
             String bookmarkJson = null;
             try {
                 bookmarkJson = PluginUtils.generateBookmarkJson(mViewerComponent);
@@ -185,11 +190,6 @@ public class ViewerImpl {
             if (eventSink != null) {
                 eventSink.success(bookmarkJson);
             }
-        }
-
-        @Override
-        public void onBookmarkModified(@NonNull List<UserBookmarkItem> bookmarkItems) {
-
         }
 
         @Override
