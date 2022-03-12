@@ -1420,7 +1420,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         PTAnnotationToolbarAnnotate: toolGroupManager.annotateItemGroup,
         PTAnnotationToolbarDraw: toolGroupManager.drawItemGroup,
         PTAnnotationToolbarInsert: toolGroupManager.insertItemGroup,
-        //PTAnnotationToolbarFillAndSign: [NSNull null], // not implemented
+        PTAnnotationToolbarFillAndSign: toolGroupManager.fillAndSignItemGroup, 
         PTAnnotationToolbarPrepareForm: toolGroupManager.prepareFormItemGroup,
         PTAnnotationToolbarMeasure: toolGroupManager.measureItemGroup,
         PTAnnotationToolbarRedaction: toolGroupManager.redactItemGroup,

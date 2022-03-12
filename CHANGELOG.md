@@ -1,3 +1,7 @@
+# 1.0.0-beta.8 - March 11, 2021
+
+- Bug Fixes
+
 # 1.0.0-beta.7 - March 4, 2021
 
 - Add additional viewMode hiding options (vertical scrolling)
