@@ -458,4 +458,11 @@ class PdftronFlutter {
   static Future<int?> getCurrentPage() {
     return _channel.invokeMethod(Functions.getCurrentPage);
   }
+
+  // Returns the current zoom scale of current document viewer.
+  //
+  // Returns a Promise.
+  static Future<double?> getZoom() {
+    return _channel.invokeMethod(Functions.getZoom);
+  }
 }

@@ -472,4 +472,11 @@ class DocumentViewController {
   Future<int?> getCurrentPage() {
     return _channel.invokeMethod(Functions.getCurrentPage);
   }
+
+  // Returns the current zoom scale of current document viewer.
+  //
+  // Returns a Promise.
+  Future<double?> getZoom() {
+    return _channel.invokeMethod(Functions.getZoom);
+  }
 }

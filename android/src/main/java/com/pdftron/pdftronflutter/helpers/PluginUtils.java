@@ -299,6 +299,7 @@ public class PluginUtils {
     public static final String FUNCTION_GET_CURRENT_PAGE = "getCurrentPage";
     public static final String FUNCTION_GROUP_ANNOTATIONS = "groupAnnotations";
     public static final String FUNCTION_UNGROUP_ANNOTATIONS = "ungroupAnnotations";
+    public static final String FUNCTION_GET_ZOOM = "getZoom";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2395,6 +2396,10 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_GET_ZOOM: {
+                checkFunctionPrecondition(component);
+                getZoom(result, component);
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -2892,6 +2897,16 @@ public class PluginUtils {
         }
 
         result.success(pdfViewCtrl.getCurrentPage());
+    }
+
+    private static void getZoom(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        double zoom = pdfViewCtrl.getZoom();
+        result.success(zoom);
     }
 
     private static void setFlagsForAnnotations(String annotationsWithFlags, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
