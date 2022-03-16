@@ -244,6 +244,7 @@ static NSString * const PTOpenTabSwitcherKey = @"openTabSwitcher";
 static NSString * const PTOpenGoToPageViewKey = @"openGoToPageView";
 static NSString * const PTOpenNavigationListsKey = @"openNavigationLists";
 static NSString * const PTGetCurrentPageKey = @"getCurrentPage";
+static NSString * const PTGetZoomKey = @"getZoom";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";

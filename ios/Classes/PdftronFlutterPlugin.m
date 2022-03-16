@@ -1500,6 +1500,8 @@
         [self openNavigationLists:result];
     } else if ([call.method isEqualToString:PTGetCurrentPageKey]) {
         [self getCurrentPage:result];
+    } else if ([call.method isEqualToString:PTGetZoomKey]) {
+        [self getZoom:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -2675,6 +2677,12 @@
 - (void)getCurrentPage:(FlutterResult)flutterResult {
     PTDocumentController *documentController = [self getDocumentController];
     flutterResult([NSNumber numberWithInt:documentController.pdfViewCtrl.currentPage]);
+}
+
+- (void)getZoom:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    double zoom = [documentController.pdfViewCtrl GetZoom];
+    flutterResult([NSNumber numberWithDouble:zoom]);
 }
 
 - (void)getDocumentPath:(FlutterResult)flutterResult {
