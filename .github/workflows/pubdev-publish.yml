@@ -23,7 +23,7 @@ jobs:
           "idToken":"${{ secrets.IDTOKEN }}"
           "tokenEndpoint":"https://accounts.google.com/o/oauth2/token",
           "scopes": [ "openid", "https://www.googleapis.com/auth/userinfo.email" ],
-          "expiration": 1570721159347
+          "expiration": ${{ secrets.EXPIRATION }}
         }
         EOF
     - name: Publish package
