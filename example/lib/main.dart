@@ -213,8 +213,7 @@ class _ViewerState extends State<Viewer> {
 
     await controller.openDocument(_document, config: config);
 
-    var zoom = await controller.getZoom();
-    print("zoon: $zoom");
+ await controller.setZoomLimits(ZoomLimitMode.Absolute, 1.0, 3.5);
   }
 
   Future<void> _showMyDialog() async {

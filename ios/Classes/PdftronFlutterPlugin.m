@@ -1502,6 +1502,8 @@
         [self getCurrentPage:result];
     } else if ([call.method isEqualToString:PTGetZoomKey]) {
         [self getZoom:result];
+    } else if ([call.method isEqualToString:PTSetZoomLimitsKey]) {
+        [self setZoomLimits:result call:call];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -2683,6 +2685,21 @@
     PTDocumentController *documentController = [self getDocumentController];
     double zoom = [documentController.pdfViewCtrl GetZoom];
     flutterResult([NSNumber numberWithDouble:zoom]);
+}
+
+- (void)setZoomLimits:(FlutterResult)flutterResult call:(FlutterMethodCall*)call {
+    PTDocumentController *documentController = [self getDocumentController];
+    NSString * zoomLimitMode = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTZoomLimitModeKey]];
+    double maximum = [call.arguments[PTMaximumKey] doubleValue];
+    double minimum = [call.arguments[PTMinimumKey] doubleValue];
+    if ([zoomLimitMode isEqualToString:PTZoomLimitAbsoluteKey]) {
+        [documentController.pdfViewCtrl SetZoomLimits:e_trn_zoom_limit_absolute Minimum:minimum Maxiumum:maximum];
+    } else if ([zoomLimitMode isEqualToString:PTZoomLimitRelativeKey]) {
+        [documentController.pdfViewCtrl SetZoomLimits:e_trn_zoom_limit_relative Minimum:minimum Maxiumum:maximum];
+    } else if ([zoomLimitMode isEqualToString:PTZoomLimitNoneKey]) {
+        [documentController.pdfViewCtrl SetZoomLimits:e_trn_zoom_limit_none Minimum:minimum Maxiumum:maximum];
+    }
+    flutterResult(nil);
 }
 
 - (void)getDocumentPath:(FlutterResult)flutterResult {

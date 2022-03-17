@@ -104,6 +104,12 @@ public class PluginUtils {
     public static final String KEY_EXPORT_FORMAT_BMP = "BMP";
     public static final String KEY_EXPORT_FORMAT_JPEG = "JPEG";
     public static final String KEY_EXPORT_FORMAT_PNG = "PNG";
+    public static final String KEY_ZOOM_LIMIT_MODE = "zoomLimitMode";
+    public static final String KEY_MAXIMUM = "maximum";
+    public static final String KEY_MINIMUM = "minimum";
+    public static final String KEY_ZOOM_LIMIT_MODE_NONE = "none";
+    public static final String KEY_ZOOM_LIMIT_MODE_ABSOLUTE = "absolute";
+    public static final String KEY_ZOOM_LIMIT_MODE_RELATIVE = "relative";
 
     public static final String KEY_REQUESTED_ORIENTATION = "requestedOrientation";
 
@@ -300,6 +306,7 @@ public class PluginUtils {
     public static final String FUNCTION_GROUP_ANNOTATIONS = "groupAnnotations";
     public static final String FUNCTION_UNGROUP_ANNOTATIONS = "ungroupAnnotations";
     public static final String FUNCTION_GET_ZOOM = "getZoom";
+    public static final String FUNCTION_SET_ZOOM_LIMITS = "setZoomLimits";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2400,6 +2407,15 @@ public class PluginUtils {
                 checkFunctionPrecondition(component);
                 getZoom(result, component);
             }
+            case FUNCTION_SET_ZOOM_LIMITS: {
+                checkFunctionPrecondition(component);
+                try {
+                    setZoomLimits(call, result, component);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -2408,6 +2424,32 @@ public class PluginUtils {
     }
 
     // Methods
+
+    private static void setZoomLimits(MethodCall call, MethodChannel.Result result, ViewerComponent component)
+            throws PDFNetException {
+        String mode = call.argument(KEY_ZOOM_LIMIT_MODE);
+        double minimum = call.argument(KEY_MINIMUM);
+        double maximum = call.argument(KEY_MAXIMUM);
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (null == pdfViewCtrl) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        PDFViewCtrl.ZoomLimitMode limitMode = null;
+
+        switch (mode) {
+            case KEY_ZOOM_LIMIT_MODE_ABSOLUTE:
+                limitMode = PDFViewCtrl.ZoomLimitMode.ABSOLUTE;
+                break;
+            case KEY_ZOOM_LIMIT_MODE_RELATIVE:
+                limitMode = PDFViewCtrl.ZoomLimitMode.RELATIVE;
+                break;
+            case KEY_ZOOM_LIMIT_MODE_NONE:
+                limitMode = PDFViewCtrl.ZoomLimitMode.NONE;
+                break;
+        }
+        pdfViewCtrl.setZoomLimits(limitMode, minimum, maximum);
+    }
 
     private static void ungroupAnnotations(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
         String annotationList = call.argument(KEY_ANNOTATION_LIST);

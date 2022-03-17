@@ -465,4 +465,14 @@ class PdftronFlutter {
   static Future<double?> getZoom() {
     return _channel.invokeMethod(Functions.getZoom);
   }
+
+  // Sets the minimum and maximum zoom bounds of current viewer.
+  static Future<void> setZoomLimits(
+      String mode, double minimum, double maximum) {
+    return _channel.invokeMethod(Functions.setZoomLimits, <String, dynamic>{
+      'zoomLimitMode': mode,
+      'minimum': minimum,
+      'maximum': maximum,
+    });
+  }
 }
