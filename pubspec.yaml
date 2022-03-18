@@ -1,10 +1,14 @@
 name: pdftron_flutter
-description: A new flutter plugin project.
-version: 0.0.126
-homepage:
+description: A convenience wrapper to build Flutter apps that use the PDFTron mobile SDK for smooth, flexible, and stand-alone document viewing.
+version: 1.0.0-beta.8
+homepage: https://www.pdftron.com
+repository: https://github.com/PDFTron/pdftron-flutter
+issue_tracker: https://github.com/PDFTron/pdftron-flutter/issues
+documentation: https://github.com/PDFTron/pdftron-flutter/blob/master/API.md
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
+  flutter: ">=1.12.0"
 
 dependencies:
   flutter:
@@ -20,8 +24,12 @@ flutter:
   # be modified. They are used by the tooling to maintain consistency when
   # adding or updating assets for this project.
   plugin:
-    androidPackage: com.pdftron.pdftronflutter
-    pluginClass: PdftronFlutterPlugin
+    platforms:
+      android:
+        package: com.pdftron.pdftronflutter
+        pluginClass: PdftronFlutterPlugin
+      ios:
+        pluginClass: PdftronFlutterPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
