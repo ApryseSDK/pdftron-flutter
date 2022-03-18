@@ -459,16 +459,27 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.getCurrentPage);
   }
 
+  /// Gets a list of absolute file paths to PDFs containing the saved signatures.
+  ///
+  /// Returns a promise
   static Future<List<String>> getSavedSignatures() {
     return _channel
         .invokeMethod(Functions.getSavedSignatures);
   }
 
+  /// Retrieves the absolute file path to the folder containing the saved signature PDFs.
+  /// For Android, to get the folder containing the saved signature JPGs, use getSavedSignatureJpgFolder.
+  ///
+  /// Returns a Promise.
   static Future<String> getSavedSignatureFolder() {
     return _channel
         .invokeMethod(Functions.getSavedSignatureFolder);
   }
 
+  /// Retrieves the absolute file path to the folder containing the saved signature JPGs. Android only.
+  /// To get the folder containing the saved signature PDFs, use getSavedSignatureFolder.
+  ///
+  /// Returns a Promise.
   static Future<String> getSavedSignatureJpgFolder() {
     return _channel
         .invokeMethod(Functions.getSavedSignatureJpgFolder);
