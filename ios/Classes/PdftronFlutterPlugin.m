@@ -1500,6 +1500,8 @@
         [self openNavigationLists:result];
     } else if ([call.method isEqualToString:PTGetCurrentPageKey]) {
         [self getCurrentPage:result];
+    } else if ([call.method isEqualToString:PTZoomWithCenterKey]) {
+        [self zoomWithCenter:result call:call];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -3160,6 +3162,15 @@
         [documentController showNavigationLists];
     }
 
+    flutterResult(nil);
+}
+
+-(void)zoomWithCenter:(FlutterResult)flutterResult call:(FlutterMethodCall*)call {
+    PTDocumentController *documentController = [self getDocumentController];
+    double zoom = [call.arguments[PTZoomRatioKey] doubleValue];
+    int x = [call.arguments[PTXKey] intValue];
+    int y = [call.arguments[PTYKey] intValue];
+    [documentController.pdfViewCtrl SetZoomX:x Y:y Zoom:zoom];
     flutterResult(nil);
 }
 
