@@ -20,7 +20,7 @@ jobs:
         {
           "accessToken":"${{ secrets.ACCESSTOKEN }}",
           "refreshToken":"${{ secrets.REFRESHTOKEN }}",
-          "idToken":"${{ secrets.IDTOKEN }}"
+          "idToken":"${{ secrets.IDTOKEN }}",
           "tokenEndpoint":"https://accounts.google.com/o/oauth2/token",
           "scopes": [ "openid", "https://www.googleapis.com/auth/userinfo.email" ],
           "expiration": ${{ secrets.EXPIRATION }}
