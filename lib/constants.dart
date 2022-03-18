@@ -61,6 +61,7 @@ class Functions {
   static const openNavigationLists = "openNavigationLists";
   static const getCurrentPage = "getCurrentPage";
   static const zoomWithCenter = "zoomWithCenter";
+  static const zoomToRect = "zoomToRect";
 }
 
 /// Defines the parameters of the functions.
