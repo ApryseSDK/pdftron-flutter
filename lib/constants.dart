@@ -8,6 +8,8 @@ class Functions {
   static const openDocument = "openDocument";
   static const getSavedSignatures = "getSavedSignatures";
   static const getSavedSignatureFolder = "getSavedSignatureFolder";
+
+/// Android only
   static const getSavedSignatureJpgFolder = "getSavedSignatureJpgFolder";
   static const importAnnotations = "importAnnotations";
   static const exportAnnotations = "exportAnnotations";
