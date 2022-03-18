@@ -186,6 +186,9 @@ public class PluginUtils {
     public static final String KEY_Y1 = "y1";
     public static final String KEY_X2 = "x2";
     public static final String KEY_Y2 = "y2";
+    public static final String KEY_X = "x";
+    public static final String KEY_Y = "y";
+    public static final String KEY_ZOOM = "zoom";
     public static final String KEY_WIDTH = "width";
     public static final String KEY_HEIGHT = "height";
     public static final String KEY_RECT = "rect";
@@ -299,6 +302,7 @@ public class PluginUtils {
     public static final String FUNCTION_GET_CURRENT_PAGE = "getCurrentPage";
     public static final String FUNCTION_GROUP_ANNOTATIONS = "groupAnnotations";
     public static final String FUNCTION_UNGROUP_ANNOTATIONS = "ungroupAnnotations";
+    public static final String FUNCTION_ZOOM_WITH_CENTER = "zoomWithCenter";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2395,6 +2399,10 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_ZOOM_WITH_CENTER: {
+                checkFunctionPrecondition(component);
+                zoomWithCenter(call, result, component);
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -3608,6 +3616,18 @@ public class PluginUtils {
                 pdfViewCtrl.docUnlock();
             }
         }
+    }
+
+    private static void zoomWithCenter(MethodCall call, MethodChannel.Result result, ViewerComponent component){
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        double zoom = call.argument(KEY_ZOOM);
+        int x = call.argument(KEY_X);
+        int y = call.argument(KEY_Y);
+        pdfViewCtrl.setZoom(x, y, zoom);
     }
 
     // Events

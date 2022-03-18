@@ -60,6 +60,7 @@ class Functions {
   static const openGoToPageView = "openGoToPageView";
   static const openNavigationLists = "openNavigationLists";
   static const getCurrentPage = "getCurrentPage";
+  static const zoomWithCenter = "zoomWithCenter";
 }
 
 /// Defines the parameters of the functions.

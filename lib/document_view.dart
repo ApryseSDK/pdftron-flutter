@@ -472,4 +472,14 @@ class DocumentViewController {
   Future<int?> getCurrentPage() {
     return _channel.invokeMethod(Functions.getCurrentPage);
   }
+
+  /// Sets the zoom scale in the current document viewer with a zoom center.
+  ///
+  /// zoom: the zoom ratio to be set
+  /// x: the x-coordinate of the zoom center
+  /// y: the y-coordinate of the zoom center
+  Future<void> zoomWithCenter(double zoom, int x, int y) {
+    return _channel.invokeMethod(Functions.zoomWithCenter,
+        <String, dynamic>{"zoom": zoom, "x": x, "y": y});
+  }
 }
