@@ -1,3 +1,5 @@
+# 1.0.0-beta.10 - March 18, 2021
+- Minor bug fixes in pubspec.yaml and other files 
 # 1.0.0-beta.9 - March 18, 2021
 - Implemented the following APIs:
 - GetSavedSignatures()
