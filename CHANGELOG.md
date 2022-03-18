@@ -1,3 +1,8 @@
+# 1.0.0-beta.9 - March 18, 2021
+- Implemented the following APIs:
+- GetSavedSignatures()
+- GetSavedSignaturesFolder()
+- GetSavedSignaturesJpgFolder()
 # 1.0.0-beta.8 - March 11, 2021
 
 - Bug Fixes

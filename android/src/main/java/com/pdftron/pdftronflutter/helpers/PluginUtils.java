@@ -49,6 +49,7 @@ import com.pdftron.pdf.utils.BookmarkManager;
 import com.pdftron.pdf.utils.DialogGoToPage;
 import com.pdftron.pdf.utils.CommonToast;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
+import com.pdftron.pdf.utils.StampManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.utils.ViewerUtils;
 import com.pdftron.pdf.widget.bottombar.builder.BottomBarBuilder;
@@ -299,6 +300,9 @@ public class PluginUtils {
     public static final String FUNCTION_GET_CURRENT_PAGE = "getCurrentPage";
     public static final String FUNCTION_GROUP_ANNOTATIONS = "groupAnnotations";
     public static final String FUNCTION_UNGROUP_ANNOTATIONS = "ungroupAnnotations";
+    public static final String FUNCTION_GET_SAVED_SIGNATURES = "getSavedSignatures";
+    public static final String FUNCTION_GET_SAVED_SIGNATURE_FOLDER = "getSavedSignatureFolder";
+    public static final String FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER = "getSavedSignatureJpgFolder";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -755,7 +759,8 @@ public class PluginUtils {
         }
     }
 
-    public static ConfigInfo handleOpenDocument(@NonNull ViewerConfig.Builder builder, @NonNull ToolManagerBuilder toolManagerBuilder,
+    public static ConfigInfo handleOpenDocument(@NonNull ViewerConfig.Builder builder,
+            @NonNull ToolManagerBuilder toolManagerBuilder,
             @NonNull PDFViewCtrlConfig pdfViewCtrlConfig, @NonNull String document, @NonNull Context context,
             String configStr) {
 
@@ -1064,7 +1069,7 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_MAX_TAB_COUNT)) {
                     int maxTabCount = configJson.getInt(KEY_CONFIG_MAX_TAB_COUNT);
                     builder.maximumTabCount(maxTabCount);
-                }
+                } 
                 if (!configJson.isNull(KEY_CONFIG_OPEN_URL_PATH)) {
                     String openUrlPath = configJson.getString(KEY_CONFIG_OPEN_URL_PATH);
                     configInfo.setOpenUrlPath(openUrlPath);
@@ -2369,6 +2374,21 @@ public class PluginUtils {
                 getCurrentPage(result, component);
                 break;
             }
+            case FUNCTION_GET_SAVED_SIGNATURES: {
+                checkFunctionPrecondition(component);
+                getSavedSignatures(result, component);
+                break;
+            }
+            case FUNCTION_GET_SAVED_SIGNATURE_FOLDER: {
+                checkFunctionPrecondition(component);
+                getSavedSignatureFolder(result, component);
+                break;
+            }
+            case FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER: {
+                checkFunctionPrecondition(component);
+                getSavedSignatureJpgFolder(result, component);
+                break;
+            }
             case FUNCTION_GROUP_ANNOTATIONS: {
                 checkFunctionPrecondition(component);
                 try {
@@ -2894,7 +2914,55 @@ public class PluginUtils {
         result.success(pdfViewCtrl.getCurrentPage());
     }
 
-    private static void setFlagsForAnnotations(String annotationsWithFlags, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
+    private static void getSavedSignatures(MethodChannel.Result result, @NonNull ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        List<String> signatures = new ArrayList<String>();
+        Context context = pdfViewCtrl.getContext();
+        if (context != null) {
+            File[] files = StampManager.getInstance().getSavedSignatures(context);
+            for (int i = 0; i < files.length; i++) {
+                signatures.add(files[i].getAbsolutePath());
+            }
+        }
+        result.success(signatures);
+    }
+
+    private static void getSavedSignatureFolder(MethodChannel.Result result, @NonNull ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        String filePath = "";
+        Context context = pdfViewCtrl.getContext();
+        if (context != null) {
+            File file = StampManager.getInstance().getSavedSignatureFolder(context);
+            filePath = file.getAbsolutePath();
+        }
+        result.success(filePath);
+    }
+
+    private static void getSavedSignatureJpgFolder(MethodChannel.Result result, @NonNull ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        String filePath = "";
+        Context context = pdfViewCtrl.getContext();
+        if (context != null) {
+            File file = StampManager.getInstance().getSavedSignatureJpgFolder(context);
+            filePath = file.getAbsolutePath();
+        }
+        result.success(filePath);
+    }
+
+    private static void setFlagsForAnnotations(String annotationsWithFlags, MethodChannel.Result result,
+            ViewerComponent component) throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         ToolManager toolManager = component.getToolManager();
@@ -3658,8 +3726,7 @@ public class PluginUtils {
                                 eventSink.success(xfdfCommand);
                             }
                         }
-                    }
-            );
+                    });
         }
     }
 
