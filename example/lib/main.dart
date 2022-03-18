@@ -212,7 +212,7 @@ class _ViewerState extends State<Viewer> {
     });
 
     await controller.openDocument(_document, config: config);
-    await controller.zoomWithCenter(3, 50, 50);
+    await controller.zoomWithCenter(2.5, 50, 50);
   }
 
   Future<void> _showMyDialog() async {

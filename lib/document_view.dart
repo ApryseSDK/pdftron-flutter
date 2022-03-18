@@ -482,4 +482,10 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.zoomWithCenter,
         <String, dynamic>{"zoom": zoom, "x": x, "y": y});
   }
+
+  /// Zoom the viewer to a specific rectangular area in a page.
+  /// 
+  /// pageNumber: the page number of the zooming area (1-indexed)
+  /// rect: The rectangular area with keys x1 (left), y1(bottom), y1(right), y2(top). Coordinates are in double
+  Future<void> zoomToRect(int pageNumber, )
 }
