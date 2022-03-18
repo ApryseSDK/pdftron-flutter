@@ -473,7 +473,7 @@ class PdftronFlutter {
   ///
   /// pageNumber: the page number of the zooming area (1-indexed)
   /// rect: The rectangular area with keys x1 (left), y1(bottom), y1(right), y2(top). Coordinates are in double
-  static Future<void> zoomToRect(int pageNumber, Map<String, int> rect) {
+  static Future<void> zoomToRect(int pageNumber, Map<String, double> rect) {
     return _channel.invokeMethod(Functions.zoomWithCenter, <String, dynamic>{
       Parameters.pageNumber: pageNumber,
       "x1": rect["x1"],

@@ -303,6 +303,7 @@ public class PluginUtils {
     public static final String FUNCTION_GROUP_ANNOTATIONS = "groupAnnotations";
     public static final String FUNCTION_UNGROUP_ANNOTATIONS = "ungroupAnnotations";
     public static final String FUNCTION_ZOOM_WITH_CENTER = "zoomWithCenter";
+    public static final String FUNCTION_ZOOM_TO_RECT = "zoomToRect";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2403,6 +2404,15 @@ public class PluginUtils {
                 checkFunctionPrecondition(component);
                 zoomWithCenter(call, result, component);
             }
+            case FUNCTION_ZOOM_TO_RECT: {
+                checkFunctionPrecondition(component);
+                try{
+                    zoomToRect(call, result, component);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -3628,6 +3638,28 @@ public class PluginUtils {
         int x = call.argument(KEY_X);
         int y = call.argument(KEY_Y);
         pdfViewCtrl.setZoom(x, y, zoom);
+        result.success(null);
+    }
+
+    private static void zoomToRect(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException{
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        try {
+            int pageNumber = call.argument(KEY_PAGE_NUMBER);
+            double x1 = call.argument(KEY_X1);
+            double y1 = call.argument(KEY_Y1);
+            double x2 = call.argument(KEY_X2);
+            double y2 = call.argument(KEY_Y2);
+            com.pdftron.pdf.Rect rect = new com.pdftron.pdf.Rect(x1, y1, x2, y2);
+            pdfViewCtrl.showRect(pageNumber, rect);
+        } catch (PDFNetException ex) {
+            ex.printStackTrace();
+        }
+        result.success(null);
+       
     }
 
     // Events
