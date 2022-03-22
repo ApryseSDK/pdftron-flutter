@@ -25,7 +25,7 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     lintOptions {
         disable 'InvalidPackage'
@@ -34,7 +34,7 @@ android {
     defaultConfig {
         applicationId "com.pdftron.pdftronflutterexample"
         minSdkVersion 21
-        targetSdkVersion 29
+        targetSdkVersion 30
         multiDexEnabled true
         manifestPlaceholders = [pdftronLicenseKey:PDFTRON_LICENSE_KEY]
         versionCode flutterVersionCode.toInteger()
