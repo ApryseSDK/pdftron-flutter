@@ -2406,6 +2406,7 @@ public class PluginUtils {
             case FUNCTION_GET_ZOOM: {
                 checkFunctionPrecondition(component);
                 getZoom(result, component);
+                break;
             }
             case FUNCTION_SET_ZOOM_LIMITS: {
                 checkFunctionPrecondition(component);
@@ -2415,6 +2416,7 @@ public class PluginUtils {
                     ex.printStackTrace();
                     result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
                 }
+                break;
             }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
