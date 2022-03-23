@@ -1,3 +1,5 @@
+# 1.0.0-beta.12 - March 23, 2021
+- QuickBookMarkConfig Option
 # 1.0.0-beta.11 - March 22, 2021
 - Update Android to v9.2.1
 
