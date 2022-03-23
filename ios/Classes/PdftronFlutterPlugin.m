@@ -742,6 +742,14 @@
                         }
                     }
                 }
+                else if([key isEqualToString:PTQuickBookmarkCreationKey])
+                {
+                    NSNumber* quickBookmarkCreation = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTQuickBookmarkCreationKey class:[NSNumber class] error:&error];
+
+                    if (!error && quickBookmarkCreation) {
+                        documentController.bookmarkPageButtonHidden = ![quickBookmarkCreation boolValue];
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
