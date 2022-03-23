@@ -51,9 +51,6 @@ class _DocumentViewState extends State<DocumentView> {
   }
 
   void _onPlatformViewCreated(int id) {
-    if (widget.onCreated == null) {
-      return;
-    }
     widget.onCreated(new DocumentViewController._(id));
   }
 }
@@ -487,5 +484,28 @@ class DocumentViewController {
       'minimum': minimum,
       'maximum': maximum,
     });
+  }
+
+  /// Gets a list of absolute file paths to PDFs containing the saved signatures.
+  ///
+  /// Returns a promise
+  Future<List<String>?> getSavedSignatures() {
+    return _channel.invokeMethod(Functions.getSavedSignatures);
+  }
+
+  /// Retrieves the absolute file path to the folder containing the saved signature PDFs.
+  /// For Android, to get the folder containing the saved signature JPGs, use getSavedSignatureJpgFolder.
+  ///
+  /// Returns a Promise.
+  Future<String?> getSavedSignatureFolder() {
+    return _channel.invokeMethod(Functions.getSavedSignatureFolder);
+  }
+
+  /// Retrieves the absolute file path to the folder containing the saved signature JPGs. Android only.
+  /// To get the folder containing the saved signature PDFs, use getSavedSignatureFolder.
+  ///
+  /// Returns a Promise.
+  Future<String?> getSavedSignatureJpgFolder() {
+    return _channel.invokeMethod(Functions.getSavedSignatureJpgFolder);
   }
 }

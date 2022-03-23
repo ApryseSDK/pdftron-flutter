@@ -742,6 +742,14 @@
                         }
                     }
                 }
+                else if([key isEqualToString:PTQuickBookmarkCreationKey])
+                {
+                    NSNumber* quickBookmarkCreation = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTQuickBookmarkCreationKey class:[NSNumber class] error:&error];
+
+                    if (!error && quickBookmarkCreation) {
+                        documentController.bookmarkPageButtonHidden = ![quickBookmarkCreation boolValue];
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
@@ -1504,6 +1512,10 @@
         [self getZoom:result];
     } else if ([call.method isEqualToString:PTSetZoomLimitsKey]) {
         [self setZoomLimits:result call:call];
+    } else if ([call.method isEqualToString:PTGetSavedSignaturesKey]) {
+        [self getSavedSignatures:result];
+    } else if ([call.method isEqualToString:PTGetSavedSignatureFolderKey]) {
+        [self getSavedSignatureFolder:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -2700,6 +2712,26 @@
         [documentController.pdfViewCtrl SetZoomLimits:e_trn_zoom_limit_none Minimum:minimum Maxiumum:maximum];
     }
     flutterResult(nil);
+}
+
+- (void)getSavedSignatures:(FlutterResult)flutterResult {
+    PTSignaturesManager *signaturesManager = [[PTSignaturesManager alloc] init];
+    NSUInteger numOfSignatures = [signaturesManager numberOfSavedSignatures];
+    NSMutableArray<NSString*> *signatures = [[NSMutableArray alloc] initWithCapacity:numOfSignatures];
+    
+    for (NSInteger i = 0; i < numOfSignatures; i++) {
+        signatures[i] = [[signaturesManager savedSignatureAtIndex:i] GetFileName];
+    }
+
+    flutterResult(signatures);
+}
+
+- (void)getSavedSignatureFolder:(FlutterResult)flutterResult {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+    NSString *libraryDirectory = paths[0];
+
+    NSString* fullPath = [libraryDirectory stringByAppendingPathComponent:@"PTSignaturesManager_signatureDirectory"];
+    flutterResult(fullPath);
 }
 
 - (void)getDocumentPath:(FlutterResult)flutterResult {

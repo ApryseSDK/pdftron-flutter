@@ -68,6 +68,8 @@ static NSString * const PTUserNameKey = @"userName";
 static NSString * const PTAnnotationManagerEditModeKey = @"annotationManagerEditMode";
 static NSString * const PTAnnotationManagerUndoModeKey = @"annotationManagerUndoMode";
 static NSString * const PTAnnotationToolbarAlignmentKey = @"annotationToolbarAlignment";
+static NSString * const PTQuickBookmarkCreationKey = @"quickBookmarkCreation";
+
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";
@@ -246,6 +248,8 @@ static NSString * const PTOpenNavigationListsKey = @"openNavigationLists";
 static NSString * const PTGetCurrentPageKey = @"getCurrentPage";
 static NSString * const PTGetZoomKey = @"getZoom";
 static NSString * const PTSetZoomLimitsKey = @"setZoomLimits";
+static NSString * const PTGetSavedSignaturesKey = @"getSavedSignatures";
+static NSString * const PTGetSavedSignatureFolderKey = @"getSavedSignatureFolder";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
