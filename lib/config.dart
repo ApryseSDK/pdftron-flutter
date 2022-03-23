@@ -499,6 +499,8 @@ class Config {
       _annotationToolbarAlignment = value;
 
   /// Sets the bookmark creation as a part of the toolbar
+  ///
+  /// Defaults to false
   set quickBookmarkCreation(bool value) => _quickBookmarkCreation = value;
 
   Config.fromJson(Map<String, dynamic> json)
