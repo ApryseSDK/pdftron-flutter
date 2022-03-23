@@ -2980,6 +2980,7 @@ public class PluginUtils {
     
     private static void getSavedSignatures(MethodChannel.Result result, @NonNull ViewerComponent component) {
         List<String> signatures = new ArrayList<String>();
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         Context context = pdfViewCtrl.getContext();
         if (context != null) {
             File[] files = StampManager.getInstance().getSavedSignatures(context);
