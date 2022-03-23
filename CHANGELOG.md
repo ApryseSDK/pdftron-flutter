@@ -1,3 +1,19 @@
+# 1.0.0-beta.11 - March 22, 2021
+- Update Android to v9.2.1
+
+# 1.0.0-beta.10 - March 18, 2021
+- Minor bug fixes in pubspec.yaml and other files 
+
+# 1.0.0-beta.9 - March 18, 2021
+- Implemented the following APIs:
+- GetSavedSignatures()
+- GetSavedSignaturesFolder()
+- GetSavedSignaturesJpgFolder()
+
+# 1.0.0-beta.8 - March 11, 2021
+
+- Bug Fixes
+
 # 1.0.0-beta.7 - March 4, 2021
 
 - Add additional viewMode hiding options (vertical scrolling)
