@@ -2475,7 +2475,13 @@ public class PluginUtils {
                 limitMode = PDFViewCtrl.ZoomLimitMode.NONE;
                 break;
         }
-        pdfViewCtrl.setZoomLimits(limitMode, minimum, maximum);
+        if (limitMode != null) {
+            try {
+                pdfViewCtrl.setZoomLimits(limitMode, minimum, maximum);
+            } catch (PDFNetException ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 
     private static void ungroupAnnotations(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
