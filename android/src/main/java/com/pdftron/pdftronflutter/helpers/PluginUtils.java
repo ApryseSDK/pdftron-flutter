@@ -49,6 +49,7 @@ import com.pdftron.pdf.utils.BookmarkManager;
 import com.pdftron.pdf.utils.DialogGoToPage;
 import com.pdftron.pdf.utils.CommonToast;
 import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
+import com.pdftron.pdf.utils.StampManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.utils.ViewerUtils;
 import com.pdftron.pdf.widget.bottombar.builder.BottomBarBuilder;
@@ -181,6 +182,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_MANAGER_UNDO_MODE = "annotationManagerUndoMode";
     public static final String KEY_CONFIG_ANNOTATION_MANAGER_EDIT_MODE = "annotationManagerEditMode";
     public static final String KEY_CONFIG_ANNOTATION_TOOLBAR_GRAVITY = "annotationToolbarAlignment";
+    public static final String KEY_CONFIG_QUICK_BOOKMARK_CREATION = "quickBookmarkCreation";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -305,6 +307,9 @@ public class PluginUtils {
     public static final String FUNCTION_UNGROUP_ANNOTATIONS = "ungroupAnnotations";
     public static final String FUNCTION_START_SEARCH_MODE = "startSearchMode";
     public static final String FUNCTION_EXIT_SEARCH_MODE = "exitSearchMode";
+    public static final String FUNCTION_GET_SAVED_SIGNATURES = "getSavedSignatures";
+    public static final String FUNCTION_GET_SAVED_SIGNATURE_FOLDER = "getSavedSignatureFolder";
+    public static final String FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER = "getSavedSignatureJpgFolder";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -518,10 +523,11 @@ public class PluginUtils {
     public static final String VIEW_MODE_CROP = "viewModeCrop";
     public static final String VIEW_MODE_ROTATION = "viewModeRotation";
     public static final String VIEW_MODE_COLOR_MODE = "viewModeColorMode";
+    public static final String VIEW_MODE_VERTICAL_SCROLLING = "viewModeVerticalScrolling";
 
     // Default Eraser Type
     public static final String DEFAULT_ERASER_TYPE_ANNOTATION = "annotationEraser";
-    public static final String DEFAULT_ERASER_TYPE_HYBRID = "hybrideEraser";
+    public static final String DEFAULT_ERASER_TYPE_HYBRID = "hybridEraser";
     public static final String DEFAULT_ERASER_TYPE_INK = "inkEraser";
 
     // Reflow Orientation
@@ -1082,7 +1088,7 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_MAX_TAB_COUNT)) {
                     int maxTabCount = configJson.getInt(KEY_CONFIG_MAX_TAB_COUNT);
                     builder.maximumTabCount(maxTabCount);
-                }
+                } 
                 if (!configJson.isNull(KEY_CONFIG_OPEN_URL_PATH)) {
                     String openUrlPath = configJson.getString(KEY_CONFIG_OPEN_URL_PATH);
                     configInfo.setOpenUrlPath(openUrlPath);
@@ -1115,6 +1121,10 @@ public class PluginUtils {
                         }
                         if (VIEW_MODE_ROTATION.equals(array.getString(i))) {
                             viewModePickerItems.add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_ROTATION);
+                        }
+                        if (VIEW_MODE_VERTICAL_SCROLLING.equals(array.getString(i))) {
+                            viewModePickerItems
+                                    .add(ViewModePickerDialogFragment.ViewModePickerItems.ITEM_ID_CONTINUOUS);
                         }
                     }
                 }
@@ -1183,6 +1193,10 @@ public class PluginUtils {
                         gravity = Gravity.START;
                     }
                     builder.toolbarItemGravity(gravity);
+                }
+                if (!configJson.isNull(KEY_CONFIG_QUICK_BOOKMARK_CREATION)) {
+                    Boolean quickBookmark = configJson.getBoolean(KEY_CONFIG_QUICK_BOOKMARK_CREATION);
+                    builder.quickBookmarkCreation(quickBookmark);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -2392,6 +2406,21 @@ public class PluginUtils {
                 getCurrentPage(result, component);
                 break;
             }
+            case FUNCTION_GET_SAVED_SIGNATURES: {
+                checkFunctionPrecondition(component);
+                getSavedSignatures(result, component);
+                break;
+            }
+            case FUNCTION_GET_SAVED_SIGNATURE_FOLDER: {
+                checkFunctionPrecondition(component);
+                getSavedSignatureFolder(result, component);
+                break;
+            }
+            case FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER: {
+                checkFunctionPrecondition(component);
+                getSavedSignatureJpgFolder(result, component);
+                break;
+            }
             case FUNCTION_GROUP_ANNOTATIONS: {
                 checkFunctionPrecondition(component);
                 try {
@@ -2941,6 +2970,53 @@ public class PluginUtils {
         }
 
         result.success(pdfViewCtrl.getCurrentPage());
+    }
+
+    private static void getSavedSignatures(MethodChannel.Result result, @NonNull ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        List<String> signatures = new ArrayList<String>();
+        Context context = pdfViewCtrl.getContext();
+        if (context != null) {
+            File[] files = StampManager.getInstance().getSavedSignatures(context);
+            for (int i = 0; i < files.length; i++) {
+                signatures.add(files[i].getAbsolutePath());
+            }
+        }
+        result.success(signatures);
+    }
+
+    private static void getSavedSignatureFolder(MethodChannel.Result result, @NonNull ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        String filePath = "";
+        Context context = pdfViewCtrl.getContext();
+        if (context != null) {
+            File file = StampManager.getInstance().getSavedSignatureFolder(context);
+            filePath = file.getAbsolutePath();
+        }
+        result.success(filePath);
+    }
+
+    private static void getSavedSignatureJpgFolder(MethodChannel.Result result, @NonNull ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        String filePath = "";
+        Context context = pdfViewCtrl.getContext();
+        if (context != null) {
+            File file = StampManager.getInstance().getSavedSignatureJpgFolder(context);
+            filePath = file.getAbsolutePath();
+        }
+        result.success(filePath);
     }
 
     private static void setFlagsForAnnotations(String annotationsWithFlags, MethodChannel.Result result,
