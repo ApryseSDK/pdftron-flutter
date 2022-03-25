@@ -488,7 +488,7 @@ class DocumentViewController {
   /// pageNumber: the page number of the zooming area (1-indexed)
   /// rect: The rectangular area with keys x1 (left), y1(bottom), y1(right), y2(top). Coordinates are in double
   Future<void> zoomToRect(int pageNumber, Map<String, double> rect) {
-    return _channel.invokeMethod(Functions.zoomWithCenter, <String, dynamic>{
+    return _channel.invokeMethod(Functions.zoomToRect, <String, dynamic>{
       Parameters.pageNumber: pageNumber,
       "x1": rect["x1"],
       "y1": rect["y1"],

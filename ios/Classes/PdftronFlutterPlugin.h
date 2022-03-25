@@ -245,6 +245,7 @@ static NSString * const PTOpenGoToPageViewKey = @"openGoToPageView";
 static NSString * const PTOpenNavigationListsKey = @"openNavigationLists";
 static NSString * const PTGetCurrentPageKey = @"getCurrentPage";
 static NSString * const PTZoomWithCenterKey = @"zoomWithCenter";
+static NSString * const PTZoomToRectKey = @"zoomToRect";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";

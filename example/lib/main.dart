@@ -212,7 +212,6 @@ class _ViewerState extends State<Viewer> {
     });
 
     await controller.openDocument(_document, config: config);
-    await controller.zoomToRect(2, {"x1": 2.5, "y1": 50, "x2": 50, "y2": 10});
   }
 
   Future<void> _showMyDialog() async {
