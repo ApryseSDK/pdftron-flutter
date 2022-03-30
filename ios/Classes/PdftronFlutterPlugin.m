@@ -2695,7 +2695,7 @@
 
 - (void)getZoom:(FlutterResult)flutterResult {
     PTDocumentController *documentController = [self getDocumentController];
-    double zoom = [documentController.pdfViewCtrl GetZoom];
+    double zoom = documentController.pdfViewCtrl.zoom * documentController.pdfViewCtrl.zoomScale;
     flutterResult([NSNumber numberWithDouble:zoom]);
 }
 
