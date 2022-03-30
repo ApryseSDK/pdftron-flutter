@@ -1034,11 +1034,11 @@
             },
         PTUndoKey:
             ^{
-                [documentController.toolManager.undoManager disableUndoRegistration];
+                documentController.toolManager.undoRedoManager.enabled = NO;
             },
         PTRedoKey:
             ^{
-                [documentController.toolManager.undoManager disableUndoRegistration];
+                documentController.toolManager.undoRedoManager.enabled = NO;
             },
         PTMoreItemsButtonKey:
             ^{
