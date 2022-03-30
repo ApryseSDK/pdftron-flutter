@@ -470,6 +470,22 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.getCurrentPage);
   }
 
+  // Returns the current zoom scale of current document viewer.
+  //
+  // Returns a Promise.
+  Future<double?> getZoom() {
+    return _channel.invokeMethod(Functions.getZoom);
+  }
+
+  // Sets the minimum and maximum zoom bounds of current viewer.
+  Future<void> setZoomLimits(String mode, double minimum, double maximum) {
+    return _channel.invokeMethod(Functions.setZoomLimits, <String, dynamic>{
+      'zoomLimitMode': mode,
+      'minimum': minimum,
+      'maximum': maximum,
+    });
+  }
+
   /// Gets a list of absolute file paths to PDFs containing the saved signatures.
   ///
   /// Returns a promise

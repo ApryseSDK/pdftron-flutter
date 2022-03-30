@@ -246,6 +246,8 @@ static NSString * const PTOpenTabSwitcherKey = @"openTabSwitcher";
 static NSString * const PTOpenGoToPageViewKey = @"openGoToPageView";
 static NSString * const PTOpenNavigationListsKey = @"openNavigationLists";
 static NSString * const PTGetCurrentPageKey = @"getCurrentPage";
+static NSString * const PTGetZoomKey = @"getZoom";
+static NSString * const PTSetZoomLimitsKey = @"setZoomLimits";
 static NSString * const PTGetSavedSignaturesKey = @"getSavedSignatures";
 static NSString * const PTGetSavedSignatureFolderKey = @"getSavedSignatureFolder";
 
@@ -346,6 +348,13 @@ static NSString * const PTSubjectAnnotationPropertyKey = @"subject";
 static NSString * const PTTitleAnnotationPropertyKey = @"title";
 static NSString * const PTRectAnnotationPropertyKey = @"rect";
 static NSString * const PTRotationAnnotationPropertyKey = @"rotation";
+
+static NSString * const PTMinimumKey = @"minimum";
+static NSString * const PTMaximumKey = @"maximum";
+static NSString * const PTZoomLimitModeKey = @"zoomLimitMode";
+static NSString * const PTZoomLimitAbsoluteKey = @"absolute";
+static NSString * const PTZoomLimitRelativeKey = @"relative";
+static NSString * const PTZoomLimitNoneKey = @"none";
 
 static NSString * const PTLinkPressLinkAnnotationKey = @"linkPress";
 static NSString * const PTURILinkAnnotationKey = @"URI";

@@ -1508,6 +1508,10 @@
         [self openNavigationLists:result];
     } else if ([call.method isEqualToString:PTGetCurrentPageKey]) {
         [self getCurrentPage:result];
+    } else if ([call.method isEqualToString:PTGetZoomKey]) {
+        [self getZoom:result];
+    } else if ([call.method isEqualToString:PTSetZoomLimitsKey]) {
+        [self setZoomLimits:result call:call];
     } else if ([call.method isEqualToString:PTGetSavedSignaturesKey]) {
         [self getSavedSignatures:result];
     } else if ([call.method isEqualToString:PTGetSavedSignatureFolderKey]) {
@@ -2687,6 +2691,27 @@
 - (void)getCurrentPage:(FlutterResult)flutterResult {
     PTDocumentController *documentController = [self getDocumentController];
     flutterResult([NSNumber numberWithInt:documentController.pdfViewCtrl.currentPage]);
+}
+
+- (void)getZoom:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    double zoom = documentController.pdfViewCtrl.zoom * documentController.pdfViewCtrl.zoomScale;
+    flutterResult([NSNumber numberWithDouble:zoom]);
+}
+
+- (void)setZoomLimits:(FlutterResult)flutterResult call:(FlutterMethodCall*)call {
+    PTDocumentController *documentController = [self getDocumentController];
+    NSString * zoomLimitMode = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTZoomLimitModeKey]];
+    double maximum = [call.arguments[PTMaximumKey] doubleValue];
+    double minimum = [call.arguments[PTMinimumKey] doubleValue];
+    if ([zoomLimitMode isEqualToString:PTZoomLimitAbsoluteKey]) {
+        [documentController.pdfViewCtrl SetZoomLimits:e_trn_zoom_limit_absolute Minimum:minimum Maxiumum:maximum];
+    } else if ([zoomLimitMode isEqualToString:PTZoomLimitRelativeKey]) {
+        [documentController.pdfViewCtrl SetZoomLimits:e_trn_zoom_limit_relative Minimum:minimum Maxiumum:maximum];
+    } else if ([zoomLimitMode isEqualToString:PTZoomLimitNoneKey]) {
+        [documentController.pdfViewCtrl SetZoomLimits:e_trn_zoom_limit_none Minimum:minimum Maxiumum:maximum];
+    }
+    flutterResult(nil);
 }
 
 - (void)getSavedSignatures:(FlutterResult)flutterResult {

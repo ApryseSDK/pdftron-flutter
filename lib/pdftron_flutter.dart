@@ -459,12 +459,28 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.getCurrentPage);
   }
 
+  // Returns the current zoom scale of current document viewer.
+  //
+  // Returns a Promise.
+  static Future<double?> getZoom() {
+    return _channel.invokeMethod(Functions.getZoom);
+  }
+
+  // Sets the minimum and maximum zoom bounds of current viewer.
+  static Future<void> setZoomLimits(
+      String mode, double minimum, double maximum) {
+    return _channel.invokeMethod(Functions.setZoomLimits, <String, dynamic>{
+      'zoomLimitMode': mode,
+      'minimum': minimum,
+      'maximum': maximum,
+    });
+  }
+
   /// Gets a list of absolute file paths to PDFs containing the saved signatures.
   ///
   /// Returns a promise
   static Future<List<String>?> getSavedSignatures() {
-    return _channel
-        .invokeMethod(Functions.getSavedSignatures);
+    return _channel.invokeMethod(Functions.getSavedSignatures);
   }
 
   /// Retrieves the absolute file path to the folder containing the saved signature PDFs.
@@ -472,8 +488,7 @@ class PdftronFlutter {
   ///
   /// Returns a Promise.
   static Future<String?> getSavedSignatureFolder() {
-    return _channel
-        .invokeMethod(Functions.getSavedSignatureFolder);
+    return _channel.invokeMethod(Functions.getSavedSignatureFolder);
   }
 
   /// Retrieves the absolute file path to the folder containing the saved signature JPGs. Android only.
@@ -481,7 +496,6 @@ class PdftronFlutter {
   ///
   /// Returns a Promise.
   static Future<String?> getSavedSignatureJpgFolder() {
-    return _channel
-        .invokeMethod(Functions.getSavedSignatureJpgFolder);
+    return _channel.invokeMethod(Functions.getSavedSignatureJpgFolder);
   }
 }

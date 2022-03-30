@@ -1,3 +1,7 @@
+# 1.0.0-beta.15 - March 23, 2021
+- getZoom Method
+- setZoomLimits Methods
+
 # 1.0.0-beta.12 - March 23, 2021
 - QuickBookMarkConfig Option
 # 1.0.0-beta.11 - March 22, 2021
