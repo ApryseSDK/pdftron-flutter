@@ -742,6 +742,20 @@
                         }
                     }
                 }
+                else if ([key isEqualToString:PTHideScrollbarsKey])
+                {
+                    NSNumber* hideScrollbars = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideScrollbarsKey class:[NSNumber class] error:&error];
+
+                    if (!error && hideScrollbars) {
+                        if (hideScrollbars) {
+                            documentController.pdfViewCtrl.contentScrollView.showsHorizontalScrollIndicator = ![hideScrollbars boolValue];
+                            documentController.pdfViewCtrl.contentScrollView.showsVerticalScrollIndicator = ![hideScrollbars boolValue];
+                            
+                            documentController.pdfViewCtrl.pagingScrollView.showsHorizontalScrollIndicator = ![hideScrollbars boolValue];
+                            documentController.pdfViewCtrl.pagingScrollView.showsVerticalScrollIndicator = ![hideScrollbars boolValue];
+                        }
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
