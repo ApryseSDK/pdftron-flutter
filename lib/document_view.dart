@@ -332,8 +332,8 @@ class DocumentViewController {
     });
   }
 
-  // Export a PDF page to an image format defined in ExportFormat.
-  // The page is taken from the PDF at the given filepath.
+  /// Export a PDF page to an image format defined in ExportFormat.
+  /// The page is taken from the PDF at the given filepath.
   Future<String?> exportAsImageFromFilePath(
       int? pageNumber, int? dpi, String? exportFormat, String? filePath) {
     return _channel
@@ -470,14 +470,14 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.getCurrentPage);
   }
 
-  // Returns the current zoom scale of current document viewer.
-  //
-  // Returns a Promise.
+  /// Returns the current zoom scale of current document viewer.
+  ///
+  /// Returns a Promise.
   Future<double?> getZoom() {
     return _channel.invokeMethod(Functions.getZoom);
   }
 
-  // Sets the minimum and maximum zoom bounds of current viewer.
+  /// Sets the minimum and maximum zoom bounds of current viewer.
   Future<void> setZoomLimits(String mode, double minimum, double maximum) {
     return _channel.invokeMethod(Functions.setZoomLimits, <String, dynamic>{
       'zoomLimitMode': mode,
