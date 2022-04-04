@@ -6,6 +6,11 @@ class Functions {
   static const getVersion = "getVersion";
   static const initialize = "initialize";
   static const openDocument = "openDocument";
+  static const getSavedSignatures = "getSavedSignatures";
+  static const getSavedSignatureFolder = "getSavedSignatureFolder";
+
+/// Android only
+  static const getSavedSignatureJpgFolder = "getSavedSignatureJpgFolder";
   static const importAnnotations = "importAnnotations";
   static const exportAnnotations = "exportAnnotations";
   static const flattenAnnotations = "flattenAnnotations";
@@ -62,6 +67,8 @@ class Functions {
   static const getCurrentPage = "getCurrentPage";
   static const zoomWithCenter = "zoomWithCenter";
   static const zoomToRect = "zoomToRect";
+  static const getZoom = "getZoom";
+  static const setZoomLimits = "setZoomLimits";
 }
 
 /// Defines the parameters of the functions.
@@ -330,6 +337,13 @@ class DefaultToolbars {
   static const pens = "PDFTron_Pens";
   static const redaction = "PDFTron_Redact";
   static const favorite = "PDFTron_Favorite";
+}
+
+/// Defines zoom limits
+class ZoomLimitMode {
+  static const None = "none";
+  static const Absolute = "absolute";
+  static const Relative = "relative";
 }
 
 /// Defines default toolbar icons for use for potential custom toolbars.

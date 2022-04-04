@@ -16,7 +16,7 @@ More information can be found at https://www.pdftron.com/documentation/guides/fl
 
 ## Contents
 
-- [API](API.md)
+- [API](https://pub.dev/documentation/pdftron_flutter/latest/pdftron/pdftron-library.html)
 - [Prerequisites](#prerequisites)
 - [Null Safety](#Null-safety)
 - [Legacy UI](#legacy-ui)
@@ -26,11 +26,6 @@ More information can be found at https://www.pdftron.com/documentation/guides/fl
 - [Changelog](#changelog)
 - [Contributing](#contributing)
 - [License](#license)
-
-## API
-API documentation is available on:
-- [GitHub](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md)
-- [pub.dev](https://pub.dev/documentation/pdftron_flutter/latest/pdftron/pdftron-library.html)
 
 ## Prerequisites
 - No license key is required for trial. However, a valid commercial license key is required after trial.

@@ -742,6 +742,14 @@
                         }
                     }
                 }
+                else if([key isEqualToString:PTQuickBookmarkCreationKey])
+                {
+                    NSNumber* quickBookmarkCreation = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTQuickBookmarkCreationKey class:[NSNumber class] error:&error];
+
+                    if (!error && quickBookmarkCreation) {
+                        documentController.bookmarkPageButtonHidden = ![quickBookmarkCreation boolValue];
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
@@ -1026,11 +1034,11 @@
             },
         PTUndoKey:
             ^{
-                [documentController.toolManager.undoManager disableUndoRegistration];
+                documentController.toolManager.undoRedoManager.enabled = NO;
             },
         PTRedoKey:
             ^{
-                [documentController.toolManager.undoManager disableUndoRegistration];
+                documentController.toolManager.undoRedoManager.enabled = NO;
             },
         PTMoreItemsButtonKey:
             ^{
@@ -1504,6 +1512,14 @@
         [self zoomWithCenter:result call:call];
     } else if ([call.method isEqualToString:PTZoomToRectKey]) {
         [self zoomToRect:result call:call];
+    } else if ([call.method isEqualToString:PTGetZoomKey]) {
+        [self getZoom:result];
+    } else if ([call.method isEqualToString:PTSetZoomLimitsKey]) {
+        [self setZoomLimits:result call:call];
+    } else if ([call.method isEqualToString:PTGetSavedSignaturesKey]) {
+        [self getSavedSignatures:result];
+    } else if ([call.method isEqualToString:PTGetSavedSignatureFolderKey]) {
+        [self getSavedSignatureFolder:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -2679,6 +2695,47 @@
 - (void)getCurrentPage:(FlutterResult)flutterResult {
     PTDocumentController *documentController = [self getDocumentController];
     flutterResult([NSNumber numberWithInt:documentController.pdfViewCtrl.currentPage]);
+}
+
+- (void)getZoom:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    double zoom = documentController.pdfViewCtrl.zoom * documentController.pdfViewCtrl.zoomScale;
+    flutterResult([NSNumber numberWithDouble:zoom]);
+}
+
+- (void)setZoomLimits:(FlutterResult)flutterResult call:(FlutterMethodCall*)call {
+    PTDocumentController *documentController = [self getDocumentController];
+    NSString * zoomLimitMode = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTZoomLimitModeKey]];
+    double maximum = [call.arguments[PTMaximumKey] doubleValue];
+    double minimum = [call.arguments[PTMinimumKey] doubleValue];
+    if ([zoomLimitMode isEqualToString:PTZoomLimitAbsoluteKey]) {
+        [documentController.pdfViewCtrl SetZoomLimits:e_trn_zoom_limit_absolute Minimum:minimum Maxiumum:maximum];
+    } else if ([zoomLimitMode isEqualToString:PTZoomLimitRelativeKey]) {
+        [documentController.pdfViewCtrl SetZoomLimits:e_trn_zoom_limit_relative Minimum:minimum Maxiumum:maximum];
+    } else if ([zoomLimitMode isEqualToString:PTZoomLimitNoneKey]) {
+        [documentController.pdfViewCtrl SetZoomLimits:e_trn_zoom_limit_none Minimum:minimum Maxiumum:maximum];
+    }
+    flutterResult(nil);
+}
+
+- (void)getSavedSignatures:(FlutterResult)flutterResult {
+    PTSignaturesManager *signaturesManager = [[PTSignaturesManager alloc] init];
+    NSUInteger numOfSignatures = [signaturesManager numberOfSavedSignatures];
+    NSMutableArray<NSString*> *signatures = [[NSMutableArray alloc] initWithCapacity:numOfSignatures];
+    
+    for (NSInteger i = 0; i < numOfSignatures; i++) {
+        signatures[i] = [[signaturesManager savedSignatureAtIndex:i] GetFileName];
+    }
+
+    flutterResult(signatures);
+}
+
+- (void)getSavedSignatureFolder:(FlutterResult)flutterResult {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+    NSString *libraryDirectory = paths[0];
+
+    NSString* fullPath = [libraryDirectory stringByAppendingPathComponent:@"PTSignaturesManager_signatureDirectory"];
+    flutterResult(fullPath);
 }
 
 - (void)getDocumentPath:(FlutterResult)flutterResult {
