@@ -9,7 +9,7 @@ class Functions {
   static const getSavedSignatures = "getSavedSignatures";
   static const getSavedSignatureFolder = "getSavedSignatureFolder";
 
-/// Android only
+  /// Android only
   static const getSavedSignatureJpgFolder = "getSavedSignatureJpgFolder";
   static const importAnnotations = "importAnnotations";
   static const exportAnnotations = "exportAnnotations";
@@ -68,6 +68,8 @@ class Functions {
   static const getZoom = "getZoom";
   static const setZoomLimits = "setZoomLimits";
   static const getScrollPos = "getScrollPos";
+  static const setHorizontalScrollPosition = "setHorizontalScrollPosition";
+  static const setVerticalScrollPosition = "setVerticalScrollPosition";
 }
 
 /// Defines the parameters of the functions.
@@ -97,6 +99,8 @@ class Parameters {
   static const exportFormat = "exportFormat";
   static const dpi = "dpi";
   static const requestedOrientation = "requestedOrientation";
+  static const horizontalScrollPosition = "horizontalScrollPosition";
+  static const verticalScrollPosition = "verticalScrollPosition";
 }
 
 /// Defines the parameters of the events.

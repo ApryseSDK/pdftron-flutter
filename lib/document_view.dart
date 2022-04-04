@@ -522,4 +522,22 @@ class DocumentViewController {
     };
     return scrollPos;
   }
+
+  /// Defines the horizontal scroll position in the current document viewer.
+  /// Parameters: horizontalScrollPosition: An int value for the scroll position in the current document viewer
+  Future<void> setHorizontalScrollPosition(int horizontalScrollPosition) {
+    return _channel.invokeMethod(
+        Functions.setHorizontalScrollPosition, <String, dynamic>{
+      Parameters.horizontalScrollPosition: horizontalScrollPosition
+    });
+  }
+
+  /// Defines the vertical scroll position in the current document viewer.
+  /// Parameters: verticalScrollPosition: An int value for the scroll position in the current document viewer
+  Future<void> setVerticalScrollPosition(int verticalScrollPosition) {
+    return _channel.invokeMethod(
+        Functions.setVerticalScrollPosition, <String, dynamic>{
+      Parameters.verticalScrollPosition: verticalScrollPosition
+    });
+  }
 }

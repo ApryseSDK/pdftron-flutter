@@ -234,6 +234,9 @@ public class PluginUtils {
     public static final String KEY_GRAVITY_START = "GravityStart";
     public static final String KEY_GRAVITY_END = "GravityEnd";
 
+    public static final String KEY_HORIZONTAL_SCROLL_POSITION = "horizontalScrollPosition";
+    public static final String KEY_VERTICAL_SCROLL_POSITION = "verticalScrollPosition";
+
     public static final String EVENT_EXPORT_ANNOTATION_COMMAND = "export_annotation_command_event";
     public static final String EVENT_EXPORT_BOOKMARK = "export_bookmark_event";
     public static final String EVENT_DOCUMENT_LOADED = "document_loaded_event";
@@ -313,6 +316,8 @@ public class PluginUtils {
     public static final String FUNCTION_GET_SAVED_SIGNATURE_FOLDER = "getSavedSignatureFolder";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER = "getSavedSignatureJpgFolder";
     public static final String FUNCTION_GET_SCROLL_POS = "getScrollPos";
+    public static final String FUNCTION_SET_HORIZONTAL_SCROLL_POSITION = "setHorizontalScrollPosition";
+    public static final String FUNCTION_SET_VERTICAL_SCROLL_POSITION = "setVerticalScrollPosition";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2454,6 +2459,16 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_SET_HORIZONTAL_SCROLL_POSITION: {
+                checkFunctionPrecondition(component);
+                setHorizontalScrollPosition(call, result, component);
+                break;
+            }
+            case FUNCTION_SET_VERTICAL_SCROLL_POSITION: {
+                checkFunctionPrecondition(component);
+                setVerticalScrollPosition(call, result, component);
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -3767,6 +3782,32 @@ public class PluginUtils {
         jsonObject.put(REFLOW_ORIENTATION_VERTICAL, pdfViewCtrl.getVScrollPos());
 
         result.success(jsonObject.toString());
+    }
+
+    private static void setHorizontalScrollPosition(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        int horizontalScrollPosition = call.argument(KEY_HORIZONTAL_SCROLL_POSITION);
+        
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+
+        pdfViewCtrl.setHScrollPos((int) (horizontalScrollPosition + 0.5));
+        result.success(null);
+    }
+
+    private static void setVerticalScrollPosition(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        int verticalScrollPosition = call.argument(KEY_VERTICAL_SCROLL_POSITION);
+        
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+
+        pdfViewCtrl.setVScrollPos((int) (verticalScrollPosition + 0.5));
+        result.success(null);
     }
 
     // Events
