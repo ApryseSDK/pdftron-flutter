@@ -1516,6 +1516,12 @@
         [self getSavedSignatures:result];
     } else if ([call.method isEqualToString:PTGetSavedSignatureFolderKey]) {
         [self getSavedSignatureFolder:result];
+    } else if ([call.method isEqualToString:PTGetScrollPosKey]) {
+        [self getScrollPos:result];
+    } else if ([call.method isEqualToString:PTSetHorizontalScrollPositionKey]) {
+        [self setHorizontalScrollPosition:call result:result];
+    } else if ([call.method isEqualToString:PTSetVerticalScrollPositionKey]) {
+        [self setVerticalScrollPosition:call result:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -3217,6 +3223,33 @@
         [documentController showNavigationLists];
     }
 
+    flutterResult(nil);
+}
+
+-(void)getScrollPos:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+
+    NSDictionary<NSString *, NSNumber *> * scrollPos = @{
+        PTReflowOrientationHorizontalKey: [[NSNumber alloc] initWithDouble:[documentController.pdfViewCtrl GetHScrollPos]],
+        PTReflowOrientationVerticalKey: [[NSNumber alloc] initWithDouble:[documentController.pdfViewCtrl GetVScrollPos]],
+    };
+    
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:scrollPos options:0 error:nil];
+    NSString *res = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    flutterResult(res);
+}
+
+-(void)setHorizontalScrollPosition:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    double horizontalScrollPos = [call.arguments[PTHorizontalScrollPositionArgumentKey] doubleValue];
+    [documentController.pdfViewCtrl SetHScrollPos:horizontalScrollPos];
+    flutterResult(nil);
+}
+
+-(void)setVerticalScrollPosition:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    double verticalScrollPos = [call.arguments[PTVerticalScrollPositionArgumentKey] doubleValue];
+    [documentController.pdfViewCtrl SetVScrollPos:verticalScrollPos];
     flutterResult(nil);
 }
 
