@@ -67,6 +67,7 @@ class Functions {
   static const getCurrentPage = "getCurrentPage";
   static const getZoom = "getZoom";
   static const setZoomLimits = "setZoomLimits";
+  static const getScrollPos = "getScrollPos";
 }
 
 /// Defines the parameters of the functions.

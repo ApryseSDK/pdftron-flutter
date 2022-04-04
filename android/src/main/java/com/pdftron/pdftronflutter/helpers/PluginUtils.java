@@ -312,6 +312,7 @@ public class PluginUtils {
     public static final String FUNCTION_GET_SAVED_SIGNATURES = "getSavedSignatures";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_FOLDER = "getSavedSignatureFolder";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER = "getSavedSignatureJpgFolder";
+    public static final String FUNCTION_GET_SCROLL_POS = "getScrollPos";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2443,6 +2444,16 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_GET_SCROLL_POS: {
+                checkFunctionPrecondition(component);
+                try {
+                    getScrollPos(result,component);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                    result.error(Integer.toString(ex.hashCode()), "JSONException Error: " + ex, null);
+                }
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -3742,6 +3753,20 @@ public class PluginUtils {
                 pdfViewCtrl.docUnlock();
             }
         }
+    }
+
+    private static void getScrollPos(MethodChannel.Result result, ViewerComponent component) throws JSONException {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        JSONObject jsonObject = new JSONObject();
+        
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        jsonObject.put(REFLOW_ORIENTATION_HORIZONTAL,  pdfViewCtrl.getHScrollPos());
+        jsonObject.put(REFLOW_ORIENTATION_VERTICAL, pdfViewCtrl.getVScrollPos());
+
+        result.success(jsonObject.toString());
     }
 
     // Events

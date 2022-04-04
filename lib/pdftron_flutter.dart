@@ -498,4 +498,18 @@ class PdftronFlutter {
   static Future<String?> getSavedSignatureJpgFolder() {
     return _channel.invokeMethod(Functions.getSavedSignatureJpgFolder);
   }
+
+  /// Returns the horizontal and vertical scroll position of current document viewer.
+  /// Returns a Promise containing a Map with the following keys:
+  /// horizontal -> the current horizontal scroll position
+  /// vertical	 -> the current vertical scroll position
+  Future<Map?> getScrollPos() async {
+    String jsonString = await _channel.invokeMethod(Functions.getScrollPos);
+    dynamic json = jsonDecode(jsonString);
+    Map scrollPos = {
+      'horizontal': json['horizontal'],
+      'vertical': json['vertical']
+    };
+    return scrollPos;
+  }
 }

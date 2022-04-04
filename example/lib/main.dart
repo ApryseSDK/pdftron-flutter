@@ -212,6 +212,10 @@ class _ViewerState extends State<Viewer> {
     });
 
     await controller.openDocument(_document, config: config);
+    Map? pos = await controller.getScrollPos();
+    print('hpos');
+    print(
+        pos!['horizontal'].toString() + ' vpos' + pos!['vertical'].toString());
   }
 
   Future<void> _showMyDialog() async {
