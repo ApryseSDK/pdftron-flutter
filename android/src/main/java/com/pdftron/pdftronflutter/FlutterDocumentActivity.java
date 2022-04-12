@@ -79,6 +79,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     private static AtomicReference<EventSink> sPageChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sZoomChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sPageMovedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sScrollChangedEventEmitter = new AtomicReference<>();
 
     private static HashMap<Annot, Integer> mSelectedAnnots;
 
@@ -243,6 +244,10 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sPageMovedEventEmitter.set(emitter);
     }
 
+    public static void setScrollChangedEventEmitter(EventSink emitter) {
+        sScrollChangedEventEmitter.set(emitter);
+    }
+
     public static void setFlutterLoadResult(Result result) {
         sFlutterLoadResult.set(result);
     }
@@ -319,6 +324,9 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     public EventSink getPageMovedEventEmitter() { return sPageMovedEventEmitter.get(); }
 
     @Override
+    public EventSink getScrollChangedEventEmitter() { return sScrollChangedEventEmitter.get(); }
+
+    @Override
     public Result getFlutterLoadResult() {
         return sFlutterLoadResult.getAndSet(null);
     }
@@ -384,6 +392,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sPageChangedEventEmitter.set(null);
         sZoomChangedEventEmitter.set(null);
         sPageMovedEventEmitter.set(null);
+        sScrollChangedEventEmitter.set(null);
 
         detachActivity();
     }

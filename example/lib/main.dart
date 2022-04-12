@@ -210,7 +210,9 @@ class _ViewerState extends State<Viewer> {
       // Show a dialog when leading navigation button is pressed.
       _showMyDialog();
     });
-
+    var scrollChanged = scrollChangedListener((horizontal, vertical) {
+      print("fkund $horizontal + $vertical");
+    });
     await controller.openDocument(_document, config: config);
   }
 

@@ -1,6 +1,8 @@
 package com.pdftron.pdftronflutter.helpers;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,6 +46,8 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LONG_PRESS_MENU
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LONG_PRESS_TEXT;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PAGE_NUMBER;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PREVIOUS_PAGE_NUMBER;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.REFLOW_ORIENTATION_HORIZONTAL;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.REFLOW_ORIENTATION_VERTICAL;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.checkQuickMenu;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.convStringToAnnotType;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.getAnnotationsData;
@@ -437,6 +441,76 @@ public class ViewerImpl {
 
                 eventSink.success(resultObject.toString());
             }
+        }
+    };
+
+    private ToolManager.PreToolManagerListener mPreToolManagerListener= new ToolManager.PreToolManagerListener() {
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public boolean onMove(MotionEvent e1, MotionEvent e2, float x_dist, float y_dist) {
+            return false;
+        }
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public boolean onUp(MotionEvent e, PDFViewCtrl.PriorEventMode priorEventMode) {
+            return false;
+        }
+
+        @Override
+        public boolean onScaleBegin(float x, float y) {
+            return false;
+        }
+
+        @Override
+        public boolean onScale(float x, float y) {
+            return false;
+        }
+
+        @Override
+        public boolean onScaleEnd(float x, float y) {
+            return false;
+        }
+
+        @Override
+        public boolean onLongPress(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public void onScrollChanged(int l, int t, int oldl, int oldt) {
+            JSONObject jsonObject = new JSONObject();
+
+            try {
+                jsonObject.put(REFLOW_ORIENTATION_HORIZONTAL,  l);
+                jsonObject.put(REFLOW_ORIENTATION_VERTICAL, t);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            EventChannel.EventSink eventSink = mViewerComponent.getScrollChangedEventEmitter();
+            if (eventSink != null) {
+                eventSink.success(jsonObject.toString());
+            }
+        }
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public boolean onKeyUp(int keyCode, KeyEvent event) {
+            return false;
         }
     };
 }
