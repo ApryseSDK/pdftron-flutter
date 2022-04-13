@@ -20,6 +20,7 @@
 @property (nonatomic, strong) FlutterEventSink pageChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink zoomChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink pageMovedEventSink;
+@property (nonatomic, strong) FlutterEventSink scrollChangedEventSink;
 
 @property (nonatomic, assign, getter=isWidgetView) BOOL widgetView;
 @property (nonatomic, assign, getter=isMultiTabSet) BOOL multiTabSet;
@@ -151,6 +152,8 @@
     
     FlutterEventChannel* pageMovedEventChannel = [FlutterEventChannel eventChannelWithName:PTPageMovedEventKey binaryMessenger:messenger];
 
+    FlutterEventChannel* scrollChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTScrollChangedEventKey binaryMessenger:messenger];
+
     [xfdfEventChannel setStreamHandler:self];
     
     [bookmarkEventChannel setStreamHandler:self];
@@ -178,6 +181,8 @@
     [zoomChangedEventChannel setStreamHandler:self];
     
     [pageMovedEventChannel setStreamHandler:self];
+
+    [scrollChangedEventChannel setStreamHandler:self];
 }
 
 #pragma mark - Configurations
@@ -1169,6 +1174,9 @@
         case pageMovedId:
             self.pageMovedEventSink = events;
             break;
+        case scrollChangedId:
+            self.scrollChangedEventSink = events;
+            break;
     }
     
     return Nil;
@@ -1222,6 +1230,9 @@
         case pageMovedId:
             self.pageMovedEventSink = nil;
             break;
+        case scrollChangedId:
+            self.scrollChangedEventSink = nil;
+            break;    
     }
     
     return Nil;
@@ -1357,6 +1368,24 @@
     if (self.pageMovedEventSink != nil)
     {
         self.pageMovedEventSink(pageNumbersString);
+    }
+}
+
+-(void)documentController:(PTDocumentController *)docVC scrollChanged:(NSString *)scrollString
+{
+    PTPDFViewCtrl *pdfViewCtrl = docVC.pdfViewCtrl;
+    
+    double horizontal = [pdfViewCtrl GetHScrollPos];
+    double vertical = [pdfViewCtrl GetVScrollPos];
+
+     NSDictionary *resultDict = @{
+         PTReflowOrientationHorizontalKey: [NSNumber numberWithDouble:horizontal],
+         PTReflowOrientationVerticalKey: [NSNumber numberWithDouble:vertical],
+    };
+
+    if (self.scrollChangedEventSink != nil)
+    {
+        self.scrollChangedEventSink([PdftronFlutterPlugin PT_idToJSONString:resultDict]);
     }
 }
 

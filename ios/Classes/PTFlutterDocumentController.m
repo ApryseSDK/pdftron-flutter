@@ -643,6 +643,12 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     [self.plugin documentController:self pageChanged:[PdftronFlutterPlugin PT_idToJSONString:resultDict]];
 }
 
+- (void)pdfViewCtrl:(PTPDFViewCtrl *)pdfViewCtrl pdfScrollViewDidScroll:(UIScrollView *)scrollView
+{
+
+    [self.plugin documentController:self scrollChanged:@""];
+}
+
 -(NSString*)generateXfdfCommandWithAdded:(NSArray<PTAnnot*>*)added modified:(NSArray<PTAnnot*>*)modified removed:(NSArray<PTAnnot*>*)removed
 {
     

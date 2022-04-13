@@ -292,6 +292,7 @@ static NSString * const PTLeadingNavButtonPressedEventKey = @"leading_nav_button
 static NSString * const PTPageChangedEventKey = @"page_changed_event";
 static NSString * const PTZoomChangedEventKey = @"zoom_changed_event";
 static NSString * const PTPageMovedEventKey = @"page_moved_event";
+static NSString *const PTScrollChangedEventKey = @"scroll_changed_event";
 
 // fit mode
 static NSString * const PTFitPageKey = @"FitPage";
@@ -430,7 +431,8 @@ static const PTAnnotationToolbarKey PTAnnotationToolbarKeyName = @"name";
 static const PTAnnotationToolbarKey PTAnnotationToolbarKeyIcon = @"icon";
 static const PTAnnotationToolbarKey PTAnnotationToolbarKeyItems = @"items";
 
-typedef enum {
+typedef enum
+{
     exportAnnotationId = 0,
     exportBookmarkId,
     documentLoadedId,
@@ -445,6 +447,7 @@ typedef enum {
     pageChangedId,
     zoomChangedId,
     pageMovedId,
+    scrollChangedId,
 } EventSinkId;
 
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
@@ -469,8 +472,7 @@ typedef enum {
 -(void)documentController:(PTDocumentController *)docVC pageChanged:(NSString*)pageNumbersString;
 -(void)documentController:(PTDocumentController *)docVC zoomChanged:(NSNumber*)zoom;
 -(void)documentController:(PTDocumentController *)docVC pageMoved:(NSString*)pageNumbersString;
-
-- (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
+-(void)documentController:(PTDocumentController *)docVC scrollChanged:(NSString*)scrollString;
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 
