@@ -200,7 +200,6 @@ class _ViewerState extends State<Viewer> {
   // Function(DocumentViewController controller) being passed to it.
   void _onDocumentViewCreated(DocumentViewController controller) async {
     Config config = new Config();
-    config.hideScrollbars = true;
 
     var leadingNavCancel = startLeadingNavButtonPressedListener(() {
       // Uncomment this to quit viewer when leading navigation button is pressed:
