@@ -65,6 +65,8 @@ class Functions {
   static const openGoToPageView = "openGoToPageView";
   static const openNavigationLists = "openNavigationLists";
   static const getCurrentPage = "getCurrentPage";
+  static const getZoom = "getZoom";
+  static const setZoomLimits = "setZoomLimits";
 }
 
 /// Defines the parameters of the functions.
@@ -333,6 +335,13 @@ class DefaultToolbars {
   static const pens = "PDFTron_Pens";
   static const redaction = "PDFTron_Redact";
   static const favorite = "PDFTron_Favorite";
+}
+
+/// Defines zoom limits
+class ZoomLimitMode {
+  static const None = "none";
+  static const Absolute = "absolute";
+  static const Relative = "relative";
 }
 
 /// Defines default toolbar icons for use for potential custom toolbars.

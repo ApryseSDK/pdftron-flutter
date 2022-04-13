@@ -105,6 +105,12 @@ public class PluginUtils {
     public static final String KEY_EXPORT_FORMAT_BMP = "BMP";
     public static final String KEY_EXPORT_FORMAT_JPEG = "JPEG";
     public static final String KEY_EXPORT_FORMAT_PNG = "PNG";
+    public static final String KEY_ZOOM_LIMIT_MODE = "zoomLimitMode";
+    public static final String KEY_MAXIMUM = "maximum";
+    public static final String KEY_MINIMUM = "minimum";
+    public static final String KEY_ZOOM_LIMIT_MODE_NONE = "none";
+    public static final String KEY_ZOOM_LIMIT_MODE_ABSOLUTE = "absolute";
+    public static final String KEY_ZOOM_LIMIT_MODE_RELATIVE = "relative";
 
     public static final String KEY_REQUESTED_ORIENTATION = "requestedOrientation";
 
@@ -182,6 +188,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_MANAGER_UNDO_MODE = "annotationManagerUndoMode";
     public static final String KEY_CONFIG_ANNOTATION_MANAGER_EDIT_MODE = "annotationManagerEditMode";
     public static final String KEY_CONFIG_ANNOTATION_TOOLBAR_GRAVITY = "annotationToolbarAlignment";
+    public static final String KEY_CONFIG_QUICK_BOOKMARK_CREATION = "quickBookmarkCreation";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -300,6 +307,8 @@ public class PluginUtils {
     public static final String FUNCTION_GET_CURRENT_PAGE = "getCurrentPage";
     public static final String FUNCTION_GROUP_ANNOTATIONS = "groupAnnotations";
     public static final String FUNCTION_UNGROUP_ANNOTATIONS = "ungroupAnnotations";
+    public static final String FUNCTION_GET_ZOOM = "getZoom";
+    public static final String FUNCTION_SET_ZOOM_LIMITS = "setZoomLimits";
     public static final String FUNCTION_GET_SAVED_SIGNATURES = "getSavedSignatures";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_FOLDER = "getSavedSignatureFolder";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER = "getSavedSignatureJpgFolder";
@@ -1173,6 +1182,10 @@ public class PluginUtils {
                         gravity = Gravity.START;
                     }
                     builder.toolbarItemGravity(gravity);
+                }
+                if (!configJson.isNull(KEY_CONFIG_QUICK_BOOKMARK_CREATION)) {
+                    Boolean quickBookmark = configJson.getBoolean(KEY_CONFIG_QUICK_BOOKMARK_CREATION);
+                    builder.quickBookmarkCreation(quickBookmark);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -2415,6 +2428,21 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_GET_ZOOM: {
+                checkFunctionPrecondition(component);
+                getZoom(result, component);
+                break;
+            }
+            case FUNCTION_SET_ZOOM_LIMITS: {
+                checkFunctionPrecondition(component);
+                try {
+                    setZoomLimits(call, result, component);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -2423,6 +2451,38 @@ public class PluginUtils {
     }
 
     // Methods
+
+    private static void setZoomLimits(MethodCall call, MethodChannel.Result result, ViewerComponent component)
+            throws PDFNetException {
+        String mode = call.argument(KEY_ZOOM_LIMIT_MODE);
+        double minimum = call.argument(KEY_MINIMUM);
+        double maximum = call.argument(KEY_MAXIMUM);
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (null == pdfViewCtrl) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        PDFViewCtrl.ZoomLimitMode limitMode = null;
+
+        switch (mode) {
+            case KEY_ZOOM_LIMIT_MODE_ABSOLUTE:
+                limitMode = PDFViewCtrl.ZoomLimitMode.ABSOLUTE;
+                break;
+            case KEY_ZOOM_LIMIT_MODE_RELATIVE:
+                limitMode = PDFViewCtrl.ZoomLimitMode.RELATIVE;
+                break;
+            case KEY_ZOOM_LIMIT_MODE_NONE:
+                limitMode = PDFViewCtrl.ZoomLimitMode.NONE;
+                break;
+        }
+        if (limitMode != null) {
+            try {
+                pdfViewCtrl.setZoomLimits(limitMode, minimum, maximum);
+            } catch (PDFNetException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 
     private static void ungroupAnnotations(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
         String annotationList = call.argument(KEY_ANNOTATION_LIST);
@@ -2914,13 +2974,19 @@ public class PluginUtils {
         result.success(pdfViewCtrl.getCurrentPage());
     }
 
-    private static void getSavedSignatures(MethodChannel.Result result, @NonNull ViewerComponent component) {
+    private static void getZoom(MethodChannel.Result result, ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         if (pdfViewCtrl == null) {
             result.error("InvalidState", "Activity not attached", null);
             return;
         }
+        double zoom = pdfViewCtrl.getZoom();
+        result.success(zoom);
+    }
+    
+    private static void getSavedSignatures(MethodChannel.Result result, @NonNull ViewerComponent component) {
         List<String> signatures = new ArrayList<String>();
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         Context context = pdfViewCtrl.getContext();
         if (context != null) {
             File[] files = StampManager.getInstance().getSavedSignatures(context);
