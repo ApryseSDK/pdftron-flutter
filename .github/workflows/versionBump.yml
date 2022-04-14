@@ -24,8 +24,10 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git commit -m "Updating pubspec.yaml" -a || echo "No commit needed. pubspec.yaml is already up-to-date"
                
-      - name: Install yq
+      - name: Install Snapcraft
         uses: samuelmeuli/action-snapcraft@v1.2.0
+      
+      - name: Install yq
         run: snap install yq
       
       - name: Update the version 
