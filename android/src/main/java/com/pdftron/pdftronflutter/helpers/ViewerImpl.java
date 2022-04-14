@@ -64,6 +64,7 @@ public class ViewerImpl {
         toolManager.addAnnotationModificationListener(mAnnotationModificationListener);
         toolManager.addAnnotationsSelectionListener(mAnnotationsSelectionListener);
         toolManager.addPdfDocModificationListener(mPdfDocModificationListener);
+        toolManager.setPreToolManagerListener(mPreToolManagerListener);
     }
 
     public void addListeners(@NonNull PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment) {
@@ -79,6 +80,7 @@ public class ViewerImpl {
         toolManager.removeAnnotationModificationListener(mAnnotationModificationListener);
         toolManager.removeAnnotationsSelectionListener(mAnnotationsSelectionListener);
         toolManager.removePdfDocModificationListener(mPdfDocModificationListener);
+        toolManager.setPreToolManagerListener(null);
     }
 
     public void removeListeners(@NonNull PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment) {
@@ -176,7 +178,6 @@ public class ViewerImpl {
     };
 
     private ToolManager.PdfDocModificationListener mPdfDocModificationListener = new ToolManager.PdfDocModificationListener() {
-        @Override
         public void onBookmarkModified() {
 
         }
