@@ -24,6 +24,7 @@ import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
+import com.pdftron.pdftronflutter.nativeviews.FlutterPdfViewCtrlTabFragment;
 
 import org.json.JSONObject;
 
@@ -400,6 +401,11 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     @Override
     public void onTabDocumentLoaded(String tag) {
         super.onTabDocumentLoaded(tag);
+
+        if (getPdfViewCtrlTabFragment() instanceof FlutterPdfViewCtrlTabFragment) {
+            FlutterPdfViewCtrlTabFragment fragment = (FlutterPdfViewCtrlTabFragment) getPdfViewCtrlTabFragment();
+            fragment.setViewerComponent(this);
+        }
 
         PluginUtils.handleDocumentLoaded(this);
     }

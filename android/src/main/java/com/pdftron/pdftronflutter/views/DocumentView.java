@@ -25,6 +25,7 @@ import com.pdftron.pdftronflutter.R;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
+import com.pdftron.pdftronflutter.nativeviews.FlutterPdfViewCtrlTabFragment;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -162,6 +163,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
                 .usingNavIcon(mShowNavIcon ? mNavIconRes : 0)
                 .usingCustomHeaders(mCustomHeaders)
                 .usingTabTitle(mTabTitle)
+                .usingTabClass(FlutterPdfViewCtrlTabFragment.class)
                 .usingTheme(R.style.FlutterAppTheme);
     }
 
@@ -255,6 +257,11 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     public void onTabDocumentLoaded(String tag) {
         super.onTabDocumentLoaded(tag);
 
+        if (getPdfViewCtrlTabFragment() instanceof FlutterPdfViewCtrlTabFragment) {
+            FlutterPdfViewCtrlTabFragment fragment = (FlutterPdfViewCtrlTabFragment) getPdfViewCtrlTabFragment();
+            fragment.setViewerComponent(this);
+        }
+        
         handleDocumentLoaded(this);
     }
 

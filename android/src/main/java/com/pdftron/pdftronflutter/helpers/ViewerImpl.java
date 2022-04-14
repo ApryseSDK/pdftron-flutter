@@ -64,7 +64,6 @@ public class ViewerImpl {
         toolManager.addAnnotationModificationListener(mAnnotationModificationListener);
         toolManager.addAnnotationsSelectionListener(mAnnotationsSelectionListener);
         toolManager.addPdfDocModificationListener(mPdfDocModificationListener);
-        toolManager.setPreToolManagerListener(mPreToolManagerListener);
     }
 
     public void addListeners(@NonNull PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment) {
@@ -80,7 +79,6 @@ public class ViewerImpl {
         toolManager.removeAnnotationModificationListener(mAnnotationModificationListener);
         toolManager.removeAnnotationsSelectionListener(mAnnotationsSelectionListener);
         toolManager.removePdfDocModificationListener(mPdfDocModificationListener);
-        toolManager.setPreToolManagerListener(null);
     }
 
     public void removeListeners(@NonNull PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment) {
@@ -442,76 +440,6 @@ public class ViewerImpl {
 
                 eventSink.success(resultObject.toString());
             }
-        }
-    };
-
-    private ToolManager.PreToolManagerListener mPreToolManagerListener= new ToolManager.PreToolManagerListener() {
-
-        @Override
-        public boolean onSingleTapConfirmed(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public boolean onMove(MotionEvent e1, MotionEvent e2, float x_dist, float y_dist) {
-            return false;
-        }
-
-        @Override
-        public boolean onDown(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public boolean onUp(MotionEvent e, PDFViewCtrl.PriorEventMode priorEventMode) {
-            return false;
-        }
-
-        @Override
-        public boolean onScaleBegin(float x, float y) {
-            return false;
-        }
-
-        @Override
-        public boolean onScale(float x, float y) {
-            return false;
-        }
-
-        @Override
-        public boolean onScaleEnd(float x, float y) {
-            return false;
-        }
-
-        @Override
-        public boolean onLongPress(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public void onScrollChanged(int l, int t, int oldl, int oldt) {
-            JSONObject jsonObject = new JSONObject();
-
-            try {
-                jsonObject.put(REFLOW_ORIENTATION_HORIZONTAL,  l);
-                jsonObject.put(REFLOW_ORIENTATION_VERTICAL, t);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            EventChannel.EventSink eventSink = mViewerComponent.getScrollChangedEventEmitter();
-            if (eventSink != null) {
-                eventSink.success(jsonObject.toString());
-            }
-        }
-
-        @Override
-        public boolean onDoubleTap(MotionEvent e) {
-            return false;
-        }
-
-        @Override
-        public boolean onKeyUp(int keyCode, KeyEvent event) {
-            return false;
         }
     };
 }
