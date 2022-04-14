@@ -4,7 +4,7 @@ on:
     branches: [master]
 
 jobs:
-  package-json-update: 
+  pubspec-update: 
     runs-on: ubuntu-latest
 
     steps:
@@ -15,14 +15,14 @@ jobs:
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo.
           ref: ${{ github.event.pull_request.head.sha }} # checks out the branch being merged into `master` 
 
-      - name: Get Latest package.json
+      - name: Get Latest pubspec.yaml
         run: | 
           git fetch 
           git checkout -m origin/master pubspec.yaml
-          git add package.json
+          git add pubspec.yaml
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git commit -m "Updating package.json" -a || echo "No commit needed. pubspec.yaml is already up-to-date"
+          git commit -m "Updating pubspec.yaml" -a || echo "No commit needed. pubspec.yaml is already up-to-date"
                
 
       - name: Update pubspec.yaml
