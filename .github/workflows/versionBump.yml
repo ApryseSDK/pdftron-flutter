@@ -18,11 +18,11 @@ jobs:
       - name: Get Latest package.json
         run: | 
           git fetch 
-          git checkout -m origin/master package.json 
+          git checkout -m origin/master pubspec.yaml
           git add package.json
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git commit -m "Updating package.json" -a || echo "No commit needed. Package.json is already up-to-date"
+          git commit -m "Updating package.json" -a || echo "No commit needed. pubspec.yaml is already up-to-date"
                
 
       - name: Update pubspec.yaml
@@ -30,8 +30,8 @@ jobs:
         with:
           cmd: bash './scripts/version_bump.bash'
 
-      - name: Add package.json 
-        run: git add package.json  
+      - name: Add pubspec.yaml
+        run: git add pubspec.yaml 
 
       - name: Commit files
         run: | # Change last line to your preferred commit message (I like `chore: build js files`).
