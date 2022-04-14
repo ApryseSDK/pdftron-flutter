@@ -28,7 +28,7 @@ jobs:
       - name: Update pubspec.yaml
         uses: mikefarah/yq@master
         with:
-          cmd: bash './scripts/version_bump.bash'
+          cmd: ./scripts/version_bump.bash
 
       - name: Add pubspec.yaml
         run: git add pubspec.yaml 
