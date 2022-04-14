@@ -25,10 +25,20 @@ jobs:
           git commit -m "Updating pubspec.yaml" -a || echo "No commit needed. pubspec.yaml is already up-to-date"
                
 
-      - name: Update pubspec.yaml
+      - name: Get SDK Version from config
+        id: lookupSdkVersion
         uses: mikefarah/yq@master
         with:
-          cmd: bash ./scripts/version_bump.bash
+          cmd: yq '.version' 'pubspec.yaml'
+      
+      - name: Update the version 
+        id: updatedSdkVersion
+        run: bash ./scripts/version_bump.bash {{ steps.lookupSdkVersion.outputs.result }}
+      
+      - name: Update pubspec
+        uses: mikefarah/yq@master
+        with:
+          cmd: NEW_VERSION={{ steps.updatedSdkVersion.outputs.result }} yq -i '.version = strenv(NEW_VERSION)' pubspec.yaml 
 
       - name: Add pubspec.yaml
         run: git add pubspec.yaml 
