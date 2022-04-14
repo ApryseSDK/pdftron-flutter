@@ -38,7 +38,7 @@ jobs:
       - name: Update pubspec
         uses: mikefarah/yq@master
         with:
-          cmd: NEW_VERSION={{ steps.updatedSdkVersion.outputs.result }} yq -i '.version = strenv(NEW_VERSION)' pubspec.yaml 
+          cmd: NEW_VERSION={{ steps.lookupSdkVersion.outputs.result }} yq -i '.version = strenv(NEW_VERSION)' pubspec.yaml 
 
       - name: Add pubspec.yaml
         run: git add pubspec.yaml 
