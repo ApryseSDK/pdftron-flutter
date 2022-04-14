@@ -24,21 +24,13 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git commit -m "Updating pubspec.yaml" -a || echo "No commit needed. pubspec.yaml is already up-to-date"
                
-
-      - name: Get SDK Version from config
-        id: lookupSdkVersion
-        uses: mikefarah/yq@master
-        with:
-          cmd: yq '.version' 'pubspec.yaml'
+      - name: Install yq
+        uses: samuelmeuli/action-snapcraft@v1.2.0
+        run: snap install yq
       
       - name: Update the version 
         id: updatedSdkVersion
-        run: bash ./scripts/version_bump.bash {{ steps.lookupSdkVersion.outputs.result }}
-      
-      - name: Update pubspec
-        uses: mikefarah/yq@master
-        with:
-          cmd: NEW_VERSION={{ steps.lookupSdkVersion.outputs.result }} yq -i '.version = strenv(NEW_VERSION)' pubspec.yaml 
+        run: bash ./scripts/version_bump.bash
 
       - name: Add pubspec.yaml
         run: git add pubspec.yaml 
