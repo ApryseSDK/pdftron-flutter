@@ -111,6 +111,9 @@ public class PluginUtils {
     public static final String KEY_ZOOM_LIMIT_MODE_NONE = "none";
     public static final String KEY_ZOOM_LIMIT_MODE_ABSOLUTE = "absolute";
     public static final String KEY_ZOOM_LIMIT_MODE_RELATIVE = "relative";
+    public static final String KEY_RED = "red";
+    public static final String KEY_GREEN = "green";
+    public static final String KEY_BLUE = "blue";
 
     public static final String KEY_REQUESTED_ORIENTATION = "requestedOrientation";
 
@@ -312,6 +315,8 @@ public class PluginUtils {
     public static final String FUNCTION_GET_SAVED_SIGNATURES = "getSavedSignatures";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_FOLDER = "getSavedSignatureFolder";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER = "getSavedSignatureJpgFolder";
+    public static final String FUNCTION_SET_BACKGROUND_COLOR = "setBackgroundColor";
+    public static final String FUNCTION_SET_DEFAULT_PAGE_COLOR = "setDefaultPageColor";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2443,6 +2448,26 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_SET_BACKGROUND_COLOR: {
+                checkFunctionPrecondition(component);
+                try {
+                    setBackgroundColor(call, result, component);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+                break;
+            }
+            case FUNCTION_SET_DEFAULT_PAGE_COLOR: {
+                checkFunctionPrecondition(component);
+                try {
+                    setDefaultPageColor(call, result, component);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -3742,6 +3767,32 @@ public class PluginUtils {
                 pdfViewCtrl.docUnlock();
             }
         }
+    }
+
+    private static void setBackgroundColor(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        int red = call.argument(KEY_RED);
+        int green = call.argument(KEY_GREEN);
+        int blue = call.argument(KEY_BLUE);
+        pdfViewCtrl.setClientBackgroundColor(red, green, blue, false);
+        result.success(null);
+    }
+
+    private static void setDefaultPageColor(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        int red = call.argument(KEY_RED);
+        int green = call.argument(KEY_GREEN);
+        int blue = call.argument(KEY_BLUE);
+        pdfViewCtrl.setDefaultPageColor(red, green, blue);
+        result.success(null);
     }
 
     // Events
