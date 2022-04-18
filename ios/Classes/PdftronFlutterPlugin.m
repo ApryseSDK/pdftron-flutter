@@ -756,6 +756,8 @@
                             documentController.pdfViewCtrl.pagingScrollView.showsHorizontalScrollIndicator = !hideScrollbars;
                             documentController.pdfViewCtrl.pagingScrollView.showsVerticalScrollIndicator = !hideScrollbars;
                         }
+                    }
+                }
                 else if([key isEqualToString:PTQuickBookmarkCreationKey])
                 {
                     NSNumber* quickBookmarkCreation = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTQuickBookmarkCreationKey class:[NSNumber class] error:&error];
