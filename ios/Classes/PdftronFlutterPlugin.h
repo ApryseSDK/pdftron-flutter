@@ -251,6 +251,8 @@ static NSString * const PTGetZoomKey = @"getZoom";
 static NSString * const PTSetZoomLimitsKey = @"setZoomLimits";
 static NSString * const PTGetSavedSignaturesKey = @"getSavedSignatures";
 static NSString * const PTGetSavedSignatureFolderKey = @"getSavedSignatureFolder";
+static NSString * const PTSetBackgroundColorKey = @"setBackgroundColor";
+static NSString * const PTSetDefaultPageColorKey = @"setDefaultPageColor";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
@@ -277,6 +279,9 @@ static NSString * const PTSourceRectArgumentKey = @"sourceRect";
 static NSString * const PTPathArgumentKey = @"path";
 static NSString * const PTDpiArgumentKey = @"dpi";
 static NSString * const PTExportFormatArgumentKey = @"exportFormat";
+static NSString * const PTRedKey = @"red";
+static NSString * const PTBlueKey = @"blue";
+static NSString * const PTGreenKey = @"green";
 
 // event strings
 static NSString * const PTExportAnnotationCommandEventKey = @"export_annotation_command_event";
