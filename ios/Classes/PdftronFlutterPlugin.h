@@ -68,6 +68,7 @@ static NSString * const PTUserNameKey = @"userName";
 static NSString * const PTAnnotationManagerEditModeKey = @"annotationManagerEditMode";
 static NSString * const PTAnnotationManagerUndoModeKey = @"annotationManagerUndoMode";
 static NSString * const PTAnnotationToolbarAlignmentKey = @"annotationToolbarAlignment";
+static NSString * const PTHideScrollbarsKey = @"hideScrollbars";
 static NSString * const PTQuickBookmarkCreationKey = @"quickBookmarkCreation";
 
 

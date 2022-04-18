@@ -742,6 +742,22 @@
                         }
                     }
                 }
+                else if ([key isEqualToString:PTHideScrollbarsKey])
+                {
+                    NSNumber* hideScrollbarsValue = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideScrollbarsKey class:[NSNumber class] error:&error];
+                    
+                    BOOL hideScrollbars = [hideScrollbarsValue boolValue];
+
+                    if (!error && hideScrollbars) {
+                        if (hideScrollbars) {
+                            documentController.pdfViewCtrl.contentScrollView.showsHorizontalScrollIndicator = !hideScrollbars;
+                            documentController.pdfViewCtrl.contentScrollView.showsVerticalScrollIndicator = !hideScrollbars;
+                            
+                            documentController.pdfViewCtrl.pagingScrollView.showsHorizontalScrollIndicator = !hideScrollbars;
+                            documentController.pdfViewCtrl.pagingScrollView.showsVerticalScrollIndicator = !hideScrollbars;
+                        }
+                    }
+                }
                 else if([key isEqualToString:PTQuickBookmarkCreationKey])
                 {
                     NSNumber* quickBookmarkCreation = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTQuickBookmarkCreationKey class:[NSNumber class] error:&error];

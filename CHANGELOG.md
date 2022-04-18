@@ -1,3 +1,5 @@
+# 1.0.0-beta.17 - March 31, 2021
+- hideScrollbars_iOS
 # 1.0.0-beta.16 - March 31, 2021
 - Minor updates to API docs
 # 1.0.0-beta.15 - March 23, 2021
