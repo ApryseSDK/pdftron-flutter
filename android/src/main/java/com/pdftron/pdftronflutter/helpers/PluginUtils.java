@@ -2440,12 +2440,7 @@ public class PluginUtils {
             }
             case FUNCTION_ZOOM_TO_RECT: {
                 checkFunctionPrecondition(component);
-                try {
-                    zoomToRect(call, result, component);
-                } catch (PDFNetException ex) {
-                    ex.printStackTrace();
-                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
-                }
+                zoomToRect(call, result, component);
                 break;
             }
             case FUNCTION_GET_ZOOM: {
@@ -3764,7 +3759,7 @@ public class PluginUtils {
         }
     }
 
-    private static void zoomWithCenter(MethodCall call, MethodChannel.Result result, ViewerComponent component){
+    private static void zoomWithCenter(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         if (pdfViewCtrl == null) {
             result.error("InvalidState", "PDFViewCtrl not found", null);
@@ -3777,7 +3772,7 @@ public class PluginUtils {
         result.success(null);
     }
 
-    private static void zoomToRect(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException{
+    private static void zoomToRect(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         if (pdfViewCtrl == null) {
             result.error("InvalidState", "PDFViewCtrl not found", null);
@@ -3793,9 +3788,10 @@ public class PluginUtils {
             pdfViewCtrl.showRect(pageNumber, rect);
         } catch (PDFNetException ex) {
             ex.printStackTrace();
+            result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
         }
         result.success(null);
-       
+
     }
 
     // Events
