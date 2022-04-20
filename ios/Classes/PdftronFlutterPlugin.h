@@ -248,6 +248,8 @@ static NSString * const PTOpenTabSwitcherKey = @"openTabSwitcher";
 static NSString * const PTOpenGoToPageViewKey = @"openGoToPageView";
 static NSString * const PTOpenNavigationListsKey = @"openNavigationLists";
 static NSString * const PTGetCurrentPageKey = @"getCurrentPage";
+static NSString * const PTZoomWithCenterKey = @"zoomWithCenter";
+static NSString * const PTZoomToRectKey = @"zoomToRect";
 static NSString * const PTGetZoomKey = @"getZoom";
 static NSString * const PTSetZoomLimitsKey = @"setZoomLimits";
 static NSString * const PTGetSavedSignaturesKey = @"getSavedSignatures";
@@ -300,6 +302,7 @@ static NSString * const PTFitPageKey = @"FitPage";
 static NSString * const PTFitWidthKey = @"FitWidth";
 static NSString * const PTFitHeightKey = @"FitHeight";
 static NSString * const PTZoomKey = @"Zoom";
+static NSString * const PTZoomRatioKey = @"zoom";
 
 // layout mode
 static NSString * const PTSingleKey = @"Single";
@@ -314,6 +317,8 @@ static NSString * const PTX1Key = @"x1";
 static NSString * const PTY1Key = @"y1";
 static NSString * const PTX2Key = @"x2";
 static NSString * const PTY2Key = @"y2";
+static NSString * const PTXKey = @"x";
+static NSString * const PTYKey = @"y";
 static NSString * const PTWidthKey = @"width";
 static NSString * const PTHeightKey = @"height";
 static NSString * const PTRectKey = @"rect";
