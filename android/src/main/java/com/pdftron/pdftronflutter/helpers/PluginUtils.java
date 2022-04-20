@@ -2436,10 +2436,11 @@ public class PluginUtils {
             case FUNCTION_ZOOM_WITH_CENTER: {
                 checkFunctionPrecondition(component);
                 zoomWithCenter(call, result, component);
+                break;
             }
             case FUNCTION_ZOOM_TO_RECT: {
                 checkFunctionPrecondition(component);
-                try{
+                try {
                     zoomToRect(call, result, component);
                 } catch (PDFNetException ex) {
                     ex.printStackTrace();
