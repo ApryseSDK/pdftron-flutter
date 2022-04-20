@@ -68,6 +68,7 @@ static NSString * const PTUserNameKey = @"userName";
 static NSString * const PTAnnotationManagerEditModeKey = @"annotationManagerEditMode";
 static NSString * const PTAnnotationManagerUndoModeKey = @"annotationManagerUndoMode";
 static NSString * const PTAnnotationToolbarAlignmentKey = @"annotationToolbarAlignment";
+static NSString * const PTHideScrollbarsKey = @"hideScrollbars";
 static NSString * const PTQuickBookmarkCreationKey = @"quickBookmarkCreation";
 
 
@@ -143,6 +144,7 @@ static NSString * const PTThumbnailSliderKey = @"thumbnailSlider";
 static NSString * const PTSaveCopyButtonKey = @"saveCopyButton";
 static NSString * const PTSaveIdenticalCopyButtonKey = @"saveIdenticalCopyButton";
 static NSString * const PTSaveFlattenedCopyButtonKey = @"saveFlattenedCopyButton";
+static NSString * const PTSaveCroppedCopyButtonKey = @"saveCroppedCopyButton";
 static NSString * const PTEditPagesButtonKey = @"editPagesButton";
 static NSString * const PTPrintButtonKey = @"printButton";
 static NSString * const PTCloseButtonKey = @"closeButton";

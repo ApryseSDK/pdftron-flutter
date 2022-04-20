@@ -160,12 +160,12 @@ class Buttons {
   static const undo = 'undo';
   static const redo = 'redo';
   static const showFileAttachmentButton = 'showFileAttachmentButton';
+  static const savePasswordCopyButton = 'savePasswordCopyButton';
 
   /// Android only.
   static const editAnnotationToolbarButton = 'editAnnotationToolButton';
   static const saveReducedCopyButton = 'saveReducedCopyButton';
   static const saveCroppedCopyButton = 'saveCroppedCopyButton';
-  static const savePasswordCopyButton = 'savePasswordCopyButton';
 }
 
 /// Defines the various kinds of tools for the viewer.
