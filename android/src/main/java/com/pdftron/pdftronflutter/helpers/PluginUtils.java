@@ -111,6 +111,7 @@ public class PluginUtils {
     public static final String KEY_ZOOM_LIMIT_MODE_NONE = "none";
     public static final String KEY_ZOOM_LIMIT_MODE_ABSOLUTE = "absolute";
     public static final String KEY_ZOOM_LIMIT_MODE_RELATIVE = "relative";
+    public static final String KEY_ANIMATED = "animated";
 
     public static final String KEY_REQUESTED_ORIENTATION = "requestedOrientation";
 
@@ -314,6 +315,7 @@ public class PluginUtils {
     public static final String FUNCTION_ZOOM_TO_RECT = "zoomToRect";
     public static final String FUNCTION_GET_ZOOM = "getZoom";
     public static final String FUNCTION_SET_ZOOM_LIMITS = "setZoomLimits";
+    public static final String FUNCTION_SMART_ZOOM = "smartZoom";
     public static final String FUNCTION_GET_SAVED_SIGNATURES = "getSavedSignatures";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_FOLDER = "getSavedSignatureFolder";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER = "getSavedSignatureJpgFolder";
@@ -2462,6 +2464,11 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_SMART_ZOOM: {
+                checkFunctionPrecondition(component);
+                smartZoom(call, result, component);
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -2470,6 +2477,19 @@ public class PluginUtils {
     }
 
     // Methods
+
+    private static void smartZoom(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
+        int x = call.argument(KEY_X);
+        int y = call.argument(KEY_Y);
+        boolean animated = call.argument(KEY_ANIMATED);
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (null == pdfViewCtrl) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        pdfViewCtrl.smartZoom(x, y, animated);
+        result.success(null);
+    }
 
     private static void setZoomLimits(MethodCall call, MethodChannel.Result result, ViewerComponent component)
             throws PDFNetException {
@@ -2501,6 +2521,7 @@ public class PluginUtils {
                 ex.printStackTrace();
             }
         }
+        result.success(null);
     }
 
     private static void ungroupAnnotations(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {

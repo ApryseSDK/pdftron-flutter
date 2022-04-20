@@ -493,6 +493,7 @@ class DocumentViewController {
       "y2": rect["y2"]
     });
   }
+
   /// Returns the current zoom scale of current document viewer.
   ///
   /// Returns a Promise.
@@ -509,6 +510,19 @@ class DocumentViewController {
     });
   }
 
+  /// Zoom to a paragraph that contains the specified coordinate. If no paragraph contains the coordinate, the zooming would not happen.
+  ///
+  /// Parameters: x:int         -> the x-coordinate of the target coordinate
+  ///             y:int         -> the y-coordinate of the target coordinate
+  ///             animated:bool -> whether the transition is animated
+  Future<void> smartZoom(int x, int y, bool animated) {
+    return _channel.invokeMethod(Functions.smartZoom, <String, dynamic>{
+      'x': x,
+      'y': y,
+      Parameters.animated: animated,
+    });
+  }
+  
   /// Gets a list of absolute file paths to PDFs containing the saved signatures.
   ///
   /// Returns a promise
