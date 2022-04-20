@@ -2438,15 +2438,11 @@ public class PluginUtils {
             case FUNCTION_ZOOM_WITH_CENTER: {
                 checkFunctionPrecondition(component);
                 zoomWithCenter(call, result, component);
+                break;
             }
             case FUNCTION_ZOOM_TO_RECT: {
                 checkFunctionPrecondition(component);
-                try{
-                    zoomToRect(call, result, component);
-                } catch (PDFNetException ex) {
-                    ex.printStackTrace();
-                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
-                }
+                zoomToRect(call, result, component);
                 break;
             }
             case FUNCTION_GET_ZOOM: {
@@ -3784,7 +3780,7 @@ public class PluginUtils {
         }
     }
 
-    private static void zoomWithCenter(MethodCall call, MethodChannel.Result result, ViewerComponent component){
+    private static void zoomWithCenter(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         if (pdfViewCtrl == null) {
             result.error("InvalidState", "PDFViewCtrl not found", null);
@@ -3797,7 +3793,7 @@ public class PluginUtils {
         result.success(null);
     }
 
-    private static void zoomToRect(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException{
+    private static void zoomToRect(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         if (pdfViewCtrl == null) {
             result.error("InvalidState", "PDFViewCtrl not found", null);
@@ -3811,11 +3807,12 @@ public class PluginUtils {
             double y2 = call.argument(KEY_Y2);
             com.pdftron.pdf.Rect rect = new com.pdftron.pdf.Rect(x1, y1, x2, y2);
             pdfViewCtrl.showRect(pageNumber, rect);
+            result.success(null);
         } catch (PDFNetException ex) {
             ex.printStackTrace();
+            result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
         }
-        result.success(null);
-       
+
     }
 
     // Events
