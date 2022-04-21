@@ -1403,7 +1403,7 @@
         NSString *annotationList = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationListArgumentKey]];;
         [self exportAnnotations:annotationList resultToken:result];
     } else if ([call.method isEqualToString:PTFlattenAnnotationsKey]) {
-        bool formsOnly = [PdftronFlutterPlugin PT_idAsBool:call.arguments[PTFormsOnlyArgumentKey]];;
+        bool formsOnly = [PdftronFlutterPlugin PT_idAsBool:call.arguments[PTFormsOnlyArgumentKey]];
         [self flattenAnnotations:formsOnly resultToken:result];
     } else if ([call.method isEqualToString:PTDeleteAnnotationsKey]) {
         NSString *annotationList = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationListArgumentKey]];;
@@ -1544,7 +1544,9 @@
         [self getSavedSignatures:result];
     } else if ([call.method isEqualToString:PTGetSavedSignatureFolderKey]) {
         [self getSavedSignatureFolder:result];
-    } else {
+    } else if ([call.method isEqualToString:PTSmartZoomKey]) {
+        [self smartZoom:result call:call];
+    }   else {
         result(FlutterMethodNotImplemented);
     }
 }
@@ -2739,6 +2741,15 @@
     } else if ([zoomLimitMode isEqualToString:PTZoomLimitNoneKey]) {
         [documentController.pdfViewCtrl SetZoomLimits:e_trn_zoom_limit_none Minimum:minimum Maxiumum:maximum];
     }
+    flutterResult(nil);
+}
+
+-(void)smartZoom:(FlutterResult)flutterResult call:(FlutterMethodCall*)call {
+    PTDocumentController *documentController = [self getDocumentController];
+    int x = [call.arguments[PTXKey] intValue];
+    int y = [call.arguments[PTYKey] intValue];
+    bool animated = [PdftronFlutterPlugin PT_idAsBool:call.arguments[PTAnimatedArgumentKey]];
+    [documentController.pdfViewCtrl SmartZoomX:(double)x y:(double)y animated:animated];
     flutterResult(nil);
 }
 
