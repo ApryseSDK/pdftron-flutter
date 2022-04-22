@@ -25,7 +25,7 @@ jobs:
           git commit -m "Updating pubspec.yaml" -a || echo "No commit needed. pubspec.yaml is already up-to-date"
                
       - name: Install Snapcraft
-        uses: samuelmeuli/action-snapcraft@v1.2.0
+        run: sudo snap install snapcraft --classic --channel stable
       
       - name: Install yq
         run: sudo snap install yq
