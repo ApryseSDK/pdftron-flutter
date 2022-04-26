@@ -8,7 +8,6 @@ class Functions {
   static const openDocument = "openDocument";
   static const getSavedSignatures = "getSavedSignatures";
   static const getSavedSignatureFolder = "getSavedSignatureFolder";
-  static const getVisiblePages = "getVisiblePages";
 
 /// Android only
   static const getSavedSignatureJpgFolder = "getSavedSignatureJpgFolder";
@@ -70,6 +69,7 @@ class Functions {
   static const zoomToRect = "zoomToRect";
   static const getZoom = "getZoom";
   static const setZoomLimits = "setZoomLimits";
+  static const getVisiblePages = "getVisiblePages";
 }
 
 /// Defines the parameters of the functions.
