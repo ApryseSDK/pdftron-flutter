@@ -493,6 +493,7 @@ class DocumentViewController {
       "y2": rect["y2"]
     });
   }
+
   /// Returns the current zoom scale of current document viewer.
   ///
   /// Returns a Promise.
@@ -531,4 +532,12 @@ class DocumentViewController {
   Future<String?> getSavedSignatureJpgFolder() {
     return _channel.invokeMethod(Functions.getSavedSignatureJpgFolder);
   }
+
+  /// Gets the visible pages in the current viewer as an array.
+  ///
+  /// Return a Promise
+  Future<List<int>?> getVisiblePages() {
+    return _channel.invokeMethod(Functions.getVisiblePages);
+  }
+    
 }

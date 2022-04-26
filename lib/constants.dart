@@ -8,6 +8,7 @@ class Functions {
   static const openDocument = "openDocument";
   static const getSavedSignatures = "getSavedSignatures";
   static const getSavedSignatureFolder = "getSavedSignatureFolder";
+  static const getVisiblePages = "getVisiblePages";
 
 /// Android only
   static const getSavedSignatureJpgFolder = "getSavedSignatureJpgFolder";
