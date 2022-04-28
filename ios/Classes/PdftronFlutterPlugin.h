@@ -255,6 +255,8 @@ static NSString * const PTSetZoomLimitsKey = @"setZoomLimits";
 static NSString * const PTGetSavedSignaturesKey = @"getSavedSignatures";
 static NSString * const PTGetSavedSignatureFolderKey = @"getSavedSignatureFolder";
 
+// Hygen generated constants
+
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
 static NSString * const PTPasswordArgumentKey = @"password";

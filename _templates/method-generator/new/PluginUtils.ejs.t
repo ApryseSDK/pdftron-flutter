@@ -1,6 +1,6 @@
 ---
-to: src/main/java/com/pdftron/pdftronflutter/helpers/PluginUtils.java
-after: Hygen Generated Methods
+to: android/src/main/java/com/pdftron/pdftronflutter/helpers/PluginUtils.java
+after: Hygen Generated Method Constants
 inject: true
 ---
 

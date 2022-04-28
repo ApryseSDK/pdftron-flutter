@@ -318,7 +318,7 @@ public class PluginUtils {
     public static final String FUNCTION_GET_SAVED_SIGNATURE_FOLDER = "getSavedSignatureFolder";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER = "getSavedSignatureJpgFolder";
 
-    // Hygen Generated Methods
+    // Hygen Generated Method Constants
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2460,6 +2460,7 @@ public class PluginUtils {
                 }
                 break;
             }
+            // Hygen Generated Method Cases
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -3795,6 +3796,8 @@ public class PluginUtils {
         }
 
     }
+
+    // Hygen Generated Methods
 
     // Events
 

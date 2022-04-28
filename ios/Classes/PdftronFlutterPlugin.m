@@ -1546,7 +1546,9 @@
         [self getSavedSignatures:result];
     } else if ([call.method isEqualToString:PTGetSavedSignatureFolderKey]) {
         [self getSavedSignatureFolder:result];
-    } else {
+    } 
+    // Hygen Generated Cases
+    else {
         result(FlutterMethodNotImplemented);
     }
 }
@@ -3273,6 +3275,8 @@
         [documentController.pdfViewCtrl ShowRect:pageNumber rect:rect];
     }
 }
+
+// Hygen Generated Methods
 
 #pragma mark - Helper
 
