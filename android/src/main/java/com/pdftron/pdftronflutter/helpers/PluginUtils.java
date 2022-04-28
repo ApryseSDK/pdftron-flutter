@@ -190,6 +190,8 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_TOOLBAR_GRAVITY = "annotationToolbarAlignment";
     public static final String KEY_CONFIG_QUICK_BOOKMARK_CREATION = "quickBookmarkCreation";
 
+    // Hygen Generated Config Constants
+
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
     public static final String KEY_X2 = "x2";
@@ -1194,6 +1196,7 @@ public class PluginUtils {
                     Boolean quickBookmark = configJson.getBoolean(KEY_CONFIG_QUICK_BOOKMARK_CREATION);
                     builder.quickBookmarkCreation(quickBookmark);
                 }
+                // Hygen Generated Configs
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
