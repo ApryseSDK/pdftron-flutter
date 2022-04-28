@@ -531,4 +531,7 @@ class DocumentViewController {
   Future<String?> getSavedSignatureJpgFolder() {
     return _channel.invokeMethod(Functions.getSavedSignatureJpgFolder);
   }
+
+  // Hygen Generated Methods
+  
 }

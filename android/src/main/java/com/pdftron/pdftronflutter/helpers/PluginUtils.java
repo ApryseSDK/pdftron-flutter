@@ -318,6 +318,8 @@ public class PluginUtils {
     public static final String FUNCTION_GET_SAVED_SIGNATURE_FOLDER = "getSavedSignatureFolder";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER = "getSavedSignatureJpgFolder";
 
+    // Hygen Generated Methods
+
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
     public static final String BUTTON_SHARE = "shareButton";
