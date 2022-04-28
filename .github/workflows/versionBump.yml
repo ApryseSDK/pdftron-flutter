@@ -1,0 +1,50 @@
+name: Update pubspec.yaml
+on:
+  pull_request:
+    branches: [master]
+
+jobs:
+  pubspec-update: 
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token.
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo.
+          ref: ${{ github.event.pull_request.head.sha }} # checks out the branch being merged into `master` 
+
+      - name: Get Latest pubspec.yaml
+        run: | 
+          git fetch 
+          git checkout -m origin/master pubspec.yaml
+          git add pubspec.yaml
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Updating pubspec.yaml" -a || echo "No commit needed. pubspec.yaml is already up-to-date"
+               
+      - name: Install Snapcraft
+        run: sudo snap install snapcraft --classic --channel stable
+      
+      - name: Install yq
+        run: sudo snap install yq
+      
+      - name: Update the version 
+        id: updatedSdkVersion
+        run: bash ./scripts/version_bump.bash
+
+      - name: Add pubspec.yaml
+        run: git add pubspec.yaml 
+
+      - name: Commit files
+        run: | # Change last line to your preferred commit message (I like `chore: build js files`).
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Updating package version" 
+
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.event.pull_request.head.ref }} # pushes the commit to the branch being merged into `master`

@@ -270,15 +270,6 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     if (tool.backToPanToolAfterUse != backToPan) {
         tool.backToPanToolAfterUse = backToPan;
     }
-    if ([self.toolManager.tool isKindOfClass:[PTCreateToolBase class]] ||
-        [self.toolManager.tool isKindOfClass:[PTFreeTextCreate class]]) {
-        // Workaround to disable undo/redo in the presets bar if necessary
-        if(self.toolManager.undoManager.undoRegistrationEnabled){
-            [self.toolManager.tool.undoManager enableUndoRegistration];
-        }else{
-            [self.toolManager.tool.undoManager disableUndoRegistration];
-        }
-    }
 }
 
 -(void)toolManager:(PTToolManager*)toolManager willRemoveAnnotation:(nonnull PTAnnot *)annotation onPageNumber:(int)pageNumber
@@ -1420,7 +1411,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         PTAnnotationToolbarAnnotate: toolGroupManager.annotateItemGroup,
         PTAnnotationToolbarDraw: toolGroupManager.drawItemGroup,
         PTAnnotationToolbarInsert: toolGroupManager.insertItemGroup,
-        //PTAnnotationToolbarFillAndSign: [NSNull null], // not implemented
+        PTAnnotationToolbarFillAndSign: toolGroupManager.fillAndSignItemGroup, 
         PTAnnotationToolbarPrepareForm: toolGroupManager.prepareFormItemGroup,
         PTAnnotationToolbarMeasure: toolGroupManager.measureItemGroup,
         PTAnnotationToolbarRedaction: toolGroupManager.redactItemGroup,
@@ -1498,6 +1489,12 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 - (void)setPageChangesOnTap:(BOOL)pageChangesOnTap
 {
     self.changesPageOnTap = pageChangesOnTap;
+}
+
+-(void)setLayoutMode:(NSString *)layoutMode
+{
+    _layoutMode = layoutMode;
+    [self applyLayoutMode];
 }
 
 - (BOOL)pageChangesOnTap
