@@ -1,3 +1,6 @@
+# 1.0.0-beta.21 - April 22, 2021
+- Update Android to v9.2.2
+
 # 1.0.0-beta.18 - April 22, 2021
 - Fix for setting layout mode on document open on iOS
 
