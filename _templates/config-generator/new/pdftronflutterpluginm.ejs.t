@@ -1,6 +1,6 @@
 ---
 to: ios/Classes/PdftronFlutterPlugin.m
-after: Hygen generated Configs
+after: Hygen Generated Configs
 inject: true
 ---
                 else if([key isEqualToString:PT<%= h.changeCase.pascalCase(name) %>Key])

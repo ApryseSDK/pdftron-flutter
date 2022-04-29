@@ -1,6 +1,6 @@
 ---
 to: ios/Classes/PdftronFlutterPlugin.h
-after: Hygen generated Config Constants
+after: Hygen Generated Config Constants
 inject: true
 ---
 static NSString * const PT<%= h.changeCase.pascalCase(name) %>Key = @"<%= name %>";
