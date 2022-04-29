@@ -3,4 +3,4 @@ to: android/src/main/java/com/pdftron/pdftronflutter/helpers/PluginUtils.java
 after: Hygen Generated Config Constants
 inject: true
 ---
-public static final String KEY_CONFIG_<%= h.javaConstants(name) %> = "<%= name %>"
+    public static final String KEY_CONFIG_<%= h.javaConstants(name) %> = "<%= name %>"
