@@ -766,6 +766,7 @@
                         documentController.bookmarkPageButtonHidden = ![quickBookmarkCreation boolValue];
                     }
                 }
+                // Hygen Generated Configs
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);

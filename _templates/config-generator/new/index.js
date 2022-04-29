@@ -5,7 +5,7 @@ module.exports = {
         {
           type: 'input',
           name: 'name',
-          message: 'Name of Method?',
+          message: 'Name of Config?',
         },
         {
           type: 'input',
