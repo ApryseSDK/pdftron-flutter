@@ -25,6 +25,7 @@ static NSString * const PTExcludedAnnotationListTypesKey = @"excludedAnnotationL
 static NSString * const PTAutoSaveEnabledKey = @"autoSaveEnabled";
 static NSString * const PTPageChangeOnTapKey = @"pageChangeOnTap";
 static NSString * const PTShowSavedSignaturesKey = @"showSavedSignatures";
+static NSString * const PTSignaturePhotoPickerEnabledKey = @"signaturePhotoPickerEnabled";
 static NSString * const PTUseStylusAsPenKey = @"useStylusAsPen";
 static NSString * const PTSignSignatureFieldWithStampsKey = @"signSignatureFieldWithStamps";
 static NSString * const PTSelectAnnotationAfterCreationKey = @"selectAnnotationAfterCreation";

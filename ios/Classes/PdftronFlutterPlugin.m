@@ -407,6 +407,13 @@
                         [documentController setShowSavedSignatures:[showSavedSignatureNumber boolValue]];
                     }
                 }
+                else if ([key isEqualToString:PTSignaturePhotoPickerEnabledKey]) {
+                    
+                    NSNumber* signaturePhotoPickerEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignaturePhotoPickerEnabledKey class:[NSNumber class] error:&error];
+                    if (!error && signaturePhotoPickerEnabledNumber) {
+                        [documentController setSignaturePhotoPickerEnabled:[signaturePhotoPickerEnabledNumber boolValue]];
+                    }
+                }
                 else if ([key isEqualToString:PTUseStylusAsPenKey]) {
                     
                     NSNumber* useStylusAsPenNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUseStylusAsPenKey class:[NSNumber class] error:&error];

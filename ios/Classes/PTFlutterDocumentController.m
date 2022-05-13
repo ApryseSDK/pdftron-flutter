@@ -1512,6 +1512,27 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     return self.toolManager.showDefaultSignature;
 }
 
+-(void)setSignaturePhotoPickerEnabled:(BOOL)signaturePhotoPickerEnabled
+{
+    NSMutableArray *newSigTypes = [self.toolManager.signatureAnnotationOptions.signatureTypes mutableCopy];
+    NSNumber *type = [NSNumber numberWithUnsignedInt:PTImageSignature];
+    
+    if (!signaturePhotoPickerEnabled) {
+        [newSigTypes removeObject:type];
+    } else if (![newSigTypes containsObject:type]) {
+        [newSigTypes addObject:type];
+    }
+    
+    self.toolManager.signatureAnnotationOptions.signatureTypes = [newSigTypes copy];
+}
+
+-(BOOL)signaturePhotoPickedEnabled
+{
+    NSNumber *type = [NSNumber numberWithUnsignedInt:PTImageSignature];
+    
+    return [self.toolManager.signatureAnnotationOptions.signatureTypes containsObject:type];
+}
+
 - (void)setSignSignatureFieldsWithStamps:(BOOL)signSignatureFieldsWithStamps
 {
     self.toolManager.signatureAnnotationOptions.signSignatureFieldsWithStamps = signSignatureFieldsWithStamps;

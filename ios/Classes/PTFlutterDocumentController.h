@@ -37,6 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL pageChangesOnTap;
 @property (nonatomic, assign) BOOL useStylusAsPen;
 @property (nonatomic, assign) BOOL showSavedSignatures;
+@property (nonatomic, assign) BOOL signaturePhotoPickerEnabled;
 @property (nonatomic, assign) BOOL signSignatureFieldsWithStamps;
 @property (nonatomic, assign) BOOL selectAnnotationAfterCreation;
 @property (nonatomic, assign, getter=isBottomToolbarOn) BOOL bottomToolbarOn;
