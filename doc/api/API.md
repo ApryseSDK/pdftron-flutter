@@ -1847,12 +1847,30 @@ config.showSavedSignatures = true;
 ```
 
 #### signaturePhotoPickerEnabled
-bool, optional, defaults to true. Android only.
+bool, optional, defaults to true.
 
 Defines whether to show the option to pick images in the signature dialog.
 
 ```dart
 config.signaturePhotoPickerEnabled = true;
+```
+
+#### signatureTypingEnabled
+bool, optional, defaults to true.
+
+Defines whether to enable typing to create a new signature.
+
+```dart
+config.signatureTypingEnabled = true;
+```
+
+#### signatureDrawingEnabled
+bool, optional, defaults to true. iOS only.
+
+Defines whether to enable drawing to create a new signature.
+
+```dart
+config.signatureDrawingEnabled = true;
 ```
 
 ### Thumbnail Browser
