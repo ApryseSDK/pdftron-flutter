@@ -1514,23 +1514,49 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 
 -(void)setSignaturePhotoPickerEnabled:(BOOL)signaturePhotoPickerEnabled
 {
-    NSMutableArray *newSigTypes = [self.toolManager.signatureAnnotationOptions.signatureTypes mutableCopy];
+    [self enableSignatureType:signaturePhotoPickerEnabled type:PTImageSignature];
+}
+
+-(BOOL)signaturePhotoPickerEnabled
+{
     NSNumber *type = [NSNumber numberWithUnsignedInt:PTImageSignature];
+    return [self.toolManager.signatureAnnotationOptions.signatureTypes containsObject:type];
+}
+
+-(void)setSignatureTypingEnabled:(BOOL)signatureTypingEnabled
+{
+    [self enableSignatureType:signatureTypingEnabled type:PTTypedSignature];
+}
+
+-(BOOL)signatureTypingEnabled
+{
+    NSNumber *type = [NSNumber numberWithUnsignedInt:PTTypedSignature];
+    return [self.toolManager.signatureAnnotationOptions.signatureTypes containsObject:type];
+}
+
+-(void)setSignatureDrawingEnabled:(BOOL)signatureDrawingEnabled
+{
+    [self enableSignatureType:signatureDrawingEnabled type:PTDrawnSignature];
+}
+
+-(BOOL)signatureDrawingEnabled
+{
+    NSNumber *type = [NSNumber numberWithUnsignedInt:PTDrawnSignature];
+    return [self.toolManager.signatureAnnotationOptions.signatureTypes containsObject:type];
+}
+
+-(void)enableSignatureType:(BOOL)enable type:(PTSignatureType)signatureType
+{
+    NSMutableArray *newSigTypes = [self.toolManager.signatureAnnotationOptions.signatureTypes mutableCopy];
+    NSNumber *type = [NSNumber numberWithUnsignedInt:signatureType];
     
-    if (!signaturePhotoPickerEnabled) {
+    if (!enable) {
         [newSigTypes removeObject:type];
     } else if (![newSigTypes containsObject:type]) {
         [newSigTypes addObject:type];
     }
     
     self.toolManager.signatureAnnotationOptions.signatureTypes = [newSigTypes copy];
-}
-
--(BOOL)signaturePhotoPickedEnabled
-{
-    NSNumber *type = [NSNumber numberWithUnsignedInt:PTImageSignature];
-    
-    return [self.toolManager.signatureAnnotationOptions.signatureTypes containsObject:type];
 }
 
 - (void)setSignSignatureFieldsWithStamps:(BOOL)signSignatureFieldsWithStamps

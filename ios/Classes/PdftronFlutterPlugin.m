@@ -414,6 +414,20 @@
                         [documentController setSignaturePhotoPickerEnabled:[signaturePhotoPickerEnabledNumber boolValue]];
                     }
                 }
+                else if ([key isEqualToString:PTSignatureTypingEnabledKey]) {
+                    
+                    NSNumber* signatureTypingEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignatureTypingEnabledKey class:[NSNumber class] error:&error];
+                    if (!error && signatureTypingEnabledNumber) {
+                        [documentController setSignatureTypingEnabled:[signatureTypingEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTSignatureDrawingEnabledKey]) {
+                    
+                    NSNumber* signatureDrawingEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignatureDrawingEnabledKey class:[NSNumber class] error:&error];
+                    if (!error && signatureDrawingEnabledNumber) {
+                        [documentController setSignatureDrawingEnabled:[signatureDrawingEnabledNumber boolValue]];
+                    }
+                }
                 else if ([key isEqualToString:PTUseStylusAsPenKey]) {
                     
                     NSNumber* useStylusAsPenNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUseStylusAsPenKey class:[NSNumber class] error:&error];
