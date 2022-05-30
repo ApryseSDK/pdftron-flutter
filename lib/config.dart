@@ -83,7 +83,8 @@ class Config {
   var _annotationToolbarAlignment;
   var _hideScrollbars;
   var _quickBookmarkCreation;
-  // Hygen 1
+
+  // Hygen Generated Configs (1)
 
   Config();
 
@@ -509,7 +510,7 @@ class Config {
   /// Defaults to false
   set quickBookmarkCreation(bool value) => _quickBookmarkCreation = value;
 
-  // Hygen 2
+  // Hygen Generated Configs (2)
 
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
@@ -594,8 +595,10 @@ class Config {
         _annotationToolbarAlignment = json['annotationToolbarAlignment'],
         _outlineListEditingEnabled = json['outlineListEditingEnabled'],
         _hideScrollbars = json['hideScrollbars'],
+
+        // Hygen Generated Configs (3)
+
         _quickBookmarkCreation = json['quickBookmarkCreation'];
-  // Hygen 3
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -676,6 +679,7 @@ class Config {
         'outlineListEditingEnabled': _outlineListEditingEnabled,
         'hideScrollbars': _hideScrollbars,
         'quickBookmarkCreation': _quickBookmarkCreation,
-        // Hygen 4
+
+        // Hygen Generated Configs (4)
       };
 }

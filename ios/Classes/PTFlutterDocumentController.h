@@ -98,6 +98,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign, getter=isReadOnly) BOOL hideScrollbars;
 
+// Hygen Generated Configs
+
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
 

@@ -71,7 +71,7 @@ static NSString * const PTAnnotationToolbarAlignmentKey = @"annotationToolbarAli
 static NSString * const PTHideScrollbarsKey = @"hideScrollbars";
 static NSString * const PTQuickBookmarkCreationKey = @"quickBookmarkCreation";
 
-// Hygen Generated Config Constants
+// Hygen Generated Configs
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";

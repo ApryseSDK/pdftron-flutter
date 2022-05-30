@@ -5,15 +5,15 @@ module.exports = {
         {
           type: 'input',
           name: 'name',
-          message: 'Name of Config?',
+          message: 'Name of config?',
         },
         {
           type: 'input',
-          name: 'config',
-          message: 'Config Value? (ex: String, int)',
+          name: 'type',
+          message: 'Type of config? (ex: bool, int, String, List, Map<String, String>)',
         }
       ]
-  
+
       return inquirer
         .prompt(questions)
     },

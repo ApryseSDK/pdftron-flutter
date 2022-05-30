@@ -1,6 +1,6 @@
 ---
 to: lib/config.dart
-after: Hygen 2
+after: // Hygen Generated Configs (2)
 inject: true
 ---
-  set <%= name %>(bool value) => _<%= name %> = value;
+  set <%= name %>(<%- type %> value) => _<%= name %> = value;

@@ -1,6 +1,6 @@
 ---
 to: lib/config.dart
-after: Hygen 4
+after: // Hygen Generated Configs (4)
 inject: true
 ---
-        '<%= name %>': _<%= name %>,
+        '<%= name %>': _<%= name %>,<% -%>
