@@ -4,6 +4,6 @@ after: Hygen Generated Configs
 inject: true
 ---
                 if (!configJson.isNull(KEY_CONFIG_<%= h.changeCase.constantCase(name) %>)) {
-                    <%= h.getJavaConfigValue(config) %> <%= name %> = configJson.get<%= h.changeCase.pascalCase(h.getJavaConfigValue(config)) %>(KEY_CONFIG_<%= h.changeCase.constantCase(name) %>);
-                    <# Needs Implementation #>
-                }
+                    <%= h.getJavaConfigValue(type) %> <%= name %> = configJson.get<%= h.changeCase.upperCaseFirst(h.getJavaConfigValue(type)) %>(KEY_CONFIG_<%= h.changeCase.constantCase(name) %>);
+                    // Needs Implementation
+                }<% -%>

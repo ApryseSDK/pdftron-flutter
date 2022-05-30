@@ -1,12 +1,5 @@
 module.exports = {
     helpers: {
-        javaConstants: params => {
-            let arr = params.split(/(?=[A-Z])/);
-            arr = arr.map(element => {
-                return element.toUpperCase();
-              });
-            return arr.join('_')
-        },
         getJavaConfigValue: config => {
             let dict = {
                 "bool" : "boolean",
@@ -14,7 +7,7 @@ module.exports = {
                 "Map" : "JSONObject"
             };
             for (const [key, value] of Object.entries(dict)) {
-                if (key.includes(config))
+                if (config.includes(key))
                     return value;
             }
             return config
@@ -26,7 +19,7 @@ module.exports = {
                 "Map" : "NSDictionary"
             };
             for (const [key, value] of Object.entries(dict)) {
-                if (key.includes(config))
+                if (config.includes(key))
                     return value;
             }
             return config
