@@ -11,7 +11,7 @@ inject: true
        .split(',')
        .forEach(param => {
          name = param.substring(param.indexOf(' ') + 1).trim()
-         args += '\n      "' + name + '": ' + name + ','
+         args += '\n      Parameters.' + name + ': ' + name + ','
        })
      args = args.substring(0, args.length - 1) + '\n    '
    }

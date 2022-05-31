@@ -10,8 +10,9 @@ inject: true
        .split(',')
        .forEach(param => {
          name = param.substring(param.indexOf(' ') + 1).trim()
-         args += '\n  static const ' + name + ' = "' + name + '";'
+         args += '  static const ' + name + ' = "' + name + '";\n'
        })
+     args = args.substring(0, args.length - 1)
    }
 -%>
   <%- args %><%- %>

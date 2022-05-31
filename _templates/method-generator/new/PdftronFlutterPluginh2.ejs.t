@@ -10,8 +10,9 @@ inject: true
        .split(',')
        .forEach(param => {
          name = param.substring(param.indexOf(' ') + 1).trim()
-         args += '\nstatic NSString * const PT' + h.changeCase.pascalCase(name) + 'ArgumentKey = @"' + name + '";'
+         args += 'static NSString * const PT' + h.changeCase.pascalCase(name) + 'ArgumentKey = @"' + name + '";\n'
        })
+     args = args.substring(0, args.length - 1)
    }
 -%>
 <%- args %><%- %>
