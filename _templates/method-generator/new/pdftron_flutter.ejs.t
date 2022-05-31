@@ -10,8 +10,8 @@ inject: true
        .replace(/(?<=<)(.*?)(?=>)/g, '')
        .split(',')
        .forEach(param => {
-         name = param.substring(param.indexOf(' ') + 1).trim()
-         args += '\n      Parameters.' + name + ': ' + name + ','
+         argName = param.trim().split(' ')[1]
+         args += '\n      Parameters.' + argName + ': ' + argName + ','
        })
      args = args.substring(0, args.length - 1) + '\n    '
    }

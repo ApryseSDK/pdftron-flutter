@@ -16,21 +16,6 @@ module.exports = {
           type: 'input',
           name: 'returnType',
           message: 'Return type of Flutter method? (ex: void, int, bool?, String?, List<String>?)',
-        },
-        {
-          type: 'input',
-          name: 'paramName',
-          message: 'Parameter Name?',
-        },
-        {
-          type: 'input',
-          name: 'androidParam',
-          message: 'Android Parameter Type? (ex: boolean,int,.. )',
-        },
-        {
-          type: 'input',
-          name: 'iOSParam',
-          message: 'iOS Parameter Type? ( ex: BOOL, NSNumber.. )',
         }
       ]
 

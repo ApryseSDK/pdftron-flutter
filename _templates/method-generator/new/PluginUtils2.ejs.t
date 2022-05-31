@@ -9,10 +9,10 @@ inject: true
        .replace(/(?<=<)(.*?)(?=>)/g, '')
        .split(',')
        .forEach(param => {
-         name = param.substring(param.indexOf(' ') + 1).trim()
-         args += '    public static final String KEY_' + h.changeCase.constantCase(name) + ' = "' + name + '";\n'
+         argName = param.trim().split(' ')[1]
+         args += '    public static final String KEY_' + h.changeCase.constantCase(argName) + ' = "' + argName + '";\n'
        })
      args = args.substring(0, args.length - 1)
    }
 -%>
-    <%- args %>
+<%- args %>
