@@ -5,12 +5,17 @@ module.exports = {
         {
           type: 'input',
           name: 'name',
-          message: 'Name of Method?',
+          message: 'Name of method?',
         },
         {
           type: 'input',
-          name: 'flutterReturnType',
-          message: 'Return Type of Flutter method? (ex: String?, int?)',
+          name: 'params',
+          message: 'Parameter list of Flutter method (comma separated)? (ex: List<String> fieldNames, int flag, bool flagValue)'
+        },
+        {
+          type: 'input',
+          name: 'returnType',
+          message: 'Return type of Flutter method? (ex: void, int, bool?, String?, List<String>?)',
         },
         {
           type: 'input',
@@ -28,7 +33,7 @@ module.exports = {
           message: 'iOS Parameter Type? ( ex: BOOL, NSNumber.. )',
         }
       ]
-  
+
       return inquirer
         .prompt(questions)
     },

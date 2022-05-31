@@ -69,7 +69,7 @@ class Functions {
   static const zoomToRect = "zoomToRect";
   static const getZoom = "getZoom";
   static const setZoomLimits = "setZoomLimits";
-  
+
   // Hygen Generated Methods
 }
 
@@ -100,6 +100,8 @@ class Parameters {
   static const exportFormat = "exportFormat";
   static const dpi = "dpi";
   static const requestedOrientation = "requestedOrientation";
+
+  // Hygen Generated Method Parameters
 }
 
 /// Defines the parameters of the events.

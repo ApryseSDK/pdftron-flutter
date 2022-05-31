@@ -1548,7 +1548,7 @@
     } else if ([call.method isEqualToString:PTGetSavedSignatureFolderKey]) {
         [self getSavedSignatureFolder:result];
     } 
-    // Hygen Generated Cases
+    // Hygen Generated Method Call Cases
     else {
         result(FlutterMethodNotImplemented);
     }

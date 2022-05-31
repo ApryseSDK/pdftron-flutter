@@ -256,7 +256,7 @@ static NSString * const PTSetZoomLimitsKey = @"setZoomLimits";
 static NSString * const PTGetSavedSignaturesKey = @"getSavedSignatures";
 static NSString * const PTGetSavedSignatureFolderKey = @"getSavedSignatureFolder";
 
-// Hygen generated constants
+// Hygen Generated Methods
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
@@ -283,6 +283,8 @@ static NSString * const PTSourceRectArgumentKey = @"sourceRect";
 static NSString * const PTPathArgumentKey = @"path";
 static NSString * const PTDpiArgumentKey = @"dpi";
 static NSString * const PTExportFormatArgumentKey = @"exportFormat";
+
+// Hygen Generated Method Parameters
 
 // event strings
 static NSString * const PTExportAnnotationCommandEventKey = @"export_annotation_command_event";
