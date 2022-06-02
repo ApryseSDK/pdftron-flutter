@@ -6,11 +6,11 @@ inject: true
 <% args = ''
    if (params !== '') {
      params
-       .replace(/(?<=<)(.*?)(?=>)/g, '')
+       .replace(/(?<=<)(.*?)(?=>)/g, '') /* removing type params to get rid of any commas that can hinder splitting */
        .split(',')
        .forEach(param => {
-         name = param.trim().split(' ')[1]
-         args += 'static NSString * const PT' + h.changeCase.pascalCase(name) + 'ArgumentKey = @"' + name + '";\n'
+         argName = param.trim().split(' ')[1]
+         args += 'static NSString * const PT' + h.changeCase.pascalCase(argName) + 'ArgumentKey = @"' + argName + '";\n'
        })
      args = args.substring(0, args.length - 1)
    }

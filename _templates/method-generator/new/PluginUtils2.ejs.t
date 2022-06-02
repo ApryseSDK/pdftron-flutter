@@ -6,7 +6,7 @@ inject: true
 <% args = ''
    if (params !== '') {
      params
-       .replace(/(?<=<)(.*?)(?=>)/g, '')
+       .replace(/(?<=<)(.*?)(?=>)/g, '') /* removing type params to get rid of any commas that can hinder splitting */
        .split(',')
        .forEach(param => {
          argName = param.trim().split(' ')[1]
