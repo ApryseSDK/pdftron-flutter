@@ -82,6 +82,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private EventChannel.EventSink sZoomChangedEventEmitter;
     private EventChannel.EventSink sPageMovedEventEmitter;
 
+    // Hygen Generated Event Listeners (1)
+
     private MethodChannel.Result sFlutterLoadResult;
 
     private HashMap<Annot, Integer> mSelectedAnnots;
@@ -375,6 +377,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         sPageMovedEventEmitter = emitter;
     }
 
+    // Hygen Generated Event Listeners (2)
+
     public void setFlutterLoadResult(MethodChannel.Result result) {
         sFlutterLoadResult = result;
     }
@@ -449,6 +453,8 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
     @Override
     public EventChannel.EventSink getPageMovedEventEmitter() { return sPageMovedEventEmitter; }
+
+    // Hygen Generated Event Listeners (3)
 
     @Override
     public MethodChannel.Result getFlutterLoadResult() {

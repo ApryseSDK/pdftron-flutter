@@ -302,6 +302,8 @@ static NSString * const PTPageChangedEventKey = @"page_changed_event";
 static NSString * const PTZoomChangedEventKey = @"zoom_changed_event";
 static NSString * const PTPageMovedEventKey = @"page_moved_event";
 
+// Hygen Generated Event Listeners (1)
+
 // fit mode
 static NSString * const PTFitPageKey = @"FitPage";
 static NSString * const PTFitWidthKey = @"FitWidth";
@@ -457,6 +459,8 @@ typedef enum {
     pageChangedId,
     zoomChangedId,
     pageMovedId,
+    
+    // Hygen Generated Event Listeners (2)
 } EventSinkId;
 
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
@@ -481,6 +485,8 @@ typedef enum {
 -(void)documentController:(PTDocumentController *)docVC pageChanged:(NSString*)pageNumbersString;
 -(void)documentController:(PTDocumentController *)docVC zoomChanged:(NSNumber*)zoom;
 -(void)documentController:(PTDocumentController *)docVC pageMoved:(NSString*)pageNumbersString;
+
+// Hygen Generated Event Listeners (3)
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 

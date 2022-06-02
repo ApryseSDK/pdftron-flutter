@@ -21,6 +21,8 @@
 @property (nonatomic, strong) FlutterEventSink zoomChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink pageMovedEventSink;
 
+// Hygen Generated Event Listeners (1)
+
 @property (nonatomic, assign, getter=isWidgetView) BOOL widgetView;
 @property (nonatomic, assign, getter=isMultiTabSet) BOOL multiTabSet;
 
@@ -178,6 +180,8 @@
     [zoomChangedEventChannel setStreamHandler:self];
     
     [pageMovedEventChannel setStreamHandler:self];
+    
+    // Hygen Generated Event Listeners (2)
 }
 
 #pragma mark - Configurations
@@ -1196,6 +1200,7 @@
         case pageMovedId:
             self.pageMovedEventSink = events;
             break;
+        // Hygen Generated Event Listeners (3)
     }
     
     return Nil;
@@ -1249,6 +1254,7 @@
         case pageMovedId:
             self.pageMovedEventSink = nil;
             break;
+        // Hygen Generated Event Listeners (4)
     }
     
     return Nil;
@@ -1386,6 +1392,8 @@
         self.pageMovedEventSink(pageNumbersString);
     }
 }
+
+// Hygen Generated Event Listeners (5)
 
 #pragma mark - Functions
 

@@ -29,6 +29,9 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_LONG_PRESS_ME
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_PAGE_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ZOOM_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_PAGE_MOVED;
+
+// Hygen Generated Event Handlers (1)
+
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_OPEN_DOCUMENT;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SET_LEADING_NAV_BUTTON_ICON;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LEADING_NAV_BUTTON_ICON;
@@ -238,6 +241,8 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
                 documentView.setPageMovedEventEmitter(null);
             }
         });
+
+        // Hygen Generated Event Handlers (2)
     }
 
     @Override

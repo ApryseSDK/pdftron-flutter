@@ -28,6 +28,8 @@ const _pageChangedChannel = const EventChannel('page_changed_event');
 const _zoomChangedChannel = const EventChannel('zoom_changed_event');
 const _pageMovedChannel = const EventChannel('page_moved_event');
 
+// Hygen Generated Event Listeners (1)
+
 typedef void ExportAnnotationCommandListener(dynamic xfdfCommand);
 typedef void ExportBookmarkListener(dynamic bookmarkJson);
 typedef void DocumentLoadedListener(dynamic filePath);
@@ -45,6 +47,9 @@ typedef void PageChangedListener(
     dynamic previousPageNumber, dynamic pageNumber);
 typedef void ZoomChangedListener(dynamic zoom);
 typedef void PageMovedListener(dynamic previousPageNumber, dynamic pageNumber);
+
+// Hygen Generated Event Listeners (2)
+
 typedef void CancelListener();
 
 /// Used to identify listeners for the EventChannel.
@@ -63,6 +68,8 @@ enum eventSinkId {
   pageChangedId,
   zoomChangedId,
   pageMovedId,
+
+  // Hygen Generated Event Listeners (3)
 }
 
 /// Listens for when a local annotation changes have been committed to the document.
@@ -315,3 +322,5 @@ CancelListener startPageMovedListener(PageMovedListener listener) {
     subscription.cancel();
   };
 }
+
+// Hygen Generated Event Listeners (4)

@@ -80,6 +80,8 @@ public interface ViewerComponent {
 
     EventChannel.EventSink getPageMovedEventEmitter();
 
+    // Hygen Generated Event Listeners
+
     MethodChannel.Result getFlutterLoadResult();
 
     HashMap<Annot, Integer> getSelectedAnnots();

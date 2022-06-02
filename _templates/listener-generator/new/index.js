@@ -5,12 +5,12 @@ module.exports = {
         {
           type: 'input',
           name: 'name',
-          message: 'Name of config?',
+          message: 'Name of event listener? (ex: zoomChanged, annotationsSelected)',
         },
         {
           type: 'input',
-          name: 'type',
-          message: 'Type of config? (ex: bool, int, String, List, Map<String, String>)',
+          name: 'params',
+          message: 'Parameter list of Flutter listener (comma separated, only names)? (ex: previousPageNumber, pageNumber)'
         }
       ]
 
@@ -18,4 +18,4 @@ module.exports = {
       return inquirer
         .prompt(questions)
     },
-  }
+}
