@@ -1,5 +1,5 @@
 ---
-to: lib/events.dart
+to: lib/constants.dart
 after: Hygen Generated Event Listeners
 inject: true
 ---
@@ -13,4 +13,4 @@ inject: true
      args = args.substring(0, args.length - 1)
    }
 -%>
-<%= args %><% -%>
+<%- args %><% -%>
