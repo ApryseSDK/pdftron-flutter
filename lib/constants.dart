@@ -69,6 +69,7 @@ class Functions {
   static const zoomToRect = "zoomToRect";
   static const getZoom = "getZoom";
   static const setZoomLimits = "setZoomLimits";
+  static const getVisiblePages = "getVisiblePages";
 }
 
 /// Defines the parameters of the functions.
