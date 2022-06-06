@@ -159,15 +159,18 @@ class AnnotProperty {
 }
 
 /// The custom toolbar object.
+///
+/// Can be used to create either a custom toolbar object or a custom toolbar item object.
+/// In the case of a toolbar item, the [items] property will be ignored.
 class CustomToolbar {
   /// id should be unique.
   String? id;
   String? name;
 
-  /// items should be array of [Buttons] / [Tools] constants.
+  /// items should be array of [Buttons] / [Tools] constants or [CustomToolbar] objects.
   List<Object>? items;
 
-  /// icon (optional) should be a [ToolbarIcons] constant.
+  /// icon (optional) should be a [ToolbarIcons] constant or an image resource name.
   String? icon;
 
   CustomToolbar(this.id, this.name, this.items, [this.icon]);

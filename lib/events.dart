@@ -320,6 +320,10 @@ CancelListener startPageMovedListener(PageMovedListener listener) {
   };
 }
 
+/// Listens for when a custom annotation toolbar item is pressed. Android only.
+/// Custom toolbar item objects can be created using the [CustomToolbar] class.
+///
+/// Returns a function that can cancel the listener.
 CancelListener startAnnotationToolbarItemPressedListener(
     AnnotationToolbarItemPressedListener listener) {
   var subscription = _annotationToolbarItemPressedChannel
