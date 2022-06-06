@@ -319,6 +319,7 @@ public class PluginUtils {
     public static final String FUNCTION_GET_SAVED_SIGNATURES = "getSavedSignatures";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_FOLDER = "getSavedSignatureFolder";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER = "getSavedSignatureJpgFolder";
+    public static final String FUNCTION_GET_VISIBLE_PAGES = "getVisiblePages";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2465,6 +2466,11 @@ public class PluginUtils {
                 smartZoom(call, result, component);
                 break;
             }
+            case FUNCTION_GET_VISIBLE_PAGES: {
+                checkFunctionPrecondition(component);
+                getVisiblePages(result, component);
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -3813,6 +3819,16 @@ public class PluginUtils {
             result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
         }
 
+    }
+
+    private static void getVisiblePages(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        int[] visiblePages = pdfViewCtrl.getVisiblePages();
+        result.success(visiblePages);
     }
 
     // Events
