@@ -212,10 +212,6 @@ class _ViewerState extends State<Viewer> {
     });
 
     await controller.openDocument(_document, config: config);
-    var pages = await controller.getVisiblePages();
-    for (int i in pages!) {
-      print("page: $i");
-    }
   }
 
   Future<void> _showMyDialog() async {
