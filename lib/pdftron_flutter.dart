@@ -459,6 +459,29 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.getCurrentPage);
   }
 
+  /// Sets the zoom scale in the current document viewer with a zoom center.
+  ///
+  /// zoom: the zoom ratio to be set
+  /// x: the x-coordinate of the zoom center
+  /// y: the y-coordinate of the zoom center
+  static Future<void> zoomWithCenter(double zoom, int x, int y) {
+    return _channel.invokeMethod(Functions.zoomWithCenter,
+        <String, dynamic>{"zoom": zoom, "x": x, "y": y});
+  }
+  
+  /// Zoom the viewer to a specific rectangular area in a page.
+  ///
+  /// pageNumber: the page number of the zooming area (1-indexed)
+  /// rect: The rectangular area with keys x1 (left), y1(bottom), y1(right), y2(top). Coordinates are in double
+  static Future<void> zoomToRect(int pageNumber, Map<String, double> rect) {
+    return _channel.invokeMethod(Functions.zoomToRect, <String, dynamic>{
+      Parameters.pageNumber: pageNumber,
+      "x1": rect["x1"],
+      "y1": rect["y1"],
+      "x2": rect["x2"],
+      "y2": rect["y2"]
+    });
+  }
   /// Returns the current zoom scale of current document viewer.
   ///
   /// Returns a Promise.
@@ -497,5 +520,12 @@ class PdftronFlutter {
   /// Returns a Promise.
   static Future<String?> getSavedSignatureJpgFolder() {
     return _channel.invokeMethod(Functions.getSavedSignatureJpgFolder);
+  }
+
+  /// Gets the visible pages in the current viewer as an array.
+  ///
+  /// Return a Promise
+  static Future<List<int>?> getVisiblePages() {
+    return _channel.invokeMethod(Functions.getVisiblePages);
   }
 }

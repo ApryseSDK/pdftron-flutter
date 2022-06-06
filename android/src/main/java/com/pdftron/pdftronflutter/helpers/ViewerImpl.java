@@ -176,10 +176,6 @@ public class ViewerImpl {
     };
 
     private ToolManager.PdfDocModificationListener mPdfDocModificationListener = new ToolManager.PdfDocModificationListener() {
-        public void onBookmarkModified() {
-
-        }
-
         @Override
         public void onBookmarkModified(@NonNull List<UserBookmarkItem> bookmarkItems) {
             String bookmarkJson = null;

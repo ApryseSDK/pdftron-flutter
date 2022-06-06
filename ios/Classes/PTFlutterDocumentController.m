@@ -123,6 +123,12 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     [self applyLayoutMode];
 }
 
+- (void)didOpenDocument
+{
+    [super didOpenDocument];
+    [self applyLayoutMode];
+}
+
 - (BOOL)isTopToolbarEnabled
 {
     return (!self.topAppNavBarHidden && !self.topToolbarsHidden);
@@ -1495,6 +1501,12 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 - (void)setPageChangesOnTap:(BOOL)pageChangesOnTap
 {
     self.changesPageOnTap = pageChangesOnTap;
+}
+
+-(void)setLayoutMode:(NSString *)layoutMode
+{
+    _layoutMode = layoutMode;
+    [self applyLayoutMode];
 }
 
 - (BOOL)pageChangesOnTap
