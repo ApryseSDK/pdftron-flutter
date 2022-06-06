@@ -1050,11 +1050,13 @@
             },
         PTUndoKey:
             ^{
-                documentController.toolManager.undoRedoManager.enabled = NO;
+                documentController.toolGroupToolbar.automaticallyUpdatesTrailingItems = NO;
+                documentController.toolGroupToolbar.trailingItems = nil;
             },
         PTRedoKey:
             ^{
-                documentController.toolManager.undoRedoManager.enabled = NO;
+                documentController.toolGroupToolbar.automaticallyUpdatesTrailingItems = NO;
+                documentController.toolGroupToolbar.trailingItems = nil;
             },
         PTMoreItemsButtonKey:
             ^{
