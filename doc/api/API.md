@@ -1218,6 +1218,22 @@ var annotationMenuPressedCancel = startAnnotationMenuPressedListener((annotation
 });
 ```
 
+#### startAnnotationToolbarItemPressedListener
+Event is raised when a custom annotation toolbar item is pressed. Android only.
+
+Event Parameters:
+
+Name | Type | Description
+--- | --- | ---
+id | int | The id of the custom toolbar item
+
+```dart
+var annotationToolbarItemPressedCancel = startAnnotationToolbarItemPressedListener((id)
+{
+  print("Item id: ${id}");
+});
+```
+
 ### Long Press Menu
 
 #### startLongPressMenuPressedListener

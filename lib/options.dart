@@ -165,7 +165,7 @@ class CustomToolbar {
   String? name;
 
   /// items should be array of [Buttons] / [Tools] constants.
-  List<String>? items;
+  List<Object>? items;
 
   /// icon (optional) should be a [ToolbarIcons] constant.
   String? icon;
