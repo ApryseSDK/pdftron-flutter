@@ -592,7 +592,7 @@ PdftronFlutter.openGoToPageView();
 ```
 
 #### getVisiblePages
-Gets the visible pages in the current viewer as an array.
+Gets the visible pages in the current viewer as an array. Android only.
 
 Returns a Future.
 
