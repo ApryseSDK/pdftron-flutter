@@ -591,6 +591,24 @@ Returns a Future.
 PdftronFlutter.openGoToPageView();
 ```
 
+#### getVisiblePages
+Gets the visible pages in the current viewer as an array. Android only.
+
+Returns a Future.
+
+Future Parameters:
+
+Name | Type | Description
+--- | --- | ---
+pages | List<int>? | list of page numbers of the visible pages
+
+```dart
+var pages = await controller.getVisiblePages();
+for (int i in pages!) {
+  print("page: $i");
+}
+```
+
 ### Import/Export Annotations
 
 #### importAnnotationCommand

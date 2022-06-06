@@ -65,11 +65,14 @@ class Functions {
   static const openGoToPageView = "openGoToPageView";
   static const openNavigationLists = "openNavigationLists";
   static const getCurrentPage = "getCurrentPage";
+  static const zoomWithCenter = "zoomWithCenter";
+  static const zoomToRect = "zoomToRect";
   static const getZoom = "getZoom";
   static const setZoomLimits = "setZoomLimits";
   static const getScrollPos = "getScrollPos";
   static const setHorizontalScrollPosition = "setHorizontalScrollPosition";
   static const setVerticalScrollPosition = "setVerticalScrollPosition";
+  static const getVisiblePages = "getVisiblePages";
 }
 
 /// Defines the parameters of the functions.
@@ -163,12 +166,12 @@ class Buttons {
   static const undo = 'undo';
   static const redo = 'redo';
   static const showFileAttachmentButton = 'showFileAttachmentButton';
+  static const savePasswordCopyButton = 'savePasswordCopyButton';
 
   /// Android only.
   static const editAnnotationToolbarButton = 'editAnnotationToolButton';
   static const saveReducedCopyButton = 'saveReducedCopyButton';
   static const saveCroppedCopyButton = 'saveCroppedCopyButton';
-  static const savePasswordCopyButton = 'savePasswordCopyButton';
 }
 
 /// Defines the various kinds of tools for the viewer.
