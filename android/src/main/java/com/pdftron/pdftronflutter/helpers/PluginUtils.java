@@ -2519,11 +2519,14 @@ public class PluginUtils {
         if (limitMode != null) {
             try {
                 pdfViewCtrl.setZoomLimits(limitMode, minimum, maximum);
+                result.success(null);
             } catch (PDFNetException ex) {
                 ex.printStackTrace();
+                result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
             }
+        } else {
+            result.error("InvalidState", "Invalid zoom limit mode", null);
         }
-        result.success(null);
     }
 
     private static void ungroupAnnotations(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
