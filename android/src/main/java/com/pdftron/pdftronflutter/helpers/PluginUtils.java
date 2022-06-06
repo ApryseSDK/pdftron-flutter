@@ -3791,6 +3791,12 @@ public class PluginUtils {
     }
 
     private static void setBackgroundColor(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+
         int red = call.argument(KEY_RED);
         int green = call.argument(KEY_GREEN);
         int blue = call.argument(KEY_BLUE);
@@ -3799,6 +3805,12 @@ public class PluginUtils {
     }
 
     private static void setDefaultPageColor(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+
         int red = call.argument(KEY_RED);
         int green = call.argument(KEY_GREEN);
         int blue = call.argument(KEY_BLUE);
