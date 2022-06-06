@@ -323,7 +323,7 @@ CancelListener startPageMovedListener(PageMovedListener listener) {
 /// Listens for if the document's scroll position is changed
 ///
 /// Returns a function that can cancel the listener.
-CancelListener scrollChangedListener(ScrollChangedListener listener) {
+CancelListener startScrollChangedListener(ScrollChangedListener listener) {
   var subscription = _scrollChangedChannel
       .receiveBroadcastStream(eventSinkId.scrollChangedId.index)
       .listen((scrollString) {
