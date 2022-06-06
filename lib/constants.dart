@@ -65,10 +65,13 @@ class Functions {
   static const openGoToPageView = "openGoToPageView";
   static const openNavigationLists = "openNavigationLists";
   static const getCurrentPage = "getCurrentPage";
+  static const zoomWithCenter = "zoomWithCenter";
+  static const zoomToRect = "zoomToRect";
   static const getZoom = "getZoom";
   static const setZoomLimits = "setZoomLimits";
   static const setBackgroundColor = "setBackgroundColor";
   static const setDefaultPageColor = "setDefaultPageColor";
+  static const getVisiblePages = "getVisiblePages";
 }
 
 /// Defines the parameters of the functions.

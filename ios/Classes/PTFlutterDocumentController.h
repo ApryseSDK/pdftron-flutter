@@ -96,6 +96,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign, getter=isDocCtrlrConfigured) BOOL docCtrlrConfigured;
 
+@property (nonatomic, assign, getter=isReadOnly) BOOL hideScrollbars;
+
 - (void)initViewerSettings;
 - (void)applyViewerSettings;
 

@@ -197,6 +197,9 @@ public class PluginUtils {
     public static final String KEY_Y1 = "y1";
     public static final String KEY_X2 = "x2";
     public static final String KEY_Y2 = "y2";
+    public static final String KEY_X = "x";
+    public static final String KEY_Y = "y";
+    public static final String KEY_ZOOM = "zoom";
     public static final String KEY_WIDTH = "width";
     public static final String KEY_HEIGHT = "height";
     public static final String KEY_RECT = "rect";
@@ -310,6 +313,8 @@ public class PluginUtils {
     public static final String FUNCTION_GET_CURRENT_PAGE = "getCurrentPage";
     public static final String FUNCTION_GROUP_ANNOTATIONS = "groupAnnotations";
     public static final String FUNCTION_UNGROUP_ANNOTATIONS = "ungroupAnnotations";
+    public static final String FUNCTION_ZOOM_WITH_CENTER = "zoomWithCenter";
+    public static final String FUNCTION_ZOOM_TO_RECT = "zoomToRect";
     public static final String FUNCTION_GET_ZOOM = "getZoom";
     public static final String FUNCTION_SET_ZOOM_LIMITS = "setZoomLimits";
     public static final String FUNCTION_GET_SAVED_SIGNATURES = "getSavedSignatures";
@@ -317,6 +322,7 @@ public class PluginUtils {
     public static final String FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER = "getSavedSignatureJpgFolder";
     public static final String FUNCTION_SET_BACKGROUND_COLOR = "setBackgroundColor";
     public static final String FUNCTION_SET_DEFAULT_PAGE_COLOR = "setDefaultPageColor";
+    public static final String FUNCTION_GET_VISIBLE_PAGES = "getVisiblePages";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2433,6 +2439,16 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_ZOOM_WITH_CENTER: {
+                checkFunctionPrecondition(component);
+                zoomWithCenter(call, result, component);
+                break;
+            }
+            case FUNCTION_ZOOM_TO_RECT: {
+                checkFunctionPrecondition(component);
+                zoomToRect(call, result, component);
+                break;
+            }
             case FUNCTION_GET_ZOOM: {
                 checkFunctionPrecondition(component);
                 getZoom(result, component);
@@ -2466,6 +2482,11 @@ public class PluginUtils {
                     ex.printStackTrace();
                     result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
                 }
+                break;
+            }
+            case FUNCTION_GET_VISIBLE_PAGES: {
+                checkFunctionPrecondition(component);
+                getVisiblePages(result, component);
                 break;
             }
             default:
@@ -3770,11 +3791,6 @@ public class PluginUtils {
     }
 
     private static void setBackgroundColor(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
-        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
-        if (pdfViewCtrl == null) {
-            result.error("InvalidState", "PDFViewCtrl not found", null);
-            return;
-        }
         int red = call.argument(KEY_RED);
         int green = call.argument(KEY_GREEN);
         int blue = call.argument(KEY_BLUE);
@@ -3783,16 +3799,57 @@ public class PluginUtils {
     }
 
     private static void setDefaultPageColor(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
-        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
-        if (pdfViewCtrl == null) {
-            result.error("InvalidState", "PDFViewCtrl not found", null);
-            return;
-        }
         int red = call.argument(KEY_RED);
         int green = call.argument(KEY_GREEN);
         int blue = call.argument(KEY_BLUE);
         pdfViewCtrl.setDefaultPageColor(red, green, blue);
         result.success(null);
+    }
+
+    private static void zoomWithCenter(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        
+        double zoom = call.argument(KEY_ZOOM);
+        int x = call.argument(KEY_X);
+        int y = call.argument(KEY_Y);
+        pdfViewCtrl.setZoom(x, y, zoom);
+        result.success(null);
+    }
+
+    private static void zoomToRect(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        
+        try {
+            int pageNumber = call.argument(KEY_PAGE_NUMBER);
+            double x1 = call.argument(KEY_X1);
+            double y1 = call.argument(KEY_Y1);
+            double x2 = call.argument(KEY_X2);
+            double y2 = call.argument(KEY_Y2);
+            com.pdftron.pdf.Rect rect = new com.pdftron.pdf.Rect(x1, y1, x2, y2);
+            pdfViewCtrl.showRect(pageNumber, rect);
+            result.success(null);
+        } catch (PDFNetException ex) {
+            ex.printStackTrace();
+            result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+        }
+    }
+
+    private static void getVisiblePages(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        int[] visiblePages = pdfViewCtrl.getVisiblePages();
+        result.success(visiblePages);
     }
 
     // Events

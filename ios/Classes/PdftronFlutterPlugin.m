@@ -742,6 +742,22 @@
                         }
                     }
                 }
+                else if ([key isEqualToString:PTHideScrollbarsKey])
+                {
+                    NSNumber* hideScrollbarsValue = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideScrollbarsKey class:[NSNumber class] error:&error];
+                    
+                    BOOL hideScrollbars = [hideScrollbarsValue boolValue];
+
+                    if (!error && hideScrollbars) {
+                        if (hideScrollbars) {
+                            documentController.pdfViewCtrl.contentScrollView.showsHorizontalScrollIndicator = !hideScrollbars;
+                            documentController.pdfViewCtrl.contentScrollView.showsVerticalScrollIndicator = !hideScrollbars;
+                            
+                            documentController.pdfViewCtrl.pagingScrollView.showsHorizontalScrollIndicator = !hideScrollbars;
+                            documentController.pdfViewCtrl.pagingScrollView.showsVerticalScrollIndicator = !hideScrollbars;
+                        }
+                    }
+                }
                 else if([key isEqualToString:PTQuickBookmarkCreationKey])
                 {
                     NSNumber* quickBookmarkCreation = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTQuickBookmarkCreationKey class:[NSNumber class] error:&error];
@@ -1034,11 +1050,13 @@
             },
         PTUndoKey:
             ^{
-                documentController.toolManager.undoRedoManager.enabled = NO;
+                documentController.toolGroupToolbar.automaticallyUpdatesTrailingItems = NO;
+                documentController.toolGroupToolbar.trailingItems = nil;
             },
         PTRedoKey:
             ^{
-                documentController.toolManager.undoRedoManager.enabled = NO;
+                documentController.toolGroupToolbar.automaticallyUpdatesTrailingItems = NO;
+                documentController.toolGroupToolbar.trailingItems = nil;
             },
         PTMoreItemsButtonKey:
             ^{
@@ -1516,6 +1534,10 @@
         [self openNavigationLists:result];
     } else if ([call.method isEqualToString:PTGetCurrentPageKey]) {
         [self getCurrentPage:result];
+    } else if ([call.method isEqualToString:PTZoomWithCenterKey]) {
+        [self zoomWithCenter:result call:call];
+    } else if ([call.method isEqualToString:PTZoomToRectKey]) {
+        [self zoomToRect:result call:call];
     } else if ([call.method isEqualToString:PTGetZoomKey]) {
         [self getZoom:result];
     } else if ([call.method isEqualToString:PTSetZoomLimitsKey]) {
@@ -3265,6 +3287,30 @@
         SetDefaultPageColor:[call.arguments[PTRedKey] unsignedCharValue] g:[call.arguments[PTGreenKey] unsignedCharValue] b:[call.arguments[PTBlueKey] unsignedCharValue]];
     [pdfViewCtrl Update:YES];
     flutterResult(nil);
+}
+
+-(void)zoomWithCenter:(FlutterResult)flutterResult call:(FlutterMethodCall*)call {
+    PTDocumentController *documentController = [self getDocumentController];
+    double zoom = [call.arguments[PTZoomRatioKey] doubleValue];
+    int x = [call.arguments[PTXKey] intValue];
+    int y = [call.arguments[PTYKey] intValue];
+    [documentController.pdfViewCtrl SetZoomX:x Y:y Zoom:zoom];
+    flutterResult(nil);
+}
+
+-(void)zoomToRect:(FlutterResult)flutterResult call:(FlutterMethodCall*)call {
+    PTDocumentController *documentController = [self getDocumentController];
+    
+    int pageNumber = [call.arguments[PTPageNumberArgumentKey] intValue];
+    double rectX1 = [call.arguments[PTX1Key] doubleValue];
+    double rectY1 = [call.arguments[PTY1Key] doubleValue];
+    double rectX2 = [call.arguments[PTX2Key] doubleValue];
+    double rectY2 = [call.arguments[PTY2Key] doubleValue];
+    
+    if (rectX1 && rectY1 && rectX2 && rectY2) {
+        PTPDFRect* rect = [[PTPDFRect alloc] initWithX1:rectX1 y1:rectY1 x2:rectX2 y2:rectY2];
+        [documentController.pdfViewCtrl ShowRect:pageNumber rect:rect];
+    }
 }
 
 #pragma mark - Helper
