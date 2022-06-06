@@ -9,7 +9,7 @@ import 'package:pdftron_flutter/pdftron_flutter.dart';
 // import 'package:permission_handler/permission_handler.dart';
 
 //set this value to view document via Widget
-var enableWidget = false;
+var enableWidget = true;
 
 void main() => runApp(MyApp());
 
@@ -89,9 +89,6 @@ class _ViewerState extends State<Viewer> {
     // await PdftronFlutter.openDocument(_document);
 
     var config = Config();
-    var myToolItem = new CustomToolbar('add_page','Add page',[],'ic_add_blank_page_white');
-    var customToolbar = new CustomToolbar('myToolbar', 'myToolbar', [Tools.annotationCreateArrow, myToolItem], ToolbarIcons.favorite);
-    config.annotationToolbars = [DefaultToolbars.annotate, customToolbar];
     // How to disable functionality:
     //      config.disabledElements = [Buttons.shareButton, Buttons.searchButton];
     //      config.disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];

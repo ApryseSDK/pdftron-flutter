@@ -303,6 +303,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         return sLongPressMenuPressedEventEmitter.get();
     }
 
+    @Override
     public EventSink getAnnotationMenuPressedEventEmitter() {
         return sAnnotationMenuPressedEventEmitter.get();
     }
