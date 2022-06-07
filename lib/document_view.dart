@@ -470,6 +470,11 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.getCurrentPage);
   }
 
+  /// Starts the search mode.
+  ///
+  /// Searches the document for [searchString] and highlights matches. The search
+  /// is case-sensitive if [matchCase] is true, and only whole words are matched
+  /// if [matchWholeWord] is true.
   Future<void> startSearchMode(
       String searchString, bool matchCase, bool matchWholeWord) {
     return _channel.invokeMethod(Functions.startSearchMode, <String, dynamic>{
@@ -479,6 +484,7 @@ class DocumentViewController {
     });
   }
 
+  /// Exits the search mode.
   Future<void> exitSearchMode() {
     return _channel.invokeMethod(Functions.exitSearchMode);
   }
