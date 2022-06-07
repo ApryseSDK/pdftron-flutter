@@ -67,6 +67,11 @@ class Functions {
   static const getCurrentPage = "getCurrentPage";
   static const startSearchMode = "startSearchMode";
   static const exitSearchMode = "exitSearchMode";
+  static const zoomWithCenter = "zoomWithCenter";
+  static const zoomToRect = "zoomToRect";
+  static const getZoom = "getZoom";
+  static const setZoomLimits = "setZoomLimits";
+  static const getVisiblePages = "getVisiblePages";
 }
 
 /// Defines the parameters of the functions.
@@ -161,12 +166,12 @@ class Buttons {
   static const undo = 'undo';
   static const redo = 'redo';
   static const showFileAttachmentButton = 'showFileAttachmentButton';
+  static const savePasswordCopyButton = 'savePasswordCopyButton';
 
   /// Android only.
   static const editAnnotationToolbarButton = 'editAnnotationToolButton';
   static const saveReducedCopyButton = 'saveReducedCopyButton';
   static const saveCroppedCopyButton = 'saveCroppedCopyButton';
-  static const savePasswordCopyButton = 'savePasswordCopyButton';
 }
 
 /// Defines the various kinds of tools for the viewer.
@@ -338,6 +343,13 @@ class DefaultToolbars {
   static const pens = "PDFTron_Pens";
   static const redaction = "PDFTron_Redact";
   static const favorite = "PDFTron_Favorite";
+}
+
+/// Defines zoom limits
+class ZoomLimitMode {
+  static const None = "none";
+  static const Absolute = "absolute";
+  static const Relative = "relative";
 }
 
 /// Defines default toolbar icons for use for potential custom toolbars.

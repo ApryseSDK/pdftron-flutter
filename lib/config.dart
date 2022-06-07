@@ -81,6 +81,7 @@ class Config {
   var _annotationManagerEditMode;
   var _annotationManagerUndoMode;
   var _annotationToolbarAlignment;
+  var _hideScrollbars;
   var _quickBookmarkCreation;
 
   Config();
@@ -498,6 +499,10 @@ class Config {
   set annotationToolbarAlignment(String value) =>
       _annotationToolbarAlignment = value;
 
+  /// bool, optional, iOS only, defaults to false
+  ///
+  /// Determines whether scrollbars will be hidden on the viewer.
+  set hideScrollbars(bool value) => _hideScrollbars = value;
   /// Sets the bookmark creation as a part of the toolbar
   ///
   /// Defaults to false
@@ -585,6 +590,7 @@ class Config {
         _annotationManagerUndoMode = json['annotationManagerUndoMode'],
         _annotationToolbarAlignment = json['annotationToolbarAlignment'],
         _outlineListEditingEnabled = json['outlineListEditingEnabled'],
+        _hideScrollbars = json['hideScrollbars'],
         _quickBookmarkCreation = json['quickBookmarkCreation'];
 
   Map<String, dynamic> toJson() => {
@@ -664,6 +670,7 @@ class Config {
         'annotationManagerUndoMode': _annotationManagerUndoMode,
         'annotationToolbarAlignment': _annotationToolbarAlignment,
         'outlineListEditingEnabled': _outlineListEditingEnabled,
+        'hideScrollbars': _hideScrollbars,
         'quickBookmarkCreation': _quickBookmarkCreation,
       };
 }

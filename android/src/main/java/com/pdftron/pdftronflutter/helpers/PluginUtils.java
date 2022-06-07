@@ -105,6 +105,12 @@ public class PluginUtils {
     public static final String KEY_EXPORT_FORMAT_BMP = "BMP";
     public static final String KEY_EXPORT_FORMAT_JPEG = "JPEG";
     public static final String KEY_EXPORT_FORMAT_PNG = "PNG";
+    public static final String KEY_ZOOM_LIMIT_MODE = "zoomLimitMode";
+    public static final String KEY_MAXIMUM = "maximum";
+    public static final String KEY_MINIMUM = "minimum";
+    public static final String KEY_ZOOM_LIMIT_MODE_NONE = "none";
+    public static final String KEY_ZOOM_LIMIT_MODE_ABSOLUTE = "absolute";
+    public static final String KEY_ZOOM_LIMIT_MODE_RELATIVE = "relative";
 
     public static final String KEY_REQUESTED_ORIENTATION = "requestedOrientation";
 
@@ -188,6 +194,9 @@ public class PluginUtils {
     public static final String KEY_Y1 = "y1";
     public static final String KEY_X2 = "x2";
     public static final String KEY_Y2 = "y2";
+    public static final String KEY_X = "x";
+    public static final String KEY_Y = "y";
+    public static final String KEY_ZOOM = "zoom";
     public static final String KEY_WIDTH = "width";
     public static final String KEY_HEIGHT = "height";
     public static final String KEY_RECT = "rect";
@@ -307,9 +316,14 @@ public class PluginUtils {
     public static final String FUNCTION_UNGROUP_ANNOTATIONS = "ungroupAnnotations";
     public static final String FUNCTION_START_SEARCH_MODE = "startSearchMode";
     public static final String FUNCTION_EXIT_SEARCH_MODE = "exitSearchMode";
+    public static final String FUNCTION_ZOOM_WITH_CENTER = "zoomWithCenter";
+    public static final String FUNCTION_ZOOM_TO_RECT = "zoomToRect";
+    public static final String FUNCTION_GET_ZOOM = "getZoom";
+    public static final String FUNCTION_SET_ZOOM_LIMITS = "setZoomLimits";
     public static final String FUNCTION_GET_SAVED_SIGNATURES = "getSavedSignatures";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_FOLDER = "getSavedSignatureFolder";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER = "getSavedSignatureJpgFolder";
+    public static final String FUNCTION_GET_VISIBLE_PAGES = "getVisiblePages";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2462,6 +2476,36 @@ public class PluginUtils {
                 exitSearchMode(result, component);
                 break;
             }
+            case FUNCTION_ZOOM_WITH_CENTER: {
+                checkFunctionPrecondition(component);
+                zoomWithCenter(call, result, component);
+                break;
+            }
+            case FUNCTION_ZOOM_TO_RECT: {
+                checkFunctionPrecondition(component);
+                zoomToRect(call, result, component);
+                break;
+            }
+            case FUNCTION_GET_ZOOM: {
+                checkFunctionPrecondition(component);
+                getZoom(result, component);
+                break;
+            }
+            case FUNCTION_SET_ZOOM_LIMITS: {
+                checkFunctionPrecondition(component);
+                try {
+                    setZoomLimits(call, result, component);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+                break;
+            }
+            case FUNCTION_GET_VISIBLE_PAGES: {
+                checkFunctionPrecondition(component);
+                getVisiblePages(result, component);
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -2471,8 +2515,39 @@ public class PluginUtils {
 
     // Methods
 
-    private static void ungroupAnnotations(MethodCall call, MethodChannel.Result result, ViewerComponent component)
-            throws PDFNetException, JSONException {
+    private static void setZoomLimits(MethodCall call, MethodChannel.Result result, ViewerComponent component)
+            throws PDFNetException {
+        String mode = call.argument(KEY_ZOOM_LIMIT_MODE);
+        double minimum = call.argument(KEY_MINIMUM);
+        double maximum = call.argument(KEY_MAXIMUM);
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (null == pdfViewCtrl) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        PDFViewCtrl.ZoomLimitMode limitMode = null;
+
+        switch (mode) {
+            case KEY_ZOOM_LIMIT_MODE_ABSOLUTE:
+                limitMode = PDFViewCtrl.ZoomLimitMode.ABSOLUTE;
+                break;
+            case KEY_ZOOM_LIMIT_MODE_RELATIVE:
+                limitMode = PDFViewCtrl.ZoomLimitMode.RELATIVE;
+                break;
+            case KEY_ZOOM_LIMIT_MODE_NONE:
+                limitMode = PDFViewCtrl.ZoomLimitMode.NONE;
+                break;
+        }
+        if (limitMode != null) {
+            try {
+                pdfViewCtrl.setZoomLimits(limitMode, minimum, maximum);
+            } catch (PDFNetException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private static void ungroupAnnotations(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
         String annotationList = call.argument(KEY_ANNOTATION_LIST);
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
@@ -2972,13 +3047,19 @@ public class PluginUtils {
         result.success(pdfViewCtrl.getCurrentPage());
     }
 
-    private static void getSavedSignatures(MethodChannel.Result result, @NonNull ViewerComponent component) {
+    private static void getZoom(MethodChannel.Result result, ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         if (pdfViewCtrl == null) {
             result.error("InvalidState", "Activity not attached", null);
             return;
         }
+        double zoom = pdfViewCtrl.getZoom();
+        result.success(zoom);
+    }
+    
+    private static void getSavedSignatures(MethodChannel.Result result, @NonNull ViewerComponent component) {
         List<String> signatures = new ArrayList<String>();
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         Context context = pdfViewCtrl.getContext();
         if (context != null) {
             File[] files = StampManager.getInstance().getSavedSignatures(context);
@@ -3768,7 +3849,6 @@ public class PluginUtils {
         } else {
             result.error("InvalidState", "Activity not attached", null);
         }
-
     }
 
     public static void exitSearchMode(MethodChannel.Result result, ViewerComponent component) {
@@ -3780,6 +3860,51 @@ public class PluginUtils {
         } else {
             result.error("InvalidState", "Activity not attached", null);
         }
+    }
+
+    private static void zoomWithCenter(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        double zoom = call.argument(KEY_ZOOM);
+        int x = call.argument(KEY_X);
+        int y = call.argument(KEY_Y);
+        pdfViewCtrl.setZoom(x, y, zoom);
+        result.success(null);
+    }
+
+    private static void zoomToRect(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        try {
+            int pageNumber = call.argument(KEY_PAGE_NUMBER);
+            double x1 = call.argument(KEY_X1);
+            double y1 = call.argument(KEY_Y1);
+            double x2 = call.argument(KEY_X2);
+            double y2 = call.argument(KEY_Y2);
+            com.pdftron.pdf.Rect rect = new com.pdftron.pdf.Rect(x1, y1, x2, y2);
+            pdfViewCtrl.showRect(pageNumber, rect);
+            result.success(null);
+        } catch (PDFNetException ex) {
+            ex.printStackTrace();
+            result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+        }
+
+    }
+
+    private static void getVisiblePages(MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        int[] visiblePages = pdfViewCtrl.getVisiblePages();
+        result.success(visiblePages);
     }
 
     // Events
