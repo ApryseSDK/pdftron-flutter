@@ -481,6 +481,8 @@ class DocumentViewController {
 
   Future<void> exitSearchMode() {
     return _channel.invokeMethod(Functions.exitSearchMode);
+  }
+
   /// Gets a list of absolute file paths to PDFs containing the saved signatures.
   ///
   /// Returns a promise
