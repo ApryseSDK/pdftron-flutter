@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL useStylusAsPen;
 @property (nonatomic, assign) BOOL showSavedSignatures;
 @property (nonatomic, assign) BOOL signSignatureFieldsWithStamps;
-@property (nonatomic, copy, nullable) NSArray<NSString *> *signatureColors;
+@property (nonatomic, copy, nullable) NSArray<NSDictionary *> *signatureColors;
 @property (nonatomic, assign) BOOL selectAnnotationAfterCreation;
 @property (nonatomic, assign, getter=isBottomToolbarOn) BOOL bottomToolbarOn;
 @property (nonatomic, copy, nullable) NSString* defaultEraserType;

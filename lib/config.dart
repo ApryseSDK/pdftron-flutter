@@ -250,10 +250,17 @@ class Config {
 
   /// Defines the colors that the user can select to create a signature.
   ///
-  /// The value is given by a list of [SignatureColor] constants. On Android,
-  /// when this config is set, the user will not be able to customize each color
-  /// shown. Defaults to [SignatureColor.black], [SignatureColor.blue], and
-  /// [SignatureColor.red].
+  /// ```dart
+  /// config.signatureColors = [
+  ///   { 'red': 255, 'green': 0, 'blue': 0 },
+  ///   { 'red':   0, 'green': 0, 'blue': 0 }
+  /// ];
+  /// ```
+  ///
+  /// The value is given by a list of a `Map<String, int>` containing RGB values.
+  /// On Android, when this config is set, the user will not be able to
+  /// customize each color shown. Defaults to black, blue, green for Android,
+  /// and black, blue, red for iOS.
   set signatureColors(List value) => _signatureColors = value;
 
   /// Whether the annotation is selected after creation.

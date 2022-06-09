@@ -238,11 +238,6 @@ public class PluginUtils {
     public static final String KEY_GRAVITY_START = "GravityStart";
     public static final String KEY_GRAVITY_END = "GravityEnd";
 
-    public static final String KEY_SIGNATURE_COLOR_BLACK = "black";
-    public static final String KEY_SIGNATURE_COLOR_BLUE = "blue";
-    public static final String KEY_SIGNATURE_COLOR_GREEN = "green";
-    public static final String KEY_SIGNATURE_COLOR_RED = "red";
-
     public static final String EVENT_EXPORT_ANNOTATION_COMMAND = "export_annotation_command_event";
     public static final String EVENT_EXPORT_BOOKMARK = "export_bookmark_event";
     public static final String EVENT_DOCUMENT_LOADED = "document_loaded_event";
@@ -1317,16 +1312,14 @@ public class PluginUtils {
         int[] signatureColors = new int[array.length()];
 
         for (int i = 0; i < array.length(); i++) {
-            String item = array.getString(i);
+            JSONObject color = array.getJSONObject(i);
 
-            if (KEY_SIGNATURE_COLOR_BLACK.equals(item)) {
-                signatureColors[i] = R.color.black_translucent;
-            } else if (KEY_SIGNATURE_COLOR_BLUE.equals(item)) {
-                signatureColors[i] = R.color.blue;
-            } else if (KEY_SIGNATURE_COLOR_GREEN.equals(item)) {
-                signatureColors[i] = R.color.green;
-            } else if (KEY_SIGNATURE_COLOR_RED.equals(item)) {
-                signatureColors[i] = R.color.red;
+            if (color != null) {
+                int red = color.getInt("red");
+                int green = color.getInt("green");
+                int blue = color.getInt("blue");
+
+                //signatureColors[i] = Color.rgb(red, green, blue);
             }
         }
 

@@ -419,12 +419,6 @@ static NSString * const PTAnnotationManagerUndoModeAllKey = @"undoModeAll";
 static NSString * const PTAnnotationToolbarAlignmentStartKey = @"GravityStart";
 static NSString * const PTAnnotationToolbarAlignmentEndKey = @"GravityEnd";
 
-// Signature color
-static NSString * const PTSignatureColorBlackKey = @"black";
-static NSString * const PTSignatureColorBlueKey = @"blue";
-static NSString * const PTSignatureColorGreenKey = @"green";
-static NSString * const PTSignatureColorRedKey = @"red";
-
 // Default annotation toolbar names.
 typedef NSString * PTDefaultAnnotationToolbarKey;
 static const PTDefaultAnnotationToolbarKey PTAnnotationToolbarView = @"PDFTron_View";
