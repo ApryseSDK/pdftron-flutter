@@ -33,6 +33,8 @@ class Config {
   var _pageChangeOnTap;
   var _showSavedSignatures;
   var _signaturePhotoPickerEnabled;
+  var _signatureTypingEnabled;
+  var _signatureDrawingEnabled;
   var _useStylusAsPen;
   var _signSignatureFieldWithStamps;
   var _selectAnnotationAfterCreation;
@@ -235,6 +237,16 @@ class Config {
   /// Defaults to true
   set signaturePhotoPickerEnabled(bool value) =>
       _signaturePhotoPickerEnabled = value;
+
+  /// Defines whether to enable typing to create a new signature
+  ///
+  /// Defaults to true.
+  set signatureTypingEnabled(bool value) => _signatureTypingEnabled = value;
+
+  /// Defines whether to enable drawing to create a new signature.
+  ///
+  /// iOS only. Defaults to true.
+  set signatureDrawingEnabled(bool value) => _signatureDrawingEnabled = value;
 
   /// Whether a stylus should act like a pen when the viewer is in pan mode.
   ///
@@ -537,6 +549,8 @@ class Config {
         _pageChangeOnTap = json['pageChangeOnTap'],
         _showSavedSignatures = json['showSavedSignatures'],
         _signaturePhotoPickerEnabled = json['signaturePhotoPickerEnabled'],
+        _signatureTypingEnabled = json['signatureTypingEnabled'],
+        _signatureDrawingEnabled = json['signatureDrawingEnabled'],
         _useStylusAsPen = json['useStylusAsPen'],
         _signSignatureFieldWithStamps = json['signSignatureFieldWithStamps'],
         _selectAnnotationAfterCreation = json['selectAnnotationAfterCreation'],
@@ -621,6 +635,8 @@ class Config {
         'pageChangeOnTap': _pageChangeOnTap,
         'showSavedSignatures': _showSavedSignatures,
         'signaturePhotoPickerEnabled': _signaturePhotoPickerEnabled,
+        'signatureTypingEnabled': _signatureTypingEnabled,
+        'signatureDrawingEnabled': _signatureDrawingEnabled,
         'useStylusAsPen': _useStylusAsPen,
         'signSignatureFieldWithStamps': _signSignatureFieldWithStamps,
         'selectAnnotationAfterCreation': _selectAnnotationAfterCreation,
