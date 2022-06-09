@@ -424,3 +424,11 @@ class ToolbarAlignment {
   static const Start = "GravityStart";
   static const End = "GravityEnd";
 }
+
+/// Defines a color that can be used for signatures.
+class SignatureColor {
+  static const black = "black";
+  static const blue = "blue";
+  static const green = "green";
+  static const red = "red";
+}

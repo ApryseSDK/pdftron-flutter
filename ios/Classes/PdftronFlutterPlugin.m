@@ -426,6 +426,14 @@
                         [documentController setSignSignatureFieldsWithStamps:[signSignatureFieldsWithStampsNumber boolValue]];
                     }
                 }
+                else if ([key isEqualToString:PTSignatureColorsKey]) {
+                    
+                    NSArray* signatureColors = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignatureColorsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && signatureColors) {
+                        [documentController setSignatureColors:signatureColors];
+                    }
+                }
                 else if ([key isEqualToString:PTSelectAnnotationAfterCreationKey]) {
                     
                     NSNumber* selectAnnotAfterCreationNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSelectAnnotationAfterCreationKey class:[NSNumber class] error:&error];

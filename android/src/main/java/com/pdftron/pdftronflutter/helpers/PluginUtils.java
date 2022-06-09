@@ -143,6 +143,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_SIGNATURE_PHOTO_PICKER_ENABLED = "signaturePhotoPickerEnabled";
     public static final String KEY_CONFIG_USE_STYLUS_AS_PEN = "useStylusAsPen";
     public static final String KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS = "signSignatureFieldWithStamps";
+    public static final String KEY_CONFIG_SIGNATURE_COLORS = "signatureColors";
     public static final String KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION = "selectAnnotationAfterCreation";
     public static final String KEY_CONFIG_PAGE_INDICATOR_ENABLED = "pageIndicatorEnabled";
     public static final String KEY_CONFIG_SHOW_QUICK_NAVIGATION_BUTTON = "showQuickNavigationButton";
@@ -236,6 +237,11 @@ public class PluginUtils {
 
     public static final String KEY_GRAVITY_START = "GravityStart";
     public static final String KEY_GRAVITY_END = "GravityEnd";
+
+    public static final String KEY_SIGNATURE_COLOR_BLACK = "black";
+    public static final String KEY_SIGNATURE_COLOR_BLUE = "blue";
+    public static final String KEY_SIGNATURE_COLOR_GREEN = "green";
+    public static final String KEY_SIGNATURE_COLOR_RED = "red";
 
     public static final String EVENT_EXPORT_ANNOTATION_COMMAND = "export_annotation_command_event";
     public static final String EVENT_EXPORT_BOOKMARK = "export_bookmark_event";
@@ -938,6 +944,10 @@ public class PluginUtils {
                     boolean signSignatureFieldWithStamps = configJson.getBoolean(KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS);
                     configInfo.setSignSignatureFieldWithStamps(signSignatureFieldWithStamps);
                 }
+                if (!configJson.isNull(KEY_CONFIG_SIGNATURE_COLORS)) {
+                    JSONArray signatureColors = configJson.getJSONArray(KEY_CONFIG_SIGNATURE_COLORS);
+                    toolManagerBuilder = setSignatureColors(signatureColors, toolManagerBuilder);
+                }
                 if (!configJson.isNull(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION)) {
                     boolean selectAnnotationAfterCreation = configJson.getBoolean(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION);
                     toolManagerBuilder.setAutoSelect(selectAnnotationAfterCreation);
@@ -1301,6 +1311,26 @@ public class PluginUtils {
         }
 
         builder.bottomBarBuilder(customBottomBar);
+    }
+
+    private static ToolManagerBuilder setSignatureColors(JSONArray array, ToolManagerBuilder toolManagerBuilder) throws JSONException {
+        int[] signatureColors = new int[array.length()];
+
+        for (int i = 0; i < array.length(); i++) {
+            String item = array.getString(i);
+
+            if (KEY_SIGNATURE_COLOR_BLACK.equals(item)) {
+                signatureColors[i] = R.color.black_translucent;
+            } else if (KEY_SIGNATURE_COLOR_BLUE.equals(item)) {
+                signatureColors[i] = R.color.blue;
+            } else if (KEY_SIGNATURE_COLOR_GREEN.equals(item)) {
+                signatureColors[i] = R.color.green;
+            } else if (KEY_SIGNATURE_COLOR_RED.equals(item)) {
+                signatureColors[i] = R.color.red;
+            }
+        }
+
+        return toolManagerBuilder.setSignatureColors(signatureColors);
     }
 
     private static Uri getUri(Context context, String path, boolean isBase64, String base64FileExtension) {
