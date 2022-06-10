@@ -3260,8 +3260,8 @@
     PTDocumentController *documentController = [self getDocumentController];
 
     NSDictionary<NSString *, NSNumber *> * scrollPos = @{
-        PTReflowOrientationHorizontalKey: [[NSNumber alloc] initWithDouble:[documentController.pdfViewCtrl GetHScrollPos]],
-        PTReflowOrientationVerticalKey: [[NSNumber alloc] initWithDouble:[documentController.pdfViewCtrl GetVScrollPos]],
+        PTScrollHorizontalKey: [[NSNumber alloc] initWithDouble:[documentController.pdfViewCtrl GetHScrollPos]],
+        PTScrollVerticalKey: [[NSNumber alloc] initWithDouble:[documentController.pdfViewCtrl GetVScrollPos]],
     };
     
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:scrollPos options:0 error:nil];

@@ -422,6 +422,10 @@ static NSString * const PTAnnotationManagerUndoModeAllKey = @"undoModeAll";
 static NSString * const PTAnnotationToolbarAlignmentStartKey = @"GravityStart";
 static NSString * const PTAnnotationToolbarAlignmentEndKey = @"GravityEnd";
 
+// Scroll direction
+static NSString * const PTScrollHorizontalKey = @"horizontal";
+static NSString * const PTScrollVerticalKey = @"vertical";
+
 // Default annotation toolbar names.
 typedef NSString * PTDefaultAnnotationToolbarKey;
 static const PTDefaultAnnotationToolbarKey PTAnnotationToolbarView = @"PDFTron_View";

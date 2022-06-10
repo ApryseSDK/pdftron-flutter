@@ -556,6 +556,10 @@ public class PluginUtils {
     public static final String ANNOTATION_MANAGER_UNDO_MODE_OWN = "undoModeOwn";
     public static final String ANNOTATION_MANAGER_UNDO_MODE_ALL = "undoModeAll";
 
+    // Scroll direction
+    public static final String SCROLL_HORIZONTAL = "horizontal";
+    public static final String SCROLL_VERTICAL = "vertical";
+
     // Navigation List visibility
     public static boolean isBookmarkListVisible = true;
     public static boolean isOutlineListVisible = true;
@@ -2468,7 +2472,7 @@ public class PluginUtils {
             case FUNCTION_GET_SCROLL_POS: {
                 checkFunctionPrecondition(component);
                 try {
-                    getScrollPos(result,component);
+                    getScrollPos(result, component);
                 } catch (JSONException ex) {
                     ex.printStackTrace();
                     result.error(Integer.toString(ex.hashCode()), "JSONException Error: " + ex, null);
@@ -3800,8 +3804,8 @@ public class PluginUtils {
             return;
         }
 
-        jsonObject.put(REFLOW_ORIENTATION_HORIZONTAL,  pdfViewCtrl.getHScrollPos());
-        jsonObject.put(REFLOW_ORIENTATION_VERTICAL, pdfViewCtrl.getVScrollPos());
+        jsonObject.put(SCROLL_HORIZONTAL, pdfViewCtrl.getHScrollPos());
+        jsonObject.put(SCROLL_VERTICAL, pdfViewCtrl.getVScrollPos());
 
         result.success(jsonObject.toString());
     }
