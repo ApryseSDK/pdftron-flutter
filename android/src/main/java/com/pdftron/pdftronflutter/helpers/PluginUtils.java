@@ -2,6 +2,7 @@ package com.pdftron.pdftronflutter.helpers;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
