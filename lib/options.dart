@@ -160,7 +160,7 @@ class AnnotProperty {
 
 /// A custom toolbar item.
 ///
-/// Custom toolbar items can be included in a custom toobar by adding the object
+/// Custom toolbar items can be included in a custom toolbar by adding the object
 /// to the [CustomToolbar.items] list. Android only.
 class CustomToolbarItem {
   /// Unique identifier of the toolbar item.
