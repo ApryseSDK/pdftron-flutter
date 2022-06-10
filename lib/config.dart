@@ -307,7 +307,14 @@ class Config {
   /// A list of [CustomToolbar] objects or [DefaultToolbars] constants that define a
   /// custom toolbar.
   ///
-  /// If used the default toolbar no longer shows. Defualts to empty.
+  /// ```dart
+  /// var customToolItem = new CustomToolbar('add_page', 'Add Page', [], 'ic_add_blank_page_white');
+  /// var customToolbar = new CustomToolbar('myToolbar', 'myToolbar', [Tools.annotationCreateArrow, customToolItem], ToolbarIcons.favorite);
+  ///
+  /// config.annotationToolbars = [DefaultToolbars.annotate, customToolbar];
+  /// ```
+  ///
+  /// If used, the default toolbars no longer show. Defualts to empty.
   set annotationToolbars(List value) => _annotationToolbars = value;
 
   /// A list of [DefaultToolbars] that defines the default annotation toolbars to hide

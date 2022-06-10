@@ -323,10 +323,17 @@ CancelListener startPageMovedListener(PageMovedListener listener) {
   };
 }
 
-/// Listens for when a custom annotation toolbar item is pressed. Android only.
-/// Custom toolbar item objects can be created using the [CustomToolbar] class.
+/// Listens for when a custom annotation toolbar item has been pressed.
+///
+/// ```dart
+/// var itemPressedCancel = startAnnotationToolbarItemPressedListener((id) {
+///   print('flutter toolbar item $id pressed');
+/// });
+/// ```
 ///
 /// Returns a function that can cancel the listener.
+/// Custom toolbar items can be added using the [Config.annotationToolbars]
+/// config. Android only.
 CancelListener startAnnotationToolbarItemPressedListener(
     AnnotationToolbarItemPressedListener listener) {
   var subscription = _annotationToolbarItemPressedChannel

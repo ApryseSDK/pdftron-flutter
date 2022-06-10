@@ -1252,8 +1252,7 @@ public class PluginUtils {
         return configInfo;
     }
 
-    private static void setAnnotationBars(JSONArray array, ViewerConfig.Builder builder, Context context)
-            throws JSONException {
+    private static void setAnnotationBars(JSONArray array, ViewerConfig.Builder builder, Context context) throws JSONException {
         if (context == null) {
             return;
         }
