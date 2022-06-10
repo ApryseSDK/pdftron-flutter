@@ -25,6 +25,7 @@ import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
+import com.pdftron.pdftronflutter.nativeviews.FlutterPdfViewCtrlTabFragment;
 
 import org.json.JSONObject;
 
@@ -82,6 +83,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     private static AtomicReference<EventSink> sZoomChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sPageMovedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sAnnotationToolbarItemPressedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sScrollChangedEventEmitter = new AtomicReference<>();
 
     private static HashMap<Annot, Integer> mSelectedAnnots;
 
@@ -249,6 +251,10 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     public static void setAnnotationToolbarItemPressedEventEmitter(EventSink emitter) {
         sAnnotationToolbarItemPressedEventEmitter.set(emitter);
     }
+    
+    public static void setScrollChangedEventEmitter(EventSink emitter) {
+        sScrollChangedEventEmitter.set(emitter);
+    }
 
     public static void setFlutterLoadResult(Result result) {
         sFlutterLoadResult.set(result);
@@ -333,6 +339,9 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     }
 
     @Override
+    public EventSink getScrollChangedEventEmitter() { return sScrollChangedEventEmitter.get(); }
+
+    @Override
     public Result getFlutterLoadResult() {
         return sFlutterLoadResult.getAndSet(null);
     }
@@ -399,6 +408,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sZoomChangedEventEmitter.set(null);
         sPageMovedEventEmitter.set(null);
         sAnnotationToolbarItemPressedEventEmitter.set(null);
+        sScrollChangedEventEmitter.set(null);
 
         detachActivity();
     }
@@ -406,6 +416,11 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     @Override
     public void onTabDocumentLoaded(String tag) {
         super.onTabDocumentLoaded(tag);
+
+        if (getPdfViewCtrlTabFragment() instanceof FlutterPdfViewCtrlTabFragment) {
+            FlutterPdfViewCtrlTabFragment fragment = (FlutterPdfViewCtrlTabFragment) getPdfViewCtrlTabFragment();
+            fragment.setViewerComponent(this);
+        }
 
         PluginUtils.handleDocumentLoaded(this);
     }

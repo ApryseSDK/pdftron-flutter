@@ -81,6 +81,8 @@ public interface ViewerComponent {
     EventChannel.EventSink getPageMovedEventEmitter();
 
     EventChannel.EventSink getAnnotationToolbarItemPressedEventEmitter();
+    
+    EventChannel.EventSink getScrollChangedEventEmitter();
 
     MethodChannel.Result getFlutterLoadResult();
 
