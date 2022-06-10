@@ -158,19 +158,36 @@ class AnnotProperty {
       };
 }
 
-/// The custom toolbar object.
+/// A custom toolbar item.
 ///
-/// Can be used to create either a custom toolbar object or a custom toolbar item object.
-/// In the case of a toolbar item, the [items] property will be ignored.
-class CustomToolbar {
-  /// id should be unique.
+/// Custom toolbar items can be included in a custom toobar by adding the object
+/// to the [CustomToolbar.items] list. Android only.
+class CustomToolbarItem {
+  /// Unique identifier of the toolbar item.
   String? id;
+
   String? name;
 
-  /// items should be array of [Buttons] / [Tools] constants or [CustomToolbar] objects.
+  /// Name of the image resource to be used as the item's icon.
+  String? icon;
+
+  CustomToolbarItem(this.id, this.name, this.icon);
+
+  Map<String, dynamic> toJson() =>
+      {'id': id, 'name': name, 'icon': icon};
+}
+
+/// A custom toolbar.
+class CustomToolbar {
+  /// Unique identifier of the toolbar.
+  String? id;
+
+  String? name;
+
+  /// An array of [Buttons] / [Tools] constants or [CustomToolbarItem] objects.
   List<Object>? items;
 
-  /// icon (optional) should be a [ToolbarIcons] constant or an image resource name.
+  /// A [ToolbarIcons] constant. Optional.
   String? icon;
 
   CustomToolbar(this.id, this.name, this.items, [this.icon]);
