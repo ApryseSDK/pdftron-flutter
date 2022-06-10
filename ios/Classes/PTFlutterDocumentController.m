@@ -1539,9 +1539,9 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     NSMutableArray<UIColor *> *colorArray = [[NSMutableArray alloc] init];
     
     for (NSDictionary *color in signatureColors) {
-        NSNumber *red = color[@"red"];
-        NSNumber *green = color[@"green"];
-        NSNumber *blue = color[@"blue"];
+        NSNumber *red = color[PTColorRedKey];
+        NSNumber *green = color[PTColorGreenKey];
+        NSNumber *blue = color[PTColorBlueKey];
         
         [colorArray addObject:[UIColor colorWithRed:[red doubleValue] / 255
                                               green:[green doubleValue] / 255

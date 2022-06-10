@@ -511,6 +511,11 @@ public class PluginUtils {
     public static final String MENU_ID_STRING_TRANSLATE = "translate";
     public static final String MENU_ID_STRING_UNGROUP = "ungroup";
 
+    // RGB colors
+    public static final String COLOR_RED = "red";
+    public static final String COLOR_GREEN = "green";
+    public static final String COLOR_BLUE = "blue";
+
     // Toolbars
     public static final String TAG_VIEW_TOOLBAR = "PDFTron_View";
     public static final String TAG_ANNOTATE_TOOLBAR = "PDFTron_Annotate";
@@ -1315,11 +1320,11 @@ public class PluginUtils {
             JSONObject color = array.getJSONObject(i);
 
             if (color != null) {
-                int red = color.getInt("red");
-                int green = color.getInt("green");
-                int blue = color.getInt("blue");
+                int red = color.getInt(COLOR_RED);
+                int green = color.getInt(COLOR_GREEN);
+                int blue = color.getInt(COLOR_BLUE);
 
-                //signatureColors[i] = Color.rgb(red, green, blue);
+                signatureColors[i] = Color.rgb(red, green, blue);
             }
         }
 
