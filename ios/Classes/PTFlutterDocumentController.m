@@ -1543,7 +1543,10 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         NSNumber *green = color[@"green"];
         NSNumber *blue = color[@"blue"];
         
-        [colorArray addObject:[UIColor colorWithRed:[red integerValue] green:[green integerValue] blue:[blue integerValue] alpha:1.0]];
+        [colorArray addObject:[UIColor colorWithRed:[red doubleValue] / 255
+                                              green:[green doubleValue] / 255
+                                               blue:[blue doubleValue] / 255
+                                              alpha:1.0]];
     }
     
     self.toolManager.signatureAnnotationOptions.signatureColors = [colorArray copy];

@@ -257,10 +257,10 @@ class Config {
   /// ];
   /// ```
   ///
-  /// The value is given by a list of a `Map<String, int>` containing RGB values.
-  /// On Android, when this config is set, the user will not be able to
-  /// customize each color shown. Defaults to black, blue, green for Android,
-  /// and black, blue, red for iOS.
+  /// The [value] is given by a list of a `Map<String, int>` containing RGB values,
+  /// with a maximum of three colors. On Android, when this config is set, the
+  /// user will not be able to customize each color shown. Defaults to black,
+  /// blue, green for Android, and black, blue, red for iOS.
   set signatureColors(List value) => _signatureColors = value;
 
   /// Whether the annotation is selected after creation.
