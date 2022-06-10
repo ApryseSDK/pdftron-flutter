@@ -37,6 +37,7 @@ class Config {
   var _signatureDrawingEnabled;
   var _useStylusAsPen;
   var _signSignatureFieldWithStamps;
+  var _signatureColors;
   var _selectAnnotationAfterCreation;
   var _pageIndicatorEnabled;
   var _showQuickNavigationButton;
@@ -258,6 +259,21 @@ class Config {
   /// Defaults to false.
   set signSignatureFieldWithStamps(bool value) =>
       _signSignatureFieldWithStamps = value;
+
+  /// A list of colors that the user can select to create a signature.
+  ///
+  /// ```dart
+  /// config.signatureColors = [
+  ///   { 'red': 255, 'green': 0, 'blue': 0 },
+  ///   { 'red':   0, 'green': 0, 'blue': 0 }
+  /// ];
+  /// ```
+  ///
+  /// Each color is given by a `Map<String, int>` containing RGB values, with a
+  /// maximum of three colors. On Android, when this config is set, the user
+  /// will not be able to customize each color shown. Defaults to black, blue,
+  /// green for Android, and black, blue, red for iOS.
+  set signatureColors(List value) => _signatureColors = value;
 
   /// Whether the annotation is selected after creation.
   ///
@@ -553,6 +569,7 @@ class Config {
         _signatureDrawingEnabled = json['signatureDrawingEnabled'],
         _useStylusAsPen = json['useStylusAsPen'],
         _signSignatureFieldWithStamps = json['signSignatureFieldWithStamps'],
+        _signatureColors = json['signatureColors'],
         _selectAnnotationAfterCreation = json['selectAnnotationAfterCreation'],
         _pageIndicatorEnabled = json['pageIndicatorEnabled'],
         _showQuickNavigationButton = json['showQuickNavigationButton'],
@@ -639,6 +656,7 @@ class Config {
         'signatureDrawingEnabled': _signatureDrawingEnabled,
         'useStylusAsPen': _useStylusAsPen,
         'signSignatureFieldWithStamps': _signSignatureFieldWithStamps,
+        'signatureColors': _signatureColors,
         'selectAnnotationAfterCreation': _selectAnnotationAfterCreation,
         'pageIndicatorEnabled': _pageIndicatorEnabled,
         'showQuickNavigationButton': _showQuickNavigationButton,

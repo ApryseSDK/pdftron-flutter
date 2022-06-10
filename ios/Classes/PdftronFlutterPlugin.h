@@ -30,6 +30,7 @@ static NSString * const PTSignatureTypingEnabledKey = @"signatureTypingEnabled";
 static NSString * const PTSignatureDrawingEnabledKey = @"signatureDrawingEnabled";
 static NSString * const PTUseStylusAsPenKey = @"useStylusAsPen";
 static NSString * const PTSignSignatureFieldWithStampsKey = @"signSignatureFieldWithStamps";
+static NSString * const PTSignatureColorsKey = @"signatureColors";
 static NSString * const PTSelectAnnotationAfterCreationKey = @"selectAnnotationAfterCreation";
 static NSString * const PTPageIndicatorEnabledKey = @"pageIndicatorEnabled";
 static NSString * const PTPageNumberIndicatorAlwaysVisibleKey = @"pageNumberIndicatorAlwaysVisible";
@@ -420,6 +421,11 @@ static NSString * const PTAnnotationManagerUndoModeAllKey = @"undoModeAll";
 // Annotation Toolbar Alignment
 static NSString * const PTAnnotationToolbarAlignmentStartKey = @"GravityStart";
 static NSString * const PTAnnotationToolbarAlignmentEndKey = @"GravityEnd";
+
+// RGB colors
+static NSString * const PTColorRedKey = @"red";
+static NSString * const PTColorGreenKey = @"green";
+static NSString * const PTColorBlueKey = @"blue";
 
 // Default annotation toolbar names.
 typedef NSString * PTDefaultAnnotationToolbarKey;

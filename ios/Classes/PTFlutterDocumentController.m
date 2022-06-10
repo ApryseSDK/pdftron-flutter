@@ -1581,6 +1581,24 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     return self.toolManager.signatureAnnotationOptions.signSignatureFieldsWithStamps;
 }
 
+- (void)setSignatureColors:(NSArray<NSDictionary *> *)signatureColors
+{
+    NSMutableArray<UIColor *> *colorArray = [[NSMutableArray alloc] init];
+    
+    for (NSDictionary *color in signatureColors) {
+        NSNumber *red = color[PTColorRedKey];
+        NSNumber *green = color[PTColorGreenKey];
+        NSNumber *blue = color[PTColorBlueKey];
+        
+        [colorArray addObject:[UIColor colorWithRed:[red doubleValue] / 255
+                                              green:[green doubleValue] / 255
+                                               blue:[blue doubleValue] / 255
+                                              alpha:1.0]];
+    }
+    
+    self.toolManager.signatureAnnotationOptions.signatureColors = [colorArray copy];
+}
+
 - (void)setSelectAnnotationAfterCreation:(BOOL)selectAnnotationAfterCreation
 {
     self.toolManager.selectAnnotationAfterCreation = selectAnnotationAfterCreation;
