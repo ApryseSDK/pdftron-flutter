@@ -252,14 +252,14 @@ class Config {
   set signaturePhotoPickerEnabled(bool value) =>
       _signaturePhotoPickerEnabled = value;
 
-  /// Defines whether to enable typing to create a new signature
+  /// Whether to enable typing to create a new signature.
   ///
   /// Defaults to true.
   set signatureTypingEnabled(bool value) => _signatureTypingEnabled = value;
 
-  /// Defines whether to enable drawing to create a new signature.
+  /// Whether to enable drawing to create a new signature.
   ///
-  /// iOS only. Defaults to true.
+  /// Defaults to true. iOS only.
   set signatureDrawingEnabled(bool value) => _signatureDrawingEnabled = value;
 
   /// Whether a stylus should act like a pen when the viewer is in pan mode.

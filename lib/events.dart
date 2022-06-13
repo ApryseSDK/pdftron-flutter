@@ -107,7 +107,13 @@ typedef void ZoomChangedListener(dynamic zoom);
 /// Gets the [previousPageNumber] before it was moved and the current
 /// [pageNumber].
 typedef void PageMovedListener(dynamic previousPageNumber, dynamic pageNumber);
+
+/// A listener used as the argument for [startScrollChangedListener].
+///
+/// Gets the current [horizontal] scroll position and the [vertical] scroll
+/// position.
 typedef void ScrollChangedListener(dynamic horizontal, dynamic vertical);
+
 typedef void CancelListener();
 
 /// Used to identify listeners for the EventChannel.
@@ -451,7 +457,7 @@ CancelListener startPageChangedListener(PageChangedListener listener) {
 ///
 /// ```dart
 /// var zoomChangedCancel = startZoomChangedListener((zoom) {
-///   print("flutter zoom changed. Current zoom is: $zoom");
+///   print('flutter zoom changed. Current zoom is: $zoom');
 /// });
 /// ```
 ///
@@ -470,7 +476,7 @@ CancelListener startZoomChangedListener(ZoomChangedListener listener) {
 ///
 /// ```dart
 /// var pageMovedCancel = startPageMovedListener((previousPageNumber, pageNumber) {
-///   print("flutter page moved from $previousPageNumber to $pageNumber");
+///   print('flutter page moved from $previousPageNumber to $pageNumber');
 /// });
 /// ```
 ///
@@ -491,8 +497,13 @@ CancelListener startPageMovedListener(PageMovedListener listener) {
   };
 }
 
-
-/// Listens for if the document's scroll position is changed
+/// Listens for when the document's scroll position is changed.
+///
+/// ```dart
+/// var scrollChangedCancel = startScrollChangedListener((horizontal, vertical) {
+///   print('flutter scroll position: $horizontal, $vertical');
+/// });
+/// ```
 ///
 /// Returns a function that can cancel the listener.
 CancelListener startScrollChangedListener(ScrollChangedListener listener) {
