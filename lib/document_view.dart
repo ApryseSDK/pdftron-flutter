@@ -510,11 +510,13 @@ class DocumentViewController {
     });
   }
 
-  /// Zoom to a paragraph that contains the specified coordinate. If no paragraph contains the coordinate, the zooming would not happen.
+  /// Zooms to a paragraph that contains the specified coordinate.
   ///
-  /// Parameters: x:int         -> the x-coordinate of the target coordinate
-  ///             y:int         -> the y-coordinate of the target coordinate
-  ///             animated:bool -> whether the transition is animated
+  /// The paragraph has to contain more than one line and be wider than 1/5th of
+  /// the page width. If no paragraph contains the coordiante, nothing occurs.
+  /// The zoom center ([x],[y]) is represented in the screen space, whose origin
+  /// is at the upper-left corner of the screen region. [animated] determines if
+  /// the transition is animated.
   Future<void> smartZoom(int x, int y, bool animated) {
     return _channel.invokeMethod(Functions.smartZoom, <String, dynamic>{
       'x': x,
