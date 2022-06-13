@@ -397,29 +397,41 @@ class ViewModePickerItem {
 
 /// Defines the type of eraser used in the viewer.
 class DefaultEraserType {
+  /// Erases everything as an object; the entire object is erased when touched.
   static const annotationEraser = "annotationEraser";
+
+  /// Erases ink by pixel, but other anntation types as objects.
   static const hybrideEraser = "hybridEraser";
 
-  /// Android only.
+  /// Erases ink by pixel only. Android only.
   static const inkEraser = "inkEraser";
 }
 
-// ReflowOrientation defines the scrolling direction of the viewer while in reflow mode. Android only.
+/// ReflowOrientation defines the scrolling direction of the viewer while in reflow mode. Android only.
 class ReflowOrientation {
   static const horizontal = "horizontal";
   static const vertical = "vertical";
 }
 
+/// The annotation manager's edit mode.
 class AnnotationManagerEditMode {
+  /// Can edit only the user's own changes.
   static const Own = "editModeOwn";
+
+  /// Can edit everyone's changes.
   static const All = "editModeAll";
 }
 
+/// The annotation manager's undo mode.
 class AnnotationManagerUndoMode {
+  /// Can undo only the user's own changes.
   static const Own = "undoModeOwn";
+
+  /// Can undo everyone's changes.
   static const All = "undoModeAll";
 }
 
+/// The alignment of annotation toolbars.
 class ToolbarAlignment {
   static const Start = "GravityStart";
   static const End = "GravityEnd";

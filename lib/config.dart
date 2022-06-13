@@ -3,8 +3,7 @@ part of pdftron;
 /// A class to contain the viewer configuration options.
 ///
 /// The class properties represent all possible viewer configuration options.
-/// These options are not required and have default values. For more information on
-/// these configurations, look at the [GitHub API documentation](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md).
+/// These options are not required and have default values.
 class Config {
   var _disabledElements;
   var _disabledTools;
@@ -96,47 +95,59 @@ class Config {
   /// Defaults to empty.
   set disabledTools(List value) => _disabledTools = value;
 
-  /// Whether tabs will be used to facilitate the viewing of multiple documents
+  /// Whether the viewer will use tabs to enable having multiple documents open
   /// simultaneously.
   ///
-  /// If this value is true and [PdftronFlutter.openDocument(document)] is called, it
-  /// will open a new tab with the associated document. Defaults to false.
+  /// If this [value] is true and [PdftronFlutter.openDocument] or
+  /// [DocumentViewController.openDocument] is called, it will open a new tab
+  /// with the associated document. Defaults to false.
   set multiTabEnabled(bool value) => _multiTabEnabled = value;
 
-  /// The custom headers to use with HTTP/HTTPS requests.
+  /// A map containing custom headers to use with HTTP/HTTPS requests.
+  ///
+  /// ```dart
+  /// config.customHeaders = {'headerName': 'headerValue'};
+  /// ```
   ///
   /// Defaults to empty.
   set customHeaders(Map<String, String> value) => _customHeaders = value;
 
   /// The default zoom level of the viewer.
   ///
-  /// Can be set with one of the [FitModes] constants. Defaults to [FitModes.fitWidth].
+  /// The [value] is given as one of the [FitModes] constants. Defaults to
+  /// [FitModes.fitWidth].
   set fitMode(String value) => _fitMode = value;
 
   /// The layout mode of the viewer.
   ///
-  /// Can be set with one of the [LayoutModes] constants. Defaults to
+  /// The [value] is given as one of the [LayoutModes] constants. Defaults to
   /// [LayoutModes.continuous].
   set layoutMode(String value) => _layoutMode = value;
 
-  /// Defines whether the tablet layout should be used on tablets. Otherwise uses the same layout as phones.
+  /// Whether the tablet layout should be used on tablets.
   ///
-  /// Defaults to true.
+  /// If false, tablets use the same layout as phones. Defaults to true.
   set tabletLayoutEnabled(bool value) => _tabletLayoutEnabled = value;
 
   /// The initial page number upon opening a document.
   ///
-  /// Page numbers are 1-indexed.
+  /// Page numbers are 1-indexed. Defaults to 1.
   set initialPageNumber(int value) => _initialPageNumber = value;
 
-  /// Whether to treat the document in [PdftronFlutter.openDocument(document)] as a base64 string.
+  /// Whether to treat the document being opened as a base64 string.
   ///
-  /// Defaults to false.
+  /// When viewing a document initialized with a base64 string, a temporary file
+  /// is created on Android, but not on iOS. Defaults to false.
   set isBase64String(bool value) => _isBase64String = value;
 
-  /// If _isBase64String is true, it defines the file extension to use.
+  /// The file extension to use when [isBase64String] is true.
   ///
-  /// Defaults to ".pdf" but is required if using the base64 string of a non-pdf file.
+  /// ```dart
+  /// config.base64FileExtension = '.jpeg';
+  /// ```
+  ///
+  /// Defaults to ".pdf", but is required if using the base64 string of a
+  /// non-pdf file.
   set base64FileExtension(String value) => _base64FileExtension = value;
 
   /// A list of [ThumbnailFilterModes] that will be hidden in the thumbnails browser.
@@ -149,17 +160,17 @@ class Config {
   /// Defaults to true.
   set longPressMenuEnabled(bool value) => _longPressMenuEnabled = value;
 
-  /// A list of [LongPressMenuItems] that can be shown after long pressing on text
+  /// A list of [LongPressMenuItems] that will be shown after a long press on text
   /// or blank space.
   ///
   /// Defaults to all of [LongPressMenuItems].
   set longPressMenuItems(List value) => _longPressMenuItems = value;
 
-  /// The long press menu items that will skip default beahaviour when pressed.
+  /// A list of [LongPressMenuItems] that will skip default behavior when pressed.
   ///
-  /// These menu items will still be displayed in the long press menu.
-  /// The new behaviour is defined in the [startLongPressMenuPressedListener()].
-  /// Defaults to empty.
+  /// These menu items will still be displayed in the long press menu. When pressed,
+  /// the event listener [startLongPressMenuPressedListener] will be called
+  /// instead where custom behavior can be implemented. Defaults to empty.
   set overrideLongPressMenuBehavior(List value) =>
       _overrideLongPressMenuBehavior = value;
 
@@ -173,40 +184,41 @@ class Config {
   /// Defaults to all of [AnnotationMenuItems].
   set annotationMenuItems(List value) => _annotationMenuItems = value;
 
-  /// A list of [AnnotationMenuItems] that will skip default behaviour when pressed.
+  /// A list of [AnnotationMenuItems] that will skip default behavior when pressed.
   ///
-  /// These menu items will still be displayed in the annotation menu.
-  /// The new behaviour will be defined in the [startAnnotationMenuPressedListener()].
-  /// Defaults to empty.
+  /// These menu items will still be displayed in the annotation menu. When pressed,
+  /// the event listener [startAnnotationMenuPressedListener] will be called
+  /// instead where custom behavior can be implemented. Defaults to empty.
   set overrideAnnotationMenuBehavior(List value) =>
       _overrideAnnotationMenuBehavior = value;
 
-  /// Defines types to be excluded from the annotation list
+  /// A list of [Tools] that will be excluded from the annotation list.
   ///
-  /// Defaults to none
+  /// Defaults to empty.
   set excludedAnnotationListTypes(List value) =>
       _excludedAnnotationListTypes = value;
 
-  /// Where a file is saved when using actions such as: "save a password copy",
-  /// "save a flattened copy", etc.
+  /// The folder path where the file will be saved for actions to save a copy of
+  /// the document.
   ///
-  /// Defaults to null.
+  /// The actions include saving a password copy and saving a flattened copy.
+  /// Defaults to null. Android only.
   set exportPath(String value) => _exportPath = value;
 
-  /// Where a cache file is saved when opening files from HTTPS.
+  /// The folder path where cache files are saved when opening files from HTTPS.
   ///
-  /// Defaults to null.
+  /// Defaults to null. Android only.
   set openUrlPath(String value) => _openUrlPath = value;
 
-  ///Sets whether the new saved file should open after saving
+  /// Whether newly saved files should open in a new tab after saving.
   ///
-  /// Deafaults to true
+  /// Applicable when [multiTabEnabled] is true. Defaults to true. Android only.
   set openSavedCopyInNewTab(bool value) => _openSavedCopyInNewTab = value;
 
-  ///Sets the limit on the maximum number of tabs that the viewer could have at a time.
-  ///Open more documents after reaching this limit will overwrite the old tabs.
+  /// The maximum number of tabs that the viewer could have at a time.
   ///
-  /// Defaults to unlimited
+  /// Applicable when [multiTabEnabled] is true. Opening more documents after
+  /// reaching this limit will overwrite the old tabs. Defaults to unlimited.
   set maxTabCount(int value) => _maxTabCount = value;
 
   /// Whether the document is automatically saved.
@@ -214,25 +226,26 @@ class Config {
   /// Defaults to true.
   set autoSaveEnabled(bool value) => _autoSaveEnabled = value;
 
-  /// Defines whether a toast indicating that the document has been successfully or unsuccessfully saved will appear.
+  /// Whether a toast indicating that the document has been successfully or
+  /// unsuccessfully saved will appear.
   ///
-  /// Defaults to true
+  /// Defaults to true. Android only.
   set showDocumentSavedToast(bool value) => _showDocumentSavedToast = value;
 
-  /// If in a horizontal viewing mode, whether the viewer changes pages when a users
-  /// taps the page's edge.
+  /// Whether the viewer should change pages when the user taps the edge of a page
+  /// if the viewer is in a horizontal viewing mode.
   ///
   /// Defaults to true.
   set pageChangeOnTap(bool value) => _pageChangeOnTap = value;
 
-  /// Whether to show saved signatures for re-use.
+  /// Whether to enable saving multiple signatures for re-use.
   ///
   /// Defaults to true.
   set showSavedSignatures(bool value) => _showSavedSignatures = value;
 
-  /// Defines whether to show the option to pick images in the signature dialog
+  /// Whether to show the option to select images in the signature dialog.
   ///
-  /// Defaults to true
+  /// Defaults to true.
   set signaturePhotoPickerEnabled(bool value) =>
       _signaturePhotoPickerEnabled = value;
 
@@ -243,37 +256,41 @@ class Config {
 
   /// Whether signature fields will be signed with image stamps.
   ///
-  /// Defaults to false.
+  /// Can be useful if saving XFDF to remote source. Defaults to false.
   set signSignatureFieldWithStamps(bool value) =>
       _signSignatureFieldWithStamps = value;
 
-  /// Whether the annotation is selected after creation.
+  /// Whether annotations are selected after creation.
   ///
-  /// On iOS, this functions for shape and text markup only. Defaults to true.
+  /// On iOS, this applies to shape and text markup only. Defaults to true.
   set selectAnnotationAfterCreation(bool value) =>
       _selectAnnotationAfterCreation = value;
 
-  /// Whehter to show the page indicator.
+  /// Whehter to show the page indicator in the viewer.
   ///
   /// Defaults to true.
   set pageIndicatorEnabled(bool value) => _pageIndicatorEnabled = value;
 
-  /// Defines whether the quick navigation buttons will appear in the viewer.
+  /// Whether the quick navigation buttons will appear in the viewer.
   ///
   /// Defaults to true.
   set showQuickNavigationButton(bool value) =>
       _showQuickNavigationButton = value;
 
-  /// If the system is in dark mode, whether to have the UI will appear in a dark color.
+  /// Whether the UI will appear in a dark color when the system is in dark mode.
   ///
-  /// Android only. Defaults to true.
+  /// If false, it will use the viewer setting instead. Defaults to true.
+  /// Android only.
   set followSystemDarkMode(bool value) => _followSystemDarkMode = value;
 
-  /// Defines whether the download dialog should be shown.
+  /// Whether the download dialog should be shown.
   ///
-  /// Defaults to true.
+  /// Defaults to true. Android only.
   set downloadDialogEnabled(bool value) => _downloadDialogEnabled = value;
 
+  /// Whether to use a single-line toolbar instead of a double-line toolbar.
+  ///
+  /// Defaults to false. Android only.
   set singleLineToolbar(bool value) => _singleLineToolbar = value;
 
   /// A list of [CustomToolbar] objects or [DefaultToolbars] constants that define a
@@ -282,9 +299,9 @@ class Config {
   /// If used the default toolbar no longer shows. Defualts to empty.
   set annotationToolbars(List value) => _annotationToolbars = value;
 
-  /// A list of [DefaultToolbars] that defines the default annotation toolbars to hide
+  /// A list of [DefaultToolbars] that will be hidden.
   ///
-  /// It should not be used in conjunction with [annotationToolbars]. Defaults to empty.
+  /// Not to be used in conjunction with [annotationToolbars]. Defaults to empty.
   set hideDefaultAnnotationToolbars(List value) =>
       _hideDefaultAnnotationToolbars = value;
 
@@ -294,20 +311,22 @@ class Config {
   set hideAnnotationToolbarSwitcher(bool value) =>
       _hideAnnotationToolbarSwitcher = value;
 
-  /// Defines which annotationToolbar should be selected when the document is opened.
+  /// The annotation toolbar that will be selected when the document is opened.
   ///
-  /// Defaults to none
+  /// The [value] is given as either one of the [DefaultToolbars] constants or
+  /// the [CustomToolbar.id] of a custom toolbar object. Defaults to none.
   set initialToolbar(String value) => _initialToolbar = value;
 
-  /// Whether to hide both the top app navigation bar and the annotation toolbar.
+  /// Whether to hide the top app navigation bar and the annotation toolbar.
   ///
   /// Defaults to false.
   set hideTopToolbars(bool value) => _hideTopToolbars = value;
 
-  /// Defines whether an unhandled tap in the viewer should toggle the visibility of the top and bottom toolbars.
-  /// When false, the top and bottom toolbar visibility will not be toggled and the page content will fit between the bars, if any.
+  /// Whether an unhandled tap in the viewer should toggle the visibility of the
+  /// top and bottom toolbars.
   ///
-  /// Defaults to true
+  /// If false, the top and bottom toolbar visibility will not be toggled and
+  /// the page content will fit between the bars, if any. Defaults to true.
   set hideToolbarsOnTap(bool value) => _hideToolbarsOnTap = value;
 
   /// Whether to hide the top app navigation bar.
@@ -315,10 +334,11 @@ class Config {
   /// Defaults to false.
   set hideTopAppNavBar(bool value) => _hideTopAppNavBar = value;
 
-  /// Customizes the right bar section of the top app nav bar.
-  /// If passed in, the default right bar section will not be used.
+  /// A list of [Buttons] that will appear in the right bar section of the top
+  /// app navigation bar.
   ///
-  /// iOS only
+  /// If used, the default right bar section will not be used. Defaults to
+  /// [Buttons.searchButton] and [Buttons.moreItemsButton]. iOS only.
   set topAppNavBarRightBar(List value) => _topAppNavBarRighBar = value;
 
   /// Whether to hide the bottom toolbar for the current viewer.
@@ -326,13 +346,21 @@ class Config {
   /// Defaults to false.
   set hideBottomToolbar(bool value) => _hideBottomToolbar = value;
 
-  /// Defines whether to hide the preset bar for the current viewer.
+  /// Whether to hide the preset bar for the current viewer.
   ///
-  /// Defaults to false
+  /// Defaults to false.
   set hidePresetBar(bool value) => _hidePresetBar = value;
 
-  /// Defines a custom bottom toolbar.
-  /// If passed in, the default bottom toolbar will not be used.
+  /// A list of [Buttons] that will appear in the bottom toolbar.
+  ///
+  /// If used, the default bottom toolbar will not be used. Supported buttons are:
+  /// * [Buttons.listsButton]
+  /// * [Buttons.thumbnailsButton]
+  /// * [Buttons.shareButton]
+  /// * [Buttons.viewControlsButton]
+  /// * [Buttons.reflowModeButton]
+  /// * [Buttons.searchButton]
+  /// * [Buttons.moreItemsButton] (iOS only)
   set bottomToolbar(List value) => _bottomToolbar = value;
 
   /// Whether to show the leading navigation button.
@@ -340,17 +368,18 @@ class Config {
   /// Defaults to true.
   set showLeadingNavButton(bool value) => _showLeadingNavButton = value;
 
-  /// Defines whether the document slider of the viewer is enabled.
+  /// Whether the document slider of the viewer is enabled.
   ///
-  /// Defaults to true
+  /// Defaults to true.
   set documentSliderEnabled(bool value) => _documentSliderEnabled = value;
 
-  /// Defines whether the last tool used in the current viewer session will be the tool selected upon starting a new viewer session.
+  /// Whether the last tool used in the current viewer session will be the tool
+  /// selected upon starting a new viewer session.
   ///
-  /// Deafults to true. Android only
+  /// Defults to true. Android only.
   set rememberLastUsedTool(bool value) => _rememberLastUsedTool = value;
 
-  /// Whether the viewer allows users to edit the document.
+  /// Whether the viewer will allow users to edit the document.
   ///
   /// Defaults to false.
   set readOnly(bool value) => _readOnly = value;
@@ -363,59 +392,61 @@ class Config {
 
   /// The author name for all annotations created on the current document.
   ///
-  /// When the xfdfCommand is exported, this information is included.
+  /// When the XFDF command is exported, this information will be included.
   set annotationAuthor(String value) => _annotationAuthor = value;
 
   /// Whether the active annotation creation tool will remain the current annotation
   /// tool.
   ///
+  /// If false, it will revert to the pan tool after an annotation is created.
   /// Defaults to true.
   set continuousAnnotationEditing(bool value) =>
       _continuousAnnotationEditing = value;
 
   /// Whether the annotation's flags will be considered upon its selection.
   ///
-  /// E.g. An annotation with a locked flag cannot be resized or moved.
-  ///
+  /// For example, an annotation with a locked flag cannot be resized or moved.
   /// Defaults to false.
   set annotationPermissionCheckEnabled(bool value) =>
       _annotationPermissionCheckEnabled = value;
 
-  /// If document editing is enabled, then this value determines if the annotation list is editable.
+  /// Whether the annotation list is editable if document editing is enabled.
   ///
-  /// Defaults to true
+  /// Defaults to true.
   set annotationsListEditingEnabled(bool value) =>
       _annotationsListEditingEnabled = value;
 
-  ///Defines whether the bookmark list can be edited.
-  /// If the viewer is readonly then bookmarks on Android are still editable but are saved to the device rather than the PDF.
+  /// Whether the bookmark list is editable.
   ///
-  /// Defaults to true
+  /// If the viewer is read-only, then bookmarks on Android will still be editable
+  /// but are saved to the device rather than the PDF. Defaults to true.
   set userBookmarksListEditingEnabled(bool value) =>
       _userBookmarksListEditingEnabled = value;
 
-  /// Defines whether the outline list can be edited.
+  /// Whether the outline list is editable.
   ///
-  /// Defaults to true
+  /// Defaults to true.
   set outlineListEditingEnabled(bool value) =>
       _outlineListEditingEnabled = value;
 
-  /// Defines whether the navigation list will be displayed as a side panel on large devices such as iPads and tablets.
+  /// Whether the navigation list will be displayed as a side panel on large
+  /// devices such as iPads and tablets.
   ///
-  /// Defaults to true
+  /// Defaults to true.
   set showNavigationListAsSidePanelOnLargeDevices(bool value) =>
       _showNavigationListAsSidePanelOnLargeDevices = value;
 
-  /// A list of [Behaviors] that can skip their default behaviour e.g. external link clicking.
+  /// A list of [Behaviors] that will skip their default behavior.
   ///
-  /// The new behaviour will be defined in [startBehaviorActivatedListener()].
-  /// Defaults to empty.
+  /// When the behavior is activated, the event listener
+  /// [startBehaviorActivatedListener] will be called instead where custom
+  /// behavior can be implemented. Defaults to empty.
   set overrideBehavior(List<String> value) => _overrideBehavior = value;
 
-  /// If [multiTabEnabled] is true, sets the tab title.
+  /// The tab title if [multiTabEnabled] is true.
   ///
-  /// For Android, it is only supported on the [DocumentView] widget.
-  /// Defaults to the file name.
+  /// Only supported on the [DocumentView] widget for Android. Defaults to the
+  /// file name.
   set tabTitle(String value) => _tabTitle = value;
 
   /// Whether the page indicator is always visible.
@@ -430,82 +461,94 @@ class Config {
   set disableEditingByAnnotationType(List value) =>
       _disableEditingByAnnotationType = value;
 
-  /// Defines whether filtering the annotation list is possible.
+  /// Whether filtering the annotation list is possible.
   ///
-  /// Defaults to true. Android only
+  /// Defaults to true. Android only.
   set annotationsListFilterEnabled(bool value) =>
       _annotationsListFilterEnabled = value;
 
-  /// A list of [ViewModePickerItem] constants that defines which view mode items to be
-  /// hidden in the view mode dialog.
+  /// The view mode items to be hidden in the view mode dialog.
   ///
+  /// The [value] is given as a list of [ViewModePickerItem] constants.
   /// Defaults to empty.
   set hideViewModeItems(List value) => _hideViewModeItems = value;
 
-  /// Sets the default eraser tool type.
+  /// The default eraser tool type.
   ///
-  /// Value only applied after a clean install.
+  /// The [value] is given as one of the [DefaultEraserType] constants. Only
+  /// applied after a clean install.
   set defaultEraserType(String value) => _defaultEraserType = value;
 
-  /// Defines whether to automatically resize the bounding box of free text annotations when editing.
+  /// Whether to automatically resize the bounding box of free text annotations
+  /// when editing.
   ///
-  /// Defaults to false
+  /// Defaults to false.
   set autoResizeFreeTextEnabled(bool value) =>
       _autoResizeFreeTextEnabled = value;
 
-  /// Defines whether to restrict data usage when viewing online PDFs.
+  /// Whether to restrict data usage when viewing online PDFs.
   ///
-  /// Defaults to false
+  /// Defaults to false.
   set restrictDownloadUsage(bool value) => _restrictDownloadUsage = value;
 
-  /// Sets the scrolling direction of the reflow control.
+  /// The scrolling direction of the reflow control.
   ///
-  /// one of ReflowOrientation constants, defaults to the viewer's scroll direction.
+  /// The [value] is given as one of the [ReflowOrientation] constants. Defaults
+  /// to the viewer's scroll direction.
   set reflowOrientation(String value) => _reflowOrientation = value;
 
   /// Whether to show images in reflow mode.
   ///
-  /// Defaults to true
+  /// Defaults to true.
   set imageInReflowModeEnabled(bool value) => _imageInReflowModeEnabled = value;
 
   /// Defines whether the annotation manager is enabled.
   ///
-  /// Defaults to false
+  /// Defaults to false.
   set annotationManagerEnabled(bool value) => _annotationManagerEnabled = value;
 
   /// The unique identifier of the current user.
+  ///
+  /// Defaults to null.
   set userId(String value) => _userId = value;
 
-  /// The name of the current user. Used in the annotation manager when annotationManagerEnabled is true.
+  /// The name of the current user.
   ///
-  /// Android only
+  /// Used in the annotation manager when [annotationManagerEnabled] is true.
+  /// Android only.
   set userName(String value) => _userName = value;
 
-  /// Sets annotation manager edit mode when annotationManagerEnabled is true and userId is not null.
+  /// The annotation manager's edit mode when [annotationManagerEnabled] is true
+  /// and [userId] is not null.
   ///
-  /// Defaults to AnnotationManagerEditMode.All
+  /// The [value] is given as one of the [AnnotationManagerEditMode] constants.
+  /// Defaults to [AnnotationManagerEditMode.All].
   set annotationManagerEditMode(String value) =>
       _annotationManagerEditMode = value;
 
-  /// Sets annotation manager undo mode when annotationManagerEnabled is true and userId is not null.
+  /// The annotation manager's undo mode when [annotationManagerEnabled] is true
+  /// and [userId] is not null.
   ///
-  /// Defaults to AnnotationManagerUndoMode.All
+  /// The [value] is given as one of the [AnnotationManagerUndoMode] constants.
+  /// Defaults to [AnnotationManagerUndoMode.All].
   set annotationManagerUndoMode(String value) =>
       _annotationManagerUndoMode = value;
 
-  /// Customizes the alignment of the annotation toolbars.
+  /// The alignment of the annotation toolbars.
   ///
-  /// one of ToolbarAlignment.Start or ToolbarAlignment.End
+  /// The [value] is given as one of the [ToolbarAlignment] constants. Defaults
+  /// to [ToolbarAlignment.End].
   set annotationToolbarAlignment(String value) =>
       _annotationToolbarAlignment = value;
 
-  /// bool, optional, iOS only, defaults to false
+  /// Whether scroll bars will be hidden in the viewer.
   ///
-  /// Determines whether scrollbars will be hidden on the viewer.
+  /// Defaults to false. iOS only.
   set hideScrollbars(bool value) => _hideScrollbars = value;
-  /// Sets the bookmark creation as a part of the toolbar
+
+  /// Whether a bookmark creation button will be included in the bottom toolbar.
   ///
-  /// Defaults to false
+  /// Pressing the button will booksmark the current page. Defaults to false.
   set quickBookmarkCreation(bool value) => _quickBookmarkCreation = value;
 
   Config.fromJson(Map<String, dynamic> json)
