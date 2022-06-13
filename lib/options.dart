@@ -1,6 +1,6 @@
 part of pdftron;
 
-/// The annotation object.
+/// An annotation object.
 class Annot {
   /// An annotation has its id in XFDF as name.
   String? id;
@@ -19,7 +19,7 @@ class Annot {
       };
 }
 
-/// The annotation associated with its rectangle.
+/// An annotation associated with its rectangle.
 class AnnotWithRect {
   String? id;
   int? pageNumber;
@@ -33,7 +33,7 @@ class AnnotWithRect {
   }
 }
 
-/// The field object for the viewer.
+/// A field object for the viewer.
 class Field {
   String? fieldName;
   dynamic fieldValue;
@@ -47,7 +47,7 @@ class Field {
       {'fieldName': fieldName, 'fieldValue': fieldValue};
 }
 
-/// The rect object for the viewer.
+/// A rect object for the viewer.
 class Rect {
   double? x1, y1, x2, y2, width, height;
   Rect(this.x1, this.y1, this.x2, this.y2, this.width, this.height);
@@ -91,12 +91,12 @@ class Rect {
       };
 }
 
-/// The flag object for an annotation.
+/// A flag object for an annotation.
 class AnnotFlag {
-  /// flag comes from [AnnotationFlags] constants.
+  /// One of the [AnnotationFlags] constants.
   String? flag;
 
-  /// flagValue represents toggling on/off.
+  /// Represents toggling the flag on or off.
   bool? flagValue;
   AnnotFlag(this.flag, this.flagValue);
 
@@ -106,7 +106,7 @@ class AnnotFlag {
       };
 }
 
-/// The annotation object associated with its flags.
+/// An annotation object associated with its flags.
 class AnnotWithFlag {
   late Annot annotation;
   late List<AnnotFlag> flags;
@@ -124,9 +124,9 @@ class AnnotWithFlag {
       {'annotation': jsonEncode(annotation), 'flags': jsonEncode(flags)};
 }
 
-/// The annotation property object.
+/// An annotation property object.
 ///
-/// Note: some of this object's properties are markup annotation exclusive, some are not.
+/// Some of this object's properties are markup annotation exclusive, some are not.
 class AnnotProperty {
   /// Not markup exclusive.
   Rect? rect;
