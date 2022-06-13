@@ -48,6 +48,10 @@ typedef void PageChangedListener(
     dynamic previousPageNumber, dynamic pageNumber);
 typedef void ZoomChangedListener(dynamic zoom);
 typedef void PageMovedListener(dynamic previousPageNumber, dynamic pageNumber);
+
+/// A listener used as the argument for [startAnnotationToolbarItemPressedListener].
+///
+/// Gets the unique [id] of the custom toolbar item that was pressed.
 typedef void AnnotationToolbarItemPressedListener(dynamic id);
 typedef void ScrollChangedListener(dynamic horizontal, dynamic vertical);
 typedef void CancelListener();

@@ -304,8 +304,8 @@ class Config {
 
   set singleLineToolbar(bool value) => _singleLineToolbar = value;
 
-  /// A list of [CustomToolbar] objects or [DefaultToolbars] constants that define a
-  /// custom toolbar.
+  /// A list of [CustomToolbar] objects or [DefaultToolbars] constants that define
+  /// a set of annotation toolbars.
   ///
   /// ```dart
   /// var customToolItem = new CustomToolbarItem('add_page', 'Add Page', 'ic_add_blank_page_white');
@@ -314,7 +314,7 @@ class Config {
   /// config.annotationToolbars = [DefaultToolbars.annotate, customToolbar];
   /// ```
   ///
-  /// If used, the default toolbars no longer show. Defualts to empty.
+  /// If used, the default toolbars no longer show. Defaults to empty.
   set annotationToolbars(List value) => _annotationToolbars = value;
 
   /// A list of [DefaultToolbars] that defines the default annotation toolbars to hide
