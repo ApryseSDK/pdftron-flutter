@@ -1,3 +1,43 @@
+# 1.0.0-beta.21 - April 22, 2021
+- Update Android to v9.2.2
+
+# 1.0.0-beta.18 - April 22, 2021
+- Fix for setting layout mode on document open on iOS
+
+
+# 1.0.0-beta.17 - March 31, 2021
+- hideScrollbars_iOS
+# 1.0.0-beta.16 - March 31, 2021
+- zoomWithCenter()
+- zoomToRect()
+
+# 1.0.0-beta.16 - March 31, 2021
+- Minor updates to API docs
+# 1.0.0-beta.15 - March 23, 2021
+- getZoom Method
+- setZoomLimits Methods
+
+# 1.0.0-beta.12 - March 23, 2021
+- QuickBookMarkConfig Option
+# 1.0.0-beta.11 - March 22, 2021
+- Update Android to v9.2.1
+
+# 1.0.0-beta.10 - March 18, 2021
+- Minor bug fixes in pubspec.yaml and other files 
+
+# 1.0.0-beta.9 - March 18, 2021
+- Implemented the following APIs:
+- GetSavedSignatures()
+- GetSavedSignaturesFolder()
+- GetSavedSignaturesJpgFolder()
+
+# 1.0.0-beta.8 - March 11, 2021
+
+- Bug Fixes
+
+# 1.0.0-beta.7 - March 4, 2021
+
+- Add additional viewMode hiding options (vertical scrolling)
 # 1.0.0-beta.5 - Februrary 22, 2021
 
 - Toggle widget and plugin (internal sample)

@@ -37,7 +37,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) BOOL pageChangesOnTap;
 @property (nonatomic, assign) BOOL useStylusAsPen;
 @property (nonatomic, assign) BOOL showSavedSignatures;
+@property (nonatomic, assign) BOOL signaturePhotoPickerEnabled;
+@property (nonatomic, assign) BOOL signatureTypingEnabled;
+@property (nonatomic, assign) BOOL signatureDrawingEnabled;
 @property (nonatomic, assign) BOOL signSignatureFieldsWithStamps;
+@property (nonatomic, copy, nullable) NSArray<NSDictionary *> *signatureColors;
 @property (nonatomic, assign) BOOL selectAnnotationAfterCreation;
 @property (nonatomic, assign, getter=isBottomToolbarOn) BOOL bottomToolbarOn;
 @property (nonatomic, copy, nullable) NSString* defaultEraserType;
@@ -95,6 +99,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable) NSString *annotationManagerUndoMode;
 
 @property (nonatomic, assign, getter=isDocCtrlrConfigured) BOOL docCtrlrConfigured;
+
+@property (nonatomic, assign, getter=isReadOnly) BOOL hideScrollbars;
 
 - (void)initViewerSettings;
 - (void)applyViewerSettings;

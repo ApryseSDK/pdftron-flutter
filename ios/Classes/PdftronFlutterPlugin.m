@@ -20,6 +20,7 @@
 @property (nonatomic, strong) FlutterEventSink pageChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink zoomChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink pageMovedEventSink;
+@property (nonatomic, strong) FlutterEventSink scrollChangedEventSink;
 
 @property (nonatomic, assign, getter=isWidgetView) BOOL widgetView;
 @property (nonatomic, assign, getter=isMultiTabSet) BOOL multiTabSet;
@@ -151,6 +152,8 @@
     
     FlutterEventChannel* pageMovedEventChannel = [FlutterEventChannel eventChannelWithName:PTPageMovedEventKey binaryMessenger:messenger];
 
+    FlutterEventChannel* scrollChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTScrollChangedEventKey binaryMessenger:messenger];
+
     [xfdfEventChannel setStreamHandler:self];
     
     [bookmarkEventChannel setStreamHandler:self];
@@ -178,6 +181,8 @@
     [zoomChangedEventChannel setStreamHandler:self];
     
     [pageMovedEventChannel setStreamHandler:self];
+
+    [scrollChangedEventChannel setStreamHandler:self];
 }
 
 #pragma mark - Configurations
@@ -407,6 +412,27 @@
                         [documentController setShowSavedSignatures:[showSavedSignatureNumber boolValue]];
                     }
                 }
+                else if ([key isEqualToString:PTSignaturePhotoPickerEnabledKey]) {
+                    
+                    NSNumber* signaturePhotoPickerEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignaturePhotoPickerEnabledKey class:[NSNumber class] error:&error];
+                    if (!error && signaturePhotoPickerEnabledNumber) {
+                        [documentController setSignaturePhotoPickerEnabled:[signaturePhotoPickerEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTSignatureTypingEnabledKey]) {
+                    
+                    NSNumber* signatureTypingEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignatureTypingEnabledKey class:[NSNumber class] error:&error];
+                    if (!error && signatureTypingEnabledNumber) {
+                        [documentController setSignatureTypingEnabled:[signatureTypingEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTSignatureDrawingEnabledKey]) {
+                    
+                    NSNumber* signatureDrawingEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignatureDrawingEnabledKey class:[NSNumber class] error:&error];
+                    if (!error && signatureDrawingEnabledNumber) {
+                        [documentController setSignatureDrawingEnabled:[signatureDrawingEnabledNumber boolValue]];
+                    }
+                }
                 else if ([key isEqualToString:PTUseStylusAsPenKey]) {
                     
                     NSNumber* useStylusAsPenNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUseStylusAsPenKey class:[NSNumber class] error:&error];
@@ -419,6 +445,14 @@
                     NSNumber* signSignatureFieldsWithStampsNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignSignatureFieldWithStampsKey class:[NSNumber class] error:&error];
                     if (!error && signSignatureFieldsWithStampsNumber) {
                         [documentController setSignSignatureFieldsWithStamps:[signSignatureFieldsWithStampsNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTSignatureColorsKey]) {
+                    
+                    NSArray* signatureColors = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignatureColorsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && signatureColors) {
+                        [documentController setSignatureColors:signatureColors];
                     }
                 }
                 else if ([key isEqualToString:PTSelectAnnotationAfterCreationKey]) {
@@ -742,6 +776,30 @@
                         }
                     }
                 }
+                else if ([key isEqualToString:PTHideScrollbarsKey])
+                {
+                    NSNumber* hideScrollbarsValue = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTHideScrollbarsKey class:[NSNumber class] error:&error];
+                    
+                    BOOL hideScrollbars = [hideScrollbarsValue boolValue];
+
+                    if (!error && hideScrollbars) {
+                        if (hideScrollbars) {
+                            documentController.pdfViewCtrl.contentScrollView.showsHorizontalScrollIndicator = !hideScrollbars;
+                            documentController.pdfViewCtrl.contentScrollView.showsVerticalScrollIndicator = !hideScrollbars;
+                            
+                            documentController.pdfViewCtrl.pagingScrollView.showsHorizontalScrollIndicator = !hideScrollbars;
+                            documentController.pdfViewCtrl.pagingScrollView.showsVerticalScrollIndicator = !hideScrollbars;
+                        }
+                    }
+                }
+                else if([key isEqualToString:PTQuickBookmarkCreationKey])
+                {
+                    NSNumber* quickBookmarkCreation = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTQuickBookmarkCreationKey class:[NSNumber class] error:&error];
+
+                    if (!error && quickBookmarkCreation) {
+                        documentController.bookmarkPageButtonHidden = ![quickBookmarkCreation boolValue];
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
@@ -1026,11 +1084,13 @@
             },
         PTUndoKey:
             ^{
-                [documentController.toolManager.undoManager disableUndoRegistration];
+                documentController.toolGroupToolbar.automaticallyUpdatesTrailingItems = NO;
+                documentController.toolGroupToolbar.trailingItems = nil;
             },
         PTRedoKey:
             ^{
-                [documentController.toolManager.undoManager disableUndoRegistration];
+                documentController.toolGroupToolbar.automaticallyUpdatesTrailingItems = NO;
+                documentController.toolGroupToolbar.trailingItems = nil;
             },
         PTMoreItemsButtonKey:
             ^{
@@ -1052,6 +1112,14 @@
                     documentController.exportItems = [exportItems copy];
                 }
             },
+        PTSaveCroppedCopyButtonKey:
+            ^{
+                if (![documentController isExportButtonHidden]) {
+                    NSMutableArray * exportItems = [documentController.exportItems mutableCopy];
+                    [exportItems removeObject:documentController.exportCroppedCopyButtonItem];
+                    documentController.exportItems = [exportItems copy];
+                }
+            },    
     };
     
     for(NSObject* item in elementsToDisable)
@@ -1161,6 +1229,9 @@
         case pageMovedId:
             self.pageMovedEventSink = events;
             break;
+        case scrollChangedId:
+            self.scrollChangedEventSink = events;
+            break;
     }
     
     return Nil;
@@ -1214,6 +1285,9 @@
         case pageMovedId:
             self.pageMovedEventSink = nil;
             break;
+        case scrollChangedId:
+            self.scrollChangedEventSink = nil;
+            break;    
     }
     
     return Nil;
@@ -1349,6 +1423,24 @@
     if (self.pageMovedEventSink != nil)
     {
         self.pageMovedEventSink(pageNumbersString);
+    }
+}
+
+-(void)documentController:(PTDocumentController *)docVC scrollChanged:(NSString *)scrollString
+{
+    PTPDFViewCtrl *pdfViewCtrl = docVC.pdfViewCtrl;
+    
+    double horizontal = [pdfViewCtrl GetHScrollPos];
+    double vertical = [pdfViewCtrl GetVScrollPos];
+
+     NSDictionary *resultDict = @{
+         PTReflowOrientationHorizontalKey: [NSNumber numberWithDouble:horizontal],
+         PTReflowOrientationVerticalKey: [NSNumber numberWithDouble:vertical],
+    };
+
+    if (self.scrollChangedEventSink != nil)
+    {
+        self.scrollChangedEventSink([PdftronFlutterPlugin PT_idToJSONString:resultDict]);
     }
 }
 
@@ -1500,6 +1592,18 @@
         [self openNavigationLists:result];
     } else if ([call.method isEqualToString:PTGetCurrentPageKey]) {
         [self getCurrentPage:result];
+    } else if ([call.method isEqualToString:PTZoomWithCenterKey]) {
+        [self zoomWithCenter:result call:call];
+    } else if ([call.method isEqualToString:PTZoomToRectKey]) {
+        [self zoomToRect:result call:call];
+    } else if ([call.method isEqualToString:PTGetZoomKey]) {
+        [self getZoom:result];
+    } else if ([call.method isEqualToString:PTSetZoomLimitsKey]) {
+        [self setZoomLimits:result call:call];
+    } else if ([call.method isEqualToString:PTGetSavedSignaturesKey]) {
+        [self getSavedSignatures:result];
+    } else if ([call.method isEqualToString:PTGetSavedSignatureFolderKey]) {
+        [self getSavedSignatureFolder:result];
     } else {
         result(FlutterMethodNotImplemented);
     }
@@ -2677,6 +2781,47 @@
     flutterResult([NSNumber numberWithInt:documentController.pdfViewCtrl.currentPage]);
 }
 
+- (void)getZoom:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    double zoom = documentController.pdfViewCtrl.zoom * documentController.pdfViewCtrl.zoomScale;
+    flutterResult([NSNumber numberWithDouble:zoom]);
+}
+
+- (void)setZoomLimits:(FlutterResult)flutterResult call:(FlutterMethodCall*)call {
+    PTDocumentController *documentController = [self getDocumentController];
+    NSString * zoomLimitMode = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTZoomLimitModeKey]];
+    double maximum = [call.arguments[PTMaximumKey] doubleValue];
+    double minimum = [call.arguments[PTMinimumKey] doubleValue];
+    if ([zoomLimitMode isEqualToString:PTZoomLimitAbsoluteKey]) {
+        [documentController.pdfViewCtrl SetZoomLimits:e_trn_zoom_limit_absolute Minimum:minimum Maxiumum:maximum];
+    } else if ([zoomLimitMode isEqualToString:PTZoomLimitRelativeKey]) {
+        [documentController.pdfViewCtrl SetZoomLimits:e_trn_zoom_limit_relative Minimum:minimum Maxiumum:maximum];
+    } else if ([zoomLimitMode isEqualToString:PTZoomLimitNoneKey]) {
+        [documentController.pdfViewCtrl SetZoomLimits:e_trn_zoom_limit_none Minimum:minimum Maxiumum:maximum];
+    }
+    flutterResult(nil);
+}
+
+- (void)getSavedSignatures:(FlutterResult)flutterResult {
+    PTSignaturesManager *signaturesManager = [[PTSignaturesManager alloc] init];
+    NSUInteger numOfSignatures = [signaturesManager numberOfSavedSignatures];
+    NSMutableArray<NSString*> *signatures = [[NSMutableArray alloc] initWithCapacity:numOfSignatures];
+    
+    for (NSInteger i = 0; i < numOfSignatures; i++) {
+        signatures[i] = [[signaturesManager savedSignatureAtIndex:i] GetFileName];
+    }
+
+    flutterResult(signatures);
+}
+
+- (void)getSavedSignatureFolder:(FlutterResult)flutterResult {
+    NSArray *paths = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+    NSString *libraryDirectory = paths[0];
+
+    NSString* fullPath = [libraryDirectory stringByAppendingPathComponent:@"PTSignaturesManager_signatureDirectory"];
+    flutterResult(fullPath);
+}
+
 - (void)getDocumentPath:(FlutterResult)flutterResult {
     PTDocumentController *documentController = [self getDocumentController];
     flutterResult(documentController.coordinatedDocument.fileURL.path);
@@ -3161,6 +3306,30 @@
     }
 
     flutterResult(nil);
+}
+
+-(void)zoomWithCenter:(FlutterResult)flutterResult call:(FlutterMethodCall*)call {
+    PTDocumentController *documentController = [self getDocumentController];
+    double zoom = [call.arguments[PTZoomRatioKey] doubleValue];
+    int x = [call.arguments[PTXKey] intValue];
+    int y = [call.arguments[PTYKey] intValue];
+    [documentController.pdfViewCtrl SetZoomX:x Y:y Zoom:zoom];
+    flutterResult(nil);
+}
+
+-(void)zoomToRect:(FlutterResult)flutterResult call:(FlutterMethodCall*)call {
+    PTDocumentController *documentController = [self getDocumentController];
+    
+    int pageNumber = [call.arguments[PTPageNumberArgumentKey] intValue];
+    double rectX1 = [call.arguments[PTX1Key] doubleValue];
+    double rectY1 = [call.arguments[PTY1Key] doubleValue];
+    double rectX2 = [call.arguments[PTX2Key] doubleValue];
+    double rectY2 = [call.arguments[PTY2Key] doubleValue];
+    
+    if (rectX1 && rectY1 && rectX2 && rectY2) {
+        PTPDFRect* rect = [[PTPDFRect alloc] initWithX1:rectX1 y1:rectY1 x2:rectX2 y2:rectY2];
+        [documentController.pdfViewCtrl ShowRect:pageNumber rect:rect];
+    }
 }
 
 #pragma mark - Helper

@@ -107,6 +107,8 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     self.needsRemoteDocumentLoaded = NO;
 
     [super openDocumentWithURL:url password:password];
+    
+    [self applyLayoutMode];
 }
 
 - (void)openDocumentWithPDFDoc:(PTPDFDoc *)document
@@ -117,6 +119,14 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     self.needsRemoteDocumentLoaded = NO;
 
     [super openDocumentWithPDFDoc:document];
+    
+    [self applyLayoutMode];
+}
+
+- (void)didOpenDocument
+{
+    [super didOpenDocument];
+    [self applyLayoutMode];
 }
 
 - (BOOL)isTopToolbarEnabled
@@ -206,6 +216,8 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
             self.settingsViewController.pageRotationHidden = value;
         } else if ([viewModeItemString isEqualToString:PTViewModeCropKey]) {
             self.settingsViewController.cropPagesHidden = value;
+        } else if ([viewModeItemString isEqualToString:PTViewModeVerticalScrollingKey]) {
+            self.settingsViewController.viewModeContinuousHidden = value;
         }
     }
 }
@@ -263,15 +275,6 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     
     if (tool.backToPanToolAfterUse != backToPan) {
         tool.backToPanToolAfterUse = backToPan;
-    }
-    if ([self.toolManager.tool isKindOfClass:[PTCreateToolBase class]] ||
-        [self.toolManager.tool isKindOfClass:[PTFreeTextCreate class]]) {
-        // Workaround to disable undo/redo in the presets bar if necessary
-        if(self.toolManager.undoManager.undoRegistrationEnabled){
-            [self.toolManager.tool.undoManager enableUndoRegistration];
-        }else{
-            [self.toolManager.tool.undoManager disableUndoRegistration];
-        }
     }
 }
 
@@ -644,6 +647,12 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     };
 
     [self.plugin documentController:self pageChanged:[PdftronFlutterPlugin PT_idToJSONString:resultDict]];
+}
+
+- (void)pdfViewCtrl:(PTPDFViewCtrl *)pdfViewCtrl pdfScrollViewDidScroll:(UIScrollView *)scrollView
+{
+
+    [self.plugin documentController:self scrollChanged:@""];
 }
 
 -(NSString*)generateXfdfCommandWithAdded:(NSArray<PTAnnot*>*)added modified:(NSArray<PTAnnot*>*)modified removed:(NSArray<PTAnnot*>*)removed
@@ -1414,7 +1423,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         PTAnnotationToolbarAnnotate: toolGroupManager.annotateItemGroup,
         PTAnnotationToolbarDraw: toolGroupManager.drawItemGroup,
         PTAnnotationToolbarInsert: toolGroupManager.insertItemGroup,
-        //PTAnnotationToolbarFillAndSign: [NSNull null], // not implemented
+        PTAnnotationToolbarFillAndSign: toolGroupManager.fillAndSignItemGroup, 
         PTAnnotationToolbarPrepareForm: toolGroupManager.prepareFormItemGroup,
         PTAnnotationToolbarMeasure: toolGroupManager.measureItemGroup,
         PTAnnotationToolbarRedaction: toolGroupManager.redactItemGroup,
@@ -1494,6 +1503,12 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     self.changesPageOnTap = pageChangesOnTap;
 }
 
+-(void)setLayoutMode:(NSString *)layoutMode
+{
+    _layoutMode = layoutMode;
+    [self applyLayoutMode];
+}
+
 - (BOOL)pageChangesOnTap
 {
     return self.changesPageOnTap;
@@ -1509,6 +1524,53 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     return self.toolManager.showDefaultSignature;
 }
 
+-(void)setSignaturePhotoPickerEnabled:(BOOL)signaturePhotoPickerEnabled
+{
+    [self enableSignatureType:signaturePhotoPickerEnabled type:PTImageSignature];
+}
+
+-(BOOL)signaturePhotoPickerEnabled
+{
+    NSNumber *type = [NSNumber numberWithUnsignedInt:PTImageSignature];
+    return [self.toolManager.signatureAnnotationOptions.signatureTypes containsObject:type];
+}
+
+-(void)setSignatureTypingEnabled:(BOOL)signatureTypingEnabled
+{
+    [self enableSignatureType:signatureTypingEnabled type:PTTypedSignature];
+}
+
+-(BOOL)signatureTypingEnabled
+{
+    NSNumber *type = [NSNumber numberWithUnsignedInt:PTTypedSignature];
+    return [self.toolManager.signatureAnnotationOptions.signatureTypes containsObject:type];
+}
+
+-(void)setSignatureDrawingEnabled:(BOOL)signatureDrawingEnabled
+{
+    [self enableSignatureType:signatureDrawingEnabled type:PTDrawnSignature];
+}
+
+-(BOOL)signatureDrawingEnabled
+{
+    NSNumber *type = [NSNumber numberWithUnsignedInt:PTDrawnSignature];
+    return [self.toolManager.signatureAnnotationOptions.signatureTypes containsObject:type];
+}
+
+-(void)enableSignatureType:(BOOL)enable type:(PTSignatureType)signatureType
+{
+    NSMutableArray *newSigTypes = [self.toolManager.signatureAnnotationOptions.signatureTypes mutableCopy];
+    NSNumber *type = [NSNumber numberWithUnsignedInt:signatureType];
+    
+    if (!enable) {
+        [newSigTypes removeObject:type];
+    } else if (![newSigTypes containsObject:type]) {
+        [newSigTypes addObject:type];
+    }
+    
+    self.toolManager.signatureAnnotationOptions.signatureTypes = [newSigTypes copy];
+}
+
 - (void)setSignSignatureFieldsWithStamps:(BOOL)signSignatureFieldsWithStamps
 {
     self.toolManager.signatureAnnotationOptions.signSignatureFieldsWithStamps = signSignatureFieldsWithStamps;
@@ -1517,6 +1579,24 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 - (BOOL)signSignatureFieldsWithStamps
 {
     return self.toolManager.signatureAnnotationOptions.signSignatureFieldsWithStamps;
+}
+
+- (void)setSignatureColors:(NSArray<NSDictionary *> *)signatureColors
+{
+    NSMutableArray<UIColor *> *colorArray = [[NSMutableArray alloc] init];
+    
+    for (NSDictionary *color in signatureColors) {
+        NSNumber *red = color[PTColorRedKey];
+        NSNumber *green = color[PTColorGreenKey];
+        NSNumber *blue = color[PTColorBlueKey];
+        
+        [colorArray addObject:[UIColor colorWithRed:[red doubleValue] / 255
+                                              green:[green doubleValue] / 255
+                                               blue:[blue doubleValue] / 255
+                                              alpha:1.0]];
+    }
+    
+    self.toolManager.signatureAnnotationOptions.signatureColors = [colorArray copy];
 }
 
 - (void)setSelectAnnotationAfterCreation:(BOOL)selectAnnotationAfterCreation

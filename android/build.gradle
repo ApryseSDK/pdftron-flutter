@@ -25,11 +25,11 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     defaultConfig {
         minSdkVersion 19
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
     }
     lintOptions {
         disable 'InvalidPackage'
@@ -38,6 +38,6 @@ android {
 
 dependencies {
     // PDFTron SDK dependencies
-    implementation "com.pdftron:pdftron:9.2.1-beta03"
-    implementation "com.pdftron:tools:9.2.1-beta03"
+    implementation "com.pdftron:pdftron:9.2.4-beta05"
+    implementation "com.pdftron:tools:9.2.4-beta05"
 }

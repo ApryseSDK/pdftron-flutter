@@ -25,6 +25,7 @@ import com.pdftron.pdftronflutter.R;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
+import com.pdftron.pdftronflutter.nativeviews.FlutterPdfViewCtrlTabFragment;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -81,6 +82,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private EventChannel.EventSink sPageChangedEventEmitter;
     private EventChannel.EventSink sZoomChangedEventEmitter;
     private EventChannel.EventSink sPageMovedEventEmitter;
+    private EventChannel.EventSink sScrollChangedEventEmitter;
 
     private MethodChannel.Result sFlutterLoadResult;
 
@@ -161,6 +163,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
                 .usingNavIcon(mShowNavIcon ? mNavIconRes : 0)
                 .usingCustomHeaders(mCustomHeaders)
                 .usingTabTitle(mTabTitle)
+                .usingTabClass(FlutterPdfViewCtrlTabFragment.class)
                 .usingTheme(R.style.FlutterAppTheme);
     }
 
@@ -254,6 +257,11 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     public void onTabDocumentLoaded(String tag) {
         super.onTabDocumentLoaded(tag);
 
+        if (getPdfViewCtrlTabFragment() instanceof FlutterPdfViewCtrlTabFragment) {
+            FlutterPdfViewCtrlTabFragment fragment = (FlutterPdfViewCtrlTabFragment) getPdfViewCtrlTabFragment();
+            fragment.setViewerComponent(this);
+        }
+        
         handleDocumentLoaded(this);
     }
 
@@ -375,6 +383,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         sPageMovedEventEmitter = emitter;
     }
 
+    public void setScrollChangedEventEmitter(EventChannel.EventSink emitter) {
+        sScrollChangedEventEmitter = emitter;
+    }
+
     public void setFlutterLoadResult(MethodChannel.Result result) {
         sFlutterLoadResult = result;
     }
@@ -449,6 +461,9 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
     @Override
     public EventChannel.EventSink getPageMovedEventEmitter() { return sPageMovedEventEmitter; }
+
+    @Override
+    public EventChannel.EventSink getScrollChangedEventEmitter() { return sScrollChangedEventEmitter; }
 
     @Override
     public MethodChannel.Result getFlutterLoadResult() {

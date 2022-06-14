@@ -31,8 +31,11 @@ class Config {
   var _pageChangeOnTap;
   var _showSavedSignatures;
   var _signaturePhotoPickerEnabled;
+  var _signatureTypingEnabled;
+  var _signatureDrawingEnabled;
   var _useStylusAsPen;
   var _signSignatureFieldWithStamps;
+  var _signatureColors;
   var _selectAnnotationAfterCreation;
   var _pageIndicatorEnabled;
   var _showQuickNavigationButton;
@@ -79,6 +82,8 @@ class Config {
   var _annotationManagerEditMode;
   var _annotationManagerUndoMode;
   var _annotationToolbarAlignment;
+  var _hideScrollbars;
+  var _quickBookmarkCreation;
 
   Config();
 
@@ -232,6 +237,16 @@ class Config {
   set signaturePhotoPickerEnabled(bool value) =>
       _signaturePhotoPickerEnabled = value;
 
+  /// Defines whether to enable typing to create a new signature
+  ///
+  /// Defaults to true.
+  set signatureTypingEnabled(bool value) => _signatureTypingEnabled = value;
+
+  /// Defines whether to enable drawing to create a new signature.
+  ///
+  /// iOS only. Defaults to true.
+  set signatureDrawingEnabled(bool value) => _signatureDrawingEnabled = value;
+
   /// Whether a stylus should act like a pen when the viewer is in pan mode.
   ///
   /// If false, it will act like a finger. Defaults to true.
@@ -242,6 +257,21 @@ class Config {
   /// Defaults to false.
   set signSignatureFieldWithStamps(bool value) =>
       _signSignatureFieldWithStamps = value;
+
+  /// A list of colors that the user can select to create a signature.
+  ///
+  /// ```dart
+  /// config.signatureColors = [
+  ///   { 'red': 255, 'green': 0, 'blue': 0 },
+  ///   { 'red':   0, 'green': 0, 'blue': 0 }
+  /// ];
+  /// ```
+  ///
+  /// Each color is given by a `Map<String, int>` containing RGB values, with a
+  /// maximum of three colors. On Android, when this config is set, the user
+  /// will not be able to customize each color shown. Defaults to black, blue,
+  /// green for Android, and black, blue, red for iOS.
+  set signatureColors(List value) => _signatureColors = value;
 
   /// Whether the annotation is selected after creation.
   ///
@@ -495,6 +525,15 @@ class Config {
   set annotationToolbarAlignment(String value) =>
       _annotationToolbarAlignment = value;
 
+  /// bool, optional, iOS only, defaults to false
+  ///
+  /// Determines whether scrollbars will be hidden on the viewer.
+  set hideScrollbars(bool value) => _hideScrollbars = value;
+  /// Sets the bookmark creation as a part of the toolbar
+  ///
+  /// Defaults to false
+  set quickBookmarkCreation(bool value) => _quickBookmarkCreation = value;
+
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
         _disabledTools = json['disabledTools'],
@@ -524,8 +563,11 @@ class Config {
         _pageChangeOnTap = json['pageChangeOnTap'],
         _showSavedSignatures = json['showSavedSignatures'],
         _signaturePhotoPickerEnabled = json['signaturePhotoPickerEnabled'],
+        _signatureTypingEnabled = json['signatureTypingEnabled'],
+        _signatureDrawingEnabled = json['signatureDrawingEnabled'],
         _useStylusAsPen = json['useStylusAsPen'],
         _signSignatureFieldWithStamps = json['signSignatureFieldWithStamps'],
+        _signatureColors = json['signatureColors'],
         _selectAnnotationAfterCreation = json['selectAnnotationAfterCreation'],
         _pageIndicatorEnabled = json['pageIndicatorEnabled'],
         _showQuickNavigationButton = json['showQuickNavigationButton'],
@@ -576,7 +618,9 @@ class Config {
         _annotationManagerEditMode = json['annotationManagerEditMode'],
         _annotationManagerUndoMode = json['annotationManagerUndoMode'],
         _annotationToolbarAlignment = json['annotationToolbarAlignment'],
-        _outlineListEditingEnabled = json['outlineListEditingEnabled'];
+        _outlineListEditingEnabled = json['outlineListEditingEnabled'],
+        _hideScrollbars = json['hideScrollbars'],
+        _quickBookmarkCreation = json['quickBookmarkCreation'];
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -606,8 +650,11 @@ class Config {
         'pageChangeOnTap': _pageChangeOnTap,
         'showSavedSignatures': _showSavedSignatures,
         'signaturePhotoPickerEnabled': _signaturePhotoPickerEnabled,
+        'signatureTypingEnabled': _signatureTypingEnabled,
+        'signatureDrawingEnabled': _signatureDrawingEnabled,
         'useStylusAsPen': _useStylusAsPen,
         'signSignatureFieldWithStamps': _signSignatureFieldWithStamps,
+        'signatureColors': _signatureColors,
         'selectAnnotationAfterCreation': _selectAnnotationAfterCreation,
         'pageIndicatorEnabled': _pageIndicatorEnabled,
         'showQuickNavigationButton': _showQuickNavigationButton,
@@ -655,5 +702,7 @@ class Config {
         'annotationManagerUndoMode': _annotationManagerUndoMode,
         'annotationToolbarAlignment': _annotationToolbarAlignment,
         'outlineListEditingEnabled': _outlineListEditingEnabled,
+        'hideScrollbars': _hideScrollbars,
+        'quickBookmarkCreation': _quickBookmarkCreation,
       };
 }

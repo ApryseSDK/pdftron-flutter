@@ -16,7 +16,7 @@ More information can be found at https://www.pdftron.com/documentation/guides/fl
 
 ## Contents
 
-- [API](API.md)
+- [API](https://pub.dev/documentation/pdftron_flutter/latest/pdftron/pdftron-library.html)
 - [Prerequisites](#prerequisites)
 - [Null Safety](#Null-safety)
 - [Legacy UI](#legacy-ui)
@@ -26,11 +26,6 @@ More information can be found at https://www.pdftron.com/documentation/guides/fl
 - [Changelog](#changelog)
 - [Contributing](#contributing)
 - [License](#license)
-
-## API
-API documentation is available on:
-- [GitHub](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/doc/api/API.md)
-- [pub.dev](https://pub.dev/documentation/pdftron_flutter/latest/pdftron/pdftron-library.html)
 
 ## Prerequisites
 - No license key is required for trial. However, a valid commercial license key is required after trial.
@@ -58,16 +53,14 @@ The release can be found here: https://github.com/PDFTron/pdftron-flutter/releas
 
 2. Add the following dependency to your Flutter project in `myapp/pubspec.yaml` file:
 
-  - If you want to use our null safe prerelease from pub.dev: 
+  - If you want to use our null safe package from pub.dev: 
     ```diff
     dependencies:
         flutter:
           sdk: flutter
-    +   pdftron_flutter: 1.0.0-beta.3
-    # To use a specific version from pub.dev, replace 1.0.0-beta.3
-    # To retain null safety, the minimum version must be 1.0.0-beta.2
+    +   pdftron_flutter:
     ```
-  - If you want to use our null safe branch from GitHub:
+  - If you want to use our null safe package from GitHub:
     ```diff
     dependencies:
         flutter:
@@ -75,38 +68,29 @@ The release can be found here: https://github.com/PDFTron/pdftron-flutter/releas
     +   pdftron_flutter:
     +     git:
     +       url: git://github.com/PDFTron/pdftron-flutter.git
-    +       ref: publish-prep
     ```
+
+3. In the `myapp` directory, run `flutter packages get`.
 
 ### Android
 
 The following instructions are only applicable to Android development; click here for the [iOS counterpart](#ios).
 
-3. Now add the following items in your `myapp/android/app/build.gradle` file:
+4. Now add the following items in your `myapp/android/app/build.gradle` file:
 	```diff
-	android {
-	    compileSdkVersion 29
-
-	    lintOptions {
-		disable 'InvalidPackage'
-	    }
-
-	    defaultConfig {
-		applicationId "com.example.myapp"
-	-       minSdkVersion 16
-	+       minSdkVersion 21
-		targetSdkVersion 29
-	+       multiDexEnabled true
-	+       manifestPlaceholders = [pdftronLicenseKey:PDFTRON_LICENSE_KEY]
-		versionCode flutterVersionCode.toInteger()
-		versionName flutterVersionName
-		testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-	    }
-		...
+	defaultConfig {
+	    applicationId "com.example.myapp"
+	-   minSdkVersion flutter.minSdkVersion
+	+   minSdkVersion 21
+	+   multiDexEnabled true
+	+   manifestPlaceholders += [pdftronLicenseKey:PDFTRON_LICENSE_KEY]
+	    targetSdkVersion flutter.targetSdkVersion
+	    versionCode flutterVersionCode.toInteger()
+	    versionName flutterVersionName
 	}
 	```
 
-4. In your `myapp/android/gradle.properties` file, add the following line:
+5. In your `myapp/android/gradle.properties` file, add the following line:
     ``` diff
     # Add the PDFTRON_LICENSE_KEY variable here. 
     # For trial purposes leave it blank.
@@ -114,32 +98,27 @@ The following instructions are only applicable to Android development; click her
     PDFTRON_LICENSE_KEY=
     ```
     
-5. In your `myapp/android/app/src/main/AndroidManifest.xml` file, add the following lines to the `<application>` tag:
+6. In your `myapp/android/app/src/main/AndroidManifest.xml` file, add the following lines:
 	```diff
-	...
-	<application
-		android:name="io.flutter.app.FlutterApplication"
-		android:label="myapp"
-		android:icon="@mipmap/ic_launcher"
-	+	android:largeHeap="true"
-	+	android:usesCleartextTraffic="true">
+	<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="com.example.myapp">
+ 
+	+ <uses-permission android:name="android.permission.INTERNET" />
+	  <!-- Required to read and write documents from device storage -->
+	+ <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	  <!-- Required if you want to record audio annotations -->
+	+ <uses-permission android:name="android.permission.RECORD_AUDIO" />
+ 
+	  <application
+	    ...
+	+   android:largeHeap="true"
+	+   android:usesCleartextTraffic="true">
 	
-	    	<!-- Add license key in meta-data tag here. This should be inside the application tag. -->
-	+	<meta-data
-	+		android:name="pdftron_license_key"
-	+		android:value="${pdftronLicenseKey}"/>
-	...
-	```
-	
-	Additionally, add the required permissions for your app in the `<manifest>` tag:
-	```diff
-		...
-	+	<uses-permission android:name="android.permission.INTERNET" />
-		<!-- Required to read and write documents from device storage -->
-	+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-		<!-- Required if you want to record audio annotations -->
-	+	<uses-permission android:name="android.permission.RECORD_AUDIO" />
-		...
+	    <!-- Add license key in meta-data tag here. This should be inside the application tag. -->
+	+   <meta-data
+	+     android:name="pdftron_license_key"
+	+     android:value="${pdftronLicenseKey}"/>
+	    ...
 	```
 
     If you are using the `DocumentView` widget, change the parent class of your `MainActivity` file (either Kotlin or Java) to `FlutterFragmentActivity`:
@@ -156,27 +135,25 @@ The following instructions are only applicable to Android development; click her
     }
     ```
 
-6. Follow the instructions outlined [in the Usage section](#usage).
-7. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
-8. Run the app with the command `flutter run`.
+7. Follow the instructions outlined [in the Usage section](#usage).
+8. Check that your Android device is running by running the command `flutter devices`. If none are available, follow the device set up instructions in the [Install](https://flutter.io/docs/get-started/install) guides for your platform.
+9. Run the app with the command `flutter run`.
 
 ### iOS
 
 The following instructions are only applicable to iOS development; click here for the [Android counterpart](#android).
 
-3. Run `flutter packages get`
 4. Open `myapp/ios/Podfile` file and add:
 	```diff
-	 # Uncomment this line to define a global platform for your project
-	-# platform :ios, '9.0'
-	+platform :ios, '10.0'
-	...
-	 target 'Runner' do
-	   ...
-	+  # PDFTron Pods
-	+  use_frameworks!
-	+  pod 'PDFNet', podspec: 'https://www.pdftron.com/downloads/ios/cocoapods/xcframeworks/pdfnet/latest.podspec'
-	 end
+	  # Uncomment this line to define a global platform for your project
+	- # platform :ios, '9.0'
+	+ platform :ios, '10.0'
+	  ...
+	  target 'Runner' do
+	    ...
+	+   # PDFTron Pods
+	+   pod 'PDFNet', podspec: 'https://www.pdftron.com/downloads/ios/cocoapods/xcframeworks/pdfnet/latest.podspec'
+	  end
 	```
 5. To ensure integration process is successful, run `flutter build ios --no-codesign` 
 6. Follow the instructions outlined [in the Usage section](#usage).

@@ -25,8 +25,12 @@ static NSString * const PTExcludedAnnotationListTypesKey = @"excludedAnnotationL
 static NSString * const PTAutoSaveEnabledKey = @"autoSaveEnabled";
 static NSString * const PTPageChangeOnTapKey = @"pageChangeOnTap";
 static NSString * const PTShowSavedSignaturesKey = @"showSavedSignatures";
+static NSString * const PTSignaturePhotoPickerEnabledKey = @"signaturePhotoPickerEnabled";
+static NSString * const PTSignatureTypingEnabledKey = @"signatureTypingEnabled";
+static NSString * const PTSignatureDrawingEnabledKey = @"signatureDrawingEnabled";
 static NSString * const PTUseStylusAsPenKey = @"useStylusAsPen";
 static NSString * const PTSignSignatureFieldWithStampsKey = @"signSignatureFieldWithStamps";
+static NSString * const PTSignatureColorsKey = @"signatureColors";
 static NSString * const PTSelectAnnotationAfterCreationKey = @"selectAnnotationAfterCreation";
 static NSString * const PTPageIndicatorEnabledKey = @"pageIndicatorEnabled";
 static NSString * const PTPageNumberIndicatorAlwaysVisibleKey = @"pageNumberIndicatorAlwaysVisible";
@@ -68,6 +72,9 @@ static NSString * const PTUserNameKey = @"userName";
 static NSString * const PTAnnotationManagerEditModeKey = @"annotationManagerEditMode";
 static NSString * const PTAnnotationManagerUndoModeKey = @"annotationManagerUndoMode";
 static NSString * const PTAnnotationToolbarAlignmentKey = @"annotationToolbarAlignment";
+static NSString * const PTHideScrollbarsKey = @"hideScrollbars";
+static NSString * const PTQuickBookmarkCreationKey = @"quickBookmarkCreation";
+
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";
@@ -141,6 +148,7 @@ static NSString * const PTThumbnailSliderKey = @"thumbnailSlider";
 static NSString * const PTSaveCopyButtonKey = @"saveCopyButton";
 static NSString * const PTSaveIdenticalCopyButtonKey = @"saveIdenticalCopyButton";
 static NSString * const PTSaveFlattenedCopyButtonKey = @"saveFlattenedCopyButton";
+static NSString * const PTSaveCroppedCopyButtonKey = @"saveCroppedCopyButton";
 static NSString * const PTEditPagesButtonKey = @"editPagesButton";
 static NSString * const PTPrintButtonKey = @"printButton";
 static NSString * const PTCloseButtonKey = @"closeButton";
@@ -244,6 +252,12 @@ static NSString * const PTOpenTabSwitcherKey = @"openTabSwitcher";
 static NSString * const PTOpenGoToPageViewKey = @"openGoToPageView";
 static NSString * const PTOpenNavigationListsKey = @"openNavigationLists";
 static NSString * const PTGetCurrentPageKey = @"getCurrentPage";
+static NSString * const PTZoomWithCenterKey = @"zoomWithCenter";
+static NSString * const PTZoomToRectKey = @"zoomToRect";
+static NSString * const PTGetZoomKey = @"getZoom";
+static NSString * const PTSetZoomLimitsKey = @"setZoomLimits";
+static NSString * const PTGetSavedSignaturesKey = @"getSavedSignatures";
+static NSString * const PTGetSavedSignatureFolderKey = @"getSavedSignatureFolder";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
@@ -286,12 +300,14 @@ static NSString * const PTLeadingNavButtonPressedEventKey = @"leading_nav_button
 static NSString * const PTPageChangedEventKey = @"page_changed_event";
 static NSString * const PTZoomChangedEventKey = @"zoom_changed_event";
 static NSString * const PTPageMovedEventKey = @"page_moved_event";
+static NSString *const PTScrollChangedEventKey = @"scroll_changed_event";
 
 // fit mode
 static NSString * const PTFitPageKey = @"FitPage";
 static NSString * const PTFitWidthKey = @"FitWidth";
 static NSString * const PTFitHeightKey = @"FitHeight";
 static NSString * const PTZoomKey = @"Zoom";
+static NSString * const PTZoomRatioKey = @"zoom";
 
 // layout mode
 static NSString * const PTSingleKey = @"Single";
@@ -306,6 +322,8 @@ static NSString * const PTX1Key = @"x1";
 static NSString * const PTY1Key = @"y1";
 static NSString * const PTX2Key = @"x2";
 static NSString * const PTY2Key = @"y2";
+static NSString * const PTXKey = @"x";
+static NSString * const PTYKey = @"y";
 static NSString * const PTWidthKey = @"width";
 static NSString * const PTHeightKey = @"height";
 static NSString * const PTRectKey = @"rect";
@@ -343,6 +361,13 @@ static NSString * const PTTitleAnnotationPropertyKey = @"title";
 static NSString * const PTRectAnnotationPropertyKey = @"rect";
 static NSString * const PTRotationAnnotationPropertyKey = @"rotation";
 
+static NSString * const PTMinimumKey = @"minimum";
+static NSString * const PTMaximumKey = @"maximum";
+static NSString * const PTZoomLimitModeKey = @"zoomLimitMode";
+static NSString * const PTZoomLimitAbsoluteKey = @"absolute";
+static NSString * const PTZoomLimitRelativeKey = @"relative";
+static NSString * const PTZoomLimitNoneKey = @"none";
+
 static NSString * const PTLinkPressLinkAnnotationKey = @"linkPress";
 static NSString * const PTURILinkAnnotationKey = @"URI";
 static NSString * const PTURLLinkAnnotationKey = @"url";
@@ -375,6 +400,7 @@ static NSString * const PTBookmarkedFilterModeKey = @"bookmarked";
 static NSString * const PTViewModeCropKey = @"viewModeCrop";
 static NSString * const PTViewModeRotationKey = @"viewModeRotation";
 static NSString * const PTViewModeColorModeKey = @"viewModeColorMode";
+static NSString * const PTViewModeVerticalScrollingKey = @"viewModeVerticalScrolling";
 
 // DefaultEraserType keys
 static NSString * const PTInkEraserModeAllKey = @"annotationEraser";
@@ -396,6 +422,11 @@ static NSString * const PTAnnotationManagerUndoModeAllKey = @"undoModeAll";
 static NSString * const PTAnnotationToolbarAlignmentStartKey = @"GravityStart";
 static NSString * const PTAnnotationToolbarAlignmentEndKey = @"GravityEnd";
 
+// RGB colors
+static NSString * const PTColorRedKey = @"red";
+static NSString * const PTColorGreenKey = @"green";
+static NSString * const PTColorBlueKey = @"blue";
+
 // Default annotation toolbar names.
 typedef NSString * PTDefaultAnnotationToolbarKey;
 static const PTDefaultAnnotationToolbarKey PTAnnotationToolbarView = @"PDFTron_View";
@@ -416,7 +447,8 @@ static const PTAnnotationToolbarKey PTAnnotationToolbarKeyName = @"name";
 static const PTAnnotationToolbarKey PTAnnotationToolbarKeyIcon = @"icon";
 static const PTAnnotationToolbarKey PTAnnotationToolbarKeyItems = @"items";
 
-typedef enum {
+typedef enum
+{
     exportAnnotationId = 0,
     exportBookmarkId,
     documentLoadedId,
@@ -431,6 +463,7 @@ typedef enum {
     pageChangedId,
     zoomChangedId,
     pageMovedId,
+    scrollChangedId,
 } EventSinkId;
 
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
@@ -455,8 +488,7 @@ typedef enum {
 -(void)documentController:(PTDocumentController *)docVC pageChanged:(NSString*)pageNumbersString;
 -(void)documentController:(PTDocumentController *)docVC zoomChanged:(NSNumber*)zoom;
 -(void)documentController:(PTDocumentController *)docVC pageMoved:(NSString*)pageNumbersString;
-
-- (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
+-(void)documentController:(PTDocumentController *)docVC scrollChanged:(NSString*)scrollString;
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 
