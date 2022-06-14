@@ -113,7 +113,7 @@ CancelListener startDocumentLoadedListener(DocumentLoadedListener listener) {
   };
 }
 
-/// Listens for errors that could occur when [PdftronFlutter.openDocument] is called.
+/// Listens for errors that could occur when [PdftronFlutter.openDocument(document)] is called.
 ///
 /// Returns a function that can cancel the listener.
 CancelListener startDocumentErrorListener(DocumentErrorListener listener) {

@@ -24,8 +24,7 @@ class PdftronFlutter {
 
   /// The current version of the PDFTron SDK.
   static Future<String> get platformVersion async {
-    final String version =
-    await _channel.invokeMethod(Functions.getPlatformVersion);
+    final String version = await _channel.invokeMethod(Functions.getPlatformVersion);
     return version;
   }
 
