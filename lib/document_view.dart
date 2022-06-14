@@ -533,10 +533,10 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.getSavedSignatureJpgFolder);
   }
 
-  /// Returns the horizontal and vertical scroll position of current document viewer.
-  /// Returns a Promise containing a Map with the following keys:
-  /// horizontal -> the current horizontal scroll position
-  /// vertical	 -> the current vertical scroll position
+  /// Gets the horizontal and vertical scroll position in the current document viewer.
+  ///
+  /// The scroll position is returned as a `Map<String, int>` with the keys
+  /// "horizontal" and "vertical".
   Future<Map?> getScrollPos() async {
     String jsonString = await _channel.invokeMethod(Functions.getScrollPos);
     dynamic json = jsonDecode(jsonString);
@@ -547,8 +547,7 @@ class DocumentViewController {
     return scrollPos;
   }
 
-  /// Defines the horizontal scroll position in the current document viewer.
-  /// Parameters: horizontalScrollPosition: An int value for the scroll position in the current document viewer
+  /// Sets the horizontal scroll position in the current document viewer.
   Future<void> setHorizontalScrollPosition(int horizontalScrollPosition) {
     return _channel.invokeMethod(
         Functions.setHorizontalScrollPosition, <String, dynamic>{
@@ -556,8 +555,7 @@ class DocumentViewController {
     });
   }
 
-  /// Defines the vertical scroll position in the current document viewer.
-  /// Parameters: verticalScrollPosition: An int value for the scroll position in the current document viewer
+  /// Sets the vertical scroll position in the current document viewer.
   Future<void> setVerticalScrollPosition(int verticalScrollPosition) {
     return _channel.invokeMethod(
         Functions.setVerticalScrollPosition, <String, dynamic>{
