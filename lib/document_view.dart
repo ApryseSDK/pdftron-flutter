@@ -535,7 +535,8 @@ class DocumentViewController {
 
   /// Sets the background color of the viewer.
   ///
-  /// Parameters:  red: number, green: number, blue: number, each number in range [0, 255]
+  /// The color is given as RGB values, with each integer being in range between
+  /// 0 and 255 inclusive.
   Future<void> setBackgroundColor(int red, int green, int blue) {
     return _channel.invokeMethod(
         Functions.setBackgroundColor, <String, dynamic>{
@@ -547,7 +548,8 @@ class DocumentViewController {
 
   /// Sets the default page color of the viewer.
   ///
-  /// Parameters:  red: number, green: number, blue: number, each number in range [0, 255]
+  /// The color is given as RGB values, with each integer being in range between
+  /// 0 and 255 inclusive.
   Future<void> setDefaultPageColor(int red, int green, int blue) {
     return _channel.invokeMethod(
         Functions.setDefaultPageColor, <String, dynamic>{
