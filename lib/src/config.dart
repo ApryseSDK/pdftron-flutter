@@ -1,3 +1,5 @@
+import '../pdftron_flutter.dart';
+
 /// A class to contain the viewer configuration options.
 ///
 /// The class properties represent all possible viewer configuration options.

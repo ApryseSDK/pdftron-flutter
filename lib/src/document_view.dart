@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -8,10 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 
-import 'options.dart';
-import 'events.dart';
-import 'config.dart';
-import 'constants.dart';
+import '../pdftron_flutter.dart';
 
 typedef void DocumentViewCreatedCallback(DocumentViewController controller);
 

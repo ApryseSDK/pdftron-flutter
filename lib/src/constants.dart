@@ -1,5 +1,4 @@
 
-
 /// Defines the names of the functions.
 class Functions {
   static const getPlatformVersion = "getPlatformVersion";

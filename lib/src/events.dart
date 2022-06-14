@@ -3,20 +3,12 @@
 
 /// To acquire a deeper understanding of how events are handled, look at the
 /// native implementations.
-import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
-import 'package:flutter/rendering.dart';
 
-import 'options.dart';
-import 'document_view.dart';
-import 'config.dart';
-import 'constants.dart';
+import '../pdftron_flutter.dart';
 
 const _exportAnnotationCommandChannel =
     const EventChannel('export_annotation_command_event');
@@ -121,7 +113,7 @@ CancelListener startDocumentLoadedListener(DocumentLoadedListener listener) {
   };
 }
 
-/// Listens for errors that could occur when [PdftronFlutter.openDocument(document)] is called.
+/// Listens for errors that could occur when [PdftronFlutter.openDocument] is called.
 ///
 /// Returns a function that can cancel the listener.
 CancelListener startDocumentErrorListener(DocumentErrorListener listener) {
