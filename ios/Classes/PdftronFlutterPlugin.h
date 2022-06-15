@@ -252,7 +252,7 @@ static NSString * const PTZoomWithCenterKey = @"zoomWithCenter";
 static NSString * const PTZoomToRectKey = @"zoomToRect";
 static NSString * const PTGetZoomKey = @"getZoom";
 static NSString * const PTSetZoomLimitsKey = @"setZoomLimits";
-static NSString *const PTSmartZoomKey = @"smartZoom";
+static NSString * const PTSmartZoomKey = @"smartZoom";
 static NSString * const PTGetSavedSignaturesKey = @"getSavedSignatures";
 static NSString * const PTGetSavedSignatureFolderKey = @"getSavedSignatureFolder";
 
