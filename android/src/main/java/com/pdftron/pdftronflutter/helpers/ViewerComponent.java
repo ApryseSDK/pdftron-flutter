@@ -80,6 +80,8 @@ public interface ViewerComponent {
 
     EventChannel.EventSink getPageMovedEventEmitter();
 
+    EventChannel.EventSink getScrollChangedEventEmitter();
+
     MethodChannel.Result getFlutterLoadResult();
 
     HashMap<Annot, Integer> getSelectedAnnots();

@@ -2,6 +2,7 @@ package com.pdftron.pdftronflutter.helpers;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
@@ -142,8 +143,10 @@ public class PluginUtils {
     public static final String KEY_CONFIG_PAGE_CHANGE_ON_TAP = "pageChangeOnTap";
     public static final String KEY_CONFIG_SHOW_SAVED_SIGNATURES = "showSavedSignatures";
     public static final String KEY_CONFIG_SIGNATURE_PHOTO_PICKER_ENABLED = "signaturePhotoPickerEnabled";
+    public static final String KEY_CONFIG_SIGNATURE_TYPING_ENABLED = "signatureTypingEnabled";
     public static final String KEY_CONFIG_USE_STYLUS_AS_PEN = "useStylusAsPen";
     public static final String KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS = "signSignatureFieldWithStamps";
+    public static final String KEY_CONFIG_SIGNATURE_COLORS = "signatureColors";
     public static final String KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION = "selectAnnotationAfterCreation";
     public static final String KEY_CONFIG_PAGE_INDICATOR_ENABLED = "pageIndicatorEnabled";
     public static final String KEY_CONFIG_SHOW_QUICK_NAVIGATION_BUTTON = "showQuickNavigationButton";
@@ -252,6 +255,7 @@ public class PluginUtils {
     public static final String EVENT_PAGE_CHANGED = "page_changed_event";
     public static final String EVENT_ZOOM_CHANGED = "zoom_changed_event";
     public static final String EVENT_PAGE_MOVED = "page_moved_event";
+    public static final String EVENT_SCROLL_CHANGED = "scroll_changed_event";
 
     public static final String FUNCTION_GET_PLATFORM_VERSION = "getPlatformVersion";
     public static final String FUNCTION_GET_VERSION = "getVersion";
@@ -510,6 +514,11 @@ public class PluginUtils {
     public static final String MENU_ID_STRING_THICKNESS = "thickness";
     public static final String MENU_ID_STRING_TRANSLATE = "translate";
     public static final String MENU_ID_STRING_UNGROUP = "ungroup";
+
+    // RGB colors
+    public static final String COLOR_RED = "red";
+    public static final String COLOR_GREEN = "green";
+    public static final String COLOR_BLUE = "blue";
 
     // Toolbars
     public static final String TAG_VIEW_TOOLBAR = "PDFTron_View";
@@ -931,6 +940,10 @@ public class PluginUtils {
                     boolean signaturePhotoPickerEnabled = configJson.getBoolean(KEY_CONFIG_SIGNATURE_PHOTO_PICKER_ENABLED);
                     toolManagerBuilder = toolManagerBuilder.setShowSignatureFromImage(signaturePhotoPickerEnabled);
                 }
+                if (!configJson.isNull(KEY_CONFIG_SIGNATURE_TYPING_ENABLED)) {
+                    boolean signatureTypingEnabled = configJson.getBoolean(KEY_CONFIG_SIGNATURE_TYPING_ENABLED);
+                    toolManagerBuilder = toolManagerBuilder.setShowTypedSignature(signatureTypingEnabled);
+                }
                 if (!configJson.isNull(KEY_CONFIG_USE_STYLUS_AS_PEN)) {
                     boolean useStylusAsPen = configJson.getBoolean(KEY_CONFIG_USE_STYLUS_AS_PEN);
                     configInfo.setUseStylusAsPen(useStylusAsPen);
@@ -938,6 +951,10 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS)) {
                     boolean signSignatureFieldWithStamps = configJson.getBoolean(KEY_CONFIG_SIGN_SIGNATURE_FIELD_WITH_STAMPS);
                     configInfo.setSignSignatureFieldWithStamps(signSignatureFieldWithStamps);
+                }
+                if (!configJson.isNull(KEY_CONFIG_SIGNATURE_COLORS)) {
+                    JSONArray signatureColors = configJson.getJSONArray(KEY_CONFIG_SIGNATURE_COLORS);
+                    toolManagerBuilder = setSignatureColors(signatureColors, toolManagerBuilder);
                 }
                 if (!configJson.isNull(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION)) {
                     boolean selectAnnotationAfterCreation = configJson.getBoolean(KEY_CONFIG_SELECT_ANNOTATION_AFTER_CREATION);
@@ -1302,6 +1319,24 @@ public class PluginUtils {
         }
 
         builder.bottomBarBuilder(customBottomBar);
+    }
+
+    private static ToolManagerBuilder setSignatureColors(JSONArray array, ToolManagerBuilder toolManagerBuilder) throws JSONException {
+        int[] signatureColors = new int[array.length()];
+
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject color = array.getJSONObject(i);
+
+            if (color != null) {
+                int red = color.getInt(COLOR_RED);
+                int green = color.getInt(COLOR_GREEN);
+                int blue = color.getInt(COLOR_BLUE);
+
+                signatureColors[i] = Color.rgb(red, green, blue);
+            }
+        }
+
+        return toolManagerBuilder.setSignatureColors(signatureColors);
     }
 
     private static Uri getUri(Context context, String path, boolean isBase64, String base64FileExtension) {
