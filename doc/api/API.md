@@ -993,6 +993,26 @@ resultImagePath | String | the temp path of the created image, user is responsib
 var resultImagePath = await PdftronFlutter.exportAsImage(1, 92, ExportFormat.BMP);
 ```
 
+### Zoom
+
+#### smartZoom
+Zoom to a paragraph that contains the specified pixel coordinate. If no paragraph contains the coordinate, no zooming occurs.  
+The zoom center (x, y) is represented in the screen space, whose origin is at the upper-left corner of the screen region.
+
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+x | int | the x-coordinate of the target coordinate
+y | int | the y-coordinate of the target coordinate
+animated | bool | whether the zoom transition is animated
+
+Returns a Future.
+
+```dart
+await PdftronFlutter.smartZoom(250, 500, true);
+```
+
 ### Undo/Redo
 
 #### undo
