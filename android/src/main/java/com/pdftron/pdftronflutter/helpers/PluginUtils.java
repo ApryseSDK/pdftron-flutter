@@ -6,7 +6,10 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Gravity;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
@@ -27,6 +30,7 @@ import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabBaseFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostBaseFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.controls.ReflowControl;
 import com.pdftron.pdf.controls.ThumbnailsViewFragment;
@@ -75,6 +79,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodCall;
@@ -255,6 +260,7 @@ public class PluginUtils {
     public static final String EVENT_PAGE_CHANGED = "page_changed_event";
     public static final String EVENT_ZOOM_CHANGED = "zoom_changed_event";
     public static final String EVENT_PAGE_MOVED = "page_moved_event";
+    public static final String EVENT_ANNOTATION_TOOLBAR_ITEM_PRESSED = "annotation_toolbar_item_pressed_event";
     public static final String EVENT_SCROLL_CHANGED = "scroll_changed_event";
 
     public static final String FUNCTION_GET_PLATFORM_VERSION = "getPlatformVersion";
@@ -565,6 +571,9 @@ public class PluginUtils {
     public static boolean isBookmarkListVisible = true;
     public static boolean isOutlineListVisible = true;
     public static boolean isAnnotationListVisible = true;
+
+    public static final AtomicInteger toolIdGenerator = new AtomicInteger(1000);
+    public static final SparseArray<String> mToolIdMap = new SparseArray<>();
 
     private static AnnotManager.EditPermissionMode mAnnotationManagerEditMode = AnnotManager.EditPermissionMode.EDIT_OTHERS;
     private static PDFViewCtrl.AnnotationManagerMode mAnnotationManagerUndoMode = PDFViewCtrl.AnnotationManagerMode.ADMIN_UNDO_OTHERS;
@@ -982,7 +991,7 @@ public class PluginUtils {
                 }
                 if (!configJson.isNull(KEY_CONFIG_ANNOTATION_TOOLBARS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_ANNOTATION_TOOLBARS);
-                    setAnnotationBars(array, builder);
+                    setAnnotationBars(array, builder, context);
                 }
                 if (!configJson.isNull(KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS)) {
                     JSONArray array = configJson.getJSONArray(KEY_CONFIG_HIDE_DEFAULT_ANNOTATION_TOOLBARS);
@@ -1245,7 +1254,10 @@ public class PluginUtils {
         return configInfo;
     }
 
-    private static void setAnnotationBars(JSONArray array, ViewerConfig.Builder builder) throws JSONException {
+    private static void setAnnotationBars(JSONArray array, ViewerConfig.Builder builder, Context context) throws JSONException {
+        if (context == null) {
+            return;
+        }
         for (int i = 0; i < array.length(); i++) {
             Object annotationBar = array.get(i);
             if (annotationBar instanceof String) {
@@ -1279,15 +1291,40 @@ public class PluginUtils {
                             .setToolbarName(toolbarName)
                             .setIcon(convStringToToolbarDefaultIconRes(toolbarIcon));
                     for (int j = 0; j < toolbarItems.length(); j++) {
-                        String toolStr = toolbarItems.getString(j);
-                        ToolbarButtonType buttonType = convStringToToolbarType(toolStr);
-                        int buttonId = convStringToButtonId(toolStr);
-                        if (buttonType != null && buttonId != 0) {
-                            if (buttonType == ToolbarButtonType.UNDO ||
-                                    buttonType == ToolbarButtonType.REDO) {
-                                toolbarBuilder.addToolStickyButton(buttonType, buttonId);
-                            } else {
-                                toolbarBuilder.addToolButton(buttonType, buttonId);
+                        Object type = toolbarItems.get(j);
+                        if (type instanceof String) {
+                            String toolStr = toolbarItems.getString(j);
+                            ToolbarButtonType buttonType = convStringToToolbarType(toolStr);
+                            int buttonId = convStringToButtonId(toolStr);
+                            if (buttonType != null && buttonId != 0) {
+                                if (buttonType == ToolbarButtonType.UNDO ||
+                                        buttonType == ToolbarButtonType.REDO) {
+                                    toolbarBuilder.addToolStickyButton(buttonType, buttonId);
+                                } else {
+                                    toolbarBuilder.addToolButton(buttonType, buttonId);
+                                }
+                            }
+                        } else if (type instanceof JSONObject) {
+                            // custom buttons
+                            JSONObject item = toolbarItems.getJSONObject(j);
+                            String itemId = null, itemName = null, itemIcon = null;
+                            if (!item.isNull(TOOLBAR_KEY_ID)) {
+                                itemId = item.getString(TOOLBAR_KEY_ID);
+                            }
+                            if (!item.isNull(TOOLBAR_KEY_NAME)) {
+                                itemName = item.getString(TOOLBAR_KEY_NAME);
+                            }
+                            if (!item.isNull(TOOLBAR_KEY_ICON)) {
+                                itemIcon = item.getString(TOOLBAR_KEY_ICON);
+                            }
+
+                            if (!Utils.isNullOrEmpty(itemId) && itemName != null && !Utils.isNullOrEmpty(itemIcon)) {
+                                int res = Utils.getResourceDrawable(context, itemIcon);
+                                if (res != 0) {
+                                    int id = toolIdGenerator.getAndIncrement();
+                                    mToolIdMap.put(id, itemId);
+                                    toolbarBuilder.addCustomButton(itemName, res, id);
+                                }
                             }
                         }
                     }
@@ -3971,6 +4008,16 @@ public class PluginUtils {
         EventChannel.EventSink leadingNavButtonPressedEventSink = component.getLeadingNavButtonPressedEventEmitter();
         if (leadingNavButtonPressedEventSink != null) {
             leadingNavButtonPressedEventSink.success(null);
+        }
+    }
+
+    public static void handleAnnotationCustomToolbarItemPressed(ViewerComponent component, MenuItem item) {
+        EventChannel.EventSink annotationCustomToolbarItemPressedEventSink = component.getAnnotationToolbarItemPressedEventEmitter();
+        int itemId = item.getItemId();
+        String itemKey = mToolIdMap.get(itemId);
+        if (itemKey != null && annotationCustomToolbarItemPressedEventSink != null) {
+            // this is a custom button
+            annotationCustomToolbarItemPressedEventSink.success(itemId);
         }
     }
 
