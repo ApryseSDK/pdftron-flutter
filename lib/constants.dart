@@ -9,7 +9,7 @@ class Functions {
   static const getSavedSignatures = "getSavedSignatures";
   static const getSavedSignatureFolder = "getSavedSignatureFolder";
 
-/// Android only
+  /// Android only
   static const getSavedSignatureJpgFolder = "getSavedSignatureJpgFolder";
   static const importAnnotations = "importAnnotations";
   static const exportAnnotations = "exportAnnotations";
@@ -69,6 +69,7 @@ class Functions {
   static const zoomToRect = "zoomToRect";
   static const getZoom = "getZoom";
   static const setZoomLimits = "setZoomLimits";
+  static const smartZoom = "smartZoom"; 
   static const getVisiblePages = "getVisiblePages";
 }
 
@@ -99,6 +100,7 @@ class Parameters {
   static const exportFormat = "exportFormat";
   static const dpi = "dpi";
   static const requestedOrientation = "requestedOrientation";
+  static const animated = "animated";
 }
 
 /// Defines the parameters of the events.

@@ -256,6 +256,7 @@ static NSString * const PTZoomWithCenterKey = @"zoomWithCenter";
 static NSString * const PTZoomToRectKey = @"zoomToRect";
 static NSString * const PTGetZoomKey = @"getZoom";
 static NSString * const PTSetZoomLimitsKey = @"setZoomLimits";
+static NSString * const PTSmartZoomKey = @"smartZoom";
 static NSString * const PTGetSavedSignaturesKey = @"getSavedSignatures";
 static NSString * const PTGetSavedSignatureFolderKey = @"getSavedSignatureFolder";
 
@@ -284,6 +285,7 @@ static NSString * const PTSourceRectArgumentKey = @"sourceRect";
 static NSString * const PTPathArgumentKey = @"path";
 static NSString * const PTDpiArgumentKey = @"dpi";
 static NSString * const PTExportFormatArgumentKey = @"exportFormat";
+static NSString * const PTAnimatedArgumentKey = @"animated";
 
 // event strings
 static NSString * const PTExportAnnotationCommandEventKey = @"export_annotation_command_event";
