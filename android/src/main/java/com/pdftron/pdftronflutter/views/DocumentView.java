@@ -211,13 +211,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(width, height);
         setLayoutParams(params);
 
-        PdfViewCtrlSettingsManager.setFullScreenMode(context, false);
-
         mExportDir = context.getCacheDir().getAbsolutePath();
         mOpenUrlCacheDir = context.getCacheDir().getAbsolutePath();
         mToolManagerBuilder = ToolManagerBuilder.from();
         mBuilder = new ViewerConfig.Builder();
-        mBuilder.fullscreenModeEnabled(false);
 
         mPDFViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(context);
     }
