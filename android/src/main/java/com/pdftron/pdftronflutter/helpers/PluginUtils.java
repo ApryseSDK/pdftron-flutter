@@ -198,7 +198,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_MANAGER_EDIT_MODE = "annotationManagerEditMode";
     public static final String KEY_CONFIG_ANNOTATION_TOOLBAR_GRAVITY = "annotationToolbarAlignment";
     public static final String KEY_CONFIG_QUICK_BOOKMARK_CREATION = "quickBookmarkCreation";
-    public static final String KEY_CONFIG_FULL_SCREEN_MODE_ENABLED = "fullscreenModeEnabled";
+    public static final String KEY_CONFIG_FULL_SCREEN_MODE_ENABLED = "fullScreenModeEnabled";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
