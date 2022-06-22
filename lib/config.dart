@@ -86,6 +86,7 @@ class Config {
   var _annotationToolbarAlignment;
   var _hideScrollbars;
   var _quickBookmarkCreation;
+  var _fullScreenModeEnabled;
 
   Config();
 
@@ -543,6 +544,11 @@ class Config {
   /// Defaults to false
   set quickBookmarkCreation(bool value) => _quickBookmarkCreation = value;
 
+  /// Whether to enable the viewer's full screen mode.
+  ///
+  /// Defaults to false. Android only.
+  set fullScreenModeEnabled(bool value) => _fullScreenModeEnabled = value;
+
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
         _disabledTools = json['disabledTools'],
@@ -629,7 +635,8 @@ class Config {
         _annotationToolbarAlignment = json['annotationToolbarAlignment'],
         _outlineListEditingEnabled = json['outlineListEditingEnabled'],
         _hideScrollbars = json['hideScrollbars'],
-        _quickBookmarkCreation = json['quickBookmarkCreation'];
+        _quickBookmarkCreation = json['quickBookmarkCreation'],
+        _fullScreenModeEnabled = json['fullScreenModeEnabled'];
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -713,5 +720,6 @@ class Config {
         'outlineListEditingEnabled': _outlineListEditingEnabled,
         'hideScrollbars': _hideScrollbars,
         'quickBookmarkCreation': _quickBookmarkCreation,
+        'fullScreenModeEnabled': _fullScreenModeEnabled,
       };
 }
