@@ -1226,6 +1226,9 @@ public class PluginUtils {
                     boolean fullScreenMode = configJson.getBoolean(KEY_CONFIG_FULL_SCREEN_MODE_ENABLED);
                     PdfViewCtrlSettingsManager.setFullScreenMode(context, fullScreenMode);
                     builder.fullscreenModeEnabled(fullScreenMode);
+                } else {
+                    PdfViewCtrlSettingsManager.setFullScreenMode(context, false);
+                    builder.fullscreenModeEnabled(false);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
