@@ -475,7 +475,7 @@ typedef enum
     scrollChangedId,
 } EventSinkId;
 
-@interface PdftronFlutterPlugin : NSObject <FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
+@interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
 
 @property (nonatomic, strong) PTTabbedDocumentViewController *tabbedDocumentViewController;
 @property (nonatomic) BOOL isBase64;
