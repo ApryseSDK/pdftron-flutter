@@ -3819,7 +3819,7 @@ public class PluginUtils {
             return;
         }
 
-        pdfViewCtrl.setHScrollPos((int) (horizontalScrollPosition + 0.5));
+        pdfViewCtrl.setHScrollPos(horizontalScrollPosition);
         result.success(null);
     }
 
@@ -3832,7 +3832,7 @@ public class PluginUtils {
             return;
         }
         
-        pdfViewCtrl.setVScrollPos((int) (verticalScrollPosition + 0.5));
+        pdfViewCtrl.setVScrollPos(verticalScrollPosition);
         result.success(null);
     }
         
