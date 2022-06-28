@@ -247,6 +247,10 @@ public class PluginUtils {
     public static final String KEY_GRAVITY_START = "GravityStart";
     public static final String KEY_GRAVITY_END = "GravityEnd";
 
+    public static final String KEY_SEARCH_STRING = "searchString";
+    public static final String KEY_MATCH_CASE = "matchCase";
+    public static final String KEY_MATCH_WHOLE_WORD = "matchWholeWord";
+
     public static final String EVENT_EXPORT_ANNOTATION_COMMAND = "export_annotation_command_event";
     public static final String EVENT_EXPORT_BOOKMARK = "export_bookmark_event";
     public static final String EVENT_DOCUMENT_LOADED = "document_loaded_event";
@@ -322,6 +326,8 @@ public class PluginUtils {
     public static final String FUNCTION_GET_CURRENT_PAGE = "getCurrentPage";
     public static final String FUNCTION_GROUP_ANNOTATIONS = "groupAnnotations";
     public static final String FUNCTION_UNGROUP_ANNOTATIONS = "ungroupAnnotations";
+    public static final String FUNCTION_START_SEARCH_MODE = "startSearchMode";
+    public static final String FUNCTION_EXIT_SEARCH_MODE = "exitSearchMode";
     public static final String FUNCTION_ZOOM_WITH_CENTER = "zoomWithCenter";
     public static final String FUNCTION_ZOOM_TO_RECT = "zoomToRect";
     public static final String FUNCTION_GET_ZOOM = "getZoom";
@@ -2517,6 +2523,21 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_START_SEARCH_MODE: {
+                checkFunctionPrecondition(component);
+                try {
+                    startSearchMode(call, result, component);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                    result.error(Integer.toString(ex.hashCode()), "JSONException Error: " + ex, null);
+                }
+                break;
+            }
+            case FUNCTION_EXIT_SEARCH_MODE: {
+                checkFunctionPrecondition(component);
+                exitSearchMode(result, component);
+                break;
+            }
             case FUNCTION_ZOOM_WITH_CENTER: {
                 checkFunctionPrecondition(component);
                 zoomWithCenter(call, result, component);
@@ -3867,6 +3888,34 @@ public class PluginUtils {
             if (shouldUnlock) {
                 pdfViewCtrl.docUnlock();
             }
+        }
+    }
+
+    public static void startSearchMode(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws JSONException {
+        PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
+        String searchString = call.argument(KEY_SEARCH_STRING);
+        boolean matchCase = call.argument(KEY_MATCH_CASE);
+        boolean matchWholeWord = call.argument(KEY_MATCH_WHOLE_WORD);
+        if (pdfViewCtrlTabFragment != null) {
+            pdfViewCtrlTabFragment.setSearchMode(true);
+            pdfViewCtrlTabFragment.setSearchQuery(searchString);
+            pdfViewCtrlTabFragment.setSearchMatchCase(matchCase);
+            pdfViewCtrlTabFragment.setSearchWholeWord(matchWholeWord);
+            pdfViewCtrlTabFragment.queryTextSubmit(searchString);
+            result.success(null);
+        } else {
+            result.error("InvalidState", "Activity not attached", null);
+        }
+    }
+
+    public static void exitSearchMode(MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
+        if (pdfViewCtrlTabFragment != null) {
+            pdfViewCtrlTabFragment.setSearchMode(false);
+            pdfViewCtrlTabFragment.cancelFindText();
+            pdfViewCtrlTabFragment.exitSearchMode();
+        } else {
+            result.error("InvalidState", "Activity not attached", null);
         }
     }
 

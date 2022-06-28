@@ -459,6 +459,25 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.getCurrentPage);
   }
 
+  /// Starts the search mode.
+  ///
+  /// Searches the document for [searchString] and highlights matches. The search
+  /// is case-sensitive if [matchCase] is true, and only whole words are matched
+  /// if [matchWholeWord] is true.
+  static Future<void> startSearchMode(
+      String searchString, bool matchCase, bool matchWholeWord) {
+    return _channel.invokeMethod(Functions.startSearchMode, <String, dynamic>{
+      Parameters.searchString: searchString,
+      Parameters.matchCase: matchCase,
+      Parameters.matchWholeWord: matchWholeWord
+    });
+  }
+
+  /// Exits the search mode.
+  static Future<void> exitSearchMode() {
+    return _channel.invokeMethod(Functions.exitSearchMode);
+  }
+  
   /// Sets the zoom scale in the current document viewer with a zoom center.
   ///
   /// zoom: the zoom ratio to be set
