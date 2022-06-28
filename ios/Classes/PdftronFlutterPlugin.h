@@ -414,7 +414,6 @@ static NSString * const PTViewModeVerticalScrollingKey = @"viewModeVerticalScrol
 // DefaultEraserType keys
 static NSString * const PTInkEraserModeAllKey = @"annotationEraser";
 static NSString * const PTInkEraserModePointsKey = @"hybridEraser";
->>>>>>> 5207911e8a2e3619ce59d7834b96a733fcedd19b
 
 // ReflowOrientation
 static NSString * const PTReflowOrientationHorizontalKey = @"horizontal";
