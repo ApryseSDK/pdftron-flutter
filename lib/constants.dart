@@ -72,6 +72,7 @@ class Functions {
   static const getScrollPos = "getScrollPos";
   static const setHorizontalScrollPosition = "setHorizontalScrollPosition";
   static const setVerticalScrollPosition = "setVerticalScrollPosition";
+  static const smartZoom = "smartZoom"; 
   static const getVisiblePages = "getVisiblePages";
 }
 
@@ -104,6 +105,7 @@ class Parameters {
   static const requestedOrientation = "requestedOrientation";
   static const horizontalScrollPosition = "horizontalScrollPosition";
   static const verticalScrollPosition = "verticalScrollPosition";
+  static const animated = "animated";
 }
 
 /// Defines the parameters of the events.
