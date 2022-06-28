@@ -510,6 +510,21 @@ class DocumentViewController {
     });
   }
 
+  /// Zooms to a paragraph that contains the specified coordinate.
+  ///
+  /// The paragraph has to contain more than one line and be wider than 1/5th of
+  /// the page width. If no paragraph contains the coordiante, nothing occurs.
+  /// The zoom center ([x],[y]) is represented in the screen space, whose origin
+  /// is at the upper-left corner of the screen region. [animated] determines if
+  /// the transition is animated.
+  Future<void> smartZoom(int x, int y, bool animated) {
+    return _channel.invokeMethod(Functions.smartZoom, <String, dynamic>{
+      'x': x,
+      'y': y,
+      Parameters.animated: animated,
+    });
+  }
+  
   /// Gets a list of absolute file paths to PDFs containing the saved signatures.
   ///
   /// Returns a promise

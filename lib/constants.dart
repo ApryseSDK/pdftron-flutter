@@ -71,6 +71,7 @@ class Functions {
   static const setZoomLimits = "setZoomLimits";
   static const setBackgroundColor = "setBackgroundColor";
   static const setDefaultPageColor = "setDefaultPageColor";
+  static const smartZoom = "smartZoom"; 
   static const getVisiblePages = "getVisiblePages";
 }
 
@@ -104,6 +105,7 @@ class Parameters {
   static const red = "red";
   static const green = "green";
   static const blue = "blue";
+  static const animated = "animated";
 }
 
 /// Defines the parameters of the events.

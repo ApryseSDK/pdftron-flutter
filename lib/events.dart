@@ -27,6 +27,9 @@ const _leadingNavButtonPressedChannel =
 const _pageChangedChannel = const EventChannel('page_changed_event');
 const _zoomChangedChannel = const EventChannel('zoom_changed_event');
 const _pageMovedChannel = const EventChannel('page_moved_event');
+const _annotationToolbarItemPressedChannel =
+    const EventChannel('annotation_toolbar_item_pressed_event');
+const _scrollChangedChannel = const EventChannel('scroll_changed_event');
 
 typedef void ExportAnnotationCommandListener(dynamic xfdfCommand);
 typedef void ExportBookmarkListener(dynamic bookmarkJson);
@@ -45,6 +48,12 @@ typedef void PageChangedListener(
     dynamic previousPageNumber, dynamic pageNumber);
 typedef void ZoomChangedListener(dynamic zoom);
 typedef void PageMovedListener(dynamic previousPageNumber, dynamic pageNumber);
+
+/// A listener used as the argument for [startAnnotationToolbarItemPressedListener].
+///
+/// Gets the unique [id] of the custom toolbar item that was pressed.
+typedef void AnnotationToolbarItemPressedListener(dynamic id);
+typedef void ScrollChangedListener(dynamic horizontal, dynamic vertical);
 typedef void CancelListener();
 
 /// Used to identify listeners for the EventChannel.
@@ -63,6 +72,8 @@ enum eventSinkId {
   pageChangedId,
   zoomChangedId,
   pageMovedId,
+  annotationToolbarItemPressedId,
+  scrollChangedId,
 }
 
 /// Listens for when a local annotation changes have been committed to the document.
@@ -309,6 +320,46 @@ CancelListener startPageMovedListener(PageMovedListener listener) {
         pagesObject[EventParameters.previousPageNumber];
     dynamic pageNumber = pagesObject[EventParameters.pageNumber];
     listener(previousPageNumber, pageNumber);
+  }, cancelOnError: true);
+
+  return () {
+    subscription.cancel();
+  };
+}
+
+/// Listens for when a custom annotation toolbar item has been pressed.
+///
+/// ```dart
+/// var itemPressedCancel = startAnnotationToolbarItemPressedListener((id) {
+///   print('flutter toolbar item $id pressed');
+/// });
+/// ```
+///
+/// Returns a function that can cancel the listener.
+/// Custom toolbar items can be added using the [Config.annotationToolbars]
+/// config. Android only.
+CancelListener startAnnotationToolbarItemPressedListener(
+    AnnotationToolbarItemPressedListener listener) {
+  var subscription = _annotationToolbarItemPressedChannel
+      .receiveBroadcastStream(eventSinkId.annotationToolbarItemPressedId.index)
+      .listen(listener, cancelOnError: true);
+
+  return () {
+    subscription.cancel();
+  };
+}
+
+/// Listens for if the document's scroll position is changed
+///
+/// Returns a function that can cancel the listener.
+CancelListener startScrollChangedListener(ScrollChangedListener listener) {
+  var subscription = _scrollChangedChannel
+      .receiveBroadcastStream(eventSinkId.scrollChangedId.index)
+      .listen((scrollString) {
+    dynamic scrollObject = jsonDecode(scrollString);
+    dynamic horizontal = scrollObject['horizontal'];
+    dynamic vertical = scrollObject['vertical'];
+    listener(horizontal, vertical);
   }, cancelOnError: true);
 
   return () {

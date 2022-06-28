@@ -25,8 +25,12 @@ static NSString * const PTExcludedAnnotationListTypesKey = @"excludedAnnotationL
 static NSString * const PTAutoSaveEnabledKey = @"autoSaveEnabled";
 static NSString * const PTPageChangeOnTapKey = @"pageChangeOnTap";
 static NSString * const PTShowSavedSignaturesKey = @"showSavedSignatures";
+static NSString * const PTSignaturePhotoPickerEnabledKey = @"signaturePhotoPickerEnabled";
+static NSString * const PTSignatureTypingEnabledKey = @"signatureTypingEnabled";
+static NSString * const PTSignatureDrawingEnabledKey = @"signatureDrawingEnabled";
 static NSString * const PTUseStylusAsPenKey = @"useStylusAsPen";
 static NSString * const PTSignSignatureFieldWithStampsKey = @"signSignatureFieldWithStamps";
+static NSString * const PTSignatureColorsKey = @"signatureColors";
 static NSString * const PTSelectAnnotationAfterCreationKey = @"selectAnnotationAfterCreation";
 static NSString * const PTPageIndicatorEnabledKey = @"pageIndicatorEnabled";
 static NSString * const PTPageNumberIndicatorAlwaysVisibleKey = @"pageNumberIndicatorAlwaysVisible";
@@ -252,6 +256,7 @@ static NSString * const PTZoomWithCenterKey = @"zoomWithCenter";
 static NSString * const PTZoomToRectKey = @"zoomToRect";
 static NSString * const PTGetZoomKey = @"getZoom";
 static NSString * const PTSetZoomLimitsKey = @"setZoomLimits";
+static NSString * const PTSmartZoomKey = @"smartZoom";
 static NSString * const PTGetSavedSignaturesKey = @"getSavedSignatures";
 static NSString * const PTGetSavedSignatureFolderKey = @"getSavedSignatureFolder";
 static NSString * const PTSetBackgroundColorKey = @"setBackgroundColor";
@@ -285,6 +290,7 @@ static NSString * const PTExportFormatArgumentKey = @"exportFormat";
 static NSString * const PTRedKey = @"red";
 static NSString * const PTBlueKey = @"blue";
 static NSString * const PTGreenKey = @"green";
+static NSString * const PTAnimatedArgumentKey = @"animated";
 
 // event strings
 static NSString * const PTExportAnnotationCommandEventKey = @"export_annotation_command_event";
@@ -301,6 +307,7 @@ static NSString * const PTLeadingNavButtonPressedEventKey = @"leading_nav_button
 static NSString * const PTPageChangedEventKey = @"page_changed_event";
 static NSString * const PTZoomChangedEventKey = @"zoom_changed_event";
 static NSString * const PTPageMovedEventKey = @"page_moved_event";
+static NSString *const PTScrollChangedEventKey = @"scroll_changed_event";
 
 // fit mode
 static NSString * const PTFitPageKey = @"FitPage";
@@ -422,6 +429,11 @@ static NSString * const PTAnnotationManagerUndoModeAllKey = @"undoModeAll";
 static NSString * const PTAnnotationToolbarAlignmentStartKey = @"GravityStart";
 static NSString * const PTAnnotationToolbarAlignmentEndKey = @"GravityEnd";
 
+// RGB colors
+static NSString * const PTColorRedKey = @"red";
+static NSString * const PTColorGreenKey = @"green";
+static NSString * const PTColorBlueKey = @"blue";
+
 // Default annotation toolbar names.
 typedef NSString * PTDefaultAnnotationToolbarKey;
 static const PTDefaultAnnotationToolbarKey PTAnnotationToolbarView = @"PDFTron_View";
@@ -442,7 +454,8 @@ static const PTAnnotationToolbarKey PTAnnotationToolbarKeyName = @"name";
 static const PTAnnotationToolbarKey PTAnnotationToolbarKeyIcon = @"icon";
 static const PTAnnotationToolbarKey PTAnnotationToolbarKeyItems = @"items";
 
-typedef enum {
+typedef enum
+{
     exportAnnotationId = 0,
     exportBookmarkId,
     documentLoadedId,
@@ -457,6 +470,7 @@ typedef enum {
     pageChangedId,
     zoomChangedId,
     pageMovedId,
+    scrollChangedId,
 } EventSinkId;
 
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
@@ -481,8 +495,7 @@ typedef enum {
 -(void)documentController:(PTDocumentController *)docVC pageChanged:(NSString*)pageNumbersString;
 -(void)documentController:(PTDocumentController *)docVC zoomChanged:(NSNumber*)zoom;
 -(void)documentController:(PTDocumentController *)docVC pageMoved:(NSString*)pageNumbersString;
-
-- (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
+-(void)documentController:(PTDocumentController *)docVC scrollChanged:(NSString*)scrollString;
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 

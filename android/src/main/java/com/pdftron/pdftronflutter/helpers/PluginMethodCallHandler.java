@@ -12,6 +12,7 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_SCROLL_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_GET_PLATFORM_VERSION;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_GET_VERSION;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_INITIALIZE;
@@ -38,6 +39,7 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_LEADING_NAV_B
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_LONG_PRESS_MENU_PRESSED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_PAGE_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_PAGE_MOVED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATION_TOOLBAR_ITEM_PRESSED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ZOOM_CHANGED;
 
 public class PluginMethodCallHandler implements MethodCallHandler {
@@ -226,6 +228,33 @@ public class PluginMethodCallHandler implements MethodCallHandler {
             @Override
             public void onCancel(Object arguments) {
                 FlutterDocumentActivity.setPageMovedEventEmitter(null);
+            }
+        });
+
+        final EventChannel annotationItemToolbarPressedEventChannel = new EventChannel(messenger,
+                EVENT_ANNOTATION_TOOLBAR_ITEM_PRESSED);
+        annotationItemToolbarPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setAnnotationToolbarItemPressedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setAnnotationToolbarItemPressedEventEmitter(null);
+            }
+        });
+        
+        final EventChannel scrollChangedEventChanel = new EventChannel(messenger, EVENT_SCROLL_CHANGED);
+        pageMovedEventChanel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setScrollChangedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setScrollChangedEventEmitter(null);
             }
         });
     }
