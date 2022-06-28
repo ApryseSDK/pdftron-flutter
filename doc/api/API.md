@@ -1075,6 +1075,26 @@ Returns a Future.
 var resultImagePath = await PdftronFlutter.exportAsImage(1, 92, ExportFormat.BMP);
 ```
 
+### Zoom
+
+#### smartZoom
+Zoom to a paragraph that contains the specified pixel coordinate. If no paragraph contains the coordinate, no zooming occurs.  
+The zoom center (x, y) is represented in the screen space, whose origin is at the upper-left corner of the screen region.
+
+Parameters:
+
+Name | Type | Description
+--- | --- | ---
+x | int | the x-coordinate of the target coordinate
+y | int | the y-coordinate of the target coordinate
+animated | bool | whether the zoom transition is animated
+
+Returns a Future.
+
+```dart
+await PdftronFlutter.smartZoom(250, 500, true);
+```
+
 ### Undo/Redo
 
 #### undo
@@ -1330,6 +1350,22 @@ var annotationMenuPressedCancel = startAnnotationMenuPressedListener((annotation
     print("Annotation has id: ${annotation.id}");
     print("Annotation is in page: ${annotation.pageNumber}");
   }
+});
+```
+
+#### startAnnotationToolbarItemPressedListener
+Event is raised when a custom annotation toolbar item is pressed. Android only.
+
+Event Parameters:
+
+Name | Type | Description
+--- | --- | ---
+id | int | The id of the custom toolbar item
+
+```dart
+var annotationToolbarItemPressedCancel = startAnnotationToolbarItemPressedListener((id)
+{
+  print("Item id: ${id}");
 });
 ```
 
@@ -2006,13 +2042,30 @@ config.showSavedSignatures = true;
 ```
 
 #### signaturePhotoPickerEnabled
-
-bool, optional, defaults to true. Android only.
+bool, optional, defaults to true.
 
 Defines whether to show the option to pick images in the signature dialog.
 
 ```dart
 config.signaturePhotoPickerEnabled = true;
+```
+
+#### signatureTypingEnabled
+bool, optional, defaults to true.
+
+Defines whether to enable typing to create a new signature.
+
+```dart
+config.signatureTypingEnabled = true;
+```
+
+#### signatureDrawingEnabled
+bool, optional, defaults to true. iOS only.
+
+Defines whether to enable drawing to create a new signature.
+
+```dart
+config.signatureDrawingEnabled = true;
 ```
 
 ### Thumbnail Browser
