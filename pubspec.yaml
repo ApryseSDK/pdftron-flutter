@@ -1,6 +1,6 @@
 name: pdftron_flutter
 description: A convenience wrapper to build Flutter apps that use the PDFTron mobile SDK for smooth, flexible, and stand-alone document viewing.
-version: 1.0.0-beta.33
+version: 1.0.0-beta.34
 homepage: https://www.pdftron.com
 repository: https://github.com/PDFTron/pdftron-flutter
 issue_tracker: https://github.com/PDFTron/pdftron-flutter/issues
@@ -37,7 +37,6 @@ flutter:
 #
 # An image asset can refer to one or more resolution-specific "variants", see
 # https://flutter.io/assets-and-images/#resolution-aware.
-
 # To add custom fonts to your plugin package, add a fonts section here,
 # in this "flutter" section. Each entry in this list should have a
 # "family" key with the font family name, and a "fonts" key with a
