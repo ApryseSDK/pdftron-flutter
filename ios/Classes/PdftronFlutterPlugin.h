@@ -149,6 +149,7 @@ static NSString * const PTSaveCopyButtonKey = @"saveCopyButton";
 static NSString * const PTSaveIdenticalCopyButtonKey = @"saveIdenticalCopyButton";
 static NSString * const PTSaveFlattenedCopyButtonKey = @"saveFlattenedCopyButton";
 static NSString * const PTSaveCroppedCopyButtonKey = @"saveCroppedCopyButton";
+static NSString * const PTSaveReducedCopyButtonKey = @"saveReducedCopyButton";
 static NSString * const PTEditPagesButtonKey = @"editPagesButton";
 static NSString * const PTPrintButtonKey = @"printButton";
 static NSString * const PTCloseButtonKey = @"closeButton";
