@@ -65,6 +65,8 @@ class Functions {
   static const openGoToPageView = "openGoToPageView";
   static const openNavigationLists = "openNavigationLists";
   static const getCurrentPage = "getCurrentPage";
+  static const startSearchMode = "startSearchMode";
+  static const exitSearchMode = "exitSearchMode";
   static const zoomWithCenter = "zoomWithCenter";
   static const zoomToRect = "zoomToRect";
   static const getZoom = "getZoom";
@@ -105,6 +107,9 @@ class Parameters {
   static const requestedOrientation = "requestedOrientation";
   static const horizontalScrollPosition = "horizontalScrollPosition";
   static const verticalScrollPosition = "verticalScrollPosition";
+  static const searchString = "searchString";
+  static const matchCase = "matchCase";
+  static const matchWholeWord = "matchWholeWord";
   static const animated = "animated";
 }
 
