@@ -1592,6 +1592,13 @@
         [self openNavigationLists:result];
     } else if ([call.method isEqualToString:PTGetCurrentPageKey]) {
         [self getCurrentPage:result];
+    } else if ([call.method isEqualToString:PTStartSearchModeKey]) {
+        NSString* searchString = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTSearchStringArgumentKey]];
+        bool matchCase = [PdftronFlutterPlugin PT_idAsBool:call.arguments[PTMatchCaseArgumentKey]];
+        bool matchWholeWord = [PdftronFlutterPlugin PT_idAsBool:call.arguments[PTMatchWholeWordArgumentKey]];
+        [self startSearchMode:searchString matchCase:matchCase matchWholeWord:matchWholeWord resultToken:result];
+    } else if ([call.method isEqualToString:PTExitSearchModeKey]) {
+        [self exitSearchMode:result];
     } else if ([call.method isEqualToString:PTZoomWithCenterKey]) {
         [self zoomWithCenter:result call:call];
     } else if ([call.method isEqualToString:PTZoomToRectKey]) {
@@ -3282,6 +3289,49 @@
     }
     
     [documentController showSearchViewController];
+    flutterResult(nil);
+}
+
+-(void)startSearchMode:(NSString*)searchString matchCase:(bool)matchCase matchWholeWord:(bool)matchWholeWord resultToken:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"open_search" message:@"Failed to open search" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+    documentController.textSearchViewController.showsKeyboardOnViewDidAppear = NO;
+    unsigned int mode = e_ptambient_string | e_ptpage_stop | e_pthighlight;
+    if (matchCase) {
+        mode |= e_ptcase_sensitive;
+    }
+    if (matchWholeWord) {
+        mode |= e_ptwhole_word;
+    }
+
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:documentController.textSearchViewController];
+    nav.modalPresentationStyle = UIModalPresentationCustom;
+    [documentController presentViewController:nav animated:NO completion:^{
+        [documentController.textSearchViewController findText:searchString withSearchMode:mode];
+    }];
+    flutterResult(nil);
+}
+
+- (void)exitSearchMode:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"open_search" message:@"Failed to open search" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+    if (documentController.textSearchViewController.presentingViewController) {
+        [documentController dismissViewControllerAnimated:YES completion:nil];
+    }
     flutterResult(nil);
 }
 
