@@ -30,6 +30,7 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_PAGE_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_SCROLL_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ZOOM_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_PAGE_MOVED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATION_TOOLBAR_ITEM_PRESSED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_OPEN_DOCUMENT;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SET_LEADING_NAV_BUTTON_ICON;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LEADING_NAV_BUTTON_ICON;
@@ -240,6 +241,19 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
             }
         });
 
+        final EventChannel annotationItemToolbarPressedEventChannel = new EventChannel(messenger,
+                EVENT_ANNOTATION_TOOLBAR_ITEM_PRESSED);
+        annotationItemToolbarPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                documentView.setAnnotationToolbarItemPressedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                documentView.setAnnotationToolbarItemPressedEventEmitter(null);
+            }
+        });
 
         final EventChannel scrollChangedEventChannel = new EventChannel(messenger, EVENT_SCROLL_CHANGED);
         scrollChangedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {

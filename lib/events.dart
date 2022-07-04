@@ -27,6 +27,8 @@ const _leadingNavButtonPressedChannel =
 const _pageChangedChannel = const EventChannel('page_changed_event');
 const _zoomChangedChannel = const EventChannel('zoom_changed_event');
 const _pageMovedChannel = const EventChannel('page_moved_event');
+const _annotationToolbarItemPressedChannel =
+    const EventChannel('annotation_toolbar_item_pressed_event');
 const _scrollChangedChannel = const EventChannel('scroll_changed_event');
 
 /// A listener used as the argument for [startExportAnnotationCommandListener].
@@ -108,6 +110,11 @@ typedef void ZoomChangedListener(dynamic zoom);
 /// [pageNumber].
 typedef void PageMovedListener(dynamic previousPageNumber, dynamic pageNumber);
 
+/// A listener used as the argument for [startAnnotationToolbarItemPressedListener].
+///
+/// Gets the unique [id] of the custom toolbar item that was pressed.
+typedef void AnnotationToolbarItemPressedListener(dynamic id);
+
 /// A listener used as the argument for [startScrollChangedListener].
 ///
 /// Gets the current [horizontal] scroll position and the [vertical] scroll
@@ -132,6 +139,7 @@ enum eventSinkId {
   pageChangedId,
   zoomChangedId,
   pageMovedId,
+  annotationToolbarItemPressedId,
   scrollChangedId,
 }
 
@@ -491,6 +499,28 @@ CancelListener startPageMovedListener(PageMovedListener listener) {
     dynamic pageNumber = pagesObject[EventParameters.pageNumber];
     listener(previousPageNumber, pageNumber);
   }, cancelOnError: true);
+
+  return () {
+    subscription.cancel();
+  };
+}
+
+/// Listens for when a custom annotation toolbar item has been pressed.
+///
+/// ```dart
+/// var itemPressedCancel = startAnnotationToolbarItemPressedListener((id) {
+///   print('flutter toolbar item $id pressed');
+/// });
+/// ```
+///
+/// Returns a function that can cancel the listener.
+/// Custom toolbar items can be added using the [Config.annotationToolbars]
+/// config. Android only.
+CancelListener startAnnotationToolbarItemPressedListener(
+    AnnotationToolbarItemPressedListener listener) {
+  var subscription = _annotationToolbarItemPressedChannel
+      .receiveBroadcastStream(eventSinkId.annotationToolbarItemPressedId.index)
+      .listen(listener, cancelOnError: true);
 
   return () {
     subscription.cancel();

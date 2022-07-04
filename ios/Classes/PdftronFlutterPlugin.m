@@ -1463,7 +1463,7 @@
         NSString *annotationList = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationListArgumentKey]];;
         [self exportAnnotations:annotationList resultToken:result];
     } else if ([call.method isEqualToString:PTFlattenAnnotationsKey]) {
-        bool formsOnly = [PdftronFlutterPlugin PT_idAsBool:call.arguments[PTFormsOnlyArgumentKey]];;
+        bool formsOnly = [PdftronFlutterPlugin PT_idAsBool:call.arguments[PTFormsOnlyArgumentKey]];
         [self flattenAnnotations:formsOnly resultToken:result];
     } else if ([call.method isEqualToString:PTDeleteAnnotationsKey]) {
         NSString *annotationList = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationListArgumentKey]];;
@@ -1592,6 +1592,13 @@
         [self openNavigationLists:result];
     } else if ([call.method isEqualToString:PTGetCurrentPageKey]) {
         [self getCurrentPage:result];
+    } else if ([call.method isEqualToString:PTStartSearchModeKey]) {
+        NSString* searchString = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTSearchStringArgumentKey]];
+        bool matchCase = [PdftronFlutterPlugin PT_idAsBool:call.arguments[PTMatchCaseArgumentKey]];
+        bool matchWholeWord = [PdftronFlutterPlugin PT_idAsBool:call.arguments[PTMatchWholeWordArgumentKey]];
+        [self startSearchMode:searchString matchCase:matchCase matchWholeWord:matchWholeWord resultToken:result];
+    } else if ([call.method isEqualToString:PTExitSearchModeKey]) {
+        [self exitSearchMode:result];
     } else if ([call.method isEqualToString:PTZoomWithCenterKey]) {
         [self zoomWithCenter:result call:call];
     } else if ([call.method isEqualToString:PTZoomToRectKey]) {
@@ -1604,7 +1611,9 @@
         [self getSavedSignatures:result];
     } else if ([call.method isEqualToString:PTGetSavedSignatureFolderKey]) {
         [self getSavedSignatureFolder:result];
-    } else {
+    } else if ([call.method isEqualToString:PTSmartZoomKey]) {
+        [self smartZoom:result call:call];
+    }   else {
         result(FlutterMethodNotImplemented);
     }
 }
@@ -2802,6 +2811,15 @@
     flutterResult(nil);
 }
 
+-(void)smartZoom:(FlutterResult)flutterResult call:(FlutterMethodCall*)call {
+    PTDocumentController *documentController = [self getDocumentController];
+    int x = [call.arguments[PTXKey] intValue];
+    int y = [call.arguments[PTYKey] intValue];
+    bool animated = [PdftronFlutterPlugin PT_idAsBool:call.arguments[PTAnimatedArgumentKey]];
+    [documentController.pdfViewCtrl SmartZoomX:(double)x y:(double)y animated:animated];
+    flutterResult(nil);
+}
+
 - (void)getSavedSignatures:(FlutterResult)flutterResult {
     PTSignaturesManager *signaturesManager = [[PTSignaturesManager alloc] init];
     NSUInteger numOfSignatures = [signaturesManager numberOfSavedSignatures];
@@ -3267,6 +3285,49 @@
     }
     
     [documentController showSearchViewController];
+    flutterResult(nil);
+}
+
+-(void)startSearchMode:(NSString*)searchString matchCase:(bool)matchCase matchWholeWord:(bool)matchWholeWord resultToken:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"open_search" message:@"Failed to open search" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+    documentController.textSearchViewController.showsKeyboardOnViewDidAppear = NO;
+    unsigned int mode = e_ptambient_string | e_ptpage_stop | e_pthighlight;
+    if (matchCase) {
+        mode |= e_ptcase_sensitive;
+    }
+    if (matchWholeWord) {
+        mode |= e_ptwhole_word;
+    }
+
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:documentController.textSearchViewController];
+    nav.modalPresentationStyle = UIModalPresentationCustom;
+    [documentController presentViewController:nav animated:NO completion:^{
+        [documentController.textSearchViewController findText:searchString withSearchMode:mode];
+    }];
+    flutterResult(nil);
+}
+
+- (void)exitSearchMode:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"open_search" message:@"Failed to open search" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+    if (documentController.textSearchViewController.presentingViewController) {
+        [documentController dismissViewControllerAnimated:YES completion:nil];
+    }
     flutterResult(nil);
 }
 

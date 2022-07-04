@@ -85,6 +85,7 @@ class Config {
   var _annotationToolbarAlignment;
   var _hideScrollbars;
   var _quickBookmarkCreation;
+  var _fullScreenModeEnabled;
 
   Config();
 
@@ -321,10 +322,17 @@ class Config {
   /// Defaults to false. Android only.
   set singleLineToolbar(bool value) => _singleLineToolbar = value;
 
-  /// A list of [CustomToolbar] objects or [DefaultToolbars] constants that define a
-  /// custom toolbar.
+  /// A list of [CustomToolbar] objects or [DefaultToolbars] constants that define
+  /// a set of annotation toolbars.
   ///
-  /// If used the default toolbar no longer shows. Defualts to empty.
+  /// ```dart
+  /// var customToolItem = new CustomToolbarItem('add_page', 'Add Page', 'ic_add_blank_page_white');
+  /// var customToolbar = new CustomToolbar('myToolbar', 'myToolbar', [Tools.annotationCreateArrow, customToolItem], ToolbarIcons.favorite);
+  ///
+  /// config.annotationToolbars = [DefaultToolbars.annotate, customToolbar];
+  /// ```
+  ///
+  /// If used, the default toolbars no longer show. Defaults to empty.
   set annotationToolbars(List value) => _annotationToolbars = value;
 
   /// A list of [DefaultToolbars] that will be hidden.
@@ -579,6 +587,11 @@ class Config {
   /// Pressing the button will booksmark the current page. Defaults to false.
   set quickBookmarkCreation(bool value) => _quickBookmarkCreation = value;
 
+  /// Whether to enable the viewer's full screen mode.
+  ///
+  /// Defaults to false. Android only.
+  set fullScreenModeEnabled(bool value) => _fullScreenModeEnabled = value;
+
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
         _disabledTools = json['disabledTools'],
@@ -665,7 +678,8 @@ class Config {
         _annotationToolbarAlignment = json['annotationToolbarAlignment'],
         _outlineListEditingEnabled = json['outlineListEditingEnabled'],
         _hideScrollbars = json['hideScrollbars'],
-        _quickBookmarkCreation = json['quickBookmarkCreation'];
+        _quickBookmarkCreation = json['quickBookmarkCreation'],
+        _fullScreenModeEnabled = json['fullScreenModeEnabled'];
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -749,5 +763,6 @@ class Config {
         'outlineListEditingEnabled': _outlineListEditingEnabled,
         'hideScrollbars': _hideScrollbars,
         'quickBookmarkCreation': _quickBookmarkCreation,
+        'fullScreenModeEnabled': _fullScreenModeEnabled,
       };
 }
