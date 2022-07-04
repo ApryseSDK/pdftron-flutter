@@ -459,6 +459,25 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.getCurrentPage);
   }
 
+  /// Starts the search mode.
+  ///
+  /// Searches the document for [searchString] and highlights matches. The search
+  /// is case-sensitive if [matchCase] is true, and only whole words are matched
+  /// if [matchWholeWord] is true.
+  static Future<void> startSearchMode(
+      String searchString, bool matchCase, bool matchWholeWord) {
+    return _channel.invokeMethod(Functions.startSearchMode, <String, dynamic>{
+      Parameters.searchString: searchString,
+      Parameters.matchCase: matchCase,
+      Parameters.matchWholeWord: matchWholeWord
+    });
+  }
+
+  /// Exits the search mode.
+  static Future<void> exitSearchMode() {
+    return _channel.invokeMethod(Functions.exitSearchMode);
+  }
+  
   /// Sets the zoom scale in the current document viewer with a zoom center.
   ///
   /// zoom: the zoom ratio to be set
@@ -499,6 +518,21 @@ class PdftronFlutter {
     });
   }
 
+  /// Zooms to a paragraph that contains the specified coordinate.
+  ///
+  /// The paragraph has to contain more than one line and be wider than 1/5th of
+  /// the page width. If no paragraph contains the coordiante, nothing occurs.
+  /// The zoom center ([x],[y]) is represented in the screen space, whose origin
+  /// is at the upper-left corner of the screen region. [animated] determines if
+  /// the transition is animated.
+  static Future<void> smartZoom(int x, int y, bool animated) {
+    return _channel.invokeMethod(Functions.smartZoom, <String, dynamic>{
+      'x': x,
+      'y': y,
+      Parameters.animated: animated,
+    });
+  }
+
   /// Gets a list of absolute file paths to PDFs containing the saved signatures.
   ///
   /// Returns a promise
@@ -520,6 +554,13 @@ class PdftronFlutter {
   /// Returns a Promise.
   static Future<String?> getSavedSignatureJpgFolder() {
     return _channel.invokeMethod(Functions.getSavedSignatureJpgFolder);
+  }
+
+  /// Gets the visible pages in the current viewer as an array.
+  ///
+  /// Return a Promise
+  static Future<List<int>?> getVisiblePages() {
+    return _channel.invokeMethod(Functions.getVisiblePages);
   }
 
   // Hygen Generated Methods

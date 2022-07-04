@@ -1,6 +1,8 @@
 package com.pdftron.pdftronflutter.helpers;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,6 +46,8 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LONG_PRESS_MENU
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LONG_PRESS_TEXT;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PAGE_NUMBER;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_PREVIOUS_PAGE_NUMBER;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.REFLOW_ORIENTATION_HORIZONTAL;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.REFLOW_ORIENTATION_VERTICAL;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.checkQuickMenu;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.convStringToAnnotType;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.getAnnotationsData;
@@ -172,7 +176,6 @@ public class ViewerImpl {
     };
 
     private ToolManager.PdfDocModificationListener mPdfDocModificationListener = new ToolManager.PdfDocModificationListener() {
-
         @Override
         public void onBookmarkModified(@NonNull List<UserBookmarkItem> bookmarkItems) {
             String bookmarkJson = null;

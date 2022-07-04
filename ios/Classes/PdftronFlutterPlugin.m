@@ -20,6 +20,7 @@
 @property (nonatomic, strong) FlutterEventSink pageChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink zoomChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink pageMovedEventSink;
+@property (nonatomic, strong) FlutterEventSink scrollChangedEventSink;
 
 // Hygen Generated Event Listeners (1)
 
@@ -153,6 +154,8 @@
     
     FlutterEventChannel* pageMovedEventChannel = [FlutterEventChannel eventChannelWithName:PTPageMovedEventKey binaryMessenger:messenger];
 
+    FlutterEventChannel* scrollChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTScrollChangedEventKey binaryMessenger:messenger];
+
     [xfdfEventChannel setStreamHandler:self];
     
     [bookmarkEventChannel setStreamHandler:self];
@@ -180,7 +183,9 @@
     [zoomChangedEventChannel setStreamHandler:self];
     
     [pageMovedEventChannel setStreamHandler:self];
-    
+
+    [scrollChangedEventChannel setStreamHandler:self];
+
     // Hygen Generated Event Listeners (2)
 }
 
@@ -411,6 +416,27 @@
                         [documentController setShowSavedSignatures:[showSavedSignatureNumber boolValue]];
                     }
                 }
+                else if ([key isEqualToString:PTSignaturePhotoPickerEnabledKey]) {
+                    
+                    NSNumber* signaturePhotoPickerEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignaturePhotoPickerEnabledKey class:[NSNumber class] error:&error];
+                    if (!error && signaturePhotoPickerEnabledNumber) {
+                        [documentController setSignaturePhotoPickerEnabled:[signaturePhotoPickerEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTSignatureTypingEnabledKey]) {
+                    
+                    NSNumber* signatureTypingEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignatureTypingEnabledKey class:[NSNumber class] error:&error];
+                    if (!error && signatureTypingEnabledNumber) {
+                        [documentController setSignatureTypingEnabled:[signatureTypingEnabledNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTSignatureDrawingEnabledKey]) {
+                    
+                    NSNumber* signatureDrawingEnabledNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignatureDrawingEnabledKey class:[NSNumber class] error:&error];
+                    if (!error && signatureDrawingEnabledNumber) {
+                        [documentController setSignatureDrawingEnabled:[signatureDrawingEnabledNumber boolValue]];
+                    }
+                }
                 else if ([key isEqualToString:PTUseStylusAsPenKey]) {
                     
                     NSNumber* useStylusAsPenNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTUseStylusAsPenKey class:[NSNumber class] error:&error];
@@ -423,6 +449,14 @@
                     NSNumber* signSignatureFieldsWithStampsNumber = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignSignatureFieldWithStampsKey class:[NSNumber class] error:&error];
                     if (!error && signSignatureFieldsWithStampsNumber) {
                         [documentController setSignSignatureFieldsWithStamps:[signSignatureFieldsWithStampsNumber boolValue]];
+                    }
+                }
+                else if ([key isEqualToString:PTSignatureColorsKey]) {
+                    
+                    NSArray* signatureColors = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTSignatureColorsKey class:[NSArray class] error:&error];
+                    
+                    if (!error && signatureColors) {
+                        [documentController setSignatureColors:signatureColors];
                     }
                 }
                 else if ([key isEqualToString:PTSelectAnnotationAfterCreationKey]) {
@@ -1200,6 +1234,9 @@
         case pageMovedId:
             self.pageMovedEventSink = events;
             break;
+        case scrollChangedId:
+            self.scrollChangedEventSink = events;
+            break;
         // Hygen Generated Event Listeners (3)
     }
     
@@ -1253,6 +1290,9 @@
             break;
         case pageMovedId:
             self.pageMovedEventSink = nil;
+            break;
+        case scrollChangedId:
+            self.scrollChangedEventSink = nil;
             break;
         // Hygen Generated Event Listeners (4)
     }
@@ -1393,6 +1433,24 @@
     }
 }
 
+-(void)documentController:(PTDocumentController *)docVC scrollChanged:(NSString *)scrollString
+{
+    PTPDFViewCtrl *pdfViewCtrl = docVC.pdfViewCtrl;
+    
+    double horizontal = [pdfViewCtrl GetHScrollPos];
+    double vertical = [pdfViewCtrl GetVScrollPos];
+
+     NSDictionary *resultDict = @{
+         PTReflowOrientationHorizontalKey: [NSNumber numberWithDouble:horizontal],
+         PTReflowOrientationVerticalKey: [NSNumber numberWithDouble:vertical],
+    };
+
+    if (self.scrollChangedEventSink != nil)
+    {
+        self.scrollChangedEventSink([PdftronFlutterPlugin PT_idToJSONString:resultDict]);
+    }
+}
+
 // Hygen Generated Event Listeners (5)
 
 #pragma mark - Functions
@@ -1414,7 +1472,7 @@
         NSString *annotationList = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationListArgumentKey]];;
         [self exportAnnotations:annotationList resultToken:result];
     } else if ([call.method isEqualToString:PTFlattenAnnotationsKey]) {
-        bool formsOnly = [PdftronFlutterPlugin PT_idAsBool:call.arguments[PTFormsOnlyArgumentKey]];;
+        bool formsOnly = [PdftronFlutterPlugin PT_idAsBool:call.arguments[PTFormsOnlyArgumentKey]];
         [self flattenAnnotations:formsOnly resultToken:result];
     } else if ([call.method isEqualToString:PTDeleteAnnotationsKey]) {
         NSString *annotationList = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTAnnotationListArgumentKey]];;
@@ -1543,6 +1601,13 @@
         [self openNavigationLists:result];
     } else if ([call.method isEqualToString:PTGetCurrentPageKey]) {
         [self getCurrentPage:result];
+    } else if ([call.method isEqualToString:PTStartSearchModeKey]) {
+        NSString* searchString = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTSearchStringArgumentKey]];
+        bool matchCase = [PdftronFlutterPlugin PT_idAsBool:call.arguments[PTMatchCaseArgumentKey]];
+        bool matchWholeWord = [PdftronFlutterPlugin PT_idAsBool:call.arguments[PTMatchWholeWordArgumentKey]];
+        [self startSearchMode:searchString matchCase:matchCase matchWholeWord:matchWholeWord resultToken:result];
+    } else if ([call.method isEqualToString:PTExitSearchModeKey]) {
+        [self exitSearchMode:result];
     } else if ([call.method isEqualToString:PTZoomWithCenterKey]) {
         [self zoomWithCenter:result call:call];
     } else if ([call.method isEqualToString:PTZoomToRectKey]) {
@@ -1555,7 +1620,9 @@
         [self getSavedSignatures:result];
     } else if ([call.method isEqualToString:PTGetSavedSignatureFolderKey]) {
         [self getSavedSignatureFolder:result];
-    } 
+    } else if ([call.method isEqualToString:PTSmartZoomKey]) {
+        [self smartZoom:result call:call];
+    }
     // Hygen Generated Method Call Cases
     else {
         result(FlutterMethodNotImplemented);
@@ -2755,6 +2822,15 @@
     flutterResult(nil);
 }
 
+-(void)smartZoom:(FlutterResult)flutterResult call:(FlutterMethodCall*)call {
+    PTDocumentController *documentController = [self getDocumentController];
+    int x = [call.arguments[PTXKey] intValue];
+    int y = [call.arguments[PTYKey] intValue];
+    bool animated = [PdftronFlutterPlugin PT_idAsBool:call.arguments[PTAnimatedArgumentKey]];
+    [documentController.pdfViewCtrl SmartZoomX:(double)x y:(double)y animated:animated];
+    flutterResult(nil);
+}
+
 - (void)getSavedSignatures:(FlutterResult)flutterResult {
     PTSignaturesManager *signaturesManager = [[PTSignaturesManager alloc] init];
     NSUInteger numOfSignatures = [signaturesManager numberOfSavedSignatures];
@@ -3220,6 +3296,49 @@
     }
     
     [documentController showSearchViewController];
+    flutterResult(nil);
+}
+
+-(void)startSearchMode:(NSString*)searchString matchCase:(bool)matchCase matchWholeWord:(bool)matchWholeWord resultToken:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"open_search" message:@"Failed to open search" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+    documentController.textSearchViewController.showsKeyboardOnViewDidAppear = NO;
+    unsigned int mode = e_ptambient_string | e_ptpage_stop | e_pthighlight;
+    if (matchCase) {
+        mode |= e_ptcase_sensitive;
+    }
+    if (matchWholeWord) {
+        mode |= e_ptwhole_word;
+    }
+
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:documentController.textSearchViewController];
+    nav.modalPresentationStyle = UIModalPresentationCustom;
+    [documentController presentViewController:nav animated:NO completion:^{
+        [documentController.textSearchViewController findText:searchString withSearchMode:mode];
+    }];
+    flutterResult(nil);
+}
+
+- (void)exitSearchMode:(FlutterResult)flutterResult
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"open_search" message:@"Failed to open search" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+    if (documentController.textSearchViewController.presentingViewController) {
+        [documentController dismissViewControllerAnimated:YES completion:nil];
+    }
     flutterResult(nil);
 }
 

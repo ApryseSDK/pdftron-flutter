@@ -21,7 +21,7 @@ import io.flutter.plugin.common.MethodChannel;
 public interface ViewerComponent {
 
     ArrayList<String> getActionOverrideItems();
-    
+
     ArrayList<String> getLongPressMenuItems();
 
     ArrayList<String> getLongPressMenuOverrideItems();
@@ -67,7 +67,7 @@ public interface ViewerComponent {
     EventChannel.EventSink getFormFieldValueChangedEventEmitter();
 
     EventChannel.EventSink getBehaviorActivatedEventEmitter();
-    
+
     EventChannel.EventSink getLongPressMenuPressedEventEmitter();
 
     EventChannel.EventSink getAnnotationMenuPressedEventEmitter();
@@ -79,6 +79,10 @@ public interface ViewerComponent {
     EventChannel.EventSink getZoomChangedEventEmitter();
 
     EventChannel.EventSink getPageMovedEventEmitter();
+
+    EventChannel.EventSink getAnnotationToolbarItemPressedEventEmitter();
+    
+    EventChannel.EventSink getScrollChangedEventEmitter();
 
     // Hygen Generated Event Listeners
 
