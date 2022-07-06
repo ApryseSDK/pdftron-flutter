@@ -1128,7 +1128,15 @@
                     [exportItems removeObject:documentController.exportCroppedCopyButtonItem];
                     documentController.exportItems = [exportItems copy];
                 }
-            },    
+            },
+        PTSaveReducedCopyButtonKey:
+            ^{
+                if (![documentController isExportButtonHidden]) {
+                    NSMutableArray * exportItems = [documentController.exportItems mutableCopy];
+                    [exportItems removeObject:documentController.exportReducedFileSizeCopyButtonItem];
+                    documentController.exportItems = [exportItems copy];
+                }
+            },
     };
     
     for(NSObject* item in elementsToDisable)
