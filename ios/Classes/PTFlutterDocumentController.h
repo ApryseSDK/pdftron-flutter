@@ -70,6 +70,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign, getter=isAnnotationsListEditingEnabled) BOOL annotationsListEditingEnabled;
 @property (nonatomic, assign, getter=isUserBookmarksListEditingEnabled) BOOL userBookmarksListEditingEnabled;
+@property (nonatomic, assign) BOOL outlineListEditingEnabled;
+
 @property (nonatomic, assign) BOOL showNavigationListAsSidePanelOnLargeDevices;
 
 @property (nonatomic, copy, nullable) NSArray<NSString *> *overrideBehavior;

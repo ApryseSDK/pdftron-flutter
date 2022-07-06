@@ -636,6 +636,15 @@
                         [documentController setUserBookmarksListEditingEnabled:[userBookmarksListEditingEnabled boolValue]];
                     }
                 }
+                else if ([key isEqualToString:PTOutlineListEditingEnabledKey]) {
+                    
+                    NSNumber* outlineListEditingEnabled = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTOutlineListEditingEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && outlineListEditingEnabled) {
+                        
+                        [documentController setOutlineListEditingEnabled:[outlineListEditingEnabled boolValue]];
+                    }
+                }
                 else if ([key isEqualToString:PTShowNavigationListAsSidePanelOnLargeDevicesKey]) {
                     
                     NSNumber* showNavigationListAsSidePanelOnLargeDevices = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowNavigationListAsSidePanelOnLargeDevicesKey class:[NSNumber class] error:&error];

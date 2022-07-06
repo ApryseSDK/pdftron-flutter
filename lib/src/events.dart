@@ -3,7 +3,12 @@
 
 /// To acquire a deeper understanding of how events are handled, look at the
 /// native implementations.
-part of pdftron;
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/services.dart';
+
+import '../pdftron_flutter.dart';
 
 const _exportAnnotationCommandChannel =
     const EventChannel('export_annotation_command_event');

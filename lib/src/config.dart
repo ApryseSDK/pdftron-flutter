@@ -1,4 +1,4 @@
-part of pdftron;
+import '../pdftron_flutter.dart';
 
 /// A class to contain the viewer configuration options.
 ///
