@@ -84,6 +84,8 @@ public interface ViewerComponent {
     
     EventChannel.EventSink getScrollChangedEventEmitter();
 
+    // Hygen Generated Event Listeners
+
     MethodChannel.Result getFlutterLoadResult();
 
     HashMap<Annot, Integer> getSelectedAnnots();

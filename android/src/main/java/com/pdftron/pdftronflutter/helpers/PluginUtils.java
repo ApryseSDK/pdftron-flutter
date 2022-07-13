@@ -203,6 +203,8 @@ public class PluginUtils {
     public static final String KEY_CONFIG_QUICK_BOOKMARK_CREATION = "quickBookmarkCreation";
     public static final String KEY_CONFIG_FULL_SCREEN_MODE_ENABLED = "fullScreenModeEnabled";
 
+    // Hygen Generated Config Constants
+
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
     public static final String KEY_X2 = "x2";
@@ -254,6 +256,8 @@ public class PluginUtils {
     public static final String KEY_MATCH_CASE = "matchCase";
     public static final String KEY_MATCH_WHOLE_WORD = "matchWholeWord";
 
+    // Hygen Generated Method Parameters
+
     public static final String EVENT_EXPORT_ANNOTATION_COMMAND = "export_annotation_command_event";
     public static final String EVENT_EXPORT_BOOKMARK = "export_bookmark_event";
     public static final String EVENT_DOCUMENT_LOADED = "document_loaded_event";
@@ -270,6 +274,8 @@ public class PluginUtils {
     public static final String EVENT_PAGE_MOVED = "page_moved_event";
     public static final String EVENT_ANNOTATION_TOOLBAR_ITEM_PRESSED = "annotation_toolbar_item_pressed_event";
     public static final String EVENT_SCROLL_CHANGED = "scroll_changed_event";
+
+    // Hygen Generated Event Listeners
 
     public static final String FUNCTION_GET_PLATFORM_VERSION = "getPlatformVersion";
     public static final String FUNCTION_GET_VERSION = "getVersion";
@@ -342,6 +348,8 @@ public class PluginUtils {
     public static final String FUNCTION_SET_BACKGROUND_COLOR = "setBackgroundColor";
     public static final String FUNCTION_SET_DEFAULT_PAGE_COLOR = "setDefaultPageColor";
     public static final String FUNCTION_GET_VISIBLE_PAGES = "getVisiblePages";
+
+    // Hygen Generated Method Constants
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -1241,6 +1249,7 @@ public class PluginUtils {
                     PdfViewCtrlSettingsManager.setFullScreenMode(context, false);
                     builder.fullscreenModeEnabled(false);
                 }
+                // Hygen Generated Configs
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -2598,6 +2607,7 @@ public class PluginUtils {
                 getVisiblePages(result, component);
                 break;
             }
+            // Hygen Generated Method Cases
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -4017,6 +4027,8 @@ public class PluginUtils {
         int[] visiblePages = pdfViewCtrl.getVisiblePages();
         result.success(visiblePages);
     }
+
+    // Hygen Generated Methods
 
     // Events
 

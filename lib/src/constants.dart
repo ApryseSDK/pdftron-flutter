@@ -1,4 +1,3 @@
-part of pdftron;
 
 /// Defines the names of the functions.
 class Functions {
@@ -75,6 +74,8 @@ class Functions {
   static const setDefaultPageColor = "setDefaultPageColor";
   static const smartZoom = "smartZoom"; 
   static const getVisiblePages = "getVisiblePages";
+
+  // Hygen Generated Methods
 }
 
 /// Defines the parameters of the functions.
@@ -111,6 +112,8 @@ class Parameters {
   static const matchCase = "matchCase";
   static const matchWholeWord = "matchWholeWord";
   static const animated = "animated";
+
+  // Hygen Generated Method Parameters
 }
 
 /// Defines the parameters of the events.
@@ -124,6 +127,8 @@ class EventParameters {
   static const annotationMenuItem = "annotationMenuItem";
   static const previousPageNumber = "previousPageNumber";
   static const pageNumber = "pageNumber";
+
+  // Hygen Generated Event Listeners
 }
 
 /// Defines the various kinds of buttons for the viewer.
@@ -155,6 +160,8 @@ class Buttons {
   static const saveCopyButton = 'saveCopyButton';
   static const saveIdenticalCopyButton = 'saveIdenticalCopyButton';
   static const saveFlattenedCopyButton = 'saveFlattenedCopyButton';
+  static const saveReducedCopyButton = 'saveReducedCopyButton';
+  static const saveCroppedCopyButton = 'saveCroppedCopyButton';
   static const editPagesButton = 'editPagesButton';
   static const printButton = 'printButton';
   static const closeButton = 'closeButton';
@@ -177,8 +184,6 @@ class Buttons {
 
   /// Android only.
   static const editAnnotationToolbarButton = 'editAnnotationToolButton';
-  static const saveReducedCopyButton = 'saveReducedCopyButton';
-  static const saveCroppedCopyButton = 'saveCroppedCopyButton';
 }
 
 /// Defines the various kinds of tools for the viewer.

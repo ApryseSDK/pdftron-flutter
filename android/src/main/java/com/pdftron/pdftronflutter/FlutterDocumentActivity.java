@@ -85,6 +85,8 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     private static AtomicReference<EventSink> sAnnotationToolbarItemPressedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sScrollChangedEventEmitter = new AtomicReference<>();
 
+    // Hygen Generated Event Listeners (1)
+
     private static HashMap<Annot, Integer> mSelectedAnnots;
 
     public static void openDocument(Context packageContext, String document, String password, String configStr) {
@@ -256,6 +258,8 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sScrollChangedEventEmitter.set(emitter);
     }
 
+    // Hygen Generated Event Listeners (2)
+
     public static void setFlutterLoadResult(Result result) {
         sFlutterLoadResult.set(result);
     }
@@ -341,6 +345,8 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     @Override
     public EventSink getScrollChangedEventEmitter() { return sScrollChangedEventEmitter.get(); }
 
+    // Hygen Generated Event Listeners (3)
+
     @Override
     public Result getFlutterLoadResult() {
         return sFlutterLoadResult.getAndSet(null);
@@ -409,6 +415,8 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sPageMovedEventEmitter.set(null);
         sAnnotationToolbarItemPressedEventEmitter.set(null);
         sScrollChangedEventEmitter.set(null);
+
+        // Hygen Generated Event Listeners (4)
 
         detachActivity();
     }
