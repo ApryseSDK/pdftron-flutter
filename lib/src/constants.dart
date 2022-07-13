@@ -1,4 +1,3 @@
-part of pdftron;
 
 /// Defines the names of the functions.
 class Functions {
@@ -71,7 +70,7 @@ class Functions {
   static const zoomToRect = "zoomToRect";
   static const getZoom = "getZoom";
   static const setZoomLimits = "setZoomLimits";
-  static const smartZoom = "smartZoom"; 
+  static const smartZoom = "smartZoom";
   static const getVisiblePages = "getVisiblePages";
 
   // Hygen Generated Methods
@@ -156,6 +155,8 @@ class Buttons {
   static const saveCopyButton = 'saveCopyButton';
   static const saveIdenticalCopyButton = 'saveIdenticalCopyButton';
   static const saveFlattenedCopyButton = 'saveFlattenedCopyButton';
+  static const saveReducedCopyButton = 'saveReducedCopyButton';
+  static const saveCroppedCopyButton = 'saveCroppedCopyButton';
   static const editPagesButton = 'editPagesButton';
   static const printButton = 'printButton';
   static const closeButton = 'closeButton';
@@ -178,8 +179,6 @@ class Buttons {
 
   /// Android only.
   static const editAnnotationToolbarButton = 'editAnnotationToolButton';
-  static const saveReducedCopyButton = 'saveReducedCopyButton';
-  static const saveCroppedCopyButton = 'saveCroppedCopyButton';
 }
 
 /// Defines the various kinds of tools for the viewer.

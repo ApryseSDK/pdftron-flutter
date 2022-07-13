@@ -1,4 +1,5 @@
-part of pdftron;
+import 'dart:convert';
+import 'constants.dart';
 
 /// The annotation object.
 class Annot {
