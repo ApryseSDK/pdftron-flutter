@@ -72,6 +72,8 @@ class Functions {
   static const setZoomLimits = "setZoomLimits";
   static const smartZoom = "smartZoom";
   static const getVisiblePages = "getVisiblePages";
+
+  // Hygen Generated Methods
 }
 
 /// Defines the parameters of the functions.
@@ -105,6 +107,8 @@ class Parameters {
   static const matchCase = "matchCase";
   static const matchWholeWord = "matchWholeWord";
   static const animated = "animated";
+
+  // Hygen Generated Method Parameters
 }
 
 /// Defines the parameters of the events.
@@ -118,6 +122,8 @@ class EventParameters {
   static const annotationMenuItem = "annotationMenuItem";
   static const previousPageNumber = "previousPageNumber";
   static const pageNumber = "pageNumber";
+
+  // Hygen Generated Event Listeners
 }
 
 /// Defines the various kinds of buttons for the viewer.

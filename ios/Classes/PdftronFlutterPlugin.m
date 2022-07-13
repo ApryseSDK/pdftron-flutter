@@ -22,6 +22,8 @@
 @property (nonatomic, strong) FlutterEventSink pageMovedEventSink;
 @property (nonatomic, strong) FlutterEventSink scrollChangedEventSink;
 
+// Hygen Generated Event Listeners (1)
+
 @property (nonatomic, assign, getter=isWidgetView) BOOL widgetView;
 @property (nonatomic, assign, getter=isMultiTabSet) BOOL multiTabSet;
 
@@ -183,6 +185,8 @@
     [pageMovedEventChannel setStreamHandler:self];
 
     [scrollChangedEventChannel setStreamHandler:self];
+
+    // Hygen Generated Event Listeners (2)
 }
 
 #pragma mark - Configurations
@@ -809,6 +813,7 @@
                         documentController.bookmarkPageButtonHidden = ![quickBookmarkCreation boolValue];
                     }
                 }
+                // Hygen Generated Configs
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
@@ -1249,6 +1254,7 @@
         case scrollChangedId:
             self.scrollChangedEventSink = events;
             break;
+        // Hygen Generated Event Listeners (3)
     }
     
     return Nil;
@@ -1304,7 +1310,8 @@
             break;
         case scrollChangedId:
             self.scrollChangedEventSink = nil;
-            break;    
+            break;
+        // Hygen Generated Event Listeners (4)
     }
     
     return Nil;
@@ -1460,6 +1467,8 @@
         self.scrollChangedEventSink([PdftronFlutterPlugin PT_idToJSONString:resultDict]);
     }
 }
+
+// Hygen Generated Event Listeners (5)
 
 #pragma mark - Functions
 
@@ -1630,7 +1639,9 @@
         [self getSavedSignatureFolder:result];
     } else if ([call.method isEqualToString:PTSmartZoomKey]) {
         [self smartZoom:result call:call];
-    }   else {
+    }
+    // Hygen Generated Method Call Cases
+    else {
         result(FlutterMethodNotImplemented);
     }
 }
@@ -3409,6 +3420,8 @@
         [documentController.pdfViewCtrl ShowRect:pageNumber rect:rect];
     }
 }
+
+// Hygen Generated Methods
 
 #pragma mark - Helper
 

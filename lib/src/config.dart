@@ -88,6 +88,8 @@ class Config {
   var _quickBookmarkCreation;
   var _fullScreenModeEnabled;
 
+  // Hygen Generated Configs (1)
+
   Config();
 
   /// A list of [Buttons] that will be disabled in the viewer.
@@ -549,6 +551,8 @@ class Config {
   /// Defaults to false. Android only.
   set fullScreenModeEnabled(bool value) => _fullScreenModeEnabled = value;
 
+  // Hygen Generated Configs (2)
+
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
         _disabledTools = json['disabledTools'],
@@ -636,6 +640,9 @@ class Config {
         _outlineListEditingEnabled = json['outlineListEditingEnabled'],
         _hideScrollbars = json['hideScrollbars'],
         _quickBookmarkCreation = json['quickBookmarkCreation'],
+
+        // Hygen Generated Configs (3)
+        
         _fullScreenModeEnabled = json['fullScreenModeEnabled'];
 
   Map<String, dynamic> toJson() => {
@@ -721,5 +728,7 @@ class Config {
         'hideScrollbars': _hideScrollbars,
         'quickBookmarkCreation': _quickBookmarkCreation,
         'fullScreenModeEnabled': _fullScreenModeEnabled,
+
+        // Hygen Generated Configs (4)
       };
 }

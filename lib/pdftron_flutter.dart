@@ -562,4 +562,6 @@ class PdftronFlutter {
   static Future<List<int>?> getVisiblePages() {
     return _channel.invokeMethod(Functions.getVisiblePages);
   }
+
+  // Hygen Generated Methods
 }
