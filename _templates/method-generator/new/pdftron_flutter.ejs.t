@@ -16,6 +16,6 @@ inject: true
      args = args.substring(0, args.length - 1) + '\n    '
    }
 -%>
-  static Future<<%= returnType %>> <%= name %>(<%- params %>) {
+  static Future<<%- returnType %>> <%= name %>(<%- params %>) {
     return _channel.invokeMethod(Functions.<%= name %><%- args %>);
   }

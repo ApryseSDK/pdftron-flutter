@@ -1,5 +1,5 @@
 ---
-to: lib/document_view.dart
+to: lib/src/document_view.dart
 after: Hygen Generated Methods
 inject: true
 ---
@@ -16,6 +16,6 @@ inject: true
      args = args.substring(0, args.length - 1) + '\n    '
    }
 -%>
-  Future<<%= returnType %>> <%= name %>(<%- params %>) {
+  Future<<%- returnType %>> <%= name %>(<%- params %>) {
     return _channel.invokeMethod(Functions.<%= name %><%- args %>);
   }
