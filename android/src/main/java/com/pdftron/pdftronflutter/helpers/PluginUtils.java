@@ -4032,7 +4032,7 @@ public class PluginUtils {
 
     public static boolean handleOpenDocError(ViewerComponent component) {
         if (component == null) {
-            return;
+            return false;
         }
         MethodChannel.Result result = component.getFlutterLoadResult();
         if (result != null) {
