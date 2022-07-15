@@ -1,5 +1,5 @@
 ---
-to: lib/config.dart
+to: lib/src/config.dart
 after: // Hygen Generated Configs \(2\)
 inject: true
 ---

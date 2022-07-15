@@ -1,5 +1,5 @@
 ---
-to: lib/events.dart
+to: lib/src/events.dart
 after: Hygen Generated Event Listeners \(4\)
 inject: true
 ---
