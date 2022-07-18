@@ -74,6 +74,7 @@ class Functions {
   static const getVisiblePages = "getVisiblePages";
 
   // Hygen Generated Methods
+  static const getAnnotationsOnPage = "getAnnotationsOnPage";
 }
 
 /// Defines the parameters of the functions.

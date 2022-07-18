@@ -267,6 +267,7 @@ static NSString * const PTStartSearchModeKey = @"startSearchMode";
 static NSString * const PTExitSearchModeKey = @"exitSearchMode";
 
 // Hygen Generated Methods
+static NSString * const PTGetAnnotationsOnPageKey = @"getAnnotationsOnPage";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";

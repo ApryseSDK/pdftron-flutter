@@ -497,7 +497,7 @@ class DocumentViewController {
   Future<void> exitSearchMode() {
     return _channel.invokeMethod(Functions.exitSearchMode);
   }
-  
+
   /// Sets the zoom scale in the current document viewer with a zoom center.
   ///
   /// zoom: the zoom ratio to be set
@@ -552,7 +552,7 @@ class DocumentViewController {
       Parameters.animated: animated,
     });
   }
-  
+
   /// Gets a list of absolute file paths to PDFs containing the saved signatures.
   ///
   /// Returns a promise
@@ -575,13 +575,26 @@ class DocumentViewController {
   Future<String?> getSavedSignatureJpgFolder() {
     return _channel.invokeMethod(Functions.getSavedSignatureJpgFolder);
   }
-  
+
   /// Gets the visible pages in the current viewer as an array.
   ///
   /// Return a Promise
   Future<List<int>?> getVisiblePages() {
     return _channel.invokeMethod(Functions.getVisiblePages);
   }
-  
+
   // Hygen Generated Methods
+  /// Gets the list of annotations on the given page.
+  Future<List<Annot>?> getAnnotationsOnPage(int pageNumber) {
+    return _channel.invokeMethod(Functions.getAnnotationsOnPage, <String, dynamic>{
+      Parameters.pageNumber: pageNumber
+    }).then((jsonArray) {
+      List<dynamic> annotations = jsonDecode(jsonArray);
+      List<Annot> annotList = new List<Annot>.empty(growable: true);
+      for (dynamic annotation in annotations) {
+        annotList.add(new Annot.fromJson(annotation));
+      }
+      return annotList;
+    });
+  }
 }
