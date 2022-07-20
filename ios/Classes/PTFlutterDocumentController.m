@@ -1093,6 +1093,9 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     
     // Quick Navigation Button
     self.navigationHistoryEnabled = self.showQuickNavigationButton;
+    
+    // Prevent sticky-note dialog from opening immediately
+    self.toolManager.textAnnotationOptions.opensPopupOnTap = NO;
 }
 
 - (void)excludeAnnotationListTypes:(NSArray<NSString*> *)excludedAnnotationListTypes
