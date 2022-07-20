@@ -267,6 +267,7 @@ static NSString * const PTStartSearchModeKey = @"startSearchMode";
 static NSString * const PTExitSearchModeKey = @"exitSearchMode";
 
 // Hygen Generated Methods
+static NSString * const PTCreateStickyNoteKey = @"createStickyNote";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
@@ -515,6 +516,8 @@ typedef enum
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 
 - (UIView *)view;
+
+- (void)createStickyNoteWithX:(double)x Y:(double)y error:(NSError *)error;
 
 + (PTDocumentController *)PT_getSelectedDocumentController:(PTTabbedDocumentViewController *)tabbedDocumentViewController;
 + (NSString *)PT_idToJSONString:(id)infoId;

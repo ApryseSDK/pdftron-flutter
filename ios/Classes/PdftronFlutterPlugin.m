@@ -1641,6 +1641,19 @@
         [self smartZoom:result call:call];
     }
     // Hygen Generated Method Call Cases
+    else if ([call.method isEqualToString:PTCreateStickyNoteKey]) {
+        NSError *error;
+        [self createStickyNoteWithX:[call.arguments[PTXKey] doubleValue]
+                                  Y:[call.arguments[PTYKey] doubleValue]
+                              error:error];
+        
+        if (error) {
+            NSLog(@"Error: Failed to create sticky note. %@", error.localizedDescription);
+            result([FlutterError errorWithCode:@"create_sticky_note" message:@"Failed to create sticky note" details:@"Failed to create sticky note."]);
+        } else {
+            result(nil);
+        }
+    }
     else {
         result(FlutterMethodNotImplemented);
     }
@@ -3422,6 +3435,26 @@
 }
 
 // Hygen Generated Methods
+
+- (void)createStickyNoteWithX:(double)x Y:(double)y error:(NSError *)error
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    PTPDFViewCtrl *pdfViewCtrl = [documentController pdfViewCtrl];
+    
+    [pdfViewCtrl DocLock:YES withBlock:^(PTPDFDoc * _Nullable doc) {
+        int pageNumber = [pdfViewCtrl GetPageNumberFromScreenPt:x y:y];
+        PTPDFPoint *pt = [pdfViewCtrl ConvScreenPtToPagePt:[[PTPDFPoint alloc] initWithPx:x py:y] page_num:pageNumber];
+
+        PTText *stickyNote = [PTText CreateTextWithPoint:[doc GetSDFDoc] pos:pt contents:@""];
+        [stickyNote SetAnchorPosition:[[PTPDFPoint alloc] initWithPx:0.5 py:0]];
+        [stickyNote SetTextIconType:e_ptComment];
+        [stickyNote SetColor:[[PTColorPt alloc] initWithX:0 y:1 z:0 w:1] numcomp:3];
+        [stickyNote RefreshAppearance];
+
+        [[doc GetPage:pageNumber] AnnotPushBack:stickyNote];
+        [pdfViewCtrl UpdateWithAnnot:stickyNote page_num:pageNumber];
+    } error:&error];
+}
 
 #pragma mark - Helper
 

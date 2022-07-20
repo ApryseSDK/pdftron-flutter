@@ -17,13 +17,16 @@ import androidx.fragment.app.FragmentActivity;
 import com.pdftron.common.PDFNetException;
 import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Annot;
+import com.pdftron.pdf.ColorPt;
 import com.pdftron.pdf.Field;
 import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.Page;
+import com.pdftron.pdf.Point;
 import com.pdftron.pdf.Rect;
 import com.pdftron.pdf.ViewChangeCollection;
 import com.pdftron.pdf.annots.Markup;
+import com.pdftron.pdf.annots.Text;
 import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
@@ -345,6 +348,7 @@ public class PluginUtils {
     public static final String FUNCTION_GET_VISIBLE_PAGES = "getVisiblePages";
 
     // Hygen Generated Method Constants
+    public static final String FUNCTION_CREATE_STICKY_NOTE = "createStickyNote";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2583,6 +2587,21 @@ public class PluginUtils {
                 break;
             }
             // Hygen Generated Method Cases
+            case FUNCTION_CREATE_STICKY_NOTE: {
+                checkFunctionPrecondition(component);
+                PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+                PDFDoc pdfDoc = component.getPdfDoc();
+                if (pdfViewCtrl == null || pdfDoc == null) {
+                    result.error("InvalidState", "PDFViewCtrl not found", null);
+                }
+
+                double x = call.argument(KEY_X);
+                double y = call.argument(KEY_Y);
+                createStickyNote(x, y, component);
+
+                result.success(null);
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -3975,6 +3994,37 @@ public class PluginUtils {
     }
 
     // Hygen Generated Methods
+    public static void createStickyNote(double x, double y, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        PDFDoc pdfDoc = component.getPdfDoc();
+
+        boolean shouldUnlock = false;
+        try {
+            pdfViewCtrl.docLock(true);
+            shouldUnlock = true;
+
+            int pageNumber = pdfViewCtrl.getPageNumberFromScreenPt(x, y);
+            double[] pts;
+            pts = pdfViewCtrl.convScreenPtToPagePt(x, y, pageNumber);
+            Point pt = new Point(pts[0], pts[1]);
+
+            Text stickyNote = Text.create(pdfDoc, pt);
+            stickyNote.setAnchorPosition(new Point(0.5, 0));
+            stickyNote.setIcon(Text.e_Comment);
+            stickyNote.setColor(new ColorPt(0, 1, 0));
+            stickyNote.refreshAppearance();
+
+            Page page = pdfDoc.getPage(pageNumber);
+            page.annotPushBack(stickyNote);
+            pdfViewCtrl.update(stickyNote, pageNumber);
+        } catch (PDFNetException e) {
+            e.printStackTrace();
+        } finally {
+            if (shouldUnlock) {
+                pdfViewCtrl.docUnlock();
+            }
+        }
+    }
 
     // Events
 

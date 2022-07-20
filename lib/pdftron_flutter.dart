@@ -477,7 +477,7 @@ class PdftronFlutter {
   static Future<void> exitSearchMode() {
     return _channel.invokeMethod(Functions.exitSearchMode);
   }
-  
+
   /// Sets the zoom scale in the current document viewer with a zoom center.
   ///
   /// zoom: the zoom ratio to be set
@@ -564,4 +564,11 @@ class PdftronFlutter {
   }
 
   // Hygen Generated Methods
+  /// (Demo method) Creates a sticky note at the given screen position.
+  static Future<void> createStickyNote(double x, double y) {
+    return _channel.invokeMethod(Functions.createStickyNote, <String, dynamic>{
+      'x': x,
+      'y': y,
+    });
+  }
 }

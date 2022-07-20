@@ -1,11 +1,14 @@
 package com.pdftron.pdftronflutter.nativeviews;
 
+import android.view.MotionEvent;
+
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.REFLOW_ORIENTATION_HORIZONTAL;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.REFLOW_ORIENTATION_VERTICAL;
 
 import androidx.annotation.NonNull;
 
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 
 import org.json.JSONException;
@@ -38,5 +41,11 @@ public class FlutterPdfViewCtrlTabFragment extends PdfViewCtrlTabFragment2 {
                 eventSink.success(jsonObject.toString());
             }
         }
+    }
+
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        PluginUtils.createStickyNote(e.getX(), e.getY(), mViewerComponent);
+        return true;
     }
 }

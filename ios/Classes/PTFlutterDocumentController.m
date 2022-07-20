@@ -954,6 +954,20 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     [super pdfViewCtrl:pdfViewCtrl downloadEventType:type pageNumber:pageNum message:message];
 }
 
+- (void)pdfViewCtrl:(PTPDFViewCtrl *)pdfViewCtrl pdfScrollViewTap:(nonnull UITapGestureRecognizer *)gestureRecognizer
+{
+    [super pdfViewCtrl:pdfViewCtrl pdfScrollViewTap:gestureRecognizer];
+    
+    NSError *error;
+    CGPoint pt = [gestureRecognizer locationInView:gestureRecognizer.view];
+    
+    [self.plugin createStickyNoteWithX:pt.x Y:pt.y error:error];
+    
+    if (error) {
+        NSLog(@"Error: Failed to create sticky note. %@", error.localizedDescription);
+    }
+}
+
 #pragma mark - <PTOutlineViewControllerDelegate>
 
 - (void)outlineViewControllerDidCancel:(PTOutlineViewController *)outlineViewController
