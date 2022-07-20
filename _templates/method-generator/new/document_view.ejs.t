@@ -13,7 +13,7 @@ inject: true
          argName = param.trim().split(' ')[1]
          args += '\n      Parameters.' + argName + ': ' + argName + ','
        })
-     args = args.substring(0, args.length - 1) + '\n    '
+     args = args.substring(0, args.length - 1) + '\n    }'
    }
 -%>
   Future<<%- returnType %>> <%= name %>(<%- params %>) {

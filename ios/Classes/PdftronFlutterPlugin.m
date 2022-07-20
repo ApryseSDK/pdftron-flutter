@@ -1641,6 +1641,9 @@
         [self smartZoom:result call:call];
     }
     // Hygen Generated Method Call Cases
+    else if ([call.method isEqualToString:PTGetAnnotationsOnPageKey]) {
+        [self getAnnotationsOnPage:result call:call];
+    }
     else {
         result(FlutterMethodNotImplemented);
     }
@@ -3422,6 +3425,28 @@
 }
 
 // Hygen Generated Methods
+- (void)getAnnotationsOnPage:(FlutterResult)result call:(FlutterMethodCall*)call
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    int pageNumber = [call.arguments[PTPageNumberArgumentKey] intValue];
+    
+    NSMutableArray *resultArray = [[NSMutableArray alloc] init];
+    NSArray<PTAnnot *> *annots = [PdftronFlutterPlugin getAnnotationsOnPage:pageNumber documentController:documentController];
+    
+    for (PTAnnot *annot in annots) {
+        NSString *uid = [annot GetUniqueIDAsString];
+        if (uid) {
+            NSDictionary *annotJson = @{
+                PTAnnotationIdKey: uid,
+                PTAnnotationPageNumberKey: [NSNumber numberWithInt:pageNumber],
+            };
+            [resultArray addObject:annotJson];
+        }
+    }
+
+    result([PdftronFlutterPlugin PT_idToJSONString:resultArray]);
+}
+
 
 #pragma mark - Helper
 

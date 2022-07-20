@@ -345,6 +345,7 @@ public class PluginUtils {
     public static final String FUNCTION_GET_VISIBLE_PAGES = "getVisiblePages";
 
     // Hygen Generated Method Constants
+    public static final String FUNCTION_GET_ANNOTATIONS_ON_PAGE = "getAnnotationsOnPage";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2583,6 +2584,11 @@ public class PluginUtils {
                 break;
             }
             // Hygen Generated Method Cases
+            case FUNCTION_GET_ANNOTATIONS_ON_PAGE: {
+                checkFunctionPrecondition(component);
+                getAnnotationsOnPage(call, result, component);
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -3975,6 +3981,39 @@ public class PluginUtils {
     }
 
     // Hygen Generated Methods
+    public static void getAnnotationsOnPage(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
+        int pageNumber = call.argument(KEY_PAGE_NUMBER);
+
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+
+        ArrayList<Annot> annotations = pdfViewCtrl.getAnnotationsOnPage(pageNumber);
+        JSONArray resultAnnotations = new JSONArray();
+
+        for (Annot annot : annotations) {
+            String id = null;
+            try {
+                id = annot.getUniqueID() != null ? annot.getUniqueID().getAsPDFText() : null;
+            } catch (PDFNetException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (id != null) {
+                    resultAnnotations.put(new JSONObject()
+                            .put(KEY_ANNOTATION_ID, id)
+                            .put(KEY_PAGE_NUMBER, pageNumber));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        result.success(resultAnnotations.toString());
+    }
 
     // Events
 
