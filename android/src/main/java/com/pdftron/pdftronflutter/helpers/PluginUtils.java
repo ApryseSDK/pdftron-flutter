@@ -4018,7 +4018,9 @@ public class PluginUtils {
     // Events
 
     public static void handleDocumentLoaded(final ViewerComponent component) {
-
+        if (component == null) {
+            return;
+        }
         // Set initial page number
         if (component.getInitialPageNumber() > 0 && component.getPdfViewCtrl() != null) {
             component.getPdfViewCtrl().setCurrentPage(component.getInitialPageNumber());
@@ -4068,6 +4070,9 @@ public class PluginUtils {
     }
 
     public static boolean handleOpenDocError(ViewerComponent component) {
+        if (component == null) {
+            return false;
+        }
         MethodChannel.Result result = component.getFlutterLoadResult();
         if (result != null) {
             result.success(false);
@@ -4114,6 +4119,9 @@ public class PluginUtils {
     }
 
     public static void handleLeadingNavButtonPressed(ViewerComponent component) {
+        if (component == null) {
+            return;
+        }
         EventChannel.EventSink leadingNavButtonPressedEventSink = component.getLeadingNavButtonPressedEventEmitter();
         if (leadingNavButtonPressedEventSink != null) {
             leadingNavButtonPressedEventSink.success(null);
@@ -4121,6 +4129,9 @@ public class PluginUtils {
     }
 
     public static void handleAnnotationCustomToolbarItemPressed(ViewerComponent component, MenuItem item) {
+        if (component == null) {
+            return;
+        }
         EventChannel.EventSink annotationCustomToolbarItemPressedEventSink = component.getAnnotationToolbarItemPressedEventEmitter();
         int itemId = item.getItemId();
         String itemKey = mToolIdMap.get(itemId);
@@ -4151,7 +4162,9 @@ public class PluginUtils {
     }
 
     public static void emitAnnotationChangedEvent(String action, Map<Annot, Integer> map, ViewerComponent component) {
-
+        if (component == null) {
+            return;
+        }
         EventChannel.EventSink eventSink = component.getAnnotationChangedEventEmitter();
         if (eventSink != null) {
             JSONObject resultObject = new JSONObject();
@@ -4182,7 +4195,7 @@ public class PluginUtils {
     }
 
     public static void emitExportAnnotationCommandEvent(String action, Map<Annot, Integer> map, ViewerComponent component) {
-        if (component.getToolManager() != null && component.getToolManager().getAnnotManager() != null) {
+        if (component == null || component.getToolManager() != null && component.getToolManager().getAnnotManager() != null) {
             return;
         } else {
             ArrayList<Annot> annots = new ArrayList<>(map.keySet());
@@ -4207,7 +4220,9 @@ public class PluginUtils {
     }
 
     public static void emitAnnotationsSelectedEvent(Map<Annot, Integer> map, ViewerComponent component) {
-
+        if (component == null) {
+            return;
+        }
         component.setSelectedAnnots(new HashMap<>(map));
 
         if (hasAnnotationsSelected(component)) {
