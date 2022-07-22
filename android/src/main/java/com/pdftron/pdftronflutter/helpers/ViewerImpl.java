@@ -1,16 +1,20 @@
 package com.pdftron.pdftronflutter.helpers;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.pdftron.common.PDFNetException;
+import com.pdftron.fdf.FDFDoc;
 import com.pdftron.pdf.Action;
 import com.pdftron.pdf.ActionParameter;
 import com.pdftron.pdf.Annot;
 import com.pdftron.pdf.Field;
+import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.annots.Widget;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
@@ -23,6 +27,7 @@ import com.pdftron.pdf.tools.ToolManager;
 import com.pdftron.pdf.utils.ActionUtils;
 import com.pdftron.pdf.utils.AnnotUtils;
 import com.pdftron.pdf.utils.ViewerUtils;
+import com.pdftron.pdftronflutter.R;
 import com.pdftron.sdf.Obj;
 
 import org.json.JSONArray;
@@ -38,6 +43,7 @@ import io.flutter.plugin.common.EventChannel;
 
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.BEHAVIOR_LINK_PRESS;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_ACTION;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_ANNOTATION_ID;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_ANNOTATION_LIST;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_ANNOTATION_MENU_ITEM;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_DATA;
@@ -314,13 +320,38 @@ public class ViewerImpl {
                     }
 
                     try {
-                        JSONObject annotationMenuObject = new JSONObject();
-                        annotationMenuObject.put(KEY_ANNOTATION_MENU_ITEM, menuStr);
-                        annotationMenuObject.put(KEY_ANNOTATION_LIST, getAnnotationsData(mViewerComponent));
+                        if(menuStr == "shareDecisions")
+                        {
+                            PDFViewCtrl pdfViewCtrl = mViewerComponent.getPdfViewCtrl();
+                            pdfViewCtrl.docLockRead();
+                            PDFDoc pdfDoc = pdfViewCtrl.getDoc();
+                            ArrayList<Annot> validAnnotationList = new ArrayList<>(1);
+                            JSONArray stickyNoteJsonObject =  getAnnotationsData(mViewerComponent);
+                            JSONObject currAnnot = stickyNoteJsonObject.getJSONObject(0);
+                            String currAnnotId = currAnnot.getString(KEY_ANNOTATION_ID);
 
-                        EventChannel.EventSink eventSink = mViewerComponent.getAnnotationMenuPressedEventEmitter();
-                        if (eventSink != null) {
-                            eventSink.success(annotationMenuObject.toString());
+                            int currAnnotPageNumber = currAnnot.getInt(KEY_PAGE_NUMBER);
+                            Annot validAnnotation =    ViewerUtils.getAnnotById(pdfViewCtrl, currAnnotId, currAnnotPageNumber);
+                            Log.i("shareDecisions", validAnnotation.toString());
+                            validAnnotationList.add(validAnnotation);
+                            FDFDoc fdfDoc = pdfDoc.fdfExtract(validAnnotationList);
+                            String finalShareContent = fdfDoc.saveAsXFDF();
+                            Log.i("shareDecisions_XFDF", finalShareContent);
+                            pdfViewCtrl.docUnlockRead();
+                            EventChannel.EventSink eventSink = mViewerComponent.getLeadingNavButtonPressedEventEmitter();
+                            if (eventSink != null) {
+                                eventSink.success(finalShareContent);
+                            }
+                        }
+                        else {
+                            JSONObject annotationMenuObject = new JSONObject();
+                            annotationMenuObject.put(KEY_ANNOTATION_MENU_ITEM, menuStr);
+                            annotationMenuObject.put(KEY_ANNOTATION_LIST, getAnnotationsData(mViewerComponent));
+
+                            EventChannel.EventSink eventSink = mViewerComponent.getAnnotationMenuPressedEventEmitter();
+                            if (eventSink != null) {
+                                eventSink.success(annotationMenuObject.toString());
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -350,6 +381,22 @@ public class ViewerImpl {
 
         @Override
         public boolean onShowQuickMenu(QuickMenu quickMenu, @Nullable Annot annot) {
+
+            try {
+                if (annot.getType() == Annot.e_Text) {
+                    QuickMenuItem item = new QuickMenuItem(quickMenu.getContext(), R.id.qm_sharedecisions, QuickMenuItem.FIRST_ROW_MENU);
+                    item.setTitle(R.string.qm_sharedecisions);
+                    item.setIcon(R.drawable.ic_share_black_24dp);
+                    item.setOrder(3);
+                    ArrayList<QuickMenuItem> items = new ArrayList<>(1);
+                    items.add(item);
+                    quickMenu.addMenuEntries(items);
+                }
+            } catch (PDFNetException e) {
+                e.printStackTrace();
+            }
+
+
             if (mViewerComponent.getHideAnnotationMenuTools() != null && annot != null && mViewerComponent.getPdfViewCtrl() != null) {
                 for (String tool : mViewerComponent.getHideAnnotationMenuTools()) {
                     int type = convStringToAnnotType(tool);

@@ -469,6 +469,7 @@ public class PluginUtils {
     public static final String MENU_ID_STRING_COPY = "copy";
     public static final String MENU_ID_STRING_DELETE = "delete";
     public static final String MENU_ID_STRING_FLATTEN = "flatten";
+    public static final String MENU_ID_STRING_SHAREDECISIONS = "shareDecisions";
     public static final String MENU_ID_STRING_TEXT = "text";
     public static final String MENU_ID_STRING_EDIT_INK = "editInk";
     public static final String MENU_ID_STRING_SEARCH = "search";
@@ -811,9 +812,9 @@ public class PluginUtils {
     }
 
     public static ConfigInfo handleOpenDocument(@NonNull ViewerConfig.Builder builder,
-            @NonNull ToolManagerBuilder toolManagerBuilder,
-            @NonNull PDFViewCtrlConfig pdfViewCtrlConfig, @NonNull String document, @NonNull Context context,
-            String configStr) {
+                                                @NonNull ToolManagerBuilder toolManagerBuilder,
+                                                @NonNull PDFViewCtrlConfig pdfViewCtrlConfig, @NonNull String document, @NonNull Context context,
+                                                String configStr) {
 
         builder
                 .maximumTabCount(Integer.MAX_VALUE)
@@ -1128,7 +1129,7 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_MAX_TAB_COUNT)) {
                     int maxTabCount = configJson.getInt(KEY_CONFIG_MAX_TAB_COUNT);
                     builder.maximumTabCount(maxTabCount);
-                } 
+                }
                 if (!configJson.isNull(KEY_CONFIG_OPEN_URL_PATH)) {
                     String openUrlPath = configJson.getString(KEY_CONFIG_OPEN_URL_PATH);
                     configInfo.setOpenUrlPath(openUrlPath);
@@ -1750,7 +1751,9 @@ public class PluginUtils {
             menuStr = MENU_ID_STRING_DELETE;
         } else if (id == R.id.qm_flatten) {
             menuStr = MENU_ID_STRING_FLATTEN;
-        } else if (id == R.id.qm_text) {
+        } else if (id == R.id.qm_sharedecisions) {
+            menuStr = MENU_ID_STRING_SHAREDECISIONS;
+        }else if (id == R.id.qm_text) {
             menuStr = MENU_ID_STRING_TEXT;
         } else if (id == R.id.qm_edit) {
             menuStr = MENU_ID_STRING_EDIT_INK;
@@ -3146,7 +3149,7 @@ public class PluginUtils {
         double zoom = pdfViewCtrl.getZoom();
         result.success(zoom);
     }
-    
+
     private static void getSavedSignatures(MethodChannel.Result result, @NonNull ViewerComponent component) {
         List<String> signatures = new ArrayList<String>();
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
@@ -3191,7 +3194,7 @@ public class PluginUtils {
     }
 
     private static void setFlagsForAnnotations(String annotationsWithFlags, MethodChannel.Result result,
-            ViewerComponent component) throws PDFNetException, JSONException {
+                                               ViewerComponent component) throws PDFNetException, JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         ToolManager toolManager = component.getToolManager();
