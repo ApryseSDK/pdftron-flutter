@@ -208,6 +208,7 @@ static NSString * const PTOpenDocumentKey = @"openDocument";
 static NSString * const PTImportAnnotationsKey = @"importAnnotations";
 static NSString * const PTExportAnnotationsKey = @"exportAnnotations";
 static NSString * const PTFlattenAnnotationsKey = @"flattenAnnotations";
+static NSString * const PTShareDecisionsAnnotationsKey = @"shareDecisionsAnnotations";
 static NSString * const PTDeleteAnnotationsKey = @"deleteAnnotations";
 static NSString * const PTSelectAnnotationKey = @"selectAnnotation";
 static NSString * const PTSetFlagsForAnnotationsKey = @"setFlagsForAnnotations";
@@ -308,6 +309,7 @@ static NSString * const PTDocumentLoadedEventKey = @"document_loaded_event";
 static NSString * const PTDocumentErrorEventKey = @"document_error_event";
 static NSString * const PTAnnotationChangedEventKey = @"annotation_changed_event";
 static NSString * const PTAnnotationsSelectedEventKey = @"annotations_selected_event";
+static NSString * const PTShareDecisionsEventKey = @"share_decisions_event";
 static NSString * const PTFormFieldValueChangedEventKey = @"form_field_value_changed_event";
 static NSString * const PTBehaviorActivatedEventKey = @"behavior_activated_event";
 static NSString * const PTLongPressMenuPressedEventKey = @"long_press_menu_pressed_event";
@@ -474,6 +476,7 @@ typedef enum
     documentErrorId,
     annotationChangedId,
     annotationsSelectedId,
+    shareDecisionsId,
     formFieldValueChangedId,
     behaviorActivatedId,
     longPressMenuPressedId,
@@ -500,12 +503,12 @@ typedef enum
 - (void)documentController:(PTDocumentController *)documentController documentError:(nullable NSError *)error;
 - (void)documentController:(PTDocumentController *)documentController annotationsChangedWithActionString:(NSString *)actionString;
 - (void)documentController:(PTDocumentController *)documentController annotationsSelected:(NSString *)annotations;
+- (void)documentController:(PTDocumentController *)documentController shareDecisions:(NSString *)xfdfCommand;
 - (void)documentController:(PTDocumentController *)documentController formFieldValueChanged:(NSString *)fieldString;
 - (void)documentController:(PTDocumentController *)docVC behaviorActivated:(NSString *)behaviorString;
 - (void)documentController:(PTDocumentController *)docVC leadingNavButtonClicked:(nullable NSString *)nav;
 - (void)documentController:(PTDocumentController *)docVC longPressMenuPressed:(NSString *)longPressMenuPressedString;
 - (void)documentController:(PTDocumentController *)docVC annotationMenuPressed:(NSString *)annotationMenuPressedString;
-- (void)documentController:(PTDocumentController *)docVC leadingNavButtonClicked:(nullable NSString *)nav;
 - (void)documentController:(PTDocumentController *)docVC pageChanged:(NSString *)pageNumbersString;
 - (void)documentController:(PTDocumentController *)docVC zoomChanged:(NSNumber *)zoom;
 - (void)documentController:(PTDocumentController *)docVC pageMoved:(NSString *)pageNumbersString;

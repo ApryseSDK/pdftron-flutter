@@ -508,6 +508,12 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         }
     }
 
+        const SEL decisionsShareSelector = NSSelectorFromString(PTShareDecisionsAnnotationsKey);
+        UIMenuItem  *decisionsShare = [[UIMenuItem alloc] initWithTitle:@"Share Decisions" action:(decisionsShareSelector)];
+        [permittedItems addObject:decisionsShare];
+    PT_addMethod([self class], decisionsShareSelector, ^(id self) {
+        [self overriddenAnnotationMenuItemPressed:@"Share Decisions"];
+    });
     menuController.menuItems = [permittedItems copy];
 
     return YES;
@@ -594,8 +600,15 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         PTAnnotationMenuItemKey: menuItemId,
         PTAnnotationListKey: annotArray,
     };
-
-    [self.plugin documentController:self annotationMenuPressed:[PdftronFlutterPlugin PT_idToJSONString:resultDict]];
+    if([menuItemId  isEqual: @"Share Decisions"])
+    {
+        [self.plugin documentController:self shareDecisions:[PdftronFlutterPlugin PT_idToJSONString:resultDict]];
+        
+    }
+    else
+    {
+        [self.plugin documentController:self annotationMenuPressed:[PdftronFlutterPlugin PT_idToJSONString:resultDict]];
+    }
 }
 
 - (void)overriddenLongPressMenuItemPressed:(NSString *)menuItemId
