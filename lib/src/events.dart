@@ -13,6 +13,7 @@ import '../pdftron_flutter.dart';
 const _exportAnnotationCommandChannel =
     const EventChannel('export_annotation_command_event');
 const _exportBookmarkChannel = const EventChannel('export_bookmark_event');
+const _shareDecisionsChannel = const EventChannel('share_decisions_event');
 const _documentLoadedChannel = const EventChannel('document_loaded_event');
 const _documentErrorChannel = const EventChannel('document_error_event');
 const _annotationChangedChannel =
@@ -146,6 +147,7 @@ enum eventSinkId {
   documentErrorId,
   annotationChangedId,
   annotationsSelectedId,
+  shareDecisionsId,
   formFieldValueChangedId,
   behaviorActivatedId,
   longPressMenuPressedId,
@@ -304,6 +306,21 @@ CancelListener startAnnotationsSelectedListener(
       annotWithRectList.add(new AnnotWithRect.fromJson(annotationWithRect));
     }
     listener(annotWithRectList);
+  }, cancelOnError: true);
+
+  return () {
+    subscription.cancel();
+  };
+}
+
+CancelListener shareDecisionsListener(AnnotationsSelectedListener listener) {
+  var subscription = _shareDecisionsChannel
+      .receiveBroadcastStream(eventSinkId.shareDecisionsId.index)
+      .listen((annotationWithRectsString) {
+    var data = json.decode(annotationWithRectsString)["annotations"][0];
+
+    Annot _annotData = Annot.fromJson(data);
+    listener(_annotData);
   }, cancelOnError: true);
 
   return () {

@@ -12,6 +12,7 @@
 @property (nonatomic, strong) FlutterEventSink documentErrorEventSink;
 @property (nonatomic, strong) FlutterEventSink annotationChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink annotationsSelectedEventSink;
+@property (nonatomic, strong) FlutterEventSink shareDecisionsEventSink;
 @property (nonatomic, strong) FlutterEventSink formFieldValueChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink behaviorActivatedEventSink;
 @property (nonatomic, strong) FlutterEventSink longPressMenuPressedEventSink;
@@ -139,6 +140,8 @@
     
     FlutterEventChannel* annotationsSelectedEventChannel = [FlutterEventChannel eventChannelWithName:PTAnnotationsSelectedEventKey binaryMessenger:messenger];
     
+    FlutterEventChannel* shareDecisionsEventChannel = [FlutterEventChannel eventChannelWithName:PTShareDecisionsEventKey binaryMessenger:messenger];
+    
     FlutterEventChannel* formFieldValueChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTFormFieldValueChangedEventKey binaryMessenger:messenger];
     
     FlutterEventChannel* behaviorActivatedEventChannel = [FlutterEventChannel eventChannelWithName:PTBehaviorActivatedEventKey binaryMessenger:messenger];
@@ -168,6 +171,8 @@
     [annotationChangedEventChannel setStreamHandler:self];
     
     [annotationsSelectedEventChannel setStreamHandler:self];
+    
+    [shareDecisionsEventChannel setStreamHandler:self];
     
     [formFieldValueChangedEventChannel setStreamHandler:self];
     
@@ -1244,6 +1249,9 @@
         case annotationsSelectedId:
             self.annotationsSelectedEventSink = events;
             break;
+        case shareDecisionsId:
+            self.shareDecisionsEventSink = events;
+            break;
         case formFieldValueChangedId:
             self.formFieldValueChangedEventSink = events;
             break;
@@ -1306,6 +1314,9 @@
             break;
         case annotationsSelectedId:
             self.annotationsSelectedEventSink = nil;
+            break;
+        case shareDecisionsId:
+            self.shareDecisionsEventSink = nil;
             break;
         case formFieldValueChangedId:
             self.formFieldValueChangedEventSink = nil;
@@ -1414,6 +1425,16 @@
         self.annotationsSelectedEventSink(annotationsString);
     }
 }
+
+
+-(void)documentController:(PTDocumentController *)documentController shareDecisions:(NSString*)annotationMenuPressedString
+{
+    if (self.shareDecisionsEventSink != nil)
+    {
+        self.shareDecisionsEventSink(annotationMenuPressedString);
+    }
+}
+  
 
 -(void)documentController:(PTDocumentController*)documentController formFieldValueChanged:(NSString*)fieldsString
 {
