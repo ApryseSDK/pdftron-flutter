@@ -383,6 +383,13 @@
                     if (!error && annotationMenuItems) {
                         [documentController setAnnotationMenuItems:annotationMenuItems];
                     }
+                    
+                    if (@available(iOS 13.0, *)) {
+                        PTSelectableBarButtonItem* selectableItem = [[PTSelectableBarButtonItem alloc] initWithImage:[UIImage systemImageNamed:@"square.and.pencil"] style:UIBarButtonItemStylePlain target:self action:@selector(customToolAction:)];
+                        selectableItem.title = @"Custom Tool";
+                        
+                        documentController.toolGroupManager.annotateItemGroup.barButtonItems = [documentController.toolGroupManager.annotateItemGroup.barButtonItems arrayByAddingObject:selectableItem];
+                    }
                 }
                 else if ([key isEqualToString:PTOverrideAnnotationMenuBehavior]) {
                     
@@ -838,6 +845,11 @@
     }
     
     [documentController applyViewerSettings];
+}
+
+-(void)customToolAction:(PTSelectableBarButtonItem*)button
+{
+    button.selected = !button.selected;
 }
 
 + (id)getConfigValue:(NSDictionary*)configDict configKey:(NSString*)configKey class:(Class)class error:(NSError**)error
