@@ -516,13 +516,22 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
             menuItem.action = selector;
         }
     }
-
+    // Condition to show
+    if(annotType == PTExtendedAnnotTypeText)
+    {
         const SEL decisionsShareSelector = NSSelectorFromString(PTShareDecisionsAnnotationsKey);
         UIMenuItem  *decisionsShare = [[UIMenuItem alloc] initWithTitle:@"Share Decisions" action:(decisionsShareSelector)];
-        [permittedItems addObject:decisionsShare];
-    PT_addMethod([self class], decisionsShareSelector, ^(id self) {
-        [self overriddenAnnotationMenuItemPressed:@"Share Decisions"];
-    });
+        
+        if([menuController.menuItems containsObject:decisionsShare ])
+        {}else
+        {
+            [permittedItems addObject:decisionsShare];
+            PT_addMethod([self class], decisionsShareSelector, ^(id self) {
+                [self overriddenAnnotationMenuItemPressed:@"Share Decisions"];
+            });
+        }
+    }
+
     menuController.menuItems = [permittedItems copy];
 
     return YES;
