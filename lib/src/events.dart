@@ -38,104 +38,33 @@ const _annotationToolbarItemPressedChannel =
 const _scrollChangedChannel = const EventChannel('scroll_changed_event');
 
 // Hygen Generated Event Listeners (1)
-const _appBarButtonPressedChannel = const EventChannel('app_bar_button_pressed_event');
 
-/// A listener used as the argument for [startExportAnnotationCommandListener].
-///
-/// Gets the [xfdfCommand], the XFDF string for local annotation changes that
-/// has been committed to the document.
 typedef void ExportAnnotationCommandListener(dynamic xfdfCommand);
-
-/// A listener used as the argument for [startExportBookmarkListener].
-///
-/// Gets the [bookmarkJson], the JSON string for user bookmark changes that has
-/// been committed to the document.
 typedef void ExportBookmarkListener(dynamic bookmarkJson);
-
-/// A listener used as the argument for [startDocumentLoadedListener].
-///
-/// Gets the [filePath] to where the document is saved.
 typedef void DocumentLoadedListener(dynamic filePath);
-
-/// A listener used as the argument for [startDocumentErrorListener].
 typedef void DocumentErrorListener();
-
-/// A listener used as the argument for [startAnnotationChangedListener].
-///
-/// Gets the string for the [action] that has occurred (add, delete, or modify)
-/// and the changed [annotations] as a list of [Annot] objects.
 typedef void AnnotationChangedListener(dynamic action, dynamic annotations);
-
-/// A listener used as the argument for [startAnnotationsSelectedListener].
-///
-/// Gets the selected [annotationWithRects] as a list of [AnnotWithRect] objects.
 typedef void AnnotationsSelectedListener(dynamic annotationWithRects);
-
-/// A listener used as the argument for [startFormFieldValueChangedListener].
-///
-/// Gets the changed [fields] as a list of [Field] objects.
+typedef void shareDecisionsEventListener(dynamic xfdf);
 typedef void FormFieldValueChangedListener(dynamic fields);
-
-/// A listener used as the argument for [startBehaviorActivatedListener].
-///
-/// Gets the [action] that has been activated as one of the [Behaviors] constants,
-/// and the [data] as a map containing detailed information regarding the behavior.
 typedef void BehaviorActivatedListener(dynamic action, dynamic data);
-
-/// A listener used as the argument for [startLongPressMenuPressedListener].
-///
-/// Gets the pressed [longPressMenuItem] as one of the [LongPressMenuItems]
-/// constants, and the selected [longPressText] string if pressed on text; empty
-/// string otherwise.
 typedef void LongPressMenuPressedChannelListener(
     dynamic longPressMenuItem, dynamic longPressText);
-
-/// A listener used as the argument for [startAnnotationMenuPressedListener].
-///
-/// Gets the pressed [annotationMenuItem] as one of the [AnnotationMenuItems]
-/// constants, and the [annotations] associated with the menu as a list of
-/// [Annot] objects.
 typedef void AnnotationMenuPressedChannelListener(
     dynamic annotationMenuItem, dynamic annotations);
-
-/// A listener used as the argument for [startLeadingNavButtonPressedListener].
 typedef void LeadingNavbuttonPressedlistener();
-
-/// A listener used as the argument for [startPageChangedListener].
-///
-/// Gets the [previousPageNumber] before it was changed and the current
-/// [pageNumber].
 typedef void PageChangedListener(
     dynamic previousPageNumber, dynamic pageNumber);
-
-/// A listener used as the argument for [startZoomChangedListener].
-///
-/// Gets the [zoom] ratio in the current document viewer.
 typedef void ZoomChangedListener(dynamic zoom);
-
-/// A listener used as the argument for [startPageMovedListener].
-///
-/// Gets the [previousPageNumber] before it was moved and the current
-/// [pageNumber].
 typedef void PageMovedListener(dynamic previousPageNumber, dynamic pageNumber);
 
 /// A listener used as the argument for [startAnnotationToolbarItemPressedListener].
 ///
 /// Gets the unique [id] of the custom toolbar item that was pressed.
 typedef void AnnotationToolbarItemPressedListener(dynamic id);
-
-/// A listener used as the argument for [startScrollChangedListener].
-///
-/// Gets the current [horizontal] scroll position and the [vertical] scroll
-/// position.
 typedef void ScrollChangedListener(dynamic horizontal, dynamic vertical);
 
 // Hygen Generated Event Listeners (2)
-
-/// A listener used as the argument for [startAppBarButtonPressedListener].
-///
-/// Gets the unique [id] of the custom app bar button item that was pressed.
-typedef void AppBarButtonPressedListener(dynamic id);
 
 typedef void CancelListener();
 
@@ -156,24 +85,15 @@ enum eventSinkId {
   pageChangedId,
   zoomChangedId,
   pageMovedId,
-  scrollChangedId,
   annotationToolbarItemPressedId,
+  scrollChangedId,
 
   // Hygen Generated Event Listeners (3)
-  appBarButtonPressedId,
 }
 
-/// Listens for when local annotation changes have been committed to the document.
-///
-/// ```dart
-/// var annotCancel = startExportAnnotationCommandListener((xfdfCommand) {
-///   print('flutter xfdfCommand: $xfdfCommand');
-/// });
-/// ```
+/// Listens for when a local annotation changes have been committed to the document.
 ///
 /// Returns a function that can cancel the listener.
-/// To also raise this event upon undo/redo, [Config.annotationManagerEnabled]
-/// must be true, and [Config.userId] must not be null.
 CancelListener startExportAnnotationCommandListener(
     ExportAnnotationCommandListener listener) {
   var subscription = _exportAnnotationCommandChannel
@@ -185,13 +105,7 @@ CancelListener startExportAnnotationCommandListener(
   };
 }
 
-/// Listens for when user bookmark changes are committed to the document.
-///
-/// ```dart
-/// var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
-///   print('flutter bookmark: $bookmarkJson');
-/// });
-/// ```
+/// Listens for when user bookmarks are committed to the document.
 ///
 /// Returns a function that can cancel the listener.
 CancelListener startExportBookmarkListener(ExportBookmarkListener listener) {
@@ -204,14 +118,7 @@ CancelListener startExportBookmarkListener(ExportBookmarkListener listener) {
   };
 }
 
-/// Listens for when [PdftronFlutter.openDocument] or
-/// [DocumentViewController.openDocument] has finished loading the file.
-///
-/// ```dart
-/// var documentLoadedCancel = startDocumentLoadedListener((path) {
-///   print('flutter document loaded: $path');
-/// });
-/// ```
+/// Listens for when [PdftronFlutter.openDocument(document)] has loaded the file.
 ///
 /// Returns a function that can cancel the listener.
 CancelListener startDocumentLoadedListener(DocumentLoadedListener listener) {
@@ -224,14 +131,7 @@ CancelListener startDocumentLoadedListener(DocumentLoadedListener listener) {
   };
 }
 
-/// Listens for errors that could occur while [PdftronFlutter.openDocument] or
-/// [DocumentViewController.openDocument] is loading the file.
-///
-/// ```dart
-/// var documentErrorCancel = startDocumentErrorListener(() {
-///   print('flutter document loaded unsuccessfully');
-/// });
-/// ```
+/// Listens for errors that could occur when [PdftronFlutter.openDocument(document)] is called.
 ///
 /// Returns a function that can cancel the listener.
 CancelListener startDocumentErrorListener(DocumentErrorListener listener) {
@@ -246,17 +146,7 @@ CancelListener startDocumentErrorListener(DocumentErrorListener listener) {
   };
 }
 
-/// Listens for when there has been a change to annotations in the document.
-///
-/// ```dart
-/// var annotChangedCancel = startAnnotationChangedListener((action, annotations) {
-///   print('flutter annotation action: $action');
-///   for (Annot annot in annotations) {
-///     print('annotation has id: ${annot.id}');
-///     print('annotation is in page: ${annot.pageNumber}');
-///   }
-/// });
-/// ```
+/// Listens for annotation changes and gets the associated action.
 ///
 /// Returns a function that can cancel the listener.
 CancelListener startAnnotationChangedListener(
@@ -281,17 +171,7 @@ CancelListener startAnnotationChangedListener(
   };
 }
 
-/// Listens for when annotations are selected.
-///
-/// ```dart
-/// var annotsSelectedCancel = startAnnotationsSelectedListener((annotationWithRects) {
-///   for (AnnotWithRect annotWithRect in annotationWithRects) {
-///     print('annotation has id: ${annotWithRect.id}');
-///     print('annotation is in page: ${annotWithRect.pageNumber}');
-///     print('annotation has width: ${annotWithRect.rect.width}');
-///   }
-/// });
-/// ```
+/// Listens for when an annotation is selected.
 ///
 /// Returns a function that can cancel the listener.
 CancelListener startAnnotationsSelectedListener(
@@ -313,14 +193,14 @@ CancelListener startAnnotationsSelectedListener(
   };
 }
 
-CancelListener shareDecisionsListener(AnnotationsSelectedListener listener) {
+CancelListener shareDecisionsListener(shareDecisionsEventListener listener) {
   var subscription = _shareDecisionsChannel
       .receiveBroadcastStream(eventSinkId.shareDecisionsId.index)
       .listen((annotationWithRectsString) {
-    var data = json.decode(annotationWithRectsString)["annotations"][0];
 
-    Annot _annotData = Annot.fromJson(data);
-    listener(_annotData);
+   
+    listener(annotationWithRectsString);
+    
   }, cancelOnError: true);
 
   return () {
@@ -329,15 +209,6 @@ CancelListener shareDecisionsListener(AnnotationsSelectedListener listener) {
 }
 
 /// Listens for changes to the value of form fields.
-///
-/// ```dart
-/// var fieldChangedCancel = startFormFieldValueChangedListener((fields) {
-///   for (Field field in fields) {
-///     print('Field has name ${field.fieldName}');
-///     print('Field has value ${field.fieldValue}');
-///   }
-/// });
-/// ```
 ///
 /// Returns a function that can cancel the listener.
 CancelListener startFormFieldValueChangedListener(
@@ -358,15 +229,7 @@ CancelListener startFormFieldValueChangedListener(
   };
 }
 
-/// Listens for the start of behaviors that has been passed into
-/// [Config.overrideBehavior].
-///
-/// ```dart
-/// var behaviorActivatedCancel = startBehaviorActivatedListener((action, data) {
-///   print('action is ' + action);
-///   print('url is ' + data['url']);
-/// });
-/// ```
+/// Listens for start of certain behaviours, if [Config.overrideBehavior] is not null.
 ///
 /// Returns a function that can cancel the listener.
 CancelListener startBehaviorActivatedListener(
@@ -385,17 +248,8 @@ CancelListener startBehaviorActivatedListener(
   };
 }
 
-/// Listens for presses on long press menu items that has been passed into
-/// [Config.overrideLongPressMenuBehavior].
-///
-/// ```dart
-/// var longPressMenuPressedCancel = startLongPressMenuPressedListener((longPressMenuItem, longPressText) {
-///   print('Long press menu item ' + longPressMenuItem + ' has been pressed');
-///   if (longPressText.length > 0) {
-///     print('The selected text is: ' + longPressText);
-///   }
-/// });
-/// ```
+/// Listens for presses on the long press menu,
+/// if [Config.overrideLongPressMenuBehavior] is not null.
 ///
 /// Returns a function that can cancel the listener.
 CancelListener startLongPressMenuPressedListener(
@@ -414,18 +268,8 @@ CancelListener startLongPressMenuPressedListener(
   };
 }
 
-/// Listens for presses on annotation menu items that has been passed into
-/// [Config.overrideAnnotationMenuBehavior].
-///
-/// ```dart
-/// var annotationMenuPressedCancel = startAnnotationMenuPressedListener((annotationMenuItem, annotations) {
-///   print('Annotation menu item ' + annotationMenuItem + ' has been pressed');
-///   for (Annot annotation in annotations) {
-///     print('Annotation has id: ${annotation.id}');
-///     print('Annotation is in page: ${annotation.pageNumber}');
-///   }
-/// });
-/// ```
+/// Listens for presses on the annotation menu,
+/// if [Config.overrideAnnotationMenuBehavior] is not null.
 ///
 /// Returns a function that can cancel the listener.
 CancelListener startAnnotationMenuPressedListener(
@@ -451,12 +295,6 @@ CancelListener startAnnotationMenuPressedListener(
 
 /// Listens for when the leading navigation button is pressed.
 ///
-/// ```dart
-/// var navPressedCancel = startLeadingNavButtonPressedListener(() {
-///   print('flutter nav button pressed');
-/// });
-/// ```
-///
 /// Returns a function that can cancel the listener.
 CancelListener startLeadingNavButtonPressedListener(
     LeadingNavbuttonPressedlistener listener) {
@@ -471,13 +309,7 @@ CancelListener startLeadingNavButtonPressedListener(
   };
 }
 
-/// Listens for when the current page is changed in the viewer.
-///
-/// ```dart
-/// var pageChangedCancel = startPageChangedListener((previousPageNumber, pageNumber) {
-///   print('flutter page changed. from $previousPageNumber to $pageNumber');
-/// });
-/// ```
+/// Listens for when a page is changed in the viewer.
 ///
 /// Returns a function that can cancel the listener.
 CancelListener startPageChangedListener(PageChangedListener listener) {
@@ -496,13 +328,7 @@ CancelListener startPageChangedListener(PageChangedListener listener) {
   };
 }
 
-/// Listens for when the current document's zoom ratio is changed.
-///
-/// ```dart
-/// var zoomChangedCancel = startZoomChangedListener((zoom) {
-///   print('flutter zoom changed. Current zoom is: $zoom');
-/// });
-/// ```
+/// Listens for if the document's zoom ratio is changed.
 ///
 /// Returns a function that can cancel the listener.
 CancelListener startZoomChangedListener(ZoomChangedListener listener) {
@@ -515,15 +341,6 @@ CancelListener startZoomChangedListener(ZoomChangedListener listener) {
   };
 }
 
-/// Listens for when a page has been moved in the document.
-///
-/// ```dart
-/// var pageMovedCancel = startPageMovedListener((previousPageNumber, pageNumber) {
-///   print('flutter page moved from $previousPageNumber to $pageNumber');
-/// });
-/// ```
-///
-/// Returns a function that can cancel the listener.
 CancelListener startPageMovedListener(PageMovedListener listener) {
   var subscription = _pageMovedChannel
       .receiveBroadcastStream(eventSinkId.pageMovedId.index)
@@ -550,7 +367,7 @@ CancelListener startPageMovedListener(PageMovedListener listener) {
 ///
 /// Returns a function that can cancel the listener.
 /// Custom toolbar items can be added using the [Config.annotationToolbars]
-/// config. 
+/// config. Android only.
 CancelListener startAnnotationToolbarItemPressedListener(
     AnnotationToolbarItemPressedListener listener) {
   var subscription = _annotationToolbarItemPressedChannel
@@ -562,13 +379,7 @@ CancelListener startAnnotationToolbarItemPressedListener(
   };
 }
 
-/// Listens for when the document's scroll position is changed.
-///
-/// ```dart
-/// var scrollChangedCancel = startScrollChangedListener((horizontal, vertical) {
-///   print('flutter scroll position: $horizontal, $vertical');
-/// });
-/// ```
+/// Listens for if the document's scroll position is changed
 ///
 /// Returns a function that can cancel the listener.
 CancelListener startScrollChangedListener(ScrollChangedListener listener) {
@@ -587,25 +398,3 @@ CancelListener startScrollChangedListener(ScrollChangedListener listener) {
 }
 
 // Hygen Generated Event Listeners (4)
-
-/// Listens for when a custom app bar item has been pressed.
-///
-/// ```dart
-/// var itemPressedCancel = startAppBarButtonPressedListener((id) {
-///   print('flutter app bar item $id pressed');
-/// });
-/// ```
-///
-/// Returns a function that can cancel the listener.
-/// Custom toolbar items can be added using the [Config.topAppNavBarRightBar]
-/// config. 
-CancelListener startAppBarButtonPressedListener(AppBarButtonPressedListener listener) {
-  var subscription = _appBarButtonPressedChannel
-      .receiveBroadcastStream(eventSinkId.appBarButtonPressedId.index)
-      .listen(listener, cancelOnError: true);
-
-  return () {
-    subscription.cancel();
-  };
-}
-

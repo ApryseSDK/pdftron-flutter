@@ -8,7 +8,6 @@ import com.pdftron.pdf.PDFDoc;
 import com.pdftron.pdf.PDFViewCtrl;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
-import com.pdftron.pdf.tools.AnnotManager;
 import com.pdftron.pdf.tools.ToolManager;
 
 import java.io.File;
@@ -75,6 +74,8 @@ public interface ViewerComponent {
     EventChannel.EventSink getAnnotationMenuPressedEventEmitter();
 
     EventChannel.EventSink getLeadingNavButtonPressedEventEmitter();
+
+    EventChannel.EventSink getShareDecisionsEventEmitter();
 
     EventChannel.EventSink getPageChangedEventEmitter();
 

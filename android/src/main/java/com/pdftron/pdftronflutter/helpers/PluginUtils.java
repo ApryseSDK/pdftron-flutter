@@ -275,6 +275,7 @@ public class PluginUtils {
     public static final String EVENT_LONG_PRESS_MENU_PRESSED = "long_press_menu_pressed_event";
     public static final String EVENT_ANNOTATION_MENU_PRESSED = "annotation_menu_pressed_event";
     public static final String EVENT_LEADING_NAV_BUTTON_PRESSED = "leading_nav_button_pressed_event";
+    public static final String EVENT_SHARE_DECISIONS_EVENT = "share_decisions_event";
     public static final String EVENT_PAGE_CHANGED = "page_changed_event";
     public static final String EVENT_ZOOM_CHANGED = "zoom_changed_event";
     public static final String EVENT_PAGE_MOVED = "page_moved_event";
