@@ -520,14 +520,14 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     if(annotType == PTExtendedAnnotTypeText)
     {
         const SEL decisionsShareSelector = NSSelectorFromString(PTShareDecisionsAnnotationsKey);
-        UIMenuItem  *decisionsShare = [[UIMenuItem alloc] initWithTitle:@"Share Decisions" action:(decisionsShareSelector)];
+        UIMenuItem  *decisionsShare = [[UIMenuItem alloc] initWithTitle:@"Share" action:(decisionsShareSelector)];
         
         if([menuController.menuItems containsObject:decisionsShare ])
         {}else
         {
             [permittedItems addObject:decisionsShare];
             PT_addMethod([self class], decisionsShareSelector, ^(id self) {
-                [self overriddenAnnotationMenuItemPressed:@"Share Decisions"];
+                [self overriddenAnnotationMenuItemPressed:@"ShareDecisions"];
             });
         }
     }
@@ -618,7 +618,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         PTAnnotationMenuItemKey: menuItemId,
         PTAnnotationListKey: annotArray,
     };
-    if([menuItemId  isEqual: @"Share Decisions"])
+    if([menuItemId  isEqual: @"ShareDecisions"])
     {
         [self.plugin documentController:self shareDecisions:[PdftronFlutterPlugin PT_idToJSONString:resultDict]];
         
