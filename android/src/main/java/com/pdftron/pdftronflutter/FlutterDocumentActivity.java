@@ -79,6 +79,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     private static AtomicReference<EventSink> sLongPressMenuPressedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sAnnotationMenuPressedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sLeadingNavButtonPressedEventEmitter = new AtomicReference<>();
+    private static AtomicReference<EventSink> sShareDecisionsEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sPageChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sZoomChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sPageMovedEventEmitter = new AtomicReference<>();
@@ -238,6 +239,10 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sLeadingNavButtonPressedEventEmitter.set(emitter);
     }
 
+    public static void setShareDecisionsEventEmitterEventEmitter(EventSink emitter) {
+        sShareDecisionsEventEmitter.set(emitter);
+    }
+
     public static void setPageChangedEventEmitter(EventSink emitter) {
         sPageChangedEventEmitter.set(emitter);
     }
@@ -319,6 +324,10 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     }
 
     public EventSink getLeadingNavButtonPressedEventEmitter() {
+        return sLeadingNavButtonPressedEventEmitter.get();
+    }
+
+    public EventSink getShareDecisionsEventEmitter() {
         return sLeadingNavButtonPressedEventEmitter.get();
     }
 
@@ -410,6 +419,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sLongPressMenuPressedEventEmitter.set(null);
         sAnnotationMenuPressedEventEmitter.set(null);
         sLeadingNavButtonPressedEventEmitter.set(null);
+        sShareDecisionsEventEmitter.set(null);
         sPageChangedEventEmitter.set(null);
         sZoomChangedEventEmitter.set(null);
         sPageMovedEventEmitter.set(null);

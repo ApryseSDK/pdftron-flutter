@@ -81,6 +81,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private EventChannel.EventSink sLongPressMenuPressedEventEmitter;
     private EventChannel.EventSink sAnnotationMenuPressedEventEmitter;
     private EventChannel.EventSink sLeadingNavButtonPressedEventEmitter;
+    private EventChannel.EventSink sShareDecisionsEventEmitter;
     private EventChannel.EventSink sPageChangedEventEmitter;
     private EventChannel.EventSink sZoomChangedEventEmitter;
     private EventChannel.EventSink sPageMovedEventEmitter;
@@ -380,6 +381,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         sLeadingNavButtonPressedEventEmitter = emitter;
     }
 
+    public void setShareDecisionsEventEmitter(EventChannel.EventSink emitter) {
+        sShareDecisionsEventEmitter = emitter;
+    }
+
     public void setPageChangedEventEmitter(EventChannel.EventSink emitter) {
         sPageChangedEventEmitter = emitter;
     }
@@ -462,6 +467,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
     public EventChannel.EventSink getLeadingNavButtonPressedEventEmitter() {
         return sLeadingNavButtonPressedEventEmitter;
+    }
+
+    public EventChannel.EventSink getShareDecisionsEventEmitter() {
+        return sShareDecisionsEventEmitter;
     }
 
     @Override

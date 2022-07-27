@@ -322,26 +322,34 @@ public class ViewerImpl {
                     try {
                         if(menuStr == "shareDecisions")
                         {
-                            PDFViewCtrl pdfViewCtrl = mViewerComponent.getPdfViewCtrl();
-                            pdfViewCtrl.docLockRead();
-                            PDFDoc pdfDoc = pdfViewCtrl.getDoc();
-                            ArrayList<Annot> validAnnotationList = new ArrayList<>(1);
-                            JSONArray stickyNoteJsonObject =  getAnnotationsData(mViewerComponent);
-                            JSONObject currAnnot = stickyNoteJsonObject.getJSONObject(0);
-                            String currAnnotId = currAnnot.getString(KEY_ANNOTATION_ID);
+                            JSONObject annotationMenuObject = new JSONObject();
+                            annotationMenuObject.put(KEY_ANNOTATION_MENU_ITEM, menuStr);
+                            annotationMenuObject.put(KEY_ANNOTATION_LIST, getAnnotationsData(mViewerComponent));
 
-                            int currAnnotPageNumber = currAnnot.getInt(KEY_PAGE_NUMBER);
-                            Annot validAnnotation =    ViewerUtils.getAnnotById(pdfViewCtrl, currAnnotId, currAnnotPageNumber);
-                            Log.i("shareDecisions", validAnnotation.toString());
-                            validAnnotationList.add(validAnnotation);
-                            FDFDoc fdfDoc = pdfDoc.fdfExtract(validAnnotationList);
-                            String finalShareContent = fdfDoc.saveAsXFDF();
-                            Log.i("shareDecisions_XFDF", finalShareContent);
-                            pdfViewCtrl.docUnlockRead();
-                            EventChannel.EventSink eventSink = mViewerComponent.getLeadingNavButtonPressedEventEmitter();
+                            EventChannel.EventSink eventSink = mViewerComponent.getShareDecisionsEventEmitter();
                             if (eventSink != null) {
-                                eventSink.success(finalShareContent);
+                                eventSink.success(annotationMenuObject.toString());
                             }
+//                            PDFViewCtrl pdfViewCtrl = mViewerComponent.getPdfViewCtrl();
+//                            pdfViewCtrl.docLockRead();
+//                            PDFDoc pdfDoc = pdfViewCtrl.getDoc();
+//                            ArrayList<Annot> validAnnotationList = new ArrayList<>(1);
+//                            JSONArray stickyNoteJsonObject =  getAnnotationsData(mViewerComponent);
+//                            JSONObject currAnnot = stickyNoteJsonObject.getJSONObject(0);
+//                            String currAnnotId = currAnnot.getString(KEY_ANNOTATION_ID);
+//
+//                            int currAnnotPageNumber = currAnnot.getInt(KEY_PAGE_NUMBER);
+//                            Annot validAnnotation =    ViewerUtils.getAnnotById(pdfViewCtrl, currAnnotId, currAnnotPageNumber);
+//                            Log.i("shareDecisions", validAnnotation.toString());
+//                            validAnnotationList.add(validAnnotation);
+//                            FDFDoc fdfDoc = pdfDoc.fdfExtract(validAnnotationList);
+//                            String finalShareContent = fdfDoc.saveAsXFDF();
+//                            Log.i("shareDecisions_XFDF", finalShareContent);
+//                            pdfViewCtrl.docUnlockRead();
+//                            EventChannel.EventSink eventSink = mViewerComponent.getShareDecisionsEventEmitter();
+//                            if (eventSink != null) {
+//                                eventSink.success(finalShareContent);
+//                            }
                         }
                         else {
                             JSONObject annotationMenuObject = new JSONObject();

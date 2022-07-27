@@ -45,6 +45,7 @@ typedef void DocumentLoadedListener(dynamic filePath);
 typedef void DocumentErrorListener();
 typedef void AnnotationChangedListener(dynamic action, dynamic annotations);
 typedef void AnnotationsSelectedListener(dynamic annotationWithRects);
+typedef void shareDecisionsEventListener(dynamic xfdf);
 typedef void FormFieldValueChangedListener(dynamic fields);
 typedef void BehaviorActivatedListener(dynamic action, dynamic data);
 typedef void LongPressMenuPressedChannelListener(
@@ -192,14 +193,14 @@ CancelListener startAnnotationsSelectedListener(
   };
 }
 
-CancelListener shareDecisionsListener(AnnotationsSelectedListener listener) {
+CancelListener shareDecisionsListener(shareDecisionsEventListener listener) {
   var subscription = _shareDecisionsChannel
       .receiveBroadcastStream(eventSinkId.shareDecisionsId.index)
       .listen((annotationWithRectsString) {
-    var data = json.decode(annotationWithRectsString)["annotations"][0];
 
-    Annot _annotData = Annot.fromJson(data);
-    listener(_annotData);
+   
+    listener(annotationWithRectsString);
+    
   }, cancelOnError: true);
 
   return () {

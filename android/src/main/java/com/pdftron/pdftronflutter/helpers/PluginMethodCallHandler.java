@@ -36,6 +36,7 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_EXPORT_ANNOTA
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_EXPORT_BOOKMARK;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_FORM_FIELD_VALUE_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_LEADING_NAV_BUTTON_PRESSED;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_SHARE_DECISIONS_EVENT;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_LONG_PRESS_MENU_PRESSED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_PAGE_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_PAGE_MOVED;
@@ -168,6 +169,19 @@ public class PluginMethodCallHandler implements MethodCallHandler {
 
         final EventChannel leadingNavButtonPressedEventChannel = new EventChannel(messenger, EVENT_LEADING_NAV_BUTTON_PRESSED);
         leadingNavButtonPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setLeadingNavButtonPressedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setLeadingNavButtonPressedEventEmitter(null);
+            }
+        });
+
+        final EventChannel shareDecisionsEventChannel = new EventChannel(messenger, EVENT_SHARE_DECISIONS_EVENT);
+        shareDecisionsEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink emitter) {
                 FlutterDocumentActivity.setLeadingNavButtonPressedEventEmitter(emitter);
