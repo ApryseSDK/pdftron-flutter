@@ -320,7 +320,7 @@ public class ViewerImpl {
                     }
 
                     try {
-                        if(menuStr == "shareDecisions")
+                        if(menuStr == "ShareDecisions")
                         {
                             JSONObject annotationMenuObject = new JSONObject();
                             annotationMenuObject.put(KEY_ANNOTATION_MENU_ITEM, menuStr);
@@ -340,7 +340,7 @@ public class ViewerImpl {
 //
 //                            int currAnnotPageNumber = currAnnot.getInt(KEY_PAGE_NUMBER);
 //                            Annot validAnnotation =    ViewerUtils.getAnnotById(pdfViewCtrl, currAnnotId, currAnnotPageNumber);
-//                            Log.i("shareDecisions", validAnnotation.toString());
+//                            Log.i("ShareDecisions", validAnnotation.toString());
 //                            validAnnotationList.add(validAnnotation);
 //                            FDFDoc fdfDoc = pdfDoc.fdfExtract(validAnnotationList);
 //                            String finalShareContent = fdfDoc.saveAsXFDF();
