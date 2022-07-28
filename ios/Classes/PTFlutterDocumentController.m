@@ -1177,7 +1177,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         UIGraphicsEndImageContext();
         
         
-        UIBarButtonItem* decisionsToolButton = decisionsToolButton = [[UIBarButtonItem alloc] initWithImage:newImage style:UIBarButtonItemStylePlain  target:self action:@selector(topLeftButtonPressed:)];
+        UIBarButtonItem* decisionsToolButton = decisionsToolButton = [[UIBarButtonItem alloc] initWithImage:newImage style:UIBarButtonItemStylePlain  target:self action:@selector(decisionsButtonPressed:)];
         
         self.decisionsLeadingNavButtonItem = decisionsToolButton;
         
@@ -1750,6 +1750,12 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 {
     [self.plugin topLeftButtonPressed:barButtonItem];
 }
+
+- (void)decisionsButtonPressed:(UIBarButtonItem *)barButtonItem
+{
+    [self.plugin decisionsButtonPressed:barButtonItem];
+}
+
 
 - (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon
 {

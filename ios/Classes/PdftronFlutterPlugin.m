@@ -876,6 +876,15 @@
     [self documentController:[self getDocumentController] leadingNavButtonClicked:nil];
 }
 
+- (void)decisionsButtonPressed:(UIBarButtonItem *)barButtonItem
+{
+    if (!self.isWidgetView) {
+        [self.tabbedDocumentViewController.navigationController dismissViewControllerAnimated:YES completion:nil];
+    }
+    
+    [self documentController:[self getDocumentController] decisionsButtonClicked:@"DecisionsButtonClicked"];
+}
+
 + (void)disableTools:(NSArray<id> *)toolsToDisable documentController:(PTDocumentController *)documentController
 {
     PTToolManager *toolManager = documentController.toolManager;
@@ -1456,6 +1465,14 @@
     if (self.leadingNavButtonPressedEventSink != nil)
     {
         self.leadingNavButtonPressedEventSink(nil);
+    }
+}
+
+-(void)documentController:(PTDocumentController *)docVC decisionsButtonClicked:(nullable NSString *)nav
+{
+    if (self.shareDecisionsEventSink != nil)
+    {
+        self.shareDecisionsEventSink(nav);
     }
 }
 

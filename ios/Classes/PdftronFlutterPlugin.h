@@ -507,6 +507,7 @@ typedef enum
 - (void)documentController:(PTDocumentController *)documentController formFieldValueChanged:(NSString *)fieldString;
 - (void)documentController:(PTDocumentController *)docVC behaviorActivated:(NSString *)behaviorString;
 - (void)documentController:(PTDocumentController *)docVC leadingNavButtonClicked:(nullable NSString *)nav;
+- (void)documentController:(PTDocumentController *)docVC decisionsButtonClicked:(nullable NSString *)nav;
 - (void)documentController:(PTDocumentController *)docVC longPressMenuPressed:(NSString *)longPressMenuPressedString;
 - (void)documentController:(PTDocumentController *)docVC annotationMenuPressed:(NSString *)annotationMenuPressedString;
 - (void)documentController:(PTDocumentController *)docVC pageChanged:(NSString *)pageNumbersString;
@@ -517,6 +518,8 @@ typedef enum
 // Hygen Generated Event Listeners (3)
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
+
+- (void)decisionsButtonPressed:(UIBarButtonItem *)barButtonItem;
 
 - (UIView *)view;
 
