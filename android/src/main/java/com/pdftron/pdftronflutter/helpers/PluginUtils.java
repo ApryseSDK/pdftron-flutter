@@ -486,7 +486,7 @@ public class PluginUtils {
     public static final String MENU_ID_STRING_COPY = "copy";
     public static final String MENU_ID_STRING_DELETE = "delete";
     public static final String MENU_ID_STRING_FLATTEN = "flatten";
-    public static final String MENU_ID_STRING_SHAREDECISIONS = "shareDecisions";
+    public static final String MENU_ID_STRING_SHAREDECISIONS = "ShareDecisions";
     public static final String MENU_ID_STRING_TEXT = "text";
     public static final String MENU_ID_STRING_EDIT_INK = "editInk";
     public static final String MENU_ID_STRING_SEARCH = "search";
@@ -4350,12 +4350,21 @@ public class PluginUtils {
         if (component == null) {
             return;
         }
-        EventChannel.EventSink annotationCustomToolbarItemPressedEventSink = component.getAnnotationToolbarItemPressedEventEmitter();
-        int itemId = item.getItemId();
-        String itemKey = mToolIdMap.get(itemId);
-        if (itemKey != null && annotationCustomToolbarItemPressedEventSink != null) {
-            // this is a custom button
-            annotationCustomToolbarItemPressedEventSink.success(itemId);
+        if(item.getTitle().equals("Decisions"))
+        {
+            EventChannel.EventSink eventSink = component.getShareDecisionsEventEmitter();
+            if (eventSink != null) {
+                eventSink.success("DecisionsButtonClicked");
+            }
+            return;
+        }else {
+            EventChannel.EventSink annotationCustomToolbarItemPressedEventSink = component.getAnnotationMenuPressedEventEmitter();
+            int itemId = item.getItemId();
+            String itemKey = mToolIdMap.get(itemId);
+            if (itemKey != null && annotationCustomToolbarItemPressedEventSink != null) {
+                // this is a custom button
+                annotationCustomToolbarItemPressedEventSink.success(itemId);
+            }
         }
     }
 
