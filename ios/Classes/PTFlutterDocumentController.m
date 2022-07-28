@@ -21,6 +21,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 
 @property (nonatomic, strong, nullable) UIBarButtonItem *leadingNavButtonItem;
 
+@property (nonatomic, strong, nullable) UIBarButtonItem *decisionsLeadingNavButtonItem;
 // Array of wrapped PTExtendedAnnotTypes.
 @property (nonatomic, strong, nullable) NSArray<NSNumber *> *hideAnnotMenuToolsAnnotTypes;
 
@@ -1051,6 +1052,8 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     // Whether toggling toolbars on tap is allowed.
     self.hidesControlsOnTap = _toolbarsHiddenOnTap;
     
+    [self DecisionsTool];
+    
     // Annotation Manager
     if (self.isAnnotationManagerEnabled && self.userId) {
         // Edit Mode
@@ -1160,6 +1163,47 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     }
     else if ([self.layoutMode isEqualToString:PTFacingCoverContinuousKey]) {
         [self.pdfViewCtrl SetPagePresentationMode:e_trn_facing_continuous_cover];
+    }
+}
+
+- (void) DecisionsTool
+{
+    if (self.showNavButton) {
+        
+        UIImage *image = [UIImage imageNamed:@"DecisionsLogo.png"];
+        UIGraphicsBeginImageContextWithOptions(CGSizeMake(20, 20), NO, 0.0);
+        [image drawInRect:CGRectMake(0, 0, 22, 20)];
+        UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        
+        
+        UIBarButtonItem* decisionsToolButton = decisionsToolButton = [[UIBarButtonItem alloc] initWithImage:newImage style:UIBarButtonItemStylePlain  target:self action:@selector(topLeftButtonPressed:)];
+        
+        self.decisionsLeadingNavButtonItem = decisionsToolButton;
+        
+        NSArray<UIBarButtonItem *> *compactItems = [self.navigationItem rightBarButtonItemsForSizeClass:UIUserInterfaceSizeClassCompact];
+        if (compactItems) {
+            NSMutableArray<UIBarButtonItem *> *mutableItems = [compactItems mutableCopy];
+            [mutableItems insertObject:decisionsToolButton atIndex:0];
+            compactItems = [mutableItems copy];
+        } else {
+            compactItems = @[decisionsToolButton];
+        }
+        [self.navigationItem setRightBarButtonItems:compactItems
+                                            forSizeClass:UIUserInterfaceSizeClassCompact
+                                                animated:NO];
+        
+        NSArray<UIBarButtonItem *> *regularItems = [self.navigationItem rightBarButtonItemsForSizeClass:UIUserInterfaceSizeClassRegular];
+        if (regularItems) {
+            NSMutableArray<UIBarButtonItem *> *mutableItems = [regularItems mutableCopy];
+            [mutableItems insertObject:decisionsToolButton atIndex:0];
+            regularItems = [mutableItems copy];
+        } else {
+            regularItems = @[decisionsToolButton];
+        }
+        [self.navigationItem setRightBarButtonItems:regularItems
+                                            forSizeClass:UIUserInterfaceSizeClassRegular
+                                                animated:NO];
     }
 }
 

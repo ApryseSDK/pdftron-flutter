@@ -78,6 +78,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy, nullable) NSString* leadingNavButtonIcon;
 
+@property (nonatomic, copy, nullable) NSString* decisionsLeadingNavButtonIcon;
+
 @property (nonatomic, assign) BOOL showQuickNavigationButton;
 
 @property (nonatomic, copy, nullable) NSString* tabTitle;
@@ -110,6 +112,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)applyViewerSettings;
 
 - (void)setLeadingNavButtonIcon:(NSString *)leadingNavButtonIcon;
+
+- (void)setDecisionsLeadingNavButtonIcon:(NSString *)decisionsLeadingNavButtonIcon;
 
 - (BOOL)shouldSetNavigationBarHidden:(BOOL)navigationBarHidden animated:(BOOL)animated;
 - (BOOL)shouldSetToolbarHidden:(BOOL)toolbarHidden animated:(BOOL)animated;
