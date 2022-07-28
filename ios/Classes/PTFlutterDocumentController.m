@@ -1187,7 +1187,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         
         UIImage *image = [UIImage imageNamed:@"DecisionsLogo.png"];
         UIGraphicsBeginImageContextWithOptions(CGSizeMake(20, 20), NO, 0.0);
-        [image drawInRect:CGRectMake(0, 0, 22, 20)];
+        [image drawInRect:CGRectMake(0, 0, 21, 20)];
         UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
         
