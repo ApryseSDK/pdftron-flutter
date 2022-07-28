@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pdftron_flutter/pdftron_flutter.dart';
+import 'package:pdftron_flutter_example/common_constants.dart';
 // If you are using local files, add the permission_handler
 // dependency to pubspec.yaml and uncomment the line below.
 // import 'package:permission_handler/permission_handler.dart';
@@ -153,12 +155,6 @@ class _ViewerState extends State<Viewer> {
     // An event listener for when local bookmark changes are committed to
     // the document. bookmarkJson is the JSON string containing all the
     // bookmarks that exist when the change was made.
-    var bookmarkCancel = startExportBookmarkListener((bookmarkJson) {
-      print("flutter bookmark: $bookmarkJson");
-    });
-
-    var path = await PdftronFlutter.saveDocument();
-    print("flutter save: $path");
 
     // To cancel event:
     // annotCancel();
@@ -200,18 +196,70 @@ class _ViewerState extends State<Viewer> {
   // Function(DocumentViewController controller) being passed to it.
   void _onDocumentViewCreated(DocumentViewController controller) async {
     Config config = new Config();
+    config.hideDefaultAnnotationToolbars = [
+      DefaultToolbars.favorite,
+      DefaultToolbars.prepareForm,
+      DefaultToolbars.measure,
+      DefaultToolbars.fillAndSign,
+      DefaultToolbars.pens,
+      DefaultToolbars.view,
+      DefaultToolbars.draw,
+      DefaultToolbars.redaction,
+      DefaultToolbars.insert
+    ];
 
-    var leadingNavCancel = startLeadingNavButtonPressedListener(() {
-      // Uncomment this to quit viewer when leading navigation button is pressed:
-      // this.setState(() {
-      //   _showViewer = !_showViewer;
-      // });
+    var disabledElements = [
+      Buttons.viewControlsButton,
+      Buttons.shareButton,
+      Buttons.saveCopyButton,
+      Buttons.calloutToolButton,
+      Buttons.moreItemsButton,
+      Buttons.underlineToolButton,
+      Buttons.squigglyToolButton,
+      Buttons.editMenuButton
+    ];
+    config.disabledTools = [
+      Tools.formCreateComboBoxField,
+      Tools.annotationEdit,
+      Tools.annotationSmartPen,
+      Tools.annotationCreateTextStrikeout,
+      Tools.annotationCreateFreeHighlighter,
+    ];
+    config.autoSaveEnabled = true;
+    config.continuousAnnotationEditing = true;
+    config.disabledElements = disabledElements;
+    config.multiTabEnabled = false;
+    config.continuousAnnotationEditing = false;
 
-      // Show a dialog when leading navigation button is pressed.
+    startLeadingNavButtonPressedListener(() {
       _showMyDialog();
     });
 
-    await controller.openDocument(_document, config: config);
+    await controller.openDocument(_document, config: config).then((value) {
+      startExportBookmarkListener((bookmarkJson) {
+        print("flutter bookmark: $bookmarkJson");
+      });
+
+      shareDecisionsListener((decisionsPDFTronResponse) async {
+        if (decisionsPDFTronResponse ==
+            CommonConstants.DecisionsButtonClicked_PDFTronButton) {
+          print("DecisionsButtonClicked");
+        } else if (json.decode(decisionsPDFTronResponse)[
+                CommonConstants.annotationMenuItem_PDFTronKey] ==
+            CommonConstants.ShareDecisions_PDFTronMenu) {
+          print("shareDecisionsListener: $decisionsPDFTronResponse");
+          var annotationsData = json.decode(decisionsPDFTronResponse)[
+              CommonConstants.annotations_PDFTronKey][0];
+          Annot _annotModelData = Annot.fromJson(annotationsData);
+          List<Annot> annotList = [];
+          annotList.add(_annotModelData);
+          await controller.exportAnnotations(annotList).then((value) {
+            print("Overall Data");
+            print(value);
+          });
+        }
+      });
+    });
   }
 
   Future<void> _showMyDialog() async {
