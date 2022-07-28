@@ -196,6 +196,27 @@ class _ViewerState extends State<Viewer> {
   // Function(DocumentViewController controller) being passed to it.
   void _onDocumentViewCreated(DocumentViewController controller) async {
     Config config = new Config();
+    if (Platform.isAndroid) {
+      CustomToolbarItem decisionsTool = new CustomToolbarItem(
+        '0001',
+        'Decisions',
+        'ic_add_blank_page_white',
+      );
+
+      var customToolBar = new CustomToolbar('01', "Annotate", [
+        Buttons.freeHandToolButton,
+        Buttons.freeTextToolButton,
+        Buttons.stickyToolButton,
+        Buttons.redo,
+        Buttons.undo,
+        Buttons.highlightToolButton,
+        Buttons.editMenuButton,
+        "Eraser",
+        decisionsTool,
+      ]);
+      config.annotationToolbars = [customToolBar];
+    }
+
     config.hideDefaultAnnotationToolbars = [
       DefaultToolbars.favorite,
       DefaultToolbars.prepareForm,
