@@ -231,6 +231,7 @@ class _ViewerState extends State<Viewer> {
     ];
 
     var disabledElements = [
+      Buttons.viewLayersButton,
       Buttons.viewControlsButton,
       Buttons.shareButton,
       Buttons.saveCopyButton,
