@@ -266,11 +266,11 @@ class _ViewerState extends State<Viewer> {
             CommonConstants.DecisionsButtonClicked_PDFTronButton) {
           print("DecisionsButtonClicked");
         } else if (json.decode(decisionsPDFTronResponse)[
-                CommonConstants.annotationMenuItem_PDFTronKey] ==
+                EventParameters.annotationMenuItem] ==
             CommonConstants.ShareDecisions_PDFTronMenu) {
           print("shareDecisionsListener: $decisionsPDFTronResponse");
           var annotationsData = json.decode(decisionsPDFTronResponse)[
-              CommonConstants.annotations_PDFTronKey][0];
+              EventParameters.annotations][0];
           Annot _annotModelData = Annot.fromJson(annotationsData);
           List<Annot> annotList = [];
           annotList.add(_annotModelData);
