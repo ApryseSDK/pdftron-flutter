@@ -2938,7 +2938,7 @@
     } else if ([toolMode isEqualToString:PTAnnotationCreateRedactionToolKey]) {
         toolClass = [PTRectangleRedactionCreate class];
     } else if ([toolMode isEqualToString:PTAnnotationCreateLinkToolKey]) {
-        // TODO
+        toolClass = [PTAnnotationCreateLinkToolKey class];
     } else if ([toolMode isEqualToString:PTAnnotationCreateRedactionTextToolKey]) {
         toolClass = [PTTextRedactionCreate class];
     } else if ([toolMode isEqualToString:PTAnnotationCreateLinkTextToolKey]) {
