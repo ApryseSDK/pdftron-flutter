@@ -979,7 +979,7 @@
                 // TODO
             }
             else if ([string isEqualToString:PTAnnotationCreateLinkTextToolKey]) {
-                // TODO
+                toolManager.linkAnnotationOptions.canCreate = value;
             }
             else if ([string isEqualToString:PTFormCreateTextFieldToolKey]) {
                 // TODO
@@ -2942,7 +2942,7 @@
     } else if ([toolMode isEqualToString:PTAnnotationCreateRedactionTextToolKey]) {
         toolClass = [PTTextRedactionCreate class];
     } else if ([toolMode isEqualToString:PTAnnotationCreateLinkTextToolKey]) {
-        // TODO
+        toolClass = [PTLinkCreate class];
     } else if ([toolMode isEqualToString:PTFormCreateTextFieldToolKey]) {
         // TODO
     } else if ([toolMode isEqualToString:PTFormCreateCheckboxFieldToolKey]) {
