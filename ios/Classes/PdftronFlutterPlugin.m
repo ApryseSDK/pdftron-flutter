@@ -2938,11 +2938,11 @@
     } else if ([toolMode isEqualToString:PTAnnotationCreateRedactionToolKey]) {
         toolClass = [PTRectangleRedactionCreate class];
     } else if ([toolMode isEqualToString:PTAnnotationCreateLinkToolKey]) {
-        toolClass = [PTLinkCreate class];
+        // TODO
     } else if ([toolMode isEqualToString:PTAnnotationCreateRedactionTextToolKey]) {
         toolClass = [PTTextRedactionCreate class];
     } else if ([toolMode isEqualToString:PTAnnotationCreateLinkTextToolKey]) {
-        toolClass = [PTLinkCreate class];
+        // TODO
     } else if ([toolMode isEqualToString:PTFormCreateTextFieldToolKey]) {
         // TODO
     } else if ([toolMode isEqualToString:PTFormCreateCheckboxFieldToolKey]) {
