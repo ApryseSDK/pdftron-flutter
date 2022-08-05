@@ -143,6 +143,12 @@ The following instructions are only applicable to Android development; click her
 
 The following instructions are only applicable to iOS development; click here for the [Android counterpart](#android).
 
+> **Note**
+> (August 2022) There are new podspec files to use when integrating the PDFTron Flutter Wrapper for iOS:
+> - `PDFTron` CocoaPod, providing `PDFNet.xcframework`: https://pdftron.com/downloads/ios/flutter/pdftron/latest.podspec
+> - `PDFTronTools` CocoaPod, providing `Tools.xcframework`: https://pdftron.com/downloads/ios/flutter/pdftron-tools/latest.podspec
+> Please update your `ios/Podfile` accordingly.
+
 4. Open `myapp/ios/Podfile` file and add:
 	```diff
 	  # Uncomment this line to define a global platform for your project
@@ -152,7 +158,8 @@ The following instructions are only applicable to iOS development; click here fo
 	  target 'Runner' do
 	    ...
 	+   # PDFTron Pods
-	+   pod 'PDFNet', podspec: 'https://www.pdftron.com/downloads/ios/cocoapods/xcframeworks/pdfnet/latest.podspec'
+	+   pod 'PDFTron', podspec: 'https://pdftron.com/downloads/ios/flutter/pdftron/latest.podspec'
+	+   pod 'PDFTronTools', podspec: 'https://pdftron.com/downloads/ios/flutter/pdftron-tools/latest.podspec'
 	  end
 	```
 5. To ensure integration process is successful, run `flutter build ios --no-codesign` 
