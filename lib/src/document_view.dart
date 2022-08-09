@@ -60,13 +60,13 @@ class _DocumentViewState extends State<DocumentView> {
   }
 
   void _onPlatformViewCreated(int id) {
-    widget.onCreated(new DocumentViewController._(id));
+    widget.onCreated(new DocumentViewController(id));
   }
 }
 
 /// Used to initialize and control the [DocumentView] widget.
 class DocumentViewController {
-  DocumentViewController._(int id)
+  DocumentViewController(int id)
       : _channel = new MethodChannel('pdftron_flutter/documentview_$id');
 
   final MethodChannel _channel;
