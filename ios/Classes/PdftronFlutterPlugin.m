@@ -1005,7 +1005,7 @@
                 // TODO
             }
             else if ([string isEqualToString:PTAnnotationCreateLinkTextToolKey]) {
-                // TODO
+                toolManager.linkAnnotationOptions.canCreate = value;
             }
             else if ([string isEqualToString:PTFormCreateTextFieldToolKey]) {
                 // TODO
