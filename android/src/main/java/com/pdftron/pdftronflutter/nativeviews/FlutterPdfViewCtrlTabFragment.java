@@ -32,9 +32,11 @@ public class FlutterPdfViewCtrlTabFragment extends PdfViewCtrlTabFragment2 {
             e.printStackTrace();
         }
 
-        EventChannel.EventSink eventSink = mViewerComponent.getScrollChangedEventEmitter();
-        if (eventSink != null) {
-            eventSink.success(jsonObject.toString());
+        if (mViewerComponent != null) {
+            EventChannel.EventSink eventSink = mViewerComponent.getScrollChangedEventEmitter();
+            if (eventSink != null) {
+                eventSink.success(jsonObject.toString());
+            }
         }
     }
 }
