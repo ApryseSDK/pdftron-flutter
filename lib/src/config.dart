@@ -89,6 +89,7 @@ class Config {
   var _fullScreenModeEnabled;
 
   // Hygen Generated Configs (1)
+  var _maxSignatureCount;
 
   Config();
 
@@ -552,6 +553,10 @@ class Config {
   set fullScreenModeEnabled(bool value) => _fullScreenModeEnabled = value;
 
   // Hygen Generated Configs (2)
+  /// The maximum number of saved signatures that can be created for a document.
+  ///
+  /// Defaults to unlimited.
+  set maxSignatureCount(int value) => _maxSignatureCount = value;
 
   Config.fromJson(Map<String, dynamic> json)
       : _disabledElements = json['disabledElements'],
@@ -642,7 +647,8 @@ class Config {
         _quickBookmarkCreation = json['quickBookmarkCreation'],
 
         // Hygen Generated Configs (3)
-        
+        _maxSignatureCount = json['maxSignatureCount'],
+
         _fullScreenModeEnabled = json['fullScreenModeEnabled'];
 
   Map<String, dynamic> toJson() => {
@@ -730,5 +736,6 @@ class Config {
         'fullScreenModeEnabled': _fullScreenModeEnabled,
 
         // Hygen Generated Configs (4)
+        'maxSignatureCount': _maxSignatureCount,
       };
 }
