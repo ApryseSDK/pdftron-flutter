@@ -576,6 +576,36 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.getSavedSignatureJpgFolder);
   }
 
+  /// Gets the horizontal and vertical scroll position in the current document viewer.
+  ///
+  /// The scroll position is returned as a `Map<String, int>` with the keys
+  /// "horizontal" and "vertical".
+  Future<Map?> getScrollPos() async {
+    String jsonString = await _channel.invokeMethod(Functions.getScrollPos);
+    dynamic json = jsonDecode(jsonString);
+    Map scrollPos = {
+      'horizontal': json['horizontal'],
+      'vertical': json['vertical']
+    };
+    return scrollPos;
+  }
+
+  /// Sets the horizontal scroll position in the current document viewer.
+  Future<void> setHorizontalScrollPosition(int horizontalScrollPosition) {
+    return _channel.invokeMethod(
+        Functions.setHorizontalScrollPosition, <String, dynamic>{
+      Parameters.horizontalScrollPosition: horizontalScrollPosition
+    });
+  }
+
+  /// Sets the vertical scroll position in the current document viewer.
+  Future<void> setVerticalScrollPosition(int verticalScrollPosition) {
+    return _channel.invokeMethod(
+        Functions.setVerticalScrollPosition, <String, dynamic>{
+      Parameters.verticalScrollPosition: verticalScrollPosition
+    });
+  }
+
   /// Gets the visible pages in the current viewer as an array.
   ///
   /// Return a Promise

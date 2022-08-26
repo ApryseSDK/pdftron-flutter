@@ -70,7 +70,10 @@ class Functions {
   static const zoomToRect = "zoomToRect";
   static const getZoom = "getZoom";
   static const setZoomLimits = "setZoomLimits";
-  static const smartZoom = "smartZoom";
+  static const getScrollPos = "getScrollPos";
+  static const setHorizontalScrollPosition = "setHorizontalScrollPosition";
+  static const setVerticalScrollPosition = "setVerticalScrollPosition";
+  static const smartZoom = "smartZoom"; 
   static const getVisiblePages = "getVisiblePages";
 
   // Hygen Generated Methods
@@ -104,6 +107,8 @@ class Parameters {
   static const exportFormat = "exportFormat";
   static const dpi = "dpi";
   static const requestedOrientation = "requestedOrientation";
+  static const horizontalScrollPosition = "horizontalScrollPosition";
+  static const verticalScrollPosition = "verticalScrollPosition";
   static const searchString = "searchString";
   static const matchCase = "matchCase";
   static const matchWholeWord = "matchWholeWord";
