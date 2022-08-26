@@ -1,4 +1,13 @@
-part of pdftron;
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/rendering.dart';
+
+import '../pdftron_flutter.dart';
 
 typedef void DocumentViewCreatedCallback(DocumentViewController controller);
 
@@ -696,8 +705,53 @@ class DocumentViewController {
     return _channel.invokeMethod(Functions.getSavedSignatureJpgFolder);
   }
 
+  /// Gets the horizontal and vertical scroll position in the current document viewer.
+  ///
+  /// The scroll position is returned as a `Map<String, int>` with the keys
+  /// "horizontal" and "vertical".
+  Future<Map?> getScrollPos() async {
+    String jsonString = await _channel.invokeMethod(Functions.getScrollPos);
+    dynamic json = jsonDecode(jsonString);
+    Map scrollPos = {
+      'horizontal': json['horizontal'],
+      'vertical': json['vertical']
+    };
+    return scrollPos;
+  }
+
+  /// Sets the horizontal scroll position in the current document viewer.
+  Future<void> setHorizontalScrollPosition(int horizontalScrollPosition) {
+    return _channel.invokeMethod(
+        Functions.setHorizontalScrollPosition, <String, dynamic>{
+      Parameters.horizontalScrollPosition: horizontalScrollPosition
+    });
+  }
+
+  /// Sets the vertical scroll position in the current document viewer.
+  Future<void> setVerticalScrollPosition(int verticalScrollPosition) {
+    return _channel.invokeMethod(
+        Functions.setVerticalScrollPosition, <String, dynamic>{
+      Parameters.verticalScrollPosition: verticalScrollPosition
+    });
+  }
+
   /// Gets the page numbers of currently visible pages in the viewer.
   Future<List<int>?> getVisiblePages() {
     return _channel.invokeMethod(Functions.getVisiblePages);
+  }
+
+  // Hygen Generated Methods
+  /// Gets the list of annotations on the given page.
+  Future<List<Annot>?> getAnnotationsOnPage(int pageNumber) {
+    return _channel.invokeMethod(Functions.getAnnotationsOnPage, <String, dynamic>{
+      Parameters.pageNumber: pageNumber
+    }).then((jsonArray) {
+      List<dynamic> annotations = jsonDecode(jsonArray);
+      List<Annot> annotList = new List<Annot>.empty(growable: true);
+      for (dynamic annotation in annotations) {
+        annotList.add(new Annot.fromJson(annotation));
+      }
+      return annotList;
+    });
   }
 }

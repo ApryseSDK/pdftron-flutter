@@ -55,6 +55,7 @@ static NSString * const PTContinuousAnnotationEditingKey = @"continuousAnnotatio
 static NSString * const PTAnnotationPermissionCheckEnabledKey = @"annotationPermissionCheckEnabled";
 static NSString * const PTAnnotationsListEditingEnabledKey = @"annotationsListEditingEnabled";
 static NSString * const PTUserBookmarksListEditingEnabledKey = @"userBookmarksListEditingEnabled";
+static NSString * const PTOutlineListEditingEnabledKey = @"outlineListEditingEnabled";
 static NSString * const PTShowNavigationListAsSidePanelOnLargeDevicesKey = @"showNavigationListAsSidePanelOnLargeDevices";
 static NSString * const PTOverrideBehaviorKey = @"overrideBehavior";
 static NSString * const PTTabTitleKey = @"tabTitle";
@@ -75,6 +76,7 @@ static NSString * const PTAnnotationToolbarAlignmentKey = @"annotationToolbarAli
 static NSString * const PTHideScrollbarsKey = @"hideScrollbars";
 static NSString * const PTQuickBookmarkCreationKey = @"quickBookmarkCreation";
 
+// Hygen Generated Configs
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";
@@ -149,6 +151,7 @@ static NSString * const PTSaveCopyButtonKey = @"saveCopyButton";
 static NSString * const PTSaveIdenticalCopyButtonKey = @"saveIdenticalCopyButton";
 static NSString * const PTSaveFlattenedCopyButtonKey = @"saveFlattenedCopyButton";
 static NSString * const PTSaveCroppedCopyButtonKey = @"saveCroppedCopyButton";
+static NSString * const PTSaveReducedCopyButtonKey = @"saveReducedCopyButton";
 static NSString * const PTEditPagesButtonKey = @"editPagesButton";
 static NSString * const PTPrintButtonKey = @"printButton";
 static NSString * const PTCloseButtonKey = @"closeButton";
@@ -260,8 +263,14 @@ static NSString * const PTSetZoomLimitsKey = @"setZoomLimits";
 static NSString * const PTSmartZoomKey = @"smartZoom";
 static NSString * const PTGetSavedSignaturesKey = @"getSavedSignatures";
 static NSString * const PTGetSavedSignatureFolderKey = @"getSavedSignatureFolder";
+static NSString * const PTGetScrollPosKey = @"getScrollPos";
+static NSString * const PTSetHorizontalScrollPositionKey = @"setHorizontalScrollPosition";
+static NSString * const PTSetVerticalScrollPositionKey = @"setVerticalScrollPosition";
 static NSString * const PTStartSearchModeKey = @"startSearchMode";
 static NSString * const PTExitSearchModeKey = @"exitSearchMode";
+
+// Hygen Generated Methods
+static NSString * const PTGetAnnotationsOnPageKey = @"getAnnotationsOnPage";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
@@ -288,10 +297,14 @@ static NSString * const PTSourceRectArgumentKey = @"sourceRect";
 static NSString * const PTPathArgumentKey = @"path";
 static NSString * const PTDpiArgumentKey = @"dpi";
 static NSString * const PTExportFormatArgumentKey = @"exportFormat";
+static NSString * const PTHorizontalScrollPositionArgumentKey = @"horizontalScrollPosition";
+static NSString * const PTVerticalScrollPositionArgumentKey = @"verticalScrollPosition";
 static NSString * const PTSearchStringArgumentKey = @"searchString";
 static NSString * const PTMatchCaseArgumentKey = @"matchCase";
 static NSString * const PTMatchWholeWordArgumentKey = @"matchWholeWord";
 static NSString * const PTAnimatedArgumentKey = @"animated";
+
+// Hygen Generated Method Parameters
 
 // event strings
 static NSString * const PTExportAnnotationCommandEventKey = @"export_annotation_command_event";
@@ -309,6 +322,8 @@ static NSString * const PTPageChangedEventKey = @"page_changed_event";
 static NSString * const PTZoomChangedEventKey = @"zoom_changed_event";
 static NSString * const PTPageMovedEventKey = @"page_moved_event";
 static NSString *const PTScrollChangedEventKey = @"scroll_changed_event";
+
+// Hygen Generated Event Listeners (1)
 
 // fit mode
 static NSString * const PTFitPageKey = @"FitPage";
@@ -431,6 +446,10 @@ static NSString * const PTAnnotationManagerUndoModeAllKey = @"undoModeAll";
 static NSString * const PTAnnotationToolbarAlignmentStartKey = @"GravityStart";
 static NSString * const PTAnnotationToolbarAlignmentEndKey = @"GravityEnd";
 
+// Scroll direction
+static NSString * const PTScrollHorizontalKey = @"horizontal";
+static NSString * const PTScrollVerticalKey = @"vertical";
+
 // RGB colors
 static NSString * const PTColorRedKey = @"red";
 static NSString * const PTColorGreenKey = @"green";
@@ -473,6 +492,8 @@ typedef enum
     zoomChangedId,
     pageMovedId,
     scrollChangedId,
+
+    // Hygen Generated Event Listeners (2)
 } EventSinkId;
 
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
@@ -498,6 +519,8 @@ typedef enum
 - (void)documentController:(PTDocumentController *)docVC zoomChanged:(NSNumber *)zoom;
 - (void)documentController:(PTDocumentController *)docVC pageMoved:(NSString *)pageNumbersString;
 - (void)documentController:(PTDocumentController *)docVC scrollChanged:(NSString*)scrollString;
+
+// Hygen Generated Event Listeners (3)
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 

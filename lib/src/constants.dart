@@ -1,4 +1,3 @@
-part of pdftron;
 
 /// Names of functions.
 class Functions {
@@ -71,8 +70,14 @@ class Functions {
   static const zoomToRect = "zoomToRect";
   static const getZoom = "getZoom";
   static const setZoomLimits = "setZoomLimits";
+  static const getScrollPos = "getScrollPos";
+  static const setHorizontalScrollPosition = "setHorizontalScrollPosition";
+  static const setVerticalScrollPosition = "setVerticalScrollPosition";
   static const smartZoom = "smartZoom"; 
   static const getVisiblePages = "getVisiblePages";
+
+  // Hygen Generated Methods
+  static const getAnnotationsOnPage = "getAnnotationsOnPage";
 }
 
 /// Parameters of functions.
@@ -102,10 +107,14 @@ class Parameters {
   static const exportFormat = "exportFormat";
   static const dpi = "dpi";
   static const requestedOrientation = "requestedOrientation";
+  static const horizontalScrollPosition = "horizontalScrollPosition";
+  static const verticalScrollPosition = "verticalScrollPosition";
   static const searchString = "searchString";
   static const matchCase = "matchCase";
   static const matchWholeWord = "matchWholeWord";
   static const animated = "animated";
+
+  // Hygen Generated Method Parameters
 }
 
 /// Parameters of events.
@@ -119,6 +128,8 @@ class EventParameters {
   static const annotationMenuItem = "annotationMenuItem";
   static const previousPageNumber = "previousPageNumber";
   static const pageNumber = "pageNumber";
+
+  // Hygen Generated Event Listeners
 }
 
 /// Buttons for the viewer.
@@ -150,6 +161,8 @@ class Buttons {
   static const saveCopyButton = 'saveCopyButton';
   static const saveIdenticalCopyButton = 'saveIdenticalCopyButton';
   static const saveFlattenedCopyButton = 'saveFlattenedCopyButton';
+  static const saveReducedCopyButton = 'saveReducedCopyButton';
+  static const saveCroppedCopyButton = 'saveCroppedCopyButton';
   static const editPagesButton = 'editPagesButton';
   static const printButton = 'printButton';
   static const closeButton = 'closeButton';
@@ -172,8 +185,6 @@ class Buttons {
 
   /// Android only.
   static const editAnnotationToolbarButton = 'editAnnotationToolButton';
-  static const saveReducedCopyButton = 'saveReducedCopyButton';
-  static const saveCroppedCopyButton = 'saveCroppedCopyButton';
 }
 
 /// Tools for the viewer.

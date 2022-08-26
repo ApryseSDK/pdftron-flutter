@@ -3,7 +3,12 @@
 
 /// To acquire a deeper understanding of how events are handled, look at the
 /// native implementations.
-part of pdftron;
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/services.dart';
+
+import '../pdftron_flutter.dart';
 
 const _exportAnnotationCommandChannel =
     const EventChannel('export_annotation_command_event');
@@ -30,6 +35,8 @@ const _pageMovedChannel = const EventChannel('page_moved_event');
 const _annotationToolbarItemPressedChannel =
     const EventChannel('annotation_toolbar_item_pressed_event');
 const _scrollChangedChannel = const EventChannel('scroll_changed_event');
+
+// Hygen Generated Event Listeners (1)
 
 /// A listener used as the argument for [startExportAnnotationCommandListener].
 ///
@@ -121,6 +128,8 @@ typedef void AnnotationToolbarItemPressedListener(dynamic id);
 /// position.
 typedef void ScrollChangedListener(dynamic horizontal, dynamic vertical);
 
+// Hygen Generated Event Listeners (2)
+
 typedef void CancelListener();
 
 /// Used to identify listeners for the EventChannel.
@@ -141,6 +150,8 @@ enum eventSinkId {
   pageMovedId,
   annotationToolbarItemPressedId,
   scrollChangedId,
+
+  // Hygen Generated Event Listeners (3)
 }
 
 /// Listens for when local annotation changes have been committed to the document.
@@ -550,3 +561,5 @@ CancelListener startScrollChangedListener(ScrollChangedListener listener) {
     subscription.cancel();
   };
 }
+
+// Hygen Generated Event Listeners (4)
