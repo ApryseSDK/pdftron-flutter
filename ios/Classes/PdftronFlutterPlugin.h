@@ -265,10 +265,14 @@ static NSString * const PTGetSavedSignaturesKey = @"getSavedSignatures";
 static NSString * const PTGetSavedSignatureFolderKey = @"getSavedSignatureFolder";
 static NSString * const PTSetBackgroundColorKey = @"setBackgroundColor";
 static NSString * const PTSetDefaultPageColorKey = @"setDefaultPageColor";
+static NSString * const PTGetScrollPosKey = @"getScrollPos";
+static NSString * const PTSetHorizontalScrollPositionKey = @"setHorizontalScrollPosition";
+static NSString * const PTSetVerticalScrollPositionKey = @"setVerticalScrollPosition";
 static NSString * const PTStartSearchModeKey = @"startSearchMode";
 static NSString * const PTExitSearchModeKey = @"exitSearchMode";
 
 // Hygen Generated Methods
+static NSString * const PTGetAnnotationsOnPageKey = @"getAnnotationsOnPage";
 
 // argument
 static NSString * const PTDocumentArgumentKey = @"document";
@@ -298,6 +302,8 @@ static NSString * const PTExportFormatArgumentKey = @"exportFormat";
 static NSString * const PTRedKey = @"red";
 static NSString * const PTBlueKey = @"blue";
 static NSString * const PTGreenKey = @"green";
+static NSString * const PTHorizontalScrollPositionArgumentKey = @"horizontalScrollPosition";
+static NSString * const PTVerticalScrollPositionArgumentKey = @"verticalScrollPosition";
 static NSString * const PTSearchStringArgumentKey = @"searchString";
 static NSString * const PTMatchCaseArgumentKey = @"matchCase";
 static NSString * const PTMatchWholeWordArgumentKey = @"matchWholeWord";
@@ -444,6 +450,10 @@ static NSString * const PTAnnotationManagerUndoModeAllKey = @"undoModeAll";
 // Annotation Toolbar Alignment
 static NSString * const PTAnnotationToolbarAlignmentStartKey = @"GravityStart";
 static NSString * const PTAnnotationToolbarAlignmentEndKey = @"GravityEnd";
+
+// Scroll direction
+static NSString * const PTScrollHorizontalKey = @"horizontal";
+static NSString * const PTScrollVerticalKey = @"vertical";
 
 // RGB colors
 static NSString * const PTColorRedKey = @"red";

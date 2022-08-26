@@ -1,5 +1,5 @@
 ---
-to: lib/events.dart
+to: lib/src/events.dart
 after: Hygen Generated Event Listeners \(2\)
 inject: true
 ---
@@ -12,4 +12,4 @@ inject: true
      args = args.substring(0, args.length - 2)
    }
 -%>
-typedef void <%= h.changeCase.pascalCase(name) %>Listener(<%= args %>);<% -%>
+typedef void <%= h.changeCase.pascalCase(name) %>Listener(<%- args %>);<% -%>

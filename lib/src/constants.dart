@@ -72,10 +72,14 @@ class Functions {
   static const setZoomLimits = "setZoomLimits";
   static const setBackgroundColor = "setBackgroundColor";
   static const setDefaultPageColor = "setDefaultPageColor";
+  static const getScrollPos = "getScrollPos";
+  static const setHorizontalScrollPosition = "setHorizontalScrollPosition";
+  static const setVerticalScrollPosition = "setVerticalScrollPosition";
   static const smartZoom = "smartZoom"; 
   static const getVisiblePages = "getVisiblePages";
 
   // Hygen Generated Methods
+  static const getAnnotationsOnPage = "getAnnotationsOnPage";
 }
 
 /// Defines the parameters of the functions.
@@ -108,6 +112,8 @@ class Parameters {
   static const red = "red";
   static const green = "green";
   static const blue = "blue";
+  static const horizontalScrollPosition = "horizontalScrollPosition";
+  static const verticalScrollPosition = "verticalScrollPosition";
   static const searchString = "searchString";
   static const matchCase = "matchCase";
   static const matchWholeWord = "matchWholeWord";

@@ -252,6 +252,9 @@ public class PluginUtils {
     public static final String KEY_GRAVITY_START = "GravityStart";
     public static final String KEY_GRAVITY_END = "GravityEnd";
 
+    public static final String KEY_HORIZONTAL_SCROLL_POSITION = "horizontalScrollPosition";
+    public static final String KEY_VERTICAL_SCROLL_POSITION = "verticalScrollPosition";
+    
     public static final String KEY_SEARCH_STRING = "searchString";
     public static final String KEY_MATCH_CASE = "matchCase";
     public static final String KEY_MATCH_WHOLE_WORD = "matchWholeWord";
@@ -347,9 +350,13 @@ public class PluginUtils {
     public static final String FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER = "getSavedSignatureJpgFolder";
     public static final String FUNCTION_SET_BACKGROUND_COLOR = "setBackgroundColor";
     public static final String FUNCTION_SET_DEFAULT_PAGE_COLOR = "setDefaultPageColor";
+    public static final String FUNCTION_GET_SCROLL_POS = "getScrollPos";
+    public static final String FUNCTION_SET_HORIZONTAL_SCROLL_POSITION = "setHorizontalScrollPosition";
+    public static final String FUNCTION_SET_VERTICAL_SCROLL_POSITION = "setVerticalScrollPosition";
     public static final String FUNCTION_GET_VISIBLE_PAGES = "getVisiblePages";
 
     // Hygen Generated Method Constants
+    public static final String FUNCTION_GET_ANNOTATIONS_ON_PAGE = "getAnnotationsOnPage";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -586,6 +593,10 @@ public class PluginUtils {
     // Annotation Manager Undo Mode
     public static final String ANNOTATION_MANAGER_UNDO_MODE_OWN = "undoModeOwn";
     public static final String ANNOTATION_MANAGER_UNDO_MODE_ALL = "undoModeAll";
+
+    // Scroll direction
+    public static final String SCROLL_HORIZONTAL = "horizontal";
+    public static final String SCROLL_VERTICAL = "vertical";
 
     // Navigation List visibility
     public static boolean isBookmarkListVisible = true;
@@ -2597,6 +2608,26 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_GET_SCROLL_POS: {
+                checkFunctionPrecondition(component);
+                try {
+                    getScrollPos(result, component);
+                } catch (JSONException ex) {
+                    ex.printStackTrace();
+                    result.error(Integer.toString(ex.hashCode()), "JSONException Error: " + ex, null);
+                }
+                break;
+            }
+            case FUNCTION_SET_HORIZONTAL_SCROLL_POSITION: {
+                checkFunctionPrecondition(component);
+                setHorizontalScrollPosition(call, result, component);
+                break;
+            }
+            case FUNCTION_SET_VERTICAL_SCROLL_POSITION: {
+                checkFunctionPrecondition(component);
+                setVerticalScrollPosition(call, result, component);
+                break;
+            }
             case FUNCTION_SMART_ZOOM: {
                 checkFunctionPrecondition(component);
                 smartZoom(call, result, component);
@@ -2608,6 +2639,11 @@ public class PluginUtils {
                 break;
             }
             // Hygen Generated Method Cases
+            case FUNCTION_GET_ANNOTATIONS_ON_PAGE: {
+                checkFunctionPrecondition(component);
+                getAnnotationsOnPage(call, result, component);
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -3928,6 +3964,7 @@ public class PluginUtils {
 
     private static void setBackgroundColor(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+
         if (pdfViewCtrl == null) {
             result.error("InvalidState", "PDFViewCtrl not found", null);
             return;
@@ -3942,6 +3979,7 @@ public class PluginUtils {
 
     private static void setDefaultPageColor(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+
         if (pdfViewCtrl == null) {
             result.error("InvalidState", "PDFViewCtrl not found", null);
             return;
@@ -3953,7 +3991,48 @@ public class PluginUtils {
         pdfViewCtrl.setDefaultPageColor(red, green, blue);
         result.success(null);
     }
-    
+
+    private static void getScrollPos(MethodChannel.Result result, ViewerComponent component) throws JSONException {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        JSONObject jsonObject = new JSONObject();
+
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+
+        jsonObject.put(SCROLL_HORIZONTAL, pdfViewCtrl.getHScrollPos());
+        jsonObject.put(SCROLL_VERTICAL, pdfViewCtrl.getVScrollPos());
+
+        result.success(jsonObject.toString());
+    }
+
+    private static void setHorizontalScrollPosition(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        int horizontalScrollPosition = call.argument(KEY_HORIZONTAL_SCROLL_POSITION);
+        
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+
+        pdfViewCtrl.setHScrollPos(horizontalScrollPosition);
+        result.success(null);
+    }
+
+    private static void setVerticalScrollPosition(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        int verticalScrollPosition = call.argument(KEY_VERTICAL_SCROLL_POSITION);
+
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        
+        pdfViewCtrl.setVScrollPos(verticalScrollPosition);
+        result.success(null);
+    }
+        
     public static void startSearchMode(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws JSONException {
         PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
         String searchString = call.argument(KEY_SEARCH_STRING);
@@ -4029,11 +4108,46 @@ public class PluginUtils {
     }
 
     // Hygen Generated Methods
+    public static void getAnnotationsOnPage(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
+        int pageNumber = call.argument(KEY_PAGE_NUMBER);
+
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+
+        ArrayList<Annot> annotations = pdfViewCtrl.getAnnotationsOnPage(pageNumber);
+        JSONArray resultAnnotations = new JSONArray();
+
+        for (Annot annot : annotations) {
+            String id = null;
+            try {
+                id = annot.getUniqueID() != null ? annot.getUniqueID().getAsPDFText() : null;
+            } catch (PDFNetException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                if (id != null) {
+                    resultAnnotations.put(new JSONObject()
+                            .put(KEY_ANNOTATION_ID, id)
+                            .put(KEY_PAGE_NUMBER, pageNumber));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        result.success(resultAnnotations.toString());
+    }
 
     // Events
 
     public static void handleDocumentLoaded(final ViewerComponent component) {
-
+        if (component == null) {
+            return;
+        }
         // Set initial page number
         if (component.getInitialPageNumber() > 0 && component.getPdfViewCtrl() != null) {
             component.getPdfViewCtrl().setCurrentPage(component.getInitialPageNumber());
@@ -4083,6 +4197,9 @@ public class PluginUtils {
     }
 
     public static boolean handleOpenDocError(ViewerComponent component) {
+        if (component == null) {
+            return false;
+        }
         MethodChannel.Result result = component.getFlutterLoadResult();
         if (result != null) {
             result.success(false);
@@ -4129,6 +4246,9 @@ public class PluginUtils {
     }
 
     public static void handleLeadingNavButtonPressed(ViewerComponent component) {
+        if (component == null) {
+            return;
+        }
         EventChannel.EventSink leadingNavButtonPressedEventSink = component.getLeadingNavButtonPressedEventEmitter();
         if (leadingNavButtonPressedEventSink != null) {
             leadingNavButtonPressedEventSink.success(null);
@@ -4136,6 +4256,9 @@ public class PluginUtils {
     }
 
     public static void handleAnnotationCustomToolbarItemPressed(ViewerComponent component, MenuItem item) {
+        if (component == null) {
+            return;
+        }
         EventChannel.EventSink annotationCustomToolbarItemPressedEventSink = component.getAnnotationToolbarItemPressedEventEmitter();
         int itemId = item.getItemId();
         String itemKey = mToolIdMap.get(itemId);
@@ -4166,7 +4289,9 @@ public class PluginUtils {
     }
 
     public static void emitAnnotationChangedEvent(String action, Map<Annot, Integer> map, ViewerComponent component) {
-
+        if (component == null) {
+            return;
+        }
         EventChannel.EventSink eventSink = component.getAnnotationChangedEventEmitter();
         if (eventSink != null) {
             JSONObject resultObject = new JSONObject();
@@ -4197,7 +4322,7 @@ public class PluginUtils {
     }
 
     public static void emitExportAnnotationCommandEvent(String action, Map<Annot, Integer> map, ViewerComponent component) {
-        if (component.getToolManager() != null && component.getToolManager().getAnnotManager() != null) {
+        if (component == null || component.getToolManager() != null && component.getToolManager().getAnnotManager() != null) {
             return;
         } else {
             ArrayList<Annot> annots = new ArrayList<>(map.keySet());
@@ -4222,7 +4347,9 @@ public class PluginUtils {
     }
 
     public static void emitAnnotationsSelectedEvent(Map<Annot, Integer> map, ViewerComponent component) {
-
+        if (component == null) {
+            return;
+        }
         component.setSelectedAnnots(new HashMap<>(map));
 
         if (hasAnnotationsSelected(component)) {

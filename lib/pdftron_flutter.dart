@@ -477,7 +477,7 @@ class PdftronFlutter {
   static Future<void> exitSearchMode() {
     return _channel.invokeMethod(Functions.exitSearchMode);
   }
-  
+
   /// Sets the zoom scale in the current document viewer with a zoom center.
   ///
   /// zoom: the zoom ratio to be set
@@ -579,6 +579,36 @@ class PdftronFlutter {
       Parameters.red: red,
       Parameters.green: green,
       Parameters.blue: blue
+      });
+  }
+  
+  /// Gets the horizontal and vertical scroll position in the current document viewer.
+  ///
+  /// The scroll position is returned as a `Map<String, int>` with the keys
+  /// "horizontal" and "vertical".
+  static Future<Map?> getScrollPos() async {
+    String jsonString = await _channel.invokeMethod(Functions.getScrollPos);
+    dynamic json = jsonDecode(jsonString);
+    Map scrollPos = {
+      'horizontal': json['horizontal'],
+      'vertical': json['vertical']
+    };
+    return scrollPos;
+  }
+
+  /// Sets the horizontal scroll position in the current document viewer.
+  Future<void> setHorizontalScrollPosition(int horizontalScrollPosition) {
+    return _channel.invokeMethod(
+        Functions.setHorizontalScrollPosition, <String, dynamic>{
+      Parameters.horizontalScrollPosition: horizontalScrollPosition
+    });
+  }
+
+  /// Sets the vertical scroll position in the current document viewer.
+  Future<void> setVerticalScrollPosition(int verticalScrollPosition) {
+    return _channel.invokeMethod(
+        Functions.setVerticalScrollPosition, <String, dynamic>{
+      Parameters.verticalScrollPosition: verticalScrollPosition
     });
   }
   
@@ -590,4 +620,17 @@ class PdftronFlutter {
   }
 
   // Hygen Generated Methods
+  /// Gets the list of annotations on the given page.
+  static Future<List<Annot>?> getAnnotationsOnPage(int pageNumber) {
+    return _channel.invokeMethod(Functions.getAnnotationsOnPage, <String, dynamic>{
+      Parameters.pageNumber: pageNumber
+    }).then((jsonArray) {
+      List<dynamic> annotations = jsonDecode(jsonArray);
+      List<Annot> annotList = new List<Annot>.empty(growable: true);
+      for (dynamic annotation in annotations) {
+        annotList.add(new Annot.fromJson(annotation));
+      }
+      return annotList;
+    });
+  }
 }

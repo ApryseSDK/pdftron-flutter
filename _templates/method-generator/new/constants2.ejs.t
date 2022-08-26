@@ -1,5 +1,5 @@
 ---
-to: lib/constants.dart
+to: lib/src/constants.dart
 after: Hygen Generated Method Parameters
 inject: true
 ---

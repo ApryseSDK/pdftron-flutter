@@ -979,7 +979,7 @@
                 // TODO
             }
             else if ([string isEqualToString:PTAnnotationCreateLinkTextToolKey]) {
-                // TODO
+                toolManager.linkAnnotationOptions.canCreate = value;
             }
             else if ([string isEqualToString:PTFormCreateTextFieldToolKey]) {
                 // TODO
@@ -1641,10 +1641,19 @@
         [self setBackgroundColor:result call:call];
     } else if ([call.method isEqualToString:PTSetDefaultPageColorKey]) {
         [self setDefaultPageColor:result call:call];
+    } else if ([call.method isEqualToString:PTGetScrollPosKey]) {
+        [self getScrollPos:result];
+    } else if ([call.method isEqualToString:PTSetHorizontalScrollPositionKey]) {
+        [self setHorizontalScrollPosition:call result:result];
+    } else if ([call.method isEqualToString:PTSetVerticalScrollPositionKey]) {
+        [self setVerticalScrollPosition:call result:result];
     } else if ([call.method isEqualToString:PTSmartZoomKey]) {
         [self smartZoom:result call:call];
     }
     // Hygen Generated Method Call Cases
+    else if ([call.method isEqualToString:PTGetAnnotationsOnPageKey]) {
+        [self getAnnotationsOnPage:result call:call];
+    }
     else {
         result(FlutterMethodNotImplemented);
     }
@@ -3433,6 +3442,34 @@
     [pdfViewCtrl
         SetDefaultPageColor:[call.arguments[PTRedKey] unsignedCharValue] g:[call.arguments[PTGreenKey] unsignedCharValue] b:[call.arguments[PTBlueKey] unsignedCharValue]];
     [pdfViewCtrl Update:YES];
+
+    flutterResult(nil);
+}
+
+-(void)getScrollPos:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+
+    NSDictionary<NSString *, NSNumber *> * scrollPos = @{
+        PTScrollHorizontalKey: [[NSNumber alloc] initWithDouble:[documentController.pdfViewCtrl GetHScrollPos]],
+        PTScrollVerticalKey: [[NSNumber alloc] initWithDouble:[documentController.pdfViewCtrl GetVScrollPos]],
+    };
+    
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:scrollPos options:0 error:nil];
+    NSString *res = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    flutterResult(res);
+}
+
+-(void)setHorizontalScrollPosition:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    double horizontalScrollPos = [call.arguments[PTHorizontalScrollPositionArgumentKey] doubleValue];
+    [documentController.pdfViewCtrl SetHScrollPos:horizontalScrollPos];
+    flutterResult(nil);
+}
+
+-(void)setVerticalScrollPosition:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    double verticalScrollPos = [call.arguments[PTVerticalScrollPositionArgumentKey] doubleValue];
+    [documentController.pdfViewCtrl SetVScrollPos:verticalScrollPos];
     flutterResult(nil);
 }
 
@@ -3461,6 +3498,28 @@
 }
 
 // Hygen Generated Methods
+- (void)getAnnotationsOnPage:(FlutterResult)result call:(FlutterMethodCall*)call
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    int pageNumber = [call.arguments[PTPageNumberArgumentKey] intValue];
+    
+    NSMutableArray *resultArray = [[NSMutableArray alloc] init];
+    NSArray<PTAnnot *> *annots = [PdftronFlutterPlugin getAnnotationsOnPage:pageNumber documentController:documentController];
+    
+    for (PTAnnot *annot in annots) {
+        NSString *uid = [annot GetUniqueIDAsString];
+        if (uid) {
+            NSDictionary *annotJson = @{
+                PTAnnotationIdKey: uid,
+                PTAnnotationPageNumberKey: [NSNumber numberWithInt:pageNumber],
+            };
+            [resultArray addObject:annotJson];
+        }
+    }
+
+    result([PdftronFlutterPlugin PT_idToJSONString:resultArray]);
+}
+
 
 #pragma mark - Helper
 
