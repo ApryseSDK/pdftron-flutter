@@ -26,6 +26,12 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     compileSdkVersion 31
+    ndkVersion flutter.ndkVersion
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
     lintOptions {
         disable 'InvalidPackage'
@@ -36,7 +42,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 31
         multiDexEnabled true
-        manifestPlaceholders = [pdftronLicenseKey:PDFTRON_LICENSE_KEY]
+        manifestPlaceholders += [pdftronLicenseKey:PDFTRON_LICENSE_KEY]
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

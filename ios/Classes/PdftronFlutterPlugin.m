@@ -22,6 +22,8 @@
 @property (nonatomic, strong) FlutterEventSink pageMovedEventSink;
 @property (nonatomic, strong) FlutterEventSink scrollChangedEventSink;
 
+// Hygen Generated Event Listeners (1)
+
 @property (nonatomic, assign, getter=isWidgetView) BOOL widgetView;
 @property (nonatomic, assign, getter=isMultiTabSet) BOOL multiTabSet;
 
@@ -183,6 +185,8 @@
     [pageMovedEventChannel setStreamHandler:self];
 
     [scrollChangedEventChannel setStreamHandler:self];
+
+    // Hygen Generated Event Listeners (2)
 }
 
 #pragma mark - Configurations
@@ -636,6 +640,15 @@
                         [documentController setUserBookmarksListEditingEnabled:[userBookmarksListEditingEnabled boolValue]];
                     }
                 }
+                else if ([key isEqualToString:PTOutlineListEditingEnabledKey]) {
+                    
+                    NSNumber* outlineListEditingEnabled = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTOutlineListEditingEnabledKey class:[NSNumber class] error:&error];
+                    
+                    if (!error && outlineListEditingEnabled) {
+                        
+                        [documentController setOutlineListEditingEnabled:[outlineListEditingEnabled boolValue]];
+                    }
+                }
                 else if ([key isEqualToString:PTShowNavigationListAsSidePanelOnLargeDevicesKey]) {
                     
                     NSNumber* showNavigationListAsSidePanelOnLargeDevices = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTShowNavigationListAsSidePanelOnLargeDevicesKey class:[NSNumber class] error:&error];
@@ -800,6 +813,7 @@
                         documentController.bookmarkPageButtonHidden = ![quickBookmarkCreation boolValue];
                     }
                 }
+                // Hygen Generated Configs
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
@@ -965,7 +979,7 @@
                 // TODO
             }
             else if ([string isEqualToString:PTAnnotationCreateLinkTextToolKey]) {
-                // TODO
+                toolManager.linkAnnotationOptions.canCreate = value;
             }
             else if ([string isEqualToString:PTFormCreateTextFieldToolKey]) {
                 // TODO
@@ -1119,7 +1133,15 @@
                     [exportItems removeObject:documentController.exportCroppedCopyButtonItem];
                     documentController.exportItems = [exportItems copy];
                 }
-            },    
+            },
+        PTSaveReducedCopyButtonKey:
+            ^{
+                if (![documentController isExportButtonHidden]) {
+                    NSMutableArray * exportItems = [documentController.exportItems mutableCopy];
+                    [exportItems removeObject:documentController.exportReducedFileSizeCopyButtonItem];
+                    documentController.exportItems = [exportItems copy];
+                }
+            },
     };
     
     for(NSObject* item in elementsToDisable)
@@ -1232,6 +1254,7 @@
         case scrollChangedId:
             self.scrollChangedEventSink = events;
             break;
+        // Hygen Generated Event Listeners (3)
     }
     
     return Nil;
@@ -1287,7 +1310,8 @@
             break;
         case scrollChangedId:
             self.scrollChangedEventSink = nil;
-            break;    
+            break;
+        // Hygen Generated Event Listeners (4)
     }
     
     return Nil;
@@ -1443,6 +1467,8 @@
         self.scrollChangedEventSink([PdftronFlutterPlugin PT_idToJSONString:resultDict]);
     }
 }
+
+// Hygen Generated Event Listeners (5)
 
 #pragma mark - Functions
 
@@ -1619,7 +1645,12 @@
         [self setVerticalScrollPosition:call result:result];
     } else if ([call.method isEqualToString:PTSmartZoomKey]) {
         [self smartZoom:result call:call];
-    } else {
+    }
+    // Hygen Generated Method Call Cases
+    else if ([call.method isEqualToString:PTGetAnnotationsOnPageKey]) {
+        [self getAnnotationsOnPage:result call:call];
+    }
+    else {
         result(FlutterMethodNotImplemented);
     }
 }
@@ -3425,6 +3456,30 @@
         [documentController.pdfViewCtrl ShowRect:pageNumber rect:rect];
     }
 }
+
+// Hygen Generated Methods
+- (void)getAnnotationsOnPage:(FlutterResult)result call:(FlutterMethodCall*)call
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    int pageNumber = [call.arguments[PTPageNumberArgumentKey] intValue];
+    
+    NSMutableArray *resultArray = [[NSMutableArray alloc] init];
+    NSArray<PTAnnot *> *annots = [PdftronFlutterPlugin getAnnotationsOnPage:pageNumber documentController:documentController];
+    
+    for (PTAnnot *annot in annots) {
+        NSString *uid = [annot GetUniqueIDAsString];
+        if (uid) {
+            NSDictionary *annotJson = @{
+                PTAnnotationIdKey: uid,
+                PTAnnotationPageNumberKey: [NSNumber numberWithInt:pageNumber],
+            };
+            [resultArray addObject:annotJson];
+        }
+    }
+
+    result([PdftronFlutterPlugin PT_idToJSONString:resultArray]);
+}
+
 
 #pragma mark - Helper
 

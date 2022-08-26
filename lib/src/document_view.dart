@@ -1,4 +1,13 @@
-part of pdftron;
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/rendering.dart';
+
+import '../pdftron_flutter.dart';
 
 typedef void DocumentViewCreatedCallback(DocumentViewController controller);
 
@@ -488,7 +497,7 @@ class DocumentViewController {
   Future<void> exitSearchMode() {
     return _channel.invokeMethod(Functions.exitSearchMode);
   }
-  
+
   /// Sets the zoom scale in the current document viewer with a zoom center.
   ///
   /// zoom: the zoom ratio to be set
@@ -543,7 +552,7 @@ class DocumentViewController {
       Parameters.animated: animated,
     });
   }
-  
+
   /// Gets a list of absolute file paths to PDFs containing the saved signatures.
   ///
   /// Returns a promise
@@ -602,5 +611,20 @@ class DocumentViewController {
   /// Return a Promise
   Future<List<int>?> getVisiblePages() {
     return _channel.invokeMethod(Functions.getVisiblePages);
+  }
+
+  // Hygen Generated Methods
+  /// Gets the list of annotations on the given page.
+  Future<List<Annot>?> getAnnotationsOnPage(int pageNumber) {
+    return _channel.invokeMethod(Functions.getAnnotationsOnPage, <String, dynamic>{
+      Parameters.pageNumber: pageNumber
+    }).then((jsonArray) {
+      List<dynamic> annotations = jsonDecode(jsonArray);
+      List<Annot> annotList = new List<Annot>.empty(growable: true);
+      for (dynamic annotation in annotations) {
+        annotList.add(new Annot.fromJson(annotation));
+      }
+      return annotList;
+    });
   }
 }
