@@ -1,5 +1,5 @@
 
-/// Defines the names of the functions.
+/// Names of functions.
 class Functions {
   static const getPlatformVersion = "getPlatformVersion";
   static const getVersion = "getVersion";
@@ -80,7 +80,7 @@ class Functions {
   static const getAnnotationsOnPage = "getAnnotationsOnPage";
 }
 
-/// Defines the parameters of the functions.
+/// Parameters of functions.
 class Parameters {
   static const licenseKey = "licenseKey";
   static const document = "document";
@@ -117,7 +117,7 @@ class Parameters {
   // Hygen Generated Method Parameters
 }
 
-/// Defines the parameters of the events.
+/// Parameters of events.
 class EventParameters {
   static const action = "action";
   static const annotations = "annotations";
@@ -132,7 +132,7 @@ class EventParameters {
   // Hygen Generated Event Listeners
 }
 
-/// Defines the various kinds of buttons for the viewer.
+/// Buttons for the viewer.
 class Buttons {
   static const viewControlsButton = 'viewControlsButton';
   static const freeHandToolButton = 'freeHandToolButton';
@@ -187,7 +187,7 @@ class Buttons {
   static const editAnnotationToolbarButton = 'editAnnotationToolButton';
 }
 
-/// Defines the various kinds of tools for the viewer.
+/// Tools for the viewer.
 class Tools {
   static const annotationEdit = 'AnnotationEdit';
   static const textSelect = 'TextSelect';
@@ -245,7 +245,7 @@ class Tools {
   static const annotationLasso = 'AnnotationLasso';
 }
 
-/// Defines all fit modes in the viewer.
+/// Fit modes in the viewer.
 class FitModes {
   static const fitPage = 'FitPage';
   static const fitWidth = 'FitWidth';
@@ -253,7 +253,7 @@ class FitModes {
   static const zoom = 'Zoom';
 }
 
-/// Defines all layout modes in the viewer.
+/// Layout modes in the viewer.
 class LayoutModes {
   static const single = 'Single';
   static const continuous = 'Continuous';
@@ -263,19 +263,19 @@ class LayoutModes {
   static const facingCoverContinuous = 'FacingCoverContinuous';
 }
 
-/// Defines the property flags for a form field.
+/// Property flags for a form field.
 class FieldFlags {
   static const ReadOnly = 0;
   static const Required = 1;
 }
 
-/// Defines the filter modes in thumbnail browser.
+/// Filter modes in thumbnail browser.
 class ThumbnailFilterModes {
   static const annotated = "annotated";
   static const bookmarked = "bookmarked";
 }
 
-/// Defines the flags for any annotation in the document.
+/// Flags for any annotation in the document.
 class AnnotationFlags {
   static const hidden = "hidden";
   static const invisible = "invisible";
@@ -289,7 +289,7 @@ class AnnotationFlags {
   static const toggleNoView = "toggleNoView";
 }
 
-/// Defines all possible annotation properties.
+/// Annotation properties.
 class AnnotationProperties {
   /// Not markup exclusive.
   static const rect = "rect";
@@ -310,12 +310,12 @@ class AnnotationProperties {
   static const contentRect = "contentRect";
 }
 
-/// Defines all user behaviors in the viewer.
+/// User behaviors in the viewer.
 class Behaviors {
   static const linkPress = "linkPress";
 }
 
-/// Defines all menu items that could show up on long press of text or empty area.
+/// Menu items that could show up upon long press on text or an empty area.
 class LongPressMenuItems {
   static const copy = "copy";
   static const search = "search";
@@ -323,7 +323,7 @@ class LongPressMenuItems {
   static const read = "read";
 }
 
-/// Defines all menu items that could show up on press of annotation.
+/// Menu items that could show up when an annotation is selected.
 class AnnotationMenuItems {
   static const style = "style";
   static const note = "note";
@@ -344,7 +344,7 @@ class AnnotationMenuItems {
   static const ungroup = "ungroup";
 }
 
-/// Defines a set of pre-designed toolbars for easier customization.
+/// Pre-designed toolbars for easier customization.
 class DefaultToolbars {
   static const view = "PDFTron_View";
   static const annotate = "PDFTron_Annotate";
@@ -358,14 +358,14 @@ class DefaultToolbars {
   static const favorite = "PDFTron_Favorite";
 }
 
-/// Defines zoom limits
+/// Zoom limits.
 class ZoomLimitMode {
   static const None = "none";
   static const Absolute = "absolute";
   static const Relative = "relative";
 }
 
-/// Defines default toolbar icons for use for potential custom toolbars.
+/// Default toolbar icons that can be used for creating custom toolbars.
 class ToolbarIcons {
   static const view = "PDFTron_View";
   static const annotate = "PDFTron_Annotate";
@@ -379,14 +379,14 @@ class ToolbarIcons {
   static const favorite = "PDFTron_Favorite";
 }
 
-/// Defines the export format for pdf image
+/// The format for exporting PDF to images.
 class ExportFormat {
   static const BMP = "BMP";
   static const JPEG = "JPEG";
   static const PNG = "PNG";
 }
 
-/// Defines the screen orientations for the viewer.
+/// The screen orientation of the viewer.
 ///
 /// Android only.
 class PTOrientation {
@@ -405,7 +405,7 @@ class PTOrientation {
   static const userPortrait = 12;
 }
 
-/// Defines the items in the view mode dialog.
+/// Items in the view mode dialog.
 class ViewModePickerItem {
   static const Crop = "viewModeCrop";
   static const Rotation = "viewModeRotation";
@@ -413,31 +413,45 @@ class ViewModePickerItem {
   static const VerticalScrolling = "viewModeVerticalScrolling";
 }
 
-/// Defines the type of eraser used in the viewer.
+/// The type of eraser used in the viewer.
 class DefaultEraserType {
+  /// Erases everything as an object; the entire object is erased when touched.
   static const annotationEraser = "annotationEraser";
+
+  /// Erases ink by pixel, but other anntation types as objects.
   static const hybrideEraser = "hybridEraser";
 
-  /// Android only.
+  /// Erases ink by pixel only. Android only.
   static const inkEraser = "inkEraser";
 }
 
-// ReflowOrientation defines the scrolling direction of the viewer while in reflow mode. Android only.
+/// The scrolling direction of the viewer while in reflow mode.
+///
+/// Android only.
 class ReflowOrientation {
   static const horizontal = "horizontal";
   static const vertical = "vertical";
 }
 
+/// The annotation manager's edit mode.
 class AnnotationManagerEditMode {
+  /// Can edit only the user's own changes.
   static const Own = "editModeOwn";
+
+  /// Can edit everyone's changes.
   static const All = "editModeAll";
 }
 
+/// The annotation manager's undo mode.
 class AnnotationManagerUndoMode {
+  /// Can undo only the user's own changes.
   static const Own = "undoModeOwn";
+
+  /// Can undo everyone's changes.
   static const All = "undoModeAll";
 }
 
+/// The alignment of annotation toolbars.
 class ToolbarAlignment {
   static const Start = "GravityStart";
   static const End = "GravityEnd";
