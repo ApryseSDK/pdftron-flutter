@@ -24,6 +24,9 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 // Array of wrapped PTExtendedAnnotTypes.
 @property (nonatomic, strong, nullable) NSArray<NSNumber *> *hideAnnotMenuToolsAnnotTypes;
 
+@property (nonatomic, strong, nullable) NSString *toolbarId;
+
+
 @end
 
 @implementation PTFlutterDocumentController
@@ -1781,6 +1784,17 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
             }
         }
         [self.tempFiles removeAllObjects];
+    }
+}
+
+#pragma mark - PTToolGroupManager
+
+- (void)annotationToolbarItemPressed:(NSString *)itemKey
+{
+    for (id toolbarItemValue in toolbarItems) {
+        if([toolbarItemValue isKindOfClass: [NSString class]]) {
+            
+        }
     }
 }
 
