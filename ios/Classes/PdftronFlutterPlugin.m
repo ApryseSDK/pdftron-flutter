@@ -1637,6 +1637,10 @@
         [self getSavedSignatures:result];
     } else if ([call.method isEqualToString:PTGetSavedSignatureFolderKey]) {
         [self getSavedSignatureFolder:result];
+    } else if ([call.method isEqualToString:PTSetBackgroundColorKey]) {
+        [self setBackgroundColor:result call:call];
+    } else if ([call.method isEqualToString:PTSetDefaultPageColorKey]) {
+        [self setDefaultPageColor:result call:call];
     } else if ([call.method isEqualToString:PTGetScrollPosKey]) {
         [self getScrollPos:result];
     } else if ([call.method isEqualToString:PTSetHorizontalScrollPositionKey]) {
@@ -3402,6 +3406,42 @@
     if (navigationListsViewController) {
         [documentController showNavigationLists];
     }
+
+    flutterResult(nil);
+}
+
+-(void)setBackgroundColor:(FlutterResult)flutterResult call:(FlutterMethodCall*)call {
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"set_background_color" message:@"Failed to set background color" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+
+    PTPDFViewCtrl *pdfViewCtrl = documentController.pdfViewCtrl;
+        
+    [pdfViewCtrl
+     SetBackgroundColor:[call.arguments[PTRedKey] unsignedCharValue] g:[call.arguments[PTGreenKey] unsignedCharValue] b:[call.arguments[PTBlueKey] unsignedCharValue] a:255];
+    flutterResult(nil);
+}
+
+-(void)setDefaultPageColor:(FlutterResult)flutterResult call:(FlutterMethodCall*)call {
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"set_default_page_color" message:@"Failed to set default page color" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+
+    PTPDFViewCtrl *pdfViewCtrl = documentController.pdfViewCtrl;
+        
+    [pdfViewCtrl
+        SetDefaultPageColor:[call.arguments[PTRedKey] unsignedCharValue] g:[call.arguments[PTGreenKey] unsignedCharValue] b:[call.arguments[PTBlueKey] unsignedCharValue]];
+    [pdfViewCtrl Update:YES];
 
     flutterResult(nil);
 }

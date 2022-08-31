@@ -117,6 +117,9 @@ public class PluginUtils {
     public static final String KEY_ZOOM_LIMIT_MODE_NONE = "none";
     public static final String KEY_ZOOM_LIMIT_MODE_ABSOLUTE = "absolute";
     public static final String KEY_ZOOM_LIMIT_MODE_RELATIVE = "relative";
+    public static final String KEY_RED = "red";
+    public static final String KEY_GREEN = "green";
+    public static final String KEY_BLUE = "blue";
     public static final String KEY_ANIMATED = "animated";
 
     public static final String KEY_REQUESTED_ORIENTATION = "requestedOrientation";
@@ -345,6 +348,8 @@ public class PluginUtils {
     public static final String FUNCTION_GET_SAVED_SIGNATURES = "getSavedSignatures";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_FOLDER = "getSavedSignatureFolder";
     public static final String FUNCTION_GET_SAVED_SIGNATURE_JPG_FOLDER = "getSavedSignatureJpgFolder";
+    public static final String FUNCTION_SET_BACKGROUND_COLOR = "setBackgroundColor";
+    public static final String FUNCTION_SET_DEFAULT_PAGE_COLOR = "setDefaultPageColor";
     public static final String FUNCTION_GET_SCROLL_POS = "getScrollPos";
     public static final String FUNCTION_SET_HORIZONTAL_SCROLL_POSITION = "setHorizontalScrollPosition";
     public static final String FUNCTION_SET_VERTICAL_SCROLL_POSITION = "setVerticalScrollPosition";
@@ -2583,6 +2588,26 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_SET_BACKGROUND_COLOR: {
+                checkFunctionPrecondition(component);
+                try {
+                    setBackgroundColor(call, result, component);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+                break;
+            }
+            case FUNCTION_SET_DEFAULT_PAGE_COLOR: {
+                checkFunctionPrecondition(component);
+                try {
+                    setDefaultPageColor(call, result, component);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+                break;
+            }
             case FUNCTION_GET_SCROLL_POS: {
                 checkFunctionPrecondition(component);
                 try {
@@ -3937,6 +3962,36 @@ public class PluginUtils {
         }
     }
 
+    private static void setBackgroundColor(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+
+        int red = call.argument(KEY_RED);
+        int green = call.argument(KEY_GREEN);
+        int blue = call.argument(KEY_BLUE);
+        pdfViewCtrl.setClientBackgroundColor(red, green, blue, false);
+        result.success(null);
+    }
+
+    private static void setDefaultPageColor(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+
+        int red = call.argument(KEY_RED);
+        int green = call.argument(KEY_GREEN);
+        int blue = call.argument(KEY_BLUE);
+        pdfViewCtrl.setDefaultPageColor(red, green, blue);
+        result.success(null);
+    }
+
     private static void getScrollPos(MethodChannel.Result result, ViewerComponent component) throws JSONException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         JSONObject jsonObject = new JSONObject();
@@ -4012,6 +4067,7 @@ public class PluginUtils {
             result.error("InvalidState", "PDFViewCtrl not found", null);
             return;
         }
+        
         double zoom = call.argument(KEY_ZOOM);
         int x = call.argument(KEY_X);
         int y = call.argument(KEY_Y);
@@ -4025,7 +4081,7 @@ public class PluginUtils {
             result.error("InvalidState", "PDFViewCtrl not found", null);
             return;
         }
-
+        
         try {
             int pageNumber = call.argument(KEY_PAGE_NUMBER);
             double x1 = call.argument(KEY_X1);

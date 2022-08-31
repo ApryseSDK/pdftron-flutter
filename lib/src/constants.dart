@@ -70,6 +70,8 @@ class Functions {
   static const zoomToRect = "zoomToRect";
   static const getZoom = "getZoom";
   static const setZoomLimits = "setZoomLimits";
+  static const setBackgroundColor = "setBackgroundColor";
+  static const setDefaultPageColor = "setDefaultPageColor";
   static const getScrollPos = "getScrollPos";
   static const setHorizontalScrollPosition = "setHorizontalScrollPosition";
   static const setVerticalScrollPosition = "setVerticalScrollPosition";
@@ -107,6 +109,9 @@ class Parameters {
   static const exportFormat = "exportFormat";
   static const dpi = "dpi";
   static const requestedOrientation = "requestedOrientation";
+  static const red = "red";
+  static const green = "green";
+  static const blue = "blue";
   static const horizontalScrollPosition = "horizontalScrollPosition";
   static const verticalScrollPosition = "verticalScrollPosition";
   static const searchString = "searchString";

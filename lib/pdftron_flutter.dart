@@ -686,6 +686,32 @@ class PdftronFlutter {
   static Future<String?> getSavedSignatureJpgFolder() {
     return _channel.invokeMethod(Functions.getSavedSignatureJpgFolder);
   }
+
+  /// Sets the background color of the viewer.
+  ///
+  /// The color is given as RGB values, with each integer being in range between
+  /// 0 and 255 inclusive.
+  static Future<void> setBackgroundColor(int red, int green, int blue) {
+    return _channel.invokeMethod(
+        Functions.setBackgroundColor, <String, dynamic>{
+      Parameters.red: red,
+      Parameters.green: green,
+      Parameters.blue: blue
+    });
+  }
+
+  /// Sets the default page color of the viewer.
+  ///
+  /// The color is given as RGB values, with each integer being in range between
+  /// 0 and 255 inclusive.
+  static Future<void> setDefaultPageColor(int red, int green, int blue) {
+    return _channel.invokeMethod(
+        Functions.setDefaultPageColor, <String, dynamic>{
+      Parameters.red: red,
+      Parameters.green: green,
+      Parameters.blue: blue
+      });
+  }
   
   /// Gets the horizontal and vertical scroll position in the current document viewer.
   ///
