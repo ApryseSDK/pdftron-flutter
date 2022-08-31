@@ -77,6 +77,7 @@ static NSString * const PTHideScrollbarsKey = @"hideScrollbars";
 static NSString * const PTQuickBookmarkCreationKey = @"quickBookmarkCreation";
 
 // Hygen Generated Configs
+static NSString * const PTMaxSignatureCountKey = @"maxSignatureCount";
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";

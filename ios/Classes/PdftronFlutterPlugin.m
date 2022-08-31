@@ -814,6 +814,14 @@
                     }
                 }
                 // Hygen Generated Configs
+                else if ([key isEqualToString:PTMaxSignatureCountKey])
+                {
+                    NSNumber* maxSignatureCount = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTMaxSignatureCountKey class:[NSNumber class] error:&error];
+
+                    if (!error && maxSignatureCount) {
+                        documentController.toolManager.signatureAnnotationOptions.maxSignatureCount = [maxSignatureCount intValue];
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);

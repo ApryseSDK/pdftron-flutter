@@ -38,6 +38,7 @@ import com.pdftron.pdf.controls.UserCropSelectionDialogFragment;
 import com.pdftron.pdf.dialog.RotateDialogFragment;
 import com.pdftron.pdf.dialog.ViewModePickerDialogFragment;
 import com.pdftron.pdf.dialog.pdflayer.PdfLayerDialog;
+import com.pdftron.pdf.dialog.signature.SignatureDialogFragment;
 import com.pdftron.pdf.model.AnnotStyle;
 import com.pdftron.pdf.tools.AdvancedShapeCreate;
 import com.pdftron.pdf.tools.AnnotEditRectGroup;
@@ -204,6 +205,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_FULL_SCREEN_MODE_ENABLED = "fullScreenModeEnabled";
 
     // Hygen Generated Config Constants
+    public static final String KEY_CONFIG_MAX_SIGNATURE_COUNT = "maxSignatureCount";
 
     public static final String KEY_X1 = "x1";
     public static final String KEY_Y1 = "y1";
@@ -1261,6 +1263,9 @@ public class PluginUtils {
                     builder.fullscreenModeEnabled(false);
                 }
                 // Hygen Generated Configs
+                if (!configJson.isNull(KEY_CONFIG_MAX_SIGNATURE_COUNT)) {
+                    SignatureDialogFragment.MAX_SIGNATURES = configJson.getInt(KEY_CONFIG_MAX_SIGNATURE_COUNT);
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
