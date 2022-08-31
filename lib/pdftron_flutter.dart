@@ -581,6 +581,7 @@ class PdftronFlutter {
       Parameters.blue: blue
       });
   }
+  
   /// Gets the horizontal and vertical scroll position in the current document viewer.
   ///
   /// The scroll position is returned as a `Map<String, int>` with the keys
