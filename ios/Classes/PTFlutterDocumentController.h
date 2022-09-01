@@ -104,12 +104,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign, getter=isReadOnly) BOOL hideScrollbars;
 
-// customToolbar/customToolbarItem item keys
-
-//typedef NSString * PTAnnotationToolbarItemKey NS_TYPED_EXENSIBLE_ENUM;
-//static const PTAnnotationToolbarItemKey PTAnnotationToolbarItemKeyId = @"id";
-//static const PTAnnotationToolbarItemKey PTAnnotationToolbarItemKeyName = @"name";
-//static const PTAnnotationToolbarItemKey PTAnnotationToolbarItemKeyIcon = @"icon";
 
 // Hygen Generated Configs
 
@@ -120,6 +114,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)shouldSetNavigationBarHidden:(BOOL)navigationBarHidden animated:(BOOL)animated;
 - (BOOL)shouldSetToolbarHidden:(BOOL)toolbarHidden animated:(BOOL)animated;
+- (void)annotationToolbarItemPressed:(PTFlutterDocumentController *)sender withKey:(NSString *)itemKey;
 
 - (void)hideViewModeItems:(NSArray<NSString *> *)viewModeItems;
 

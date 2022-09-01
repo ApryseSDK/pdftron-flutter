@@ -3424,6 +3424,18 @@
     }
 }
 
+- (void)annotationToolbarItemPressed:(PTFlutterDocumentController *)sender withKey:(NSString *)itemKey
+{
+    if (sender.onChange) {
+        NSMutableDictionary *result = [[NSMutableDictionary alloc] initWithDictionary: @{
+            @"onAnnotationToolbarItemPress": @"onAnnotationToolbarItemPress",
+            PTAnnotationToolbarItemKeyId: (itemKey ?: @"")
+        }];
+                
+        sender.onChange(result);
+    }
+}
+
 // Hygen Generated Methods
 - (void)getAnnotationsOnPage:(FlutterResult)result call:(FlutterMethodCall*)call
 {

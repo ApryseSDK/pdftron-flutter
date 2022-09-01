@@ -18,6 +18,10 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 }
 
 @interface PTFlutterDocumentController()
+{
+    NSMutableDictionary<NSString *, NSNumber *> *_annotationToolbarItemKeyMap;
+    NSUInteger _annotationToolbarItemCounter;
+}
 
 @property (nonatomic, strong, nullable) UIBarButtonItem *leadingNavButtonItem;
 
@@ -1441,6 +1445,23 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     return toolGroupMap[key];
 }
 
+- (nullable UIImage *)imageForImageName:(NSString *)imageName
+{
+    UIImage * const image = [UIImage imageNamed:imageName];
+    if (image != nil) {
+        return image;
+    }else{
+        // fallback to System Image
+        if (@available(iOS 13.0, *)) {
+            UIImage *systemIcon = [UIImage systemImageNamed:imageName];
+            if (systemIcon != nil) {
+                return systemIcon;
+            }
+        }
+    }
+    return nil;
+}
+
 - (PTToolGroup *)createToolGroupWithDictionary:(NSDictionary<NSString *, id> *)dictionary toolGroupManager:(PTToolGroupManager *)toolGroupManager
 {
     NSString *toolbarId = dictionary[PTAnnotationToolbarKeyId];
@@ -1457,18 +1478,60 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     
     NSMutableArray<UIBarButtonItem *> *barButtonItems = [NSMutableArray array];
     
-    for (NSString *toolbarItem in toolbarItems) {
-        if (![toolbarItem isKindOfClass:[NSString class]]) {
-            continue;
-        }
-        
-        Class toolClass = [PdftronFlutterPlugin toolClassForKey:toolbarItem];
-        if (!toolClass) {
-            continue;
-        }
-        
-        UIBarButtonItem *item = [toolGroupManager createItemForToolClass:toolClass];
-        if (item) {
+    for (id toolbarItemValue in toolbarItems) {
+        if ([toolbarItemValue isKindOfClass:[NSString class]]) {
+            NSString * const toolbarItemKey = (NSString *)toolbarItemValue;
+            
+            Class toolClass = [PdftronFlutterPlugin toolClassForKey:toolbarItemKey];
+            if (!toolClass) {
+                continue;
+            }
+            
+            UIBarButtonItem *item = [toolGroupManager createItemForToolClass:toolClass];
+            if (item) {
+                [barButtonItems addObject:item];
+            }
+        } else if ([toolbarItemValue isKindOfClass:[NSDictionary class]]) {
+            NSDictionary<NSString *, id> * const toolbarItem = (NSDictionary *)toolbarItemValue;
+            
+            NSString * const toolbarItemId = toolbarItem[PTAnnotationToolbarItemKeyId];
+            NSString * const toolbarItemName = toolbarItem[PTAnnotationToolbarItemKeyName];
+            NSString * const toolbarItemIconName = toolbarItem[PTAnnotationToolbarItemKeyIcon];
+            
+            // An item id, name, and icon are required.
+            if (toolbarItemId.length == 0 ||
+                !toolbarItemName ||
+                toolbarItemIconName.length == 0) {
+                continue;
+            }
+            
+            UIImage * const toolbarItemIcon = [self imageForImageName:toolbarItemIconName];
+            // NOTE: Use the image-based initializer to avoid showing the title (safe to set the title afterwards though).
+            PTSelectableBarButtonItem * const item = [[PTSelectableBarButtonItem alloc]                                                                 initWithImage:toolbarItemIcon
+                                                      style:UIBarButtonItemStylePlain
+                                                      target:self
+                                                      action:@selector(customToolGroupToolbarItemPressed:)];
+            item.title = toolbarItemName;
+            
+            NSAssert(toolbarItemId != nil, @"Expected a toolbar item id");
+            
+            NSInteger itemTag = 0;
+            
+            // Check if this id has already been mapped before.
+            NSNumber * const idNumberValue = _annotationToolbarItemKeyMap[toolbarItemId];
+            if (idNumberValue) {
+                // Use existing mapped integer tag.
+                itemTag = idNumberValue.integerValue;
+            } else {
+                // We need to map this item id key to an integer.
+                _annotationToolbarItemCounter++;
+                
+                itemTag = _annotationToolbarItemCounter;
+                _annotationToolbarItemKeyMap[toolbarItemId] = @(itemTag);
+            }
+            
+            item.tag = itemTag;
+            
             [barButtonItems addObject:item];
         }
     }
@@ -1479,6 +1542,27 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     toolGroup.identifier = toolbarId;
 
     return toolGroup;
+}
+
+- (void)customToolGroupToolbarItemPressed:(PTSelectableBarButtonItem *)toolbarItem
+{
+    const NSInteger itemTag = toolbarItem.tag;
+    
+    // Find the corresponding item key string value for this item tag number.
+    __block NSString *itemKey = nil;
+    [_annotationToolbarItemKeyMap enumerateKeysAndObjectsUsingBlock:^(NSString * const currentItemKey,
+                                                                      NSNumber * const currentItemTagNumber,
+                                                                      BOOL * const stop) {
+        const NSInteger currentItemTag = currentItemTagNumber.integerValue;
+        if (itemTag == currentItemTag) {
+            itemKey = currentItemKey;
+            *stop = YES;
+        }
+    }];
+    
+    if (itemKey) {
+        [self.delegate annotationToolbarItemPressed:self withKey:itemKey];
+    }
 }
 
 - (void)setHideAnnotMenuTools:(NSArray<NSNumber *> *)hideAnnotMenuTools
@@ -1784,17 +1868,6 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
             }
         }
         [self.tempFiles removeAllObjects];
-    }
-}
-
-#pragma mark - PTToolGroupManager
-
-- (void)annotationToolbarItemPressed:(NSString *)itemKey
-{
-    for (id toolbarItemValue in toolbarItems) {
-        if([toolbarItemValue isKindOfClass: [NSString class]]) {
-            
-        }
     }
 }
 
