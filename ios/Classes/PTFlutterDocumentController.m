@@ -1002,6 +1002,9 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     _showNavigationListAsSidePanelOnLargeDevices = YES;
     
     _imageInReflowModeEnabled = YES;
+    
+    _annotationToolbarItemKeyMap = [NSMutableDictionary dictionary];
+    _annotationToolbarItemCounter = 0;
 }
 
 - (void)applyViewerSettings
@@ -1561,7 +1564,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     }];
     
     if (itemKey) {
-        [self.delegate annotationToolbarItemPressed:self withKey:itemKey];
+        [self.plugin documentController:self annotationToolbarItemPressed:itemKey];
     }
 }
 

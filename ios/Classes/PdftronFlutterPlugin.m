@@ -21,7 +21,7 @@
 @property (nonatomic, strong) FlutterEventSink zoomChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink pageMovedEventSink;
 @property (nonatomic, strong) FlutterEventSink scrollChangedEventSink;
-
+@property (nonatomic, strong) FlutterEventSink annotationToolbarItemPressedEventSink;
 // Hygen Generated Event Listeners (1)
 
 @property (nonatomic, assign, getter=isWidgetView) BOOL widgetView;
@@ -187,6 +187,10 @@
     [scrollChangedEventChannel setStreamHandler:self];
 
     // Hygen Generated Event Listeners (2)
+    FlutterEventChannel* annotationToolbarItemPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTAnnotationToolbarItemPressedEventKey binaryMessenger:messenger];
+
+    [annotationToolbarItemPressedEventChannel setStreamHandler:self];
+
 }
 
 #pragma mark - Configurations
@@ -1255,6 +1259,9 @@
             self.scrollChangedEventSink = events;
             break;
         // Hygen Generated Event Listeners (3)
+        case annotationToolbarItemPressedId:
+            self.annotationToolbarItemPressedEventSink = events;
+            break;
     }
     
     return Nil;
@@ -1312,10 +1319,12 @@
             self.scrollChangedEventSink = nil;
             break;
         // Hygen Generated Event Listeners (4)
+        case annotationToolbarItemPressedId:
+            self.annotationToolbarItemPressedEventSink = nil;
+            break;
     }
     
-    return Nil;
-}
+    return Nil;}
 
 #pragma mark - FlutterPlatformView
 
@@ -1469,6 +1478,15 @@
 }
 
 // Hygen Generated Event Listeners (5)
+- (void)documentController:(PTDocumentController *)docVC annotationToolbarItemPressed:(NSString *)annotationToolbarItemPressedString
+{
+    
+    if (self.annotationToolbarItemPressedEventSink != nil)
+    {
+        self.annotationToolbarItemPressedEventSink(annotationToolbarItemPressedString);
+    }
+}
+
 
 #pragma mark - Functions
 
@@ -3421,18 +3439,6 @@
     if (rectX1 && rectY1 && rectX2 && rectY2) {
         PTPDFRect* rect = [[PTPDFRect alloc] initWithX1:rectX1 y1:rectY1 x2:rectX2 y2:rectY2];
         [documentController.pdfViewCtrl ShowRect:pageNumber rect:rect];
-    }
-}
-
-- (void)annotationToolbarItemPressed:(PTFlutterDocumentController *)sender withKey:(NSString *)itemKey
-{
-    if (sender.onChange) {
-        NSMutableDictionary *result = [[NSMutableDictionary alloc] initWithDictionary: @{
-            @"onAnnotationToolbarItemPress": @"onAnnotationToolbarItemPress",
-            PTAnnotationToolbarItemKeyId: (itemKey ?: @"")
-        }];
-                
-        sender.onChange(result);
     }
 }
 
