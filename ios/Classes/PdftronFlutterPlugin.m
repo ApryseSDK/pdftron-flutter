@@ -818,6 +818,14 @@
                     }
                 }
                 // Hygen Generated Configs
+                else if ([key isEqualToString:PTMaxSignatureCountKey])
+                {
+                    NSNumber* maxSignatureCount = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTMaxSignatureCountKey class:[NSNumber class] error:&error];
+
+                    if (!error && maxSignatureCount) {
+                        documentController.toolManager.signatureAnnotationOptions.maxSignatureCount = [maxSignatureCount intValue];
+                    }
+                }
                 else
                 {
                     NSLog(@"Unknown JSON key in config: %@.", key);
@@ -1655,6 +1663,16 @@
         [self getSavedSignatures:result];
     } else if ([call.method isEqualToString:PTGetSavedSignatureFolderKey]) {
         [self getSavedSignatureFolder:result];
+    } else if ([call.method isEqualToString:PTSetBackgroundColorKey]) {
+        [self setBackgroundColor:result call:call];
+    } else if ([call.method isEqualToString:PTSetDefaultPageColorKey]) {
+        [self setDefaultPageColor:result call:call];
+    } else if ([call.method isEqualToString:PTGetScrollPosKey]) {
+        [self getScrollPos:result];
+    } else if ([call.method isEqualToString:PTSetHorizontalScrollPositionKey]) {
+        [self setHorizontalScrollPosition:call result:result];
+    } else if ([call.method isEqualToString:PTSetVerticalScrollPositionKey]) {
+        [self setVerticalScrollPosition:call result:result];
     } else if ([call.method isEqualToString:PTSmartZoomKey]) {
         [self smartZoom:result call:call];
     }
@@ -3415,6 +3433,69 @@
         [documentController showNavigationLists];
     }
 
+    flutterResult(nil);
+}
+
+-(void)setBackgroundColor:(FlutterResult)flutterResult call:(FlutterMethodCall*)call {
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"set_background_color" message:@"Failed to set background color" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+
+    PTPDFViewCtrl *pdfViewCtrl = documentController.pdfViewCtrl;
+        
+    [pdfViewCtrl
+     SetBackgroundColor:[call.arguments[PTRedKey] unsignedCharValue] g:[call.arguments[PTGreenKey] unsignedCharValue] b:[call.arguments[PTBlueKey] unsignedCharValue] a:255];
+    flutterResult(nil);
+}
+
+-(void)setDefaultPageColor:(FlutterResult)flutterResult call:(FlutterMethodCall*)call {
+    PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"set_default_page_color" message:@"Failed to set default page color" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+
+    PTPDFViewCtrl *pdfViewCtrl = documentController.pdfViewCtrl;
+        
+    [pdfViewCtrl
+        SetDefaultPageColor:[call.arguments[PTRedKey] unsignedCharValue] g:[call.arguments[PTGreenKey] unsignedCharValue] b:[call.arguments[PTBlueKey] unsignedCharValue]];
+    [pdfViewCtrl Update:YES];
+
+    flutterResult(nil);
+}
+
+-(void)getScrollPos:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+
+    NSDictionary<NSString *, NSNumber *> * scrollPos = @{
+        PTScrollHorizontalKey: [[NSNumber alloc] initWithDouble:[documentController.pdfViewCtrl GetHScrollPos]],
+        PTScrollVerticalKey: [[NSNumber alloc] initWithDouble:[documentController.pdfViewCtrl GetVScrollPos]],
+    };
+    
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:scrollPos options:0 error:nil];
+    NSString *res = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+    flutterResult(res);
+}
+
+-(void)setHorizontalScrollPosition:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    double horizontalScrollPos = [call.arguments[PTHorizontalScrollPositionArgumentKey] doubleValue];
+    [documentController.pdfViewCtrl SetHScrollPos:horizontalScrollPos];
+    flutterResult(nil);
+}
+
+-(void)setVerticalScrollPosition:(FlutterMethodCall*)call result:(FlutterResult)flutterResult {
+    PTDocumentController *documentController = [self getDocumentController];
+    double verticalScrollPos = [call.arguments[PTVerticalScrollPositionArgumentKey] doubleValue];
+    [documentController.pdfViewCtrl SetVScrollPos:verticalScrollPos];
     flutterResult(nil);
 }
 
