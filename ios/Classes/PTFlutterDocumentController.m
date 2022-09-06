@@ -1510,10 +1510,11 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
             
             UIImage * const toolbarItemIcon = [self imageForImageName:toolbarItemIconName];
             // NOTE: Use the image-based initializer to avoid showing the title (safe to set the title afterwards though).
-            PTSelectableBarButtonItem * const item = [[PTSelectableBarButtonItem alloc]                                                                 initWithImage:toolbarItemIcon
-                                                      style:UIBarButtonItemStylePlain
-                                                      target:self
-                                                      action:@selector(customToolGroupToolbarItemPressed:)];
+            PTSelectableBarButtonItem * const item = [[PTSelectableBarButtonItem alloc]
+                initWithImage:toolbarItemIcon
+                style:UIBarButtonItemStylePlain
+                target:self
+                action:@selector(customToolGroupToolbarItemPressed:)];
             item.title = toolbarItemName;
             
             NSAssert(toolbarItemId != nil, @"Expected a toolbar item id");

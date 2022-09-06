@@ -1332,7 +1332,8 @@
             break;
     }
     
-    return Nil;}
+    return Nil;
+}
 
 #pragma mark - FlutterPlatformView
 

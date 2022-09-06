@@ -115,7 +115,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)shouldSetNavigationBarHidden:(BOOL)navigationBarHidden animated:(BOOL)animated;
 - (BOOL)shouldSetToolbarHidden:(BOOL)toolbarHidden animated:(BOOL)animated;
-//- (void)annotationToolbarItemPressed:(PTFlutterDocumentController *)sender withKey:(NSString *)itemKey;
 
 - (void)hideViewModeItems:(NSArray<NSString *> *)viewModeItems;
 
