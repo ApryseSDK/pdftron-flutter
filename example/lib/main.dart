@@ -211,9 +211,6 @@ class _ViewerState extends State<Viewer> {
       _showMyDialog();
     });
 
-    var customToolItem = new CustomToolbarItem('add_page', 'Add Page', 'ic_add_blank_page_white');
-    var customToolbar = new CustomToolbar('myToolbar', 'myToolbar', [Tools.annotationCreateArrow, customToolItem], ToolbarIcons.favorite);
-    config.annotationToolbars = [DefaultToolbars.annotate, customToolbar];
     await controller.openDocument(_document, config: config);
   }
 
