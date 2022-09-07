@@ -526,7 +526,7 @@ CancelListener startPageMovedListener(PageMovedListener listener) {
 ///
 /// Returns a function that can cancel the listener.
 /// Custom toolbar items can be added using the [Config.annotationToolbars]
-/// config. Android only.
+/// config. 
 CancelListener startAnnotationToolbarItemPressedListener(
     AnnotationToolbarItemPressedListener listener) {
   var subscription = _annotationToolbarItemPressedChannel

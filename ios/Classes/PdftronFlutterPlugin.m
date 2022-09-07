@@ -21,7 +21,7 @@
 @property (nonatomic, strong) FlutterEventSink zoomChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink pageMovedEventSink;
 @property (nonatomic, strong) FlutterEventSink scrollChangedEventSink;
-
+@property (nonatomic, strong) FlutterEventSink annotationToolbarItemPressedEventSink;
 // Hygen Generated Event Listeners (1)
 
 @property (nonatomic, assign, getter=isWidgetView) BOOL widgetView;
@@ -187,6 +187,10 @@
     [scrollChangedEventChannel setStreamHandler:self];
 
     // Hygen Generated Event Listeners (2)
+    FlutterEventChannel* annotationToolbarItemPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTAnnotationToolbarItemPressedEventKey binaryMessenger:messenger];
+
+    [annotationToolbarItemPressedEventChannel setStreamHandler:self];
+
 }
 
 #pragma mark - Configurations
@@ -1263,6 +1267,9 @@
             self.scrollChangedEventSink = events;
             break;
         // Hygen Generated Event Listeners (3)
+        case annotationToolbarItemPressedId:
+            self.annotationToolbarItemPressedEventSink = events;
+            break;
     }
     
     return Nil;
@@ -1320,6 +1327,9 @@
             self.scrollChangedEventSink = nil;
             break;
         // Hygen Generated Event Listeners (4)
+        case annotationToolbarItemPressedId:
+            self.annotationToolbarItemPressedEventSink = nil;
+            break;
     }
     
     return Nil;
@@ -1477,6 +1487,15 @@
 }
 
 // Hygen Generated Event Listeners (5)
+- (void)documentController:(PTDocumentController *)docVC annotationToolbarItemPressed:(NSString *)annotationToolbarItemPressedString
+{
+    
+    if (self.annotationToolbarItemPressedEventSink != nil)
+    {
+        self.annotationToolbarItemPressedEventSink(annotationToolbarItemPressedString);
+    }
+}
+
 
 #pragma mark - Functions
 

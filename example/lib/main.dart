@@ -210,7 +210,7 @@ class _ViewerState extends State<Viewer> {
       // Show a dialog when leading navigation button is pressed.
       _showMyDialog();
     });
-
+ 
     await controller.openDocument(_document, config: config);
   }
 

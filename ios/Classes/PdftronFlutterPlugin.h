@@ -330,6 +330,7 @@ static NSString * const PTPageMovedEventKey = @"page_moved_event";
 static NSString *const PTScrollChangedEventKey = @"scroll_changed_event";
 
 // Hygen Generated Event Listeners (1)
+static NSString * const PTAnnotationToolbarItemPressedEventKey = @"annotation_toolbar_item_pressed_event";
 
 // fit mode
 static NSString * const PTFitPageKey = @"FitPage";
@@ -481,6 +482,12 @@ static const PTAnnotationToolbarKey PTAnnotationToolbarKeyName = @"name";
 static const PTAnnotationToolbarKey PTAnnotationToolbarKeyIcon = @"icon";
 static const PTAnnotationToolbarKey PTAnnotationToolbarKeyItems = @"items";
 
+// Custom annotation toolbar item keys.
+typedef NSString *PTAnnotationToolbarItemKey NS_TYPED_EXTENSIBLE_ENUM;
+static const PTAnnotationToolbarItemKey PTAnnotationToolbarItemKeyId = @"id";
+static const PTAnnotationToolbarItemKey PTAnnotationToolbarItemKeyName = @"name";
+static const PTAnnotationToolbarItemKey PTAnnotationToolbarItemKeyIcon = @"icon";
+
 typedef enum
 {
     exportAnnotationId = 0,
@@ -497,9 +504,9 @@ typedef enum
     pageChangedId,
     zoomChangedId,
     pageMovedId,
-    scrollChangedId,
-
     // Hygen Generated Event Listeners (2)
+    annotationToolbarItemPressedId,
+    scrollChangedId,
 } EventSinkId;
 
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
@@ -527,6 +534,7 @@ typedef enum
 - (void)documentController:(PTDocumentController *)docVC scrollChanged:(NSString*)scrollString;
 
 // Hygen Generated Event Listeners (3)
+- (void)documentController:(PTDocumentController *)docVC annotationToolbarItemPressed:(NSString *)annotationToolbarItemPressedId;
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 
