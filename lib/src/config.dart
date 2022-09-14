@@ -86,6 +86,7 @@ class Config {
   var _hideScrollbars;
   var _quickBookmarkCreation;
   var _fullScreenModeEnabled;
+  var _customAppNavBar;
 
   // Hygen Generated Configs (1)
   var _maxSignatureCount;
@@ -595,6 +596,12 @@ class Config {
   /// Defaults to false. Android only.
   set fullScreenModeEnabled(bool value) => _fullScreenModeEnabled = value;
 
+  /// The customization of buttons on the viewer app nav bar.
+  ///
+  /// If used, the default custom App Nav toolbar will not be used.
+  /// Use [CustomAppNavBarButton] to populate the custom app nav bar
+  set customAppNavBar(List value) => _customAppNavBar = value;
+
   // Hygen Generated Configs (2)
   /// The maximum number of saved signatures that can be created for a document.
   ///
@@ -692,7 +699,9 @@ class Config {
         // Hygen Generated Configs (3)
         _maxSignatureCount = json['maxSignatureCount'],
 
-        _fullScreenModeEnabled = json['fullScreenModeEnabled'];
+        _fullScreenModeEnabled = json['fullScreenModeEnabled'],
+        _customAppNavBar = json['customAppNavBar'];
+        
 
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
@@ -777,6 +786,7 @@ class Config {
         'hideScrollbars': _hideScrollbars,
         'quickBookmarkCreation': _quickBookmarkCreation,
         'fullScreenModeEnabled': _fullScreenModeEnabled,
+        'customAppNavBar': _customAppNavBar,
 
         // Hygen Generated Configs (4)
         'maxSignatureCount': _maxSignatureCount,

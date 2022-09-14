@@ -75,6 +75,7 @@ static NSString * const PTAnnotationManagerUndoModeKey = @"annotationManagerUndo
 static NSString * const PTAnnotationToolbarAlignmentKey = @"annotationToolbarAlignment";
 static NSString * const PTHideScrollbarsKey = @"hideScrollbars";
 static NSString * const PTQuickBookmarkCreationKey = @"quickBookmarkCreation";
+static NSString * const PTCustomAppNavBarKey = @"customAppNavBar";
 
 // Hygen Generated Configs
 static NSString * const PTMaxSignatureCountKey = @"maxSignatureCount";

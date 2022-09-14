@@ -192,6 +192,10 @@ class Buttons {
   static const editAnnotationToolbarButton = 'editAnnotationToolButton';
 }
 
+class CustomNavButton {
+
+}
+
 /// Tools for the viewer.
 class Tools {
   static const annotationEdit = 'AnnotationEdit';

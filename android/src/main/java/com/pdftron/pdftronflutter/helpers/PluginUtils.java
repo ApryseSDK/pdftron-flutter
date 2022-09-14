@@ -203,6 +203,7 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_TOOLBAR_GRAVITY = "annotationToolbarAlignment";
     public static final String KEY_CONFIG_QUICK_BOOKMARK_CREATION = "quickBookmarkCreation";
     public static final String KEY_CONFIG_FULL_SCREEN_MODE_ENABLED = "fullScreenModeEnabled";
+    public static final String KEY_CONFIG_CUSTOM_APP_NAV_BAR = "customAppNavBar";
 
     // Hygen Generated Config Constants
     public static final String KEY_CONFIG_MAX_SIGNATURE_COUNT = "maxSignatureCount";
@@ -1261,6 +1262,10 @@ public class PluginUtils {
                 } else {
                     PdfViewCtrlSettingsManager.setFullScreenMode(context, false);
                     builder.fullscreenModeEnabled(false);
+                }
+                if (!configJson.isNull(KEY_CONFIG_CUSTOM_APP_NAV_BAR)) {
+                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_CUSTOM_APP_NAV_BAR);
+                    setBottomToolbar(array, builder);
                 }
                 // Hygen Generated Configs
                 if (!configJson.isNull(KEY_CONFIG_MAX_SIGNATURE_COUNT)) {

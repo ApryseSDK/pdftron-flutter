@@ -817,6 +817,14 @@
                         documentController.bookmarkPageButtonHidden = ![quickBookmarkCreation boolValue];
                     }
                 }
+                else if([key isEqualToString:PTCustomAppNavBarKey])
+                {
+                    NSArray *customAppNavBar = [PdftronFlutterPlugin getConfigValue:configPairs configKey:PTCustomAppNavBarKey class:[NSArray class] error:&error];
+                    
+                    if (!error && customAppNavBar) {
+                        documentController.customAppNavBar = customAppNavBar;
+                    }
+                }
                 // Hygen Generated Configs
                 else if ([key isEqualToString:PTMaxSignatureCountKey])
                 {
