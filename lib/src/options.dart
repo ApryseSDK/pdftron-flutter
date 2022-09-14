@@ -196,17 +196,3 @@ class CustomToolbar {
   Map<String, dynamic> toJson() =>
       {'id': id, 'name': name, 'items': jsonEncode(items), 'icon': icon};
 }
-
-class CustomAppNavBarButton {
-  
-  String? id;
-
-  String? name;
-
-  String? icon;
-
-  CustomAppNavBarButton(this.id, this.name, this.icon);
-
-  Map<String, dynamic> toJson() =>
-      {'id': id, 'name': name, 'icon': icon};
-}
