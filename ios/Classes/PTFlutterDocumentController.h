@@ -104,8 +104,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, assign, getter=isReadOnly) BOOL hideScrollbars;
 
-@property (nonatomic, copy, nullable) NSArray<NSString *> * customAppNavBar;
-
 // Hygen Generated Configs
 @property (nonatomic, assign) int maxSignatureCount;
 

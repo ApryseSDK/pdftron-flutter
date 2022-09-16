@@ -62,6 +62,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private ArrayList<String> mHideAnnotationMenuTools;
     private ArrayList<String> mAnnotationMenuItems;
     private ArrayList<String> mAnnotationMenuOverrideItems;
+    private ArrayList<String> mAppNavRightBarItems;
     private boolean mAutoSaveEnabled;
     private boolean mUseStylusAsPen;
     private boolean mSignSignatureFieldWithStamps;
@@ -137,6 +138,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         mHideAnnotationMenuTools = configInfo.getHideAnnotationMenuTools();
         mAnnotationMenuItems = configInfo.getAnnotationMenuItems();
         mAnnotationMenuOverrideItems = configInfo.getAnnotationMenuOverrideItems();
+        mAppNavRightBarItems = configInfo.getAppNavRightBarItems();
 
         setShowNavIcon(configInfo.isShowLeadingNavButton());
 
@@ -528,6 +530,11 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     @Override
     public ArrayList<String> getAnnotationMenuOverrideItems() {
         return mAnnotationMenuOverrideItems;
+    }
+
+    @Override
+    public ArrayList<String> getAppNavRightBarItems() {
+        return mAppNavRightBarItems;
     }
 
     // Convenience

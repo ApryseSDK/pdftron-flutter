@@ -32,6 +32,8 @@ public interface ViewerComponent {
 
     ArrayList<String> getAnnotationMenuOverrideItems();
 
+    ArrayList<String> getAppNavRightBarItems();
+
     boolean isAnnotationManagerEnabled();
 
     String getUserId();
@@ -108,4 +110,5 @@ public interface ViewerComponent {
 
     @NonNull
     ViewerImpl getImpl();
+
 }
