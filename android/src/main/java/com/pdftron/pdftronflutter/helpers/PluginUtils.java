@@ -4261,8 +4261,6 @@ public class PluginUtils {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    //add buttons from array
-//                    toolbar.getMenu().add(R.string.action_add_bookmark).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM); //SO
                 }
             }
         }

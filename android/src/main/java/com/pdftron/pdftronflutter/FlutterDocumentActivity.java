@@ -389,7 +389,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
 
     @Override
     public ArrayList<String> getAppNavRightBarItems() {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override

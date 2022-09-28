@@ -595,7 +595,6 @@ class Config {
   /// Defaults to false. Android only.
   set fullScreenModeEnabled(bool value) => _fullScreenModeEnabled = value;
 
-
   // Hygen Generated Configs (2)
   /// The maximum number of saved signatures that can be created for a document.
   ///
@@ -695,7 +694,6 @@ class Config {
 
         _fullScreenModeEnabled = json['fullScreenModeEnabled'];
         
-
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
         'disabledTools': _disabledTools,
