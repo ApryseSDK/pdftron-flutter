@@ -1311,32 +1311,35 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     
     // Handle the right side of the top app nav bar
     if (self.topAppNavBarRightBar && self.topAppNavBarRightBar.count >= 0) {
-       NSMutableArray<UIBarButtonItem *> *righBarItems = [[NSMutableArray alloc] init];
+       NSMutableArray<UIBarButtonItem *> *rightBarItems = [[NSMutableArray alloc] init];
        
-       for (id rightBarItemString in self.topAppNavBarRightBar) {
+       for (id rightBarItem in self.topAppNavBarRightBar) {
            
-           if ([rightBarItemString isKindOfClass:[NSString class]]) {
+           if ([rightBarItem isKindOfClass:[NSString class]]) {
+               
+               NSString *rightBarItemString = (NSString *)rightBarItem;
+               
                //default right app nav bar
-               UIBarButtonItem *rightBarItem = [self itemForButton:rightBarItemString
-                                                  inViewController:self];
+               UIBarButtonItem *barButtonItem = [self itemForButton:rightBarItemString
+                                                   inViewController:self];
                if (rightBarItem) {
-                   [righBarItems addObject:rightBarItem];
+                   [rightBarItems addObject:barButtonItem];
                }
            }
         
            //custom right app nav bar
-           else if ([rightBarItemString isKindOfClass:[NSDictionary class]]) {
+           else if ([rightBarItem isKindOfClass:[NSDictionary class]]) {
                //custom nav bar items
-               NSDictionary<NSString *, id> *rightBarItemDictionary = (NSDictionary *)rightBarItemString;
+               NSDictionary<NSString *, id> *rightBarItemDictionary = (NSDictionary *)rightBarItem;
                
                UIBarButtonItem *barButtonItem = [self createBarButtonItemWithDictionary:rightBarItemDictionary];
                
-               [righBarItems addObject:barButtonItem];
+               [rightBarItems addObject:barButtonItem];
                
            }
        }
        
-       self.navigationItem.rightBarButtonItems = [righBarItems copy];
+       self.navigationItem.rightBarButtonItems = [rightBarItems copy];
     }
     
     // Handle bottomToolbar.
