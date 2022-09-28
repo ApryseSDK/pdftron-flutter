@@ -21,6 +21,8 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 {
     NSMutableDictionary<NSString *, NSNumber *> *_annotationToolbarItemKeyMap;
     NSUInteger _annotationToolbarItemCounter;
+    NSMutableDictionary<NSString *, NSNumber *> *_barButtonItemKeyMap;
+    NSUInteger _barButtonItemCounter;
 }
 
 @property (nonatomic, strong, nullable) UIBarButtonItem *leadingNavButtonItem;
@@ -1005,6 +1007,9 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     
     _annotationToolbarItemKeyMap = [NSMutableDictionary dictionary];
     _annotationToolbarItemCounter = 0;
+    
+    _barButtonItemKeyMap = [NSMutableDictionary dictionary];
+    _barButtonItemCounter = 0;
 }
 
 - (void)applyViewerSettings
@@ -1306,13 +1311,28 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     
     // Handle the right side of the top app nav bar
     if (self.topAppNavBarRightBar && self.topAppNavBarRightBar.count >= 0) {
-       NSMutableArray *righBarItems = [[NSMutableArray alloc] init];
+       NSMutableArray<UIBarButtonItem *> *righBarItems = [[NSMutableArray alloc] init];
        
-       for (NSString *rightBarItemString in self.topAppNavBarRightBar) {
-           UIBarButtonItem *rightBarItem = [self itemForButton:rightBarItemString
-                                              inViewController:self];
-           if (rightBarItem) {
-               [righBarItems addObject:rightBarItem];
+       for (id rightBarItemString in self.topAppNavBarRightBar) {
+           
+           if ([rightBarItemString isKindOfClass:[NSString class]]) {
+               //default right app nav bar
+               UIBarButtonItem *rightBarItem = [self itemForButton:rightBarItemString
+                                                  inViewController:self];
+               if (rightBarItem) {
+                   [righBarItems addObject:rightBarItem];
+               }
+           }
+        
+           //custom right app nav bar
+           else if ([rightBarItemString isKindOfClass:[NSDictionary class]]) {
+               //custom nav bar items
+               NSDictionary<NSString *, id> *rightBarItemDictionary = (NSDictionary *)rightBarItemString;
+               
+               UIBarButtonItem *barButtonItem = [self createBarButtonItemWithDictionary:rightBarItemDictionary];
+               
+               [righBarItems addObject:barButtonItem];
+               
            }
        }
        
@@ -1555,6 +1575,70 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     // Find the corresponding item key string value for this item tag number.
     __block NSString *itemKey = nil;
     [_annotationToolbarItemKeyMap enumerateKeysAndObjectsUsingBlock:^(NSString * const currentItemKey,
+                                                                      NSNumber * const currentItemTagNumber,
+                                                                      BOOL * const stop) {
+        const NSInteger currentItemTag = currentItemTagNumber.integerValue;
+        if (itemTag == currentItemTag) {
+            itemKey = currentItemKey;
+            *stop = YES;
+        }
+    }];
+    
+    if (itemKey) {
+        [self.plugin documentController:self annotationToolbarItemPressed:itemKey];
+    }
+}
+
+- (UIBarButtonItem *) createBarButtonItemWithDictionary:(NSDictionary<NSString *, id> *) barButtonDictionary {
+    
+    NSString * const barButtonItemId = barButtonDictionary[PTAnnotationToolbarItemKeyId];
+    NSString * const barButtonItemName = barButtonDictionary[PTAnnotationToolbarItemKeyName];
+    NSString * const barButtonItemIconName = barButtonDictionary[PTAnnotationToolbarItemKeyIcon];
+    
+    // An item id, name, and icon are required.
+    if (barButtonItemId.length == 0 ||
+        !barButtonItemName ||
+        barButtonItemIconName.length == 0) {
+        return nil;
+    }
+    
+    UIImage * const toolbarItemIcon = [self imageForImageName:barButtonItemIconName];
+    // NOTE: Use the image-based initializer to avoid showing the title (safe to set the title afterwards though).
+    PTSelectableBarButtonItem * const item = [[PTSelectableBarButtonItem alloc]
+        initWithImage:toolbarItemIcon
+        style:UIBarButtonItemStylePlain
+        target:self
+        action:@selector(customBarButtonItemPressed:)];
+    item.title = barButtonItemName;
+    
+    NSAssert(barButtonItemId != nil, @"Expected a toolbar item id");
+    
+    NSInteger itemTag = 0;
+    
+    // Check if this id has already been mapped before.
+    NSNumber * const idNumberValue = _barButtonItemKeyMap[barButtonItemId];
+    if (idNumberValue) {
+        // Use existing mapped integer tag.
+        itemTag = idNumberValue.integerValue;
+    } else {
+        // We need to map this item id key to an integer.
+        _barButtonItemCounter++;
+        
+        itemTag = _barButtonItemCounter;
+        _barButtonItemKeyMap[barButtonItemId] = @(itemTag);
+    }
+    
+    
+    return item;
+}
+
+- (void)customBarButtonItemPressed:(PTSelectableBarButtonItem *)toolbarItem
+{
+    const NSInteger itemTag = toolbarItem.tag;
+    
+    // Find the corresponding item key string value for this item tag number.
+    __block NSString *itemKey = nil;
+    [_barButtonItemKeyMap enumerateKeysAndObjectsUsingBlock:^(NSString * const currentItemKey,
                                                                       NSNumber * const currentItemTagNumber,
                                                                       BOOL * const stop) {
         const NSInteger currentItemTag = currentItemTagNumber.integerValue;
