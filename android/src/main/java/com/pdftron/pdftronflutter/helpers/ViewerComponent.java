@@ -87,6 +87,8 @@ public interface ViewerComponent {
     EventChannel.EventSink getScrollChangedEventEmitter();
 
     // Hygen Generated Event Listeners
+    EventChannel.EventSink getAppBarButtonPressedEventEmitter();
+
 
     MethodChannel.Result getFlutterLoadResult();
 

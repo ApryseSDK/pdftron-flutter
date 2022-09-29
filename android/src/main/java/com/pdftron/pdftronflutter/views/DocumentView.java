@@ -89,6 +89,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private EventChannel.EventSink sScrollChangedEventEmitter;
 
     // Hygen Generated Event Listeners (1)
+    private EventChannel.EventSink sAppBarButtonPressedEventEmitter;
 
     private MethodChannel.Result sFlutterLoadResult;
 
@@ -403,6 +404,10 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     }
 
     // Hygen Generated Event Listeners (2)
+    public void setAppBarButtonPressedEventEmitter(EventChannel.EventSink emitter) {
+        sAppBarButtonPressedEventEmitter = emitter;
+    }
+
 
     public void setFlutterLoadResult(MethodChannel.Result result) {
         sFlutterLoadResult = result;
@@ -489,6 +494,11 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     public EventChannel.EventSink getScrollChangedEventEmitter() { return sScrollChangedEventEmitter; }
 
     // Hygen Generated Event Listeners (3)
+    @Override
+    public EventChannel.EventSink getAppBarButtonPressedEventEmitter() {
+        return sAppBarButtonPressed;
+    }
+
 
     @Override
     public MethodChannel.Result getFlutterLoadResult() {

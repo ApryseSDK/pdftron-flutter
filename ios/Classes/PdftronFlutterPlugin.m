@@ -23,6 +23,7 @@
 @property (nonatomic, strong) FlutterEventSink scrollChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink annotationToolbarItemPressedEventSink;
 // Hygen Generated Event Listeners (1)
+@property (nonatomic, strong) FlutterEventSink appBarButtonPressedEventSink;
 
 @property (nonatomic, assign, getter=isWidgetView) BOOL widgetView;
 @property (nonatomic, assign, getter=isMultiTabSet) BOOL multiTabSet;
@@ -187,6 +188,10 @@
     [scrollChangedEventChannel setStreamHandler:self];
 
     // Hygen Generated Event Listeners (2)
+    FlutterEventChannel* appBarButtonPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTAppBarButtonPressedEventKey binaryMessenger:messenger];
+
+    [appBarButtonPressedEventChannel setStreamHandler:self];
+
     FlutterEventChannel* annotationToolbarItemPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTAnnotationToolbarItemPressedEventKey binaryMessenger:messenger];
 
     [annotationToolbarItemPressedEventChannel setStreamHandler:self];
@@ -1267,6 +1272,9 @@
             self.scrollChangedEventSink = events;
             break;
         // Hygen Generated Event Listeners (3)
+        case appBarButtonPressedId:
+            self.appBarButtonPressedEventSink = events;
+            break;
         case annotationToolbarItemPressedId:
             self.annotationToolbarItemPressedEventSink = events;
             break;
@@ -1327,6 +1335,9 @@
             self.scrollChangedEventSink = nil;
             break;
         // Hygen Generated Event Listeners (4)
+        case appBarButtonPressedId:
+            self.appBarButtonPressedEventSink = nil;
+            break;
         case annotationToolbarItemPressedId:
             self.annotationToolbarItemPressedEventSink = nil;
             break;
@@ -1487,6 +1498,14 @@
 }
 
 // Hygen Generated Event Listeners (5)
+- (void)documentController:(PTDocumentController *)docVC appBarButtonPressed:(NSString *)appBarButtonPressedString
+{
+    if (self.appBarButtonPressedEventSink != nil)
+    {
+        self.appBarButtonPressedEventSink(appBarButtonPressedString);
+    }
+}
+
 - (void)documentController:(PTDocumentController *)docVC annotationToolbarItemPressed:(NSString *)annotationToolbarItemPressedString
 {
     

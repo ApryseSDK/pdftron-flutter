@@ -287,6 +287,7 @@ public class PluginUtils {
     public static final String EVENT_SCROLL_CHANGED = "scroll_changed_event";
 
     // Hygen Generated Event Listeners
+    public static final String EVENT_APP_BAR_BUTTON_PRESSED = "app_bar_button_pressed";
 
     public static final String FUNCTION_GET_PLATFORM_VERSION = "getPlatformVersion";
     public static final String FUNCTION_GET_VERSION = "getVersion";

@@ -135,6 +135,7 @@ class EventParameters {
   static const pageNumber = "pageNumber";
 
   // Hygen Generated Event Listeners
+  static const appBarButton = "appBarButton";
 }
 
 /// Buttons for the viewer.

@@ -37,6 +37,7 @@ const _annotationToolbarItemPressedChannel =
 const _scrollChangedChannel = const EventChannel('scroll_changed_event');
 
 // Hygen Generated Event Listeners (1)
+const _appBarButtonPressedChannel = const EventChannel('app_bar_button_pressed_event');
 
 /// A listener used as the argument for [startExportAnnotationCommandListener].
 ///
@@ -129,6 +130,7 @@ typedef void AnnotationToolbarItemPressedListener(dynamic id);
 typedef void ScrollChangedListener(dynamic horizontal, dynamic vertical);
 
 // Hygen Generated Event Listeners (2)
+typedef void AppBarButtonPressedListener(dynamic appBarButton);
 
 typedef void CancelListener();
 
@@ -152,6 +154,7 @@ enum eventSinkId {
   scrollChangedId,
 
   // Hygen Generated Event Listeners (3)
+  appBarButtonPressedId,
 }
 
 /// Listens for when local annotation changes have been committed to the document.
@@ -563,3 +566,17 @@ CancelListener startScrollChangedListener(ScrollChangedListener listener) {
 }
 
 // Hygen Generated Event Listeners (4)
+CancelListener startAppBarButtonPressedListener(AppBarButtonPressedListener listener) {
+  var subscription = _appBarButtonPressedChannel
+      .receiveBroadcastStream(eventSinkId.appBarButtonPressedId.index)
+      .listen((appBarButtonPressedString) {
+        dynamic appBarButtonPressedObject = jsonDecode(appBarButtonPressedString);
+        dynamic appBarButton = appBarButtonPressedObject[EventParameters.appBarButton];
+        listener(appBarButton);
+      }, cancelOnError: true);
+
+  return () {
+    subscription.cancel();
+  };
+}
+
