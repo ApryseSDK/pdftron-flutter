@@ -285,7 +285,6 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
                 documentView.setAppBarButtonPressedEventEmitter(null);
             }
         });
-
     }
 
     @Override

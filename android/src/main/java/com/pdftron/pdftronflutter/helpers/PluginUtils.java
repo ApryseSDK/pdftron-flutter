@@ -285,9 +285,8 @@ public class PluginUtils {
     public static final String EVENT_PAGE_MOVED = "page_moved_event";
     public static final String EVENT_ANNOTATION_TOOLBAR_ITEM_PRESSED = "annotation_toolbar_item_pressed_event";
     public static final String EVENT_SCROLL_CHANGED = "scroll_changed_event";
-
     // Hygen Generated Event Listeners
-    public static final String EVENT_APP_BAR_BUTTON_PRESSED = "app_bar_button_pressed";
+    public static final String EVENT_APP_BAR_BUTTON_PRESSED = "app_bar_button_pressed_event";
 
     public static final String FUNCTION_GET_PLATFORM_VERSION = "getPlatformVersion";
     public static final String FUNCTION_GET_VERSION = "getVersion";
@@ -4336,6 +4335,17 @@ public class PluginUtils {
         if (itemKey != null && annotationCustomToolbarItemPressedEventSink != null) {
             // this is a custom button
             annotationCustomToolbarItemPressedEventSink.success(itemId);
+        }
+    }
+
+    public static void handleAppBarButtonPressed(ViewerComponent component, MenuItem item) {
+        if (component == null) {
+            return;
+        }
+        EventChannel.EventSink appBarButtonPressedEventSink = component.getAppBarButtonPressedEventEmitter();
+        int itemId = item.getItemId();
+        if (appBarButtonPressedEventSink != null) {
+            appBarButtonPressedEventSink.success(itemId);
         }
     }
 

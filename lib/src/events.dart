@@ -130,7 +130,11 @@ typedef void AnnotationToolbarItemPressedListener(dynamic id);
 typedef void ScrollChangedListener(dynamic horizontal, dynamic vertical);
 
 // Hygen Generated Event Listeners (2)
-typedef void AppBarButtonPressedListener(dynamic appBarButton);
+
+/// A listener used as the argument for [startAppBarButtonPressedListener].
+///
+/// Gets the unique [id] of the custom app bar button item that was pressed.
+typedef void AppBarButtonPressedListener(dynamic id);
 
 typedef void CancelListener();
 
@@ -566,14 +570,22 @@ CancelListener startScrollChangedListener(ScrollChangedListener listener) {
 }
 
 // Hygen Generated Event Listeners (4)
+
+/// Listens for when a custom app bar item has been pressed.
+///
+/// ```dart
+/// var itemPressedCancel = startAppBarButtonPressedListener((id) {
+///   print('flutter app bar item $id pressed');
+/// });
+/// ```
+///
+/// Returns a function that can cancel the listener.
+/// Custom toolbar items can be added using the [Config.topAppNavBarRightBar]
+/// config. 
 CancelListener startAppBarButtonPressedListener(AppBarButtonPressedListener listener) {
   var subscription = _appBarButtonPressedChannel
       .receiveBroadcastStream(eventSinkId.appBarButtonPressedId.index)
-      .listen((appBarButtonPressedString) {
-        dynamic appBarButtonPressedObject = jsonDecode(appBarButtonPressedString);
-        dynamic appBarButton = appBarButtonPressedObject[EventParameters.appBarButton];
-        listener(appBarButton);
-      }, cancelOnError: true);
+      .listen(listener, cancelOnError: true);
 
   return () {
     subscription.cancel();

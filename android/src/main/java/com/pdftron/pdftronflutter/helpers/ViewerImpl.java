@@ -438,12 +438,4 @@ public class ViewerImpl {
             }
         }
     };
-
-    // Hygen Generated Event Listeners
-    // uncomment and use to implement appBarButtonPressed
-    // EventChannel.EventSink eventSink = mViewerComponent.getAppBarButtonPressedEventEmitter();
-    // if (eventSink != null) {
-    //
-    // }
-
 }

@@ -133,9 +133,6 @@ class EventParameters {
   static const annotationMenuItem = "annotationMenuItem";
   static const previousPageNumber = "previousPageNumber";
   static const pageNumber = "pageNumber";
-
-  // Hygen Generated Event Listeners
-  static const appBarButton = "appBarButton";
 }
 
 /// Buttons for the viewer.

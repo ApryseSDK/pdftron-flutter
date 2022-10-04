@@ -12,6 +12,7 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 import io.flutter.plugin.common.MethodChannel.Result;
 
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_APP_BAR_BUTTON_PRESSED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_SCROLL_CHANGED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_GET_PLATFORM_VERSION;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_GET_VERSION;
@@ -255,6 +256,20 @@ public class PluginMethodCallHandler implements MethodCallHandler {
             @Override
             public void onCancel(Object arguments) {
                 FlutterDocumentActivity.setScrollChangedEventEmitter(null);
+            }
+        });
+
+        final EventChannel appBarButtonPressedPressedEventChannel = new EventChannel(messenger,
+                EVENT_APP_BAR_BUTTON_PRESSED);
+        appBarButtonPressedPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setAppBarButtonPressedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setAppBarButtonPressedEventEmitter(null);
             }
         });
     }

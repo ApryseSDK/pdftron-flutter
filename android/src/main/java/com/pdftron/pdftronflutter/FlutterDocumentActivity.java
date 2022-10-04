@@ -38,6 +38,7 @@ import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleAnnotationCustomToolbarItemPressed;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleAppBarButtonPressed;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleLeadingNavButtonPressed;
 
 public class FlutterDocumentActivity extends DocumentActivity implements ViewerComponent {
@@ -484,6 +485,7 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem item) {
         handleAnnotationCustomToolbarItemPressed(this, item);
+        handleAppBarButtonPressed(this, item);
         return super.onToolbarOptionsItemSelected(item);
     }
 

@@ -36,6 +36,7 @@ import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleAnnotationCustomToolbarItemPressed;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleAppBarButtonPressed;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleDocumentLoaded;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleLeadingNavButtonPressed;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOnDetach;
@@ -335,9 +336,9 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem item) {
         handleAnnotationCustomToolbarItemPressed(this, item);
+        handleAppBarButtonPressed(this, item);
         return super.onToolbarOptionsItemSelected(item);
     }
-
 
     public void setExportAnnotationCommandEventEmitter(EventChannel.EventSink emitter) {
         sExportAnnotationCommandEventEmitter = emitter;
@@ -496,7 +497,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     // Hygen Generated Event Listeners (3)
     @Override
     public EventChannel.EventSink getAppBarButtonPressedEventEmitter() {
-        return sAppBarButtonPressed;
+        return sAppBarButtonPressedEventEmitter;
     }
 
 
