@@ -1605,13 +1605,13 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         return nil;
     }
     
-    UIImage * const toolbarItemIcon = [self imageForImageName:barButtonItemIconName];
+    UIImage * const barButtonItemIcon = [self imageForImageName:barButtonItemIconName];
     // NOTE: Use the image-based initializer to avoid showing the title (safe to set the title afterwards though).
     PTSelectableBarButtonItem * const item = [[PTSelectableBarButtonItem alloc]
-        initWithImage:toolbarItemIcon
+        initWithImage:barButtonItemIcon
         style:UIBarButtonItemStylePlain
         target:self
-        action:@selector(customBarButtonItemPressed:)];
+        action:@selector(customBarButtonPressed:)];
     item.title = barButtonItemName;
     
     NSAssert(barButtonItemId != nil, @"Expected a toolbar item id");
@@ -1635,9 +1635,9 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     return item;
 }
 
-- (void)customBarButtonItemPressed:(PTSelectableBarButtonItem *)toolbarItem
+- (void)customBarButtonPressed:(PTSelectableBarButtonItem *)barButtonItem
 {
-    const NSInteger itemTag = toolbarItem.tag;
+    const NSInteger itemTag = barButtonItem.tag;
     
     // Find the corresponding item key string value for this item tag number.
     __block NSString *itemKey = nil;
@@ -1652,7 +1652,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     }];
     
     if (itemKey) {
-        [self.plugin documentController:self annotationToolbarItemPressed:itemKey];
+        [self.plugin documentController:self appBarButtonPressed:itemKey];
     }
 }
 

@@ -154,8 +154,8 @@ enum eventSinkId {
   pageChangedId,
   zoomChangedId,
   pageMovedId,
-  annotationToolbarItemPressedId,
   scrollChangedId,
+  annotationToolbarItemPressedId,
 
   // Hygen Generated Event Listeners (3)
   appBarButtonPressedId,

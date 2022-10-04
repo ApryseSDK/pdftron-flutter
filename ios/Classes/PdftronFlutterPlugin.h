@@ -506,9 +506,9 @@ typedef enum
     zoomChangedId,
     pageMovedId,
     // Hygen Generated Event Listeners (2)
-    appBarButtonPressedId,
-    annotationToolbarItemPressedId,
     scrollChangedId,
+    annotationToolbarItemPressedId,
+    appBarButtonPressedId,
 } EventSinkId;
 
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
@@ -534,10 +534,9 @@ typedef enum
 - (void)documentController:(PTDocumentController *)docVC zoomChanged:(NSNumber *)zoom;
 - (void)documentController:(PTDocumentController *)docVC pageMoved:(NSString *)pageNumbersString;
 - (void)documentController:(PTDocumentController *)docVC scrollChanged:(NSString*)scrollString;
-
 // Hygen Generated Event Listeners (3)
-- (void)documentController:(PTDocumentController *)docVC appBarButtonPressed:(NSString *)appBarButtonPressedString;
 - (void)documentController:(PTDocumentController *)docVC annotationToolbarItemPressed:(NSString *)annotationToolbarItemPressedId;
+- (void)documentController:(PTDocumentController *)docVC appBarButtonPressed:(NSString *)appBarButtonPressedString;
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 
