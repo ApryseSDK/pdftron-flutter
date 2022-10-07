@@ -1,6 +1,7 @@
 package com.pdftron.pdftronflutter.views;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.view.View;
@@ -39,6 +40,7 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleAnnotationCus
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleAppBarButtonPressed;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleDocumentLoaded;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleLeadingNavButtonPressed;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOnConfigurationChanged;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOnDetach;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOpenDocError;
 
@@ -269,6 +271,12 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         }
         
         handleDocumentLoaded(this);
+    }
+
+    @Override
+    protected void onConfigurationChanged(Configuration newConfig) {
+        handleOnConfigurationChanged(this);
+        super.onConfigurationChanged(newConfig);
     }
 
     @Override

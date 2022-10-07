@@ -9,13 +9,10 @@ import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.fdf.FDFDoc;
@@ -31,9 +28,7 @@ import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
-import com.pdftron.pdf.controls.PdfViewCtrlTabBaseFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
-import com.pdftron.pdf.controls.PdfViewCtrlTabHostBaseFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.controls.ReflowControl;
 import com.pdftron.pdf.controls.ThumbnailsViewFragment;
@@ -50,7 +45,6 @@ import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
-import com.pdftron.pdf.tools.UndoRedoManager;
 import com.pdftron.pdf.tools.AnnotManager;
 import com.pdftron.pdf.utils.AnalyticsHandlerAdapter;
 import com.pdftron.pdf.utils.AnnotUtils;
@@ -62,11 +56,9 @@ import com.pdftron.pdf.utils.StampManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdf.utils.ViewerUtils;
 import com.pdftron.pdf.widget.bottombar.builder.BottomBarBuilder;
-import com.pdftron.pdf.widget.toolbar.TopToolbarMenuId;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
-import com.pdftron.pdftronflutter.FlutterDocumentActivity;
 import com.pdftron.pdftronflutter.R;
 import com.pdftron.pdf.PDFDraw;
 
@@ -79,7 +71,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -1403,6 +1394,7 @@ public class PluginUtils {
             }
         }
     }
+
 
     private static void setBottomToolbar(JSONArray array, ViewerConfig.Builder builder) throws JSONException {
         BottomBarBuilder customBottomBar = BottomBarBuilder.withTag("CustomBottomBar");
@@ -4283,6 +4275,52 @@ public class PluginUtils {
         }
 
         return false;
+    }
+
+    public static void handleOnConfigurationChanged(ViewerComponent component) {
+        if (component == null) {
+            return;
+        }
+        if (component.getAppNavRightBarItems() != null) {
+            PdfViewCtrlTabHostFragment2 hostFragment = component.getPdfViewCtrlTabHostFragment();
+            if (hostFragment != null) {
+                androidx.appcompat.widget.Toolbar toolbar = hostFragment.getToolbar();
+                if (toolbar != null) {
+                    toolbar.getMenu().clear();
+
+                    try {
+                        for (int i = 0; i < component.getAppNavRightBarItems().size(); i++) {
+                            String object = component.getAppNavRightBarItems().get(i);
+
+                            int itemId = 0;
+                            String itemName = null, itemIcon = null;
+                            JSONObject item = new JSONObject(object);
+                            if (!item.isNull(TOOLBAR_ITEM_KEY_ID)) {
+                                itemId = item.getInt(TOOLBAR_ITEM_KEY_ID);
+                            }
+                            if (!item.isNull(TOOLBAR_ITEM_KEY_NAME)) {
+                                itemName = item.getString(TOOLBAR_ITEM_KEY_NAME);
+                            }
+                            if (!item.isNull(TOOLBAR_ITEM_KEY_ICON)) {
+                                itemIcon = item.getString(TOOLBAR_ITEM_KEY_ICON);
+                            }
+
+                            if (itemId != 0 && itemName != null && !Utils.isNullOrEmpty(itemIcon)) {
+                                int res = Utils.getResourceDrawable(toolbar.getContext(), itemIcon);
+                                Menu navBarMenu = toolbar.getMenu();
+                                if (navBarMenu != null) {
+                                    navBarMenu.add(Menu.NONE, itemId, Menu.NONE, itemName)
+                                            .setIcon(res)
+                                            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
     }
 
     public static void handleOnDetach(ViewerComponent component) {
