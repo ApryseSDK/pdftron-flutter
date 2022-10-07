@@ -330,8 +330,8 @@ static NSString * const PTPageMovedEventKey = @"page_moved_event";
 static NSString *const PTScrollChangedEventKey = @"scroll_changed_event";
 
 // Hygen Generated Event Listeners (1)
-static NSString * const PTAppBarButtonPressedEventKey = @"app_bar_button_pressed_event";
 static NSString * const PTAnnotationToolbarItemPressedEventKey = @"annotation_toolbar_item_pressed_event";
+static NSString * const PTAppBarButtonPressedEventKey = @"app_bar_button_pressed_event";
 
 // fit mode
 static NSString * const PTFitPageKey = @"FitPage";
