@@ -4216,46 +4216,7 @@ public class PluginUtils {
                         }
                     });
         }
-        if (component.getAppNavRightBarItems() != null) {
-            PdfViewCtrlTabHostFragment2 hostFragment = component.getPdfViewCtrlTabHostFragment();
-            if (hostFragment != null) {
-                androidx.appcompat.widget.Toolbar toolbar = hostFragment.getToolbar();
-                if (toolbar != null) {
-                    toolbar.getMenu().clear();
-
-                    try {
-                        for (int i = 0; i < component.getAppNavRightBarItems().size(); i++) {
-                            String object = component.getAppNavRightBarItems().get(i);
-
-                            int itemId = 0;
-                            String itemName = null, itemIcon = null;
-                            JSONObject item = new JSONObject(object);
-                            if (!item.isNull(TOOLBAR_ITEM_KEY_ID)) {
-                                itemId = item.getInt(TOOLBAR_ITEM_KEY_ID);
-                            }
-                            if (!item.isNull(TOOLBAR_ITEM_KEY_NAME)) {
-                                itemName = item.getString(TOOLBAR_ITEM_KEY_NAME);
-                            }
-                            if (!item.isNull(TOOLBAR_ITEM_KEY_ICON)) {
-                                itemIcon = item.getString(TOOLBAR_ITEM_KEY_ICON);
-                            }
-
-                            if (itemId != 0 && itemName != null && !Utils.isNullOrEmpty(itemIcon)) {
-                                int res = Utils.getResourceDrawable(toolbar.getContext(), itemIcon);
-                                Menu navBarMenu = toolbar.getMenu();
-                                if (navBarMenu != null) {
-                                    navBarMenu.add(Menu.NONE, itemId, Menu.NONE, itemName)
-                                            .setIcon(res)
-                                            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-                                }
-                            }
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
+        handleCustomAppBarButton(component);
     }
 
     public static boolean handleOpenDocError(ViewerComponent component) {
@@ -4276,51 +4237,11 @@ public class PluginUtils {
 
         return false;
     }
-
     public static void handleOnConfigurationChanged(ViewerComponent component) {
         if (component == null) {
             return;
         }
-        if (component.getAppNavRightBarItems() != null) {
-            PdfViewCtrlTabHostFragment2 hostFragment = component.getPdfViewCtrlTabHostFragment();
-            if (hostFragment != null) {
-                androidx.appcompat.widget.Toolbar toolbar = hostFragment.getToolbar();
-                if (toolbar != null) {
-                    toolbar.getMenu().clear();
-
-                    try {
-                        for (int i = 0; i < component.getAppNavRightBarItems().size(); i++) {
-                            String object = component.getAppNavRightBarItems().get(i);
-
-                            int itemId = 0;
-                            String itemName = null, itemIcon = null;
-                            JSONObject item = new JSONObject(object);
-                            if (!item.isNull(TOOLBAR_ITEM_KEY_ID)) {
-                                itemId = item.getInt(TOOLBAR_ITEM_KEY_ID);
-                            }
-                            if (!item.isNull(TOOLBAR_ITEM_KEY_NAME)) {
-                                itemName = item.getString(TOOLBAR_ITEM_KEY_NAME);
-                            }
-                            if (!item.isNull(TOOLBAR_ITEM_KEY_ICON)) {
-                                itemIcon = item.getString(TOOLBAR_ITEM_KEY_ICON);
-                            }
-
-                            if (itemId != 0 && itemName != null && !Utils.isNullOrEmpty(itemIcon)) {
-                                int res = Utils.getResourceDrawable(toolbar.getContext(), itemIcon);
-                                Menu navBarMenu = toolbar.getMenu();
-                                if (navBarMenu != null) {
-                                    navBarMenu.add(Menu.NONE, itemId, Menu.NONE, itemName)
-                                            .setIcon(res)
-                                            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-                                }
-                            }
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
+        handleCustomAppBarButton(component);
     }
 
     public static void handleOnDetach(ViewerComponent component) {
@@ -4384,6 +4305,49 @@ public class PluginUtils {
         int itemId = item.getItemId();
         if (appBarButtonPressedEventSink != null) {
             appBarButtonPressedEventSink.success(itemId);
+        }
+    }
+
+    public static void handleCustomAppBarButton(ViewerComponent component) {
+        if (component.getAppNavRightBarItems() != null) {
+            PdfViewCtrlTabHostFragment2 hostFragment = component.getPdfViewCtrlTabHostFragment();
+            if (hostFragment != null) {
+                androidx.appcompat.widget.Toolbar toolbar = hostFragment.getToolbar();
+                if (toolbar != null) {
+                    toolbar.getMenu().clear();
+
+                    try {
+                        for (int i = 0; i < component.getAppNavRightBarItems().size(); i++) {
+                            String object = component.getAppNavRightBarItems().get(i);
+
+                            int itemId = 0;
+                            String itemName = null, itemIcon = null;
+                            JSONObject item = new JSONObject(object);
+                            if (!item.isNull(TOOLBAR_ITEM_KEY_ID)) {
+                                itemId = item.getInt(TOOLBAR_ITEM_KEY_ID);
+                            }
+                            if (!item.isNull(TOOLBAR_ITEM_KEY_NAME)) {
+                                itemName = item.getString(TOOLBAR_ITEM_KEY_NAME);
+                            }
+                            if (!item.isNull(TOOLBAR_ITEM_KEY_ICON)) {
+                                itemIcon = item.getString(TOOLBAR_ITEM_KEY_ICON);
+                            }
+
+                            if (itemId != 0 && itemName != null && !Utils.isNullOrEmpty(itemIcon)) {
+                                int res = Utils.getResourceDrawable(toolbar.getContext(), itemIcon);
+                                Menu navBarMenu = toolbar.getMenu();
+                                if (navBarMenu != null) {
+                                    navBarMenu.add(Menu.NONE, itemId, Menu.NONE, itemName)
+                                            .setIcon(res)
+                                            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                                }
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
     }
 
