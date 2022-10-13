@@ -1630,7 +1630,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
         itemTag = _appBarButtonItemCounter;
         _appBarButtonItemKeyMap[appBarButtonItemId] = @(itemTag);
     }
-    
+    item.tag = itemTag;
     
     return item;
 }
