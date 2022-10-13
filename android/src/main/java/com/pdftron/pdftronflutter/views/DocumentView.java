@@ -417,7 +417,6 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         sAppBarButtonPressedEventEmitter = emitter;
     }
 
-
     public void setFlutterLoadResult(MethodChannel.Result result) {
         sFlutterLoadResult = result;
     }
@@ -507,7 +506,6 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     public EventChannel.EventSink getAppBarButtonPressedEventEmitter() {
         return sAppBarButtonPressedEventEmitter;
     }
-
 
     @Override
     public MethodChannel.Result getFlutterLoadResult() {

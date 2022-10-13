@@ -1395,7 +1395,6 @@ public class PluginUtils {
         }
     }
 
-
     private static void setBottomToolbar(JSONArray array, ViewerConfig.Builder builder) throws JSONException {
         BottomBarBuilder customBottomBar = BottomBarBuilder.withTag("CustomBottomBar");
 

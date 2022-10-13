@@ -89,7 +89,6 @@ public interface ViewerComponent {
     // Hygen Generated Event Listeners
     EventChannel.EventSink getAppBarButtonPressedEventEmitter();
 
-
     MethodChannel.Result getFlutterLoadResult();
 
     HashMap<Annot, Integer> getSelectedAnnots();
