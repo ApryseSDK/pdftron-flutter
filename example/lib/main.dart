@@ -210,11 +210,7 @@ class _ViewerState extends State<Viewer> {
       // Show a dialog when leading navigation button is pressed.
       _showMyDialog();
     });
-
-    var itemPressed = startAppBarButtonPressedListener((id) {
-      print('flutter app bar item $id pressed');
-    });
-    config.topAppNavBarRightBar = [CustomToolbarItem('20', 'testNAME', 'pencil.circle'), CustomToolbarItem('21', 'testNAME2', 'pencil.circle'), CustomToolbarItem('22', 'testNAME3', 'pencil.circle'), CustomToolbarItem('23', 'testNAME4', 'pencil.circle'), CustomToolbarItem('24', 'testNAME5', 'pencil.circle')];
+ 
     await controller.openDocument(_document, config: config);
   }
 

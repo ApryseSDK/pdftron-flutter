@@ -1,7 +1,6 @@
 package com.pdftron.pdftronflutter.views;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.util.AttributeSet;
 import android.view.MenuItem;
 import android.view.View;
@@ -37,10 +36,8 @@ import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.MethodChannel;
 
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleAnnotationCustomToolbarItemPressed;
-import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleAppBarButtonPressed;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleDocumentLoaded;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleLeadingNavButtonPressed;
-import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOnConfigurationChanged;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOnDetach;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleOpenDocError;
 
@@ -65,7 +62,6 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private ArrayList<String> mHideAnnotationMenuTools;
     private ArrayList<String> mAnnotationMenuItems;
     private ArrayList<String> mAnnotationMenuOverrideItems;
-    private ArrayList<String> mAppNavRightBarItems;
     private boolean mAutoSaveEnabled;
     private boolean mUseStylusAsPen;
     private boolean mSignSignatureFieldWithStamps;
@@ -92,7 +88,6 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     private EventChannel.EventSink sScrollChangedEventEmitter;
 
     // Hygen Generated Event Listeners (1)
-    private EventChannel.EventSink sAppBarButtonPressedEventEmitter;
 
     private MethodChannel.Result sFlutterLoadResult;
 
@@ -142,7 +137,6 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         mHideAnnotationMenuTools = configInfo.getHideAnnotationMenuTools();
         mAnnotationMenuItems = configInfo.getAnnotationMenuItems();
         mAnnotationMenuOverrideItems = configInfo.getAnnotationMenuOverrideItems();
-        mAppNavRightBarItems = configInfo.getAppNavRightBarItems();
 
         setShowNavIcon(configInfo.isShowLeadingNavButton());
 
@@ -274,12 +268,6 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     }
 
     @Override
-    protected void onConfigurationChanged(Configuration newConfig) {
-        handleOnConfigurationChanged(this);
-        super.onConfigurationChanged(newConfig);
-    }
-
-    @Override
     public boolean onOpenDocError() {
         super.onOpenDocError();
 
@@ -344,9 +332,9 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem item) {
         handleAnnotationCustomToolbarItemPressed(this, item);
-        handleAppBarButtonPressed(this, item);
         return super.onToolbarOptionsItemSelected(item);
     }
+
 
     public void setExportAnnotationCommandEventEmitter(EventChannel.EventSink emitter) {
         sExportAnnotationCommandEventEmitter = emitter;
@@ -413,9 +401,6 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     }
 
     // Hygen Generated Event Listeners (2)
-    public void setAppBarButtonPressedEventEmitter(EventChannel.EventSink emitter) {
-        sAppBarButtonPressedEventEmitter = emitter;
-    }
 
     public void setFlutterLoadResult(MethodChannel.Result result) {
         sFlutterLoadResult = result;
@@ -502,10 +487,6 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     public EventChannel.EventSink getScrollChangedEventEmitter() { return sScrollChangedEventEmitter; }
 
     // Hygen Generated Event Listeners (3)
-    @Override
-    public EventChannel.EventSink getAppBarButtonPressedEventEmitter() {
-        return sAppBarButtonPressedEventEmitter;
-    }
 
     @Override
     public MethodChannel.Result getFlutterLoadResult() {
@@ -547,11 +528,6 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     @Override
     public ArrayList<String> getAnnotationMenuOverrideItems() {
         return mAnnotationMenuOverrideItems;
-    }
-
-    @Override
-    public ArrayList<String> getAppNavRightBarItems() {
-        return mAppNavRightBarItems;
     }
 
     // Convenience

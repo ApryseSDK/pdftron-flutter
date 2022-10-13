@@ -8,11 +8,11 @@ import android.util.Base64;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentActivity;
 
 import com.pdftron.common.PDFNetException;
 import com.pdftron.fdf.FDFDoc;
@@ -28,7 +28,9 @@ import com.pdftron.pdf.config.PDFViewCtrlConfig;
 import com.pdftron.pdf.config.ToolConfig;
 import com.pdftron.pdf.config.ToolManagerBuilder;
 import com.pdftron.pdf.config.ViewerConfig;
+import com.pdftron.pdf.controls.PdfViewCtrlTabBaseFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
+import com.pdftron.pdf.controls.PdfViewCtrlTabHostBaseFragment;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.controls.ReflowControl;
 import com.pdftron.pdf.controls.ThumbnailsViewFragment;
@@ -45,6 +47,7 @@ import com.pdftron.pdf.tools.FreehandCreate;
 import com.pdftron.pdf.tools.QuickMenuItem;
 import com.pdftron.pdf.tools.Tool;
 import com.pdftron.pdf.tools.ToolManager;
+import com.pdftron.pdf.tools.UndoRedoManager;
 import com.pdftron.pdf.tools.AnnotManager;
 import com.pdftron.pdf.utils.AnalyticsHandlerAdapter;
 import com.pdftron.pdf.utils.AnnotUtils;
@@ -71,6 +74,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -199,7 +203,6 @@ public class PluginUtils {
     public static final String KEY_CONFIG_ANNOTATION_TOOLBAR_GRAVITY = "annotationToolbarAlignment";
     public static final String KEY_CONFIG_QUICK_BOOKMARK_CREATION = "quickBookmarkCreation";
     public static final String KEY_CONFIG_FULL_SCREEN_MODE_ENABLED = "fullScreenModeEnabled";
-    public static final String KEY_CONFIG_TOP_APP_NAV_BAR_RIGHT_BAR = "topAppNavBarRightBar";
 
     // Hygen Generated Config Constants
     public static final String KEY_CONFIG_MAX_SIGNATURE_COUNT = "maxSignatureCount";
@@ -253,7 +256,7 @@ public class PluginUtils {
 
     public static final String KEY_HORIZONTAL_SCROLL_POSITION = "horizontalScrollPosition";
     public static final String KEY_VERTICAL_SCROLL_POSITION = "verticalScrollPosition";
-
+    
     public static final String KEY_SEARCH_STRING = "searchString";
     public static final String KEY_MATCH_CASE = "matchCase";
     public static final String KEY_MATCH_WHOLE_WORD = "matchWholeWord";
@@ -276,8 +279,8 @@ public class PluginUtils {
     public static final String EVENT_PAGE_MOVED = "page_moved_event";
     public static final String EVENT_ANNOTATION_TOOLBAR_ITEM_PRESSED = "annotation_toolbar_item_pressed_event";
     public static final String EVENT_SCROLL_CHANGED = "scroll_changed_event";
+
     // Hygen Generated Event Listeners
-    public static final String EVENT_APP_BAR_BUTTON_PRESSED = "app_bar_button_pressed_event";
 
     public static final String FUNCTION_GET_PLATFORM_VERSION = "getPlatformVersion";
     public static final String FUNCTION_GET_VERSION = "getVersion";
@@ -570,11 +573,6 @@ public class PluginUtils {
     public static final String TOOLBAR_KEY_ICON = "icon";
     public static final String TOOLBAR_KEY_ITEMS = "items";
 
-    // Custom toolbar items
-    public static final String TOOLBAR_ITEM_KEY_ID = "id";
-    public static final String TOOLBAR_ITEM_KEY_NAME = "name";
-    public static final String TOOLBAR_ITEM_KEY_ICON = "icon";
-
     // View Mode
     public static final String VIEW_MODE_CROP = "viewModeCrop";
     public static final String VIEW_MODE_ROTATION = "viewModeRotation";
@@ -635,7 +633,6 @@ public class PluginUtils {
         private String tabTitle;
         private String openUrlPath;
         private String exportPath;
-        private ArrayList<String> appNavRightBarItems;
 
         public ConfigInfo() {
             this.initialPageNumber = -1;
@@ -687,10 +684,6 @@ public class PluginUtils {
 
         public void setLongPressMenuItems(ArrayList<String> longPressMenuItems) {
             this.longPressMenuItems = longPressMenuItems;
-        }
-
-        public void setTopAppNavBarRightBar(ArrayList<String> rightBarItems) {
-            this.appNavRightBarItems = rightBarItems;
         }
 
         public void setLongPressMenuOverrideItems(ArrayList<String> longPressMenuOverrideItems) {
@@ -831,10 +824,6 @@ public class PluginUtils {
 
         public String getOpenUrlPath() {
             return openUrlPath;
-        }
-
-        public ArrayList<String> getAppNavRightBarItems() {
-            return appNavRightBarItems;
         }
     }
 
@@ -1156,7 +1145,7 @@ public class PluginUtils {
                 if (!configJson.isNull(KEY_CONFIG_MAX_TAB_COUNT)) {
                     int maxTabCount = configJson.getInt(KEY_CONFIG_MAX_TAB_COUNT);
                     builder.maximumTabCount(maxTabCount);
-                }
+                } 
                 if (!configJson.isNull(KEY_CONFIG_OPEN_URL_PATH)) {
                     String openUrlPath = configJson.getString(KEY_CONFIG_OPEN_URL_PATH);
                     configInfo.setOpenUrlPath(openUrlPath);
@@ -1272,11 +1261,6 @@ public class PluginUtils {
                 } else {
                     PdfViewCtrlSettingsManager.setFullScreenMode(context, false);
                     builder.fullscreenModeEnabled(false);
-                }
-                if (!configJson.isNull(KEY_CONFIG_TOP_APP_NAV_BAR_RIGHT_BAR)) {
-                    JSONArray array = configJson.getJSONArray(KEY_CONFIG_TOP_APP_NAV_BAR_RIGHT_BAR);
-                    ArrayList<String> navBarRightBarItems = convertJSONArrayToArrayList(array);
-                    configInfo.setTopAppNavBarRightBar(navBarRightBarItems);
                 }
                 // Hygen Generated Configs
                 if (!configJson.isNull(KEY_CONFIG_MAX_SIGNATURE_COUNT)) {
@@ -3222,7 +3206,7 @@ public class PluginUtils {
         double zoom = pdfViewCtrl.getZoom();
         result.success(zoom);
     }
-
+    
     private static void getSavedSignatures(MethodChannel.Result result, @NonNull ViewerComponent component) {
         List<String> signatures = new ArrayList<String>();
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
@@ -4031,7 +4015,7 @@ public class PluginUtils {
     private static void setHorizontalScrollPosition(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         int horizontalScrollPosition = call.argument(KEY_HORIZONTAL_SCROLL_POSITION);
-
+        
         if (pdfViewCtrl == null) {
             result.error("InvalidState", "PDFViewCtrl not found", null);
             return;
@@ -4049,11 +4033,11 @@ public class PluginUtils {
             result.error("InvalidState", "PDFViewCtrl not found", null);
             return;
         }
-
+        
         pdfViewCtrl.setVScrollPos(verticalScrollPosition);
         result.success(null);
     }
-
+        
     public static void startSearchMode(MethodCall call, MethodChannel.Result result, ViewerComponent component) throws JSONException {
         PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
         String searchString = call.argument(KEY_SEARCH_STRING);
@@ -4088,7 +4072,7 @@ public class PluginUtils {
             result.error("InvalidState", "PDFViewCtrl not found", null);
             return;
         }
-
+        
         double zoom = call.argument(KEY_ZOOM);
         int x = call.argument(KEY_X);
         int y = call.argument(KEY_Y);
@@ -4102,7 +4086,7 @@ public class PluginUtils {
             result.error("InvalidState", "PDFViewCtrl not found", null);
             return;
         }
-
+        
         try {
             int pageNumber = call.argument(KEY_PAGE_NUMBER);
             double x1 = call.argument(KEY_X1);
@@ -4215,7 +4199,6 @@ public class PluginUtils {
                         }
                     });
         }
-        handleCustomAppBarButton(component);
     }
 
     public static boolean handleOpenDocError(ViewerComponent component) {
@@ -4235,12 +4218,6 @@ public class PluginUtils {
         }
 
         return false;
-    }
-    public static void handleOnConfigurationChanged(ViewerComponent component) {
-        if (component == null) {
-            return;
-        }
-        handleCustomAppBarButton(component);
     }
 
     public static void handleOnDetach(ViewerComponent component) {
@@ -4293,60 +4270,6 @@ public class PluginUtils {
         if (itemKey != null && annotationCustomToolbarItemPressedEventSink != null) {
             // this is a custom button
             annotationCustomToolbarItemPressedEventSink.success(itemId);
-        }
-    }
-
-    public static void handleAppBarButtonPressed(ViewerComponent component, MenuItem item) {
-        if (component == null) {
-            return;
-        }
-        EventChannel.EventSink appBarButtonPressedEventSink = component.getAppBarButtonPressedEventEmitter();
-        int itemId = item.getItemId();
-        if (appBarButtonPressedEventSink != null) {
-            appBarButtonPressedEventSink.success(itemId);
-        }
-    }
-
-    private static void handleCustomAppBarButton(ViewerComponent component) {
-        if (component.getAppNavRightBarItems() != null) {
-            PdfViewCtrlTabHostFragment2 hostFragment = component.getPdfViewCtrlTabHostFragment();
-            if (hostFragment != null) {
-                androidx.appcompat.widget.Toolbar toolbar = hostFragment.getToolbar();
-                if (toolbar != null) {
-                    toolbar.getMenu().clear();
-
-                    try {
-                        for (int i = 0; i < component.getAppNavRightBarItems().size(); i++) {
-                            String object = component.getAppNavRightBarItems().get(i);
-
-                            int itemId = 0;
-                            String itemName = null, itemIcon = null;
-                            JSONObject item = new JSONObject(object);
-                            if (!item.isNull(TOOLBAR_ITEM_KEY_ID)) {
-                                itemId = item.getInt(TOOLBAR_ITEM_KEY_ID);
-                            }
-                            if (!item.isNull(TOOLBAR_ITEM_KEY_NAME)) {
-                                itemName = item.getString(TOOLBAR_ITEM_KEY_NAME);
-                            }
-                            if (!item.isNull(TOOLBAR_ITEM_KEY_ICON)) {
-                                itemIcon = item.getString(TOOLBAR_ITEM_KEY_ICON);
-                            }
-
-                            if (itemId != 0 && itemName != null && !Utils.isNullOrEmpty(itemIcon)) {
-                                int res = Utils.getResourceDrawable(toolbar.getContext(), itemIcon);
-                                Menu navBarMenu = toolbar.getMenu();
-                                if (navBarMenu != null) {
-                                    navBarMenu.add(Menu.NONE, itemId, Menu.NONE, itemName)
-                                            .setIcon(res)
-                                            .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-                                }
-                            }
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
         }
     }
 

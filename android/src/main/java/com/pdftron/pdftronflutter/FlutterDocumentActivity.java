@@ -2,7 +2,6 @@ package com.pdftron.pdftronflutter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -39,7 +38,6 @@ import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.MethodChannel.Result;
 
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleAnnotationCustomToolbarItemPressed;
-import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleAppBarButtonPressed;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleLeadingNavButtonPressed;
 
 public class FlutterDocumentActivity extends DocumentActivity implements ViewerComponent {
@@ -88,7 +86,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     private static AtomicReference<EventSink> sScrollChangedEventEmitter = new AtomicReference<>();
 
     // Hygen Generated Event Listeners (1)
-    private static AtomicReference<EventSink> sAppBarButtonPressedEventEmitter = new AtomicReference<>();
 
     private static HashMap<Annot, Integer> mSelectedAnnots;
 
@@ -262,10 +259,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     }
 
     // Hygen Generated Event Listeners (2)
-    public static void setAppBarButtonPressedEventEmitter(EventSink emitter) {
-        sAppBarButtonPressedEventEmitter.set(emitter);
-    }
-
 
     public static void setFlutterLoadResult(Result result) {
         sFlutterLoadResult.set(result);
@@ -353,11 +346,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     public EventSink getScrollChangedEventEmitter() { return sScrollChangedEventEmitter.get(); }
 
     // Hygen Generated Event Listeners (3)
-    @Override
-    public EventSink getAppBarButtonPressedEventEmitter() {
-        return sAppBarButtonPressedEventEmitter.get();
-    }
-
 
     @Override
     public Result getFlutterLoadResult() {
@@ -400,21 +388,10 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     }
 
     @Override
-    public ArrayList<String> getAppNavRightBarItems() {
-        return new ArrayList<>();
-    }
-
-    @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         attachActivity();
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        PluginUtils.handleOnConfigurationChanged(this);
-        super.onConfigurationChanged(newConfig);
     }
 
     @Override
@@ -440,7 +417,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sScrollChangedEventEmitter.set(null);
 
         // Hygen Generated Event Listeners (4)
-        sAppBarButtonPressedEventEmitter.set(null);
 
         detachActivity();
     }
@@ -492,7 +468,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     @Override
     public boolean onToolbarOptionsItemSelected(MenuItem item) {
         handleAnnotationCustomToolbarItemPressed(this, item);
-        handleAppBarButtonPressed(this, item);
         return super.onToolbarOptionsItemSelected(item);
     }
 
