@@ -4308,7 +4308,7 @@ public class PluginUtils {
         }
     }
 
-    public static void handleCustomAppBarButton(ViewerComponent component) {
+    private static void handleCustomAppBarButton(ViewerComponent component) {
         if (component.getAppNavRightBarItems() != null) {
             PdfViewCtrlTabHostFragment2 hostFragment = component.getPdfViewCtrlTabHostFragment();
             if (hostFragment != null) {
