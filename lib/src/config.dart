@@ -373,7 +373,7 @@ class Config {
   /// Defaults to false.
   set hideTopAppNavBar(bool value) => _hideTopAppNavBar = value;
 
-  /// A list of [Buttons] that will appear in the right bar section of the top
+  /// A list of [Buttons] and [CustomToolbarItems] that will appear in the right bar section of the top
   /// app navigation bar.
   ///
   /// If used, the default right bar section will not be used. Defaults to
@@ -693,7 +693,7 @@ class Config {
         _maxSignatureCount = json['maxSignatureCount'],
 
         _fullScreenModeEnabled = json['fullScreenModeEnabled'];
-
+        
   Map<String, dynamic> toJson() => {
         'disabledElements': _disabledElements,
         'disabledTools': _disabledTools,
