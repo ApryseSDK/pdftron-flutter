@@ -32,6 +32,8 @@ public interface ViewerComponent {
 
     ArrayList<String> getAnnotationMenuOverrideItems();
 
+    ArrayList<String> getAppNavRightBarItems();
+
     boolean isAnnotationManagerEnabled();
 
     String getUserId();
@@ -85,6 +87,7 @@ public interface ViewerComponent {
     EventChannel.EventSink getScrollChangedEventEmitter();
 
     // Hygen Generated Event Listeners
+    EventChannel.EventSink getAppBarButtonPressedEventEmitter();
 
     MethodChannel.Result getFlutterLoadResult();
 
@@ -108,4 +111,5 @@ public interface ViewerComponent {
 
     @NonNull
     ViewerImpl getImpl();
+
 }

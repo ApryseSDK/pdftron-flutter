@@ -23,6 +23,7 @@
 @property (nonatomic, strong) FlutterEventSink scrollChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink annotationToolbarItemPressedEventSink;
 // Hygen Generated Event Listeners (1)
+@property (nonatomic, strong) FlutterEventSink appBarButtonPressedEventSink;
 
 @property (nonatomic, assign, getter=isWidgetView) BOOL widgetView;
 @property (nonatomic, assign, getter=isMultiTabSet) BOOL multiTabSet;
@@ -190,6 +191,10 @@
     FlutterEventChannel* annotationToolbarItemPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTAnnotationToolbarItemPressedEventKey binaryMessenger:messenger];
 
     [annotationToolbarItemPressedEventChannel setStreamHandler:self];
+    
+    FlutterEventChannel* appBarButtonPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTAppBarButtonPressedEventKey binaryMessenger:messenger];
+
+    [appBarButtonPressedEventChannel setStreamHandler:self];
 
 }
 
@@ -1270,6 +1275,9 @@
         case annotationToolbarItemPressedId:
             self.annotationToolbarItemPressedEventSink = events;
             break;
+        case appBarButtonPressedId:
+            self.appBarButtonPressedEventSink = events;
+            break;
     }
     
     return Nil;
@@ -1329,6 +1337,9 @@
         // Hygen Generated Event Listeners (4)
         case annotationToolbarItemPressedId:
             self.annotationToolbarItemPressedEventSink = nil;
+            break;
+        case appBarButtonPressedId:
+            self.appBarButtonPressedEventSink = nil;
             break;
     }
     
@@ -1493,6 +1504,13 @@
     if (self.annotationToolbarItemPressedEventSink != nil)
     {
         self.annotationToolbarItemPressedEventSink(annotationToolbarItemPressedString);
+    }
+}
+- (void)documentController:(PTDocumentController *)docVC appBarButtonPressed:(NSString *)appBarButtonPressedString
+{
+    if (self.appBarButtonPressedEventSink != nil)
+    {
+        self.appBarButtonPressedEventSink(appBarButtonPressedString);
     }
 }
 

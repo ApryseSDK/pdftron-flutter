@@ -33,6 +33,7 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_PAGE_MOVED;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_ANNOTATION_TOOLBAR_ITEM_PRESSED;
 
 // Hygen Generated Event Listeners (1)
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.EVENT_APP_BAR_BUTTON_PRESSED;
 
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_OPEN_DOCUMENT;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SET_LEADING_NAV_BUTTON_ICON;
@@ -272,6 +273,18 @@ public class FlutterDocumentView implements PlatformView, MethodChannel.MethodCa
         });
 
         // Hygen Generated Event Listeners (2)
+        final EventChannel appBarButtonPressedEventChannel = new EventChannel(messenger, EVENT_APP_BAR_BUTTON_PRESSED);
+        appBarButtonPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                documentView.setAppBarButtonPressedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                documentView.setAppBarButtonPressedEventEmitter(null);
+            }
+        });
     }
 
     @Override
