@@ -18,7 +18,8 @@ capture:
         languages:
           - "java"
         excludes:
-          - build.gradle
+          - android/build.gradle
+          - example/android/build.gradle
 analyze:
   mode: central
 install:
