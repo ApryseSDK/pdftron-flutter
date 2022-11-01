@@ -6,6 +6,12 @@ project:
     name: ${scm.git.commit}
     date: ${scm.git.commit.date}
 capture:
+  build:
+    buildCommands:
+      - shell: [bash, -e, scripts/ios/run_polaris.sh]
+    coverity:
+      skipFiles:
+      - "example/ios/Pods"
   coverity:
     buildless:
       project:
