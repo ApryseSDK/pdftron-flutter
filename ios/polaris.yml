@@ -1,6 +1,6 @@
 version: "1"
 project:
-  name: ${scm.git.repo}
+  name: ${scm.git.repo}/ios
   branch: ${scm.git.branch}
   revision:
     name: ${scm.git.commit}
@@ -12,14 +12,6 @@ capture:
     coverity:
       skipFiles:
       - "example/ios/Pods"
-  coverity:
-    buildless:
-      project:
-        languages:
-          - "java"
-        excludes:
-          - android/build.gradle
-          - example/android/build.gradle
 analyze:
   mode: central
 install:
