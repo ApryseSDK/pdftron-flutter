@@ -1,11 +1,15 @@
 version: "1"
 project:
-  name: ${scm.git.repo}/ios
+  name: ${scm.git.repo}
   branch: ${scm.git.branch}
   revision:
     name: ${scm.git.commit}
     date: ${scm.git.commit.date}
 capture:
+  fileSystem:
+    java:
+      files:
+        - directory: ./android
   build:
     buildCommands:
       - shell: [bash, -e, scripts/ios/run_polaris.sh]
