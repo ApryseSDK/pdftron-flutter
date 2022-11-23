@@ -1,6 +1,15 @@
 # 1.0.0-beta.55 - Oct 13, 2022
 - Update Android to v9.4.0
 
+# 1.0.0-beta.48 - Aug 25, 2022
+- Update Android to v9.4.0
+
+# 1.0.0-beta.36 - Jul 13, 2022
+- Update Android to v9.3.0
+
+# 1.0.0-beta.24 - Jul 13, 2022
+- Update Android to v9.2.3
+
 # 1.0.0-beta.21 - April 22, 2022
 - Update Android to v9.2.2
 
