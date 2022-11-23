@@ -1,53 +1,53 @@
 # 1.0.0-beta.55 - Oct 13, 2022
 - Update Android to v9.4.0
 
-# 1.0.0-beta.21 - April 22, 2021
+# 1.0.0-beta.21 - April 22, 2022
 - Update Android to v9.2.2
 
-# 1.0.0-beta.18 - April 22, 2021
+# 1.0.0-beta.18 - April 22, 2022
 - Fix for setting layout mode on document open on iOS
 
 
-# 1.0.0-beta.17 - March 31, 2021
+# 1.0.0-beta.17 - March 31, 2022
 - hideScrollbars_iOS
-# 1.0.0-beta.16 - March 31, 2021
+# 1.0.0-beta.16 - March 31, 2022
 - zoomWithCenter()
 - zoomToRect()
 
-# 1.0.0-beta.16 - March 31, 2021
+# 1.0.0-beta.16 - March 31, 2022
 - Minor updates to API docs
-# 1.0.0-beta.15 - March 23, 2021
+# 1.0.0-beta.15 - March 23, 2022
 - getZoom Method
 - setZoomLimits Methods
 
-# 1.0.0-beta.12 - March 23, 2021
+# 1.0.0-beta.12 - March 23, 2022
 - QuickBookMarkConfig Option
-# 1.0.0-beta.11 - March 22, 2021
+# 1.0.0-beta.11 - March 22, 2022
 - Update Android to v9.2.1
 
-# 1.0.0-beta.10 - March 18, 2021
+# 1.0.0-beta.10 - March 18, 2022
 - Minor bug fixes in pubspec.yaml and other files 
 
-# 1.0.0-beta.9 - March 18, 2021
+# 1.0.0-beta.9 - March 18, 2022
 - Implemented the following APIs:
 - GetSavedSignatures()
 - GetSavedSignaturesFolder()
 - GetSavedSignaturesJpgFolder()
 
-# 1.0.0-beta.8 - March 11, 2021
+# 1.0.0-beta.8 - March 11, 2022
 
 - Bug Fixes
 
-# 1.0.0-beta.7 - March 4, 2021
+# 1.0.0-beta.7 - March 4, 2022
 
 - Add additional viewMode hiding options (vertical scrolling)
-# 1.0.0-beta.5 - Februrary 22, 2021
+# 1.0.0-beta.5 - Februrary 22, 2022
 
 - Toggle widget and plugin (internal sample)
 - Remove Jcenter (Android)
 
 
-# 1.0.0-beta.4 - Februrary 3, 2021
+# 1.0.0-beta.4 - Februrary 3, 2022
 
 - Added sound null safety support for new API's
 - Updated API.md files to reflect changes
