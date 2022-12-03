@@ -354,6 +354,9 @@ public class PluginUtils {
     public static final String FUNCTION_SET_VERTICAL_SCROLL_POSITION = "setVerticalScrollPosition";
     public static final String FUNCTION_GET_VISIBLE_PAGES = "getVisiblePages";
 
+    // Kotlin Toast Method
+    public static final String FUNCTION_SHOW_MY_TOAST = "showMyToast";
+
     // Hygen Generated Method Constants
     public static final String FUNCTION_GET_ANNOTATIONS_ON_PAGE = "getAnnotationsOnPage";
 
