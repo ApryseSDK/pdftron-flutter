@@ -5,6 +5,7 @@ import android.content.Context;
 import com.pdftron.common.PDFNetException;
 import com.pdftron.pdf.PDFNet;
 import com.pdftron.pdftronflutter.FlutterDocumentActivity;
+import com.pdftron.pdftronflutter.kotlin.MyToast;
 
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.EventChannel;
@@ -20,6 +21,7 @@ import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_INITIALIZE
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_OPEN_DOCUMENT;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SET_LEADING_NAV_BUTTON_ICON;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SET_REQUESTED_ORIENTATION;
+import static com.pdftron.pdftronflutter.helpers.PluginUtils.FUNCTION_SHOW_MY_TOAST;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_CONFIG;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_DOCUMENT;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.KEY_LEADING_NAV_BUTTON_ICON;
@@ -314,6 +316,10 @@ public class PluginMethodCallHandler implements MethodCallHandler {
             case FUNCTION_SET_REQUESTED_ORIENTATION: {
                 int requestedOrientation = call.argument(KEY_REQUESTED_ORIENTATION);
                 FlutterDocumentActivity.setOrientation(requestedOrientation);
+                break;
+            }
+            case FUNCTION_SHOW_MY_TOAST: {
+                MyToast.show(mContext);
                 break;
             }
             default:

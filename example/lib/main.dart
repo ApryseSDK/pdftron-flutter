@@ -208,7 +208,7 @@ class _ViewerState extends State<Viewer> {
       // });
 
       // Show a dialog when leading navigation button is pressed.
-      _showMyDialog();
+      PdftronFlutter.showMyToast();
     });
 
     await controller.openDocument(_document, config: config);

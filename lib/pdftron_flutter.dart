@@ -4,6 +4,7 @@ library pdftron;
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'src/options.dart';
@@ -24,7 +25,8 @@ class PdftronFlutter {
 
   /// The current version of the OS that the app is running on.
   static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod(Functions.getPlatformVersion);
+    final String version =
+        await _channel.invokeMethod(Functions.getPlatformVersion);
     return version;
   }
 
@@ -41,6 +43,11 @@ class PdftronFlutter {
   static Future<void> initialize([String licenseKey = ""]) {
     return _channel.invokeMethod(Functions.initialize,
         <String, dynamic>{Parameters.licenseKey: licenseKey});
+  }
+
+  /// Invokes Kotlin Toast API
+  static Future<void> showMyToast() {
+    return _channel.invokeMethod(Functions.showMyToast);
   }
 
   /// Opens a document in the viewer with configurations.
@@ -603,7 +610,7 @@ class PdftronFlutter {
   static Future<void> exitSearchMode() {
     return _channel.invokeMethod(Functions.exitSearchMode);
   }
-  
+
   /// Zooms the viewer to the given scale using the given coordinate as the center.
   ///
   /// The zoom center ([x],[y]) is represented in the screen space, whose origin
@@ -612,7 +619,7 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.zoomWithCenter,
         <String, dynamic>{"zoom": zoom, "x": x, "y": y});
   }
-  
+
   /// Zooms the viewer to fit the given rectangular area in the specified page.
   ///
   /// ```dart
@@ -710,9 +717,9 @@ class PdftronFlutter {
       Parameters.red: red,
       Parameters.green: green,
       Parameters.blue: blue
-      });
+    });
   }
-  
+
   /// Gets the horizontal and vertical scroll position in the current document viewer.
   ///
   /// The scroll position is returned as a `Map<String, int>` with the keys
@@ -742,7 +749,7 @@ class PdftronFlutter {
       Parameters.verticalScrollPosition: verticalScrollPosition
     });
   }
-  
+
   /// Gets the page numbers of currently visible pages in the viewer.
   static Future<List<int>?> getVisiblePages() {
     return _channel.invokeMethod(Functions.getVisiblePages);
@@ -751,9 +758,8 @@ class PdftronFlutter {
   // Hygen Generated Methods
   /// Gets the list of annotations on the given page.
   static Future<List<Annot>?> getAnnotationsOnPage(int pageNumber) {
-    return _channel.invokeMethod(Functions.getAnnotationsOnPage, <String, dynamic>{
-      Parameters.pageNumber: pageNumber
-    }).then((jsonArray) {
+    return _channel.invokeMethod(Functions.getAnnotationsOnPage,
+        <String, dynamic>{Parameters.pageNumber: pageNumber}).then((jsonArray) {
       List<dynamic> annotations = jsonDecode(jsonArray);
       List<Annot> annotList = new List<Annot>.empty(growable: true);
       for (dynamic annotation in annotations) {

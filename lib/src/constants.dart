@@ -1,4 +1,3 @@
-
 /// Names of functions.
 class Functions {
   static const getPlatformVersion = "getPlatformVersion";
@@ -9,6 +8,7 @@ class Functions {
   static const getSavedSignatureFolder = "getSavedSignatureFolder";
 
   /// Android only
+  static const showMyToast = "showMyToast";
   static const getSavedSignatureJpgFolder = "getSavedSignatureJpgFolder";
   static const importAnnotations = "importAnnotations";
   static const exportAnnotations = "exportAnnotations";
@@ -75,7 +75,7 @@ class Functions {
   static const getScrollPos = "getScrollPos";
   static const setHorizontalScrollPosition = "setHorizontalScrollPosition";
   static const setVerticalScrollPosition = "setVerticalScrollPosition";
-  static const smartZoom = "smartZoom"; 
+  static const smartZoom = "smartZoom";
   static const getVisiblePages = "getVisiblePages";
 
   // Hygen Generated Methods
