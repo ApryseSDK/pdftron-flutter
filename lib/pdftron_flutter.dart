@@ -749,12 +749,14 @@ class PdftronFlutter {
   }
 
   // Hygen Generated Methods
+  /// Sets the page presentation mode in the viewer
   static Future<void> setLayoutMode(String layoutMode) {
     return _channel.invokeMethod(Functions.setLayoutMode, <String, dynamic>{
       Parameters.layoutMode: layoutMode
     });
   }
 
+  /// Sets the page view mode in the viewer
   static Future<void> setFitMode(String fitMode) {
     return _channel.invokeMethod(Functions.setFitMode, <String, dynamic>{
       Parameters.fitMode: fitMode
