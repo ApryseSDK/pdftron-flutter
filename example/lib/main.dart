@@ -207,11 +207,17 @@ class _ViewerState extends State<Viewer> {
       //   _showViewer = !_showViewer;
       // });
 
+    controller.setLayoutMode(LayoutModes.facing);
       // Show a dialog when leading navigation button is pressed.
-      _showMyDialog();
+      // _showMyDialog();
     });
-
+    var documentLoadedCancel = startDocumentLoadedListener((filePath) {
+      print("document loaded: $filePath");
+      
+    });
+    
     await controller.openDocument(_document, config: config);
+    
   }
 
   Future<void> _showMyDialog() async {

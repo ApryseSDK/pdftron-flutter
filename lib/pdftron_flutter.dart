@@ -749,6 +749,18 @@ class PdftronFlutter {
   }
 
   // Hygen Generated Methods
+  static Future<void> setLayoutMode(String layoutMode) {
+    return _channel.invokeMethod(Functions.setLayoutMode, <String, dynamic>{
+      Parameters.layoutMode: layoutMode
+    });
+  }
+
+  static Future<void> setFitMode(String fitMode) {
+    return _channel.invokeMethod(Functions.setFitMode, <String, dynamic>{
+      Parameters.fitMode: fitMode
+    });
+  }
+
   /// Gets the list of annotations on the given page.
   static Future<List<Annot>?> getAnnotationsOnPage(int pageNumber) {
     return _channel.invokeMethod(Functions.getAnnotationsOnPage, <String, dynamic>{

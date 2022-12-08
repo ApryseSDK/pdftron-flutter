@@ -79,6 +79,8 @@ class Functions {
   static const getVisiblePages = "getVisiblePages";
 
   // Hygen Generated Methods
+  static const setLayoutMode = "setLayoutMode";
+  static const setFitMode = "setFitMode";
   static const getAnnotationsOnPage = "getAnnotationsOnPage";
 }
 
@@ -120,6 +122,8 @@ class Parameters {
   static const animated = "animated";
 
   // Hygen Generated Method Parameters
+  static const layoutMode = "layoutMode";
+  static const fitMode = "fitMode";
 }
 
 /// Parameters of events.

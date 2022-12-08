@@ -259,6 +259,10 @@ public class PluginUtils {
     public static final String KEY_MATCH_WHOLE_WORD = "matchWholeWord";
 
     // Hygen Generated Method Parameters
+    public static final String KEY_LAYOUT_MODE = "layoutMode";
+
+    public static final String KEY_FIT_MODE = "fitMode";
+
 
     public static final String EVENT_EXPORT_ANNOTATION_COMMAND = "export_annotation_command_event";
     public static final String EVENT_EXPORT_BOOKMARK = "export_bookmark_event";
@@ -355,6 +359,8 @@ public class PluginUtils {
     public static final String FUNCTION_GET_VISIBLE_PAGES = "getVisiblePages";
 
     // Hygen Generated Method Constants
+    public static final String FUNCTION_SET_LAYOUT_MODE = "setLayoutMode";
+    public static final String FUNCTION_SET_FIT_MODE = "setFitMode";
     public static final String FUNCTION_GET_ANNOTATIONS_ON_PAGE = "getAnnotationsOnPage";
 
     public static final String BUTTON_TOOLS = "toolsButton";
@@ -461,10 +467,10 @@ public class PluginUtils {
 
     private static final String LAYOUT_MODE_SINGLE = "Single";
     private static final String LAYOUT_MODE_CONTINUOUS = "Continuous";
-    private static final String LAYOUT_MODE_FACING = "facing";
-    private static final String LAYOUT_MODE_FACING_CONTINUOUS = "facingContinuous";
-    private static final String LAYOUT_MODE_FACING_OVER = "facingOver";
-    private static final String LAYOUT_MODE_FACING_OVER_CONTINUOUS = "facingOverContinuous";
+    private static final String LAYOUT_MODE_FACING = "Facing";
+    private static final String LAYOUT_MODE_FACING_CONTINUOUS = "FacingContinuous";
+    private static final String LAYOUT_MODE_FACING_OVER = "FacingOver";
+    private static final String LAYOUT_MODE_FACING_OVER_CONTINUOUS = "FacingOverContinuous";
 
     private static final String FIT_MODE_FIT_PAGE = "FitPage";
     private static final String FIT_MODE_FIT_WIDTH = "FitWidth";
@@ -1692,6 +1698,24 @@ public class PluginUtils {
         return layoutMode;
     }
 
+    private static PDFViewCtrl.PagePresentationMode convStringToPagePresentationMode(String pagePresentationString) {
+        PDFViewCtrl.PagePresentationMode mode = null;
+        if (LAYOUT_MODE_SINGLE.equals(pagePresentationString)) {
+            mode = PDFViewCtrl.PagePresentationMode.SINGLE;
+        } else if (LAYOUT_MODE_CONTINUOUS.equals(pagePresentationString)) {
+            mode = PDFViewCtrl.PagePresentationMode.SINGLE_CONT;
+        } else if (LAYOUT_MODE_FACING.equals(pagePresentationString)) {
+            mode = PDFViewCtrl.PagePresentationMode.FACING;
+        } else if (LAYOUT_MODE_FACING_CONTINUOUS.equals(pagePresentationString)) {
+            mode = PDFViewCtrl.PagePresentationMode.FACING_CONT;
+        } else if (LAYOUT_MODE_FACING_OVER.equals(pagePresentationString)) {
+            mode = PDFViewCtrl.PagePresentationMode.FACING_COVER;
+        } else if (LAYOUT_MODE_FACING_OVER_CONTINUOUS.equals(pagePresentationString)) {
+            mode = PDFViewCtrl.PagePresentationMode.FACING_COVER_CONT;
+        }
+        return mode;
+    }
+
     private static PDFViewCtrl.PageViewMode convStringToFitMode(String fitString) {
         PDFViewCtrl.PageViewMode fitMode = null;
         if (FIT_MODE_FIT_PAGE.equals(fitString)) {
@@ -2660,6 +2684,16 @@ public class PluginUtils {
                 break;
             }
             // Hygen Generated Method Cases
+            case FUNCTION_SET_LAYOUT_MODE: {
+                checkFunctionPrecondition(component);
+                setLayoutMode(call, result, component);
+                break;
+            }
+            case FUNCTION_SET_FIT_MODE: {
+                checkFunctionPrecondition(component);
+                setFitMode(call, result, component);
+                break;
+            }
             case FUNCTION_GET_ANNOTATIONS_ON_PAGE: {
                 checkFunctionPrecondition(component);
                 getAnnotationsOnPage(call, result, component);
@@ -4129,6 +4163,31 @@ public class PluginUtils {
     }
 
     // Hygen Generated Methods
+    public static void setLayoutMode(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        String layoutString = call.argument(KEY_LAYOUT_MODE);
+
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+
+        pdfViewCtrl.setPagePresentationMode(convStringToPagePresentationMode(layoutString));
+        result.success(null);
+    }
+
+    public static void setFitMode(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        String fitString = call.argument(KEY_FIT_MODE);
+
+        if (pdfViewCtrl == null) {
+            result.error("InvalidState", "PDFViewCtrl not found", null);
+            return;
+        }
+        pdfViewCtrl.setPageViewMode(convStringToFitMode(fitString));
+        result.success(null);
+    }
+
     public static void getAnnotationsOnPage(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
         int pageNumber = call.argument(KEY_PAGE_NUMBER);
 

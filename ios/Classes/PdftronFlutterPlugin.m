@@ -1696,6 +1696,12 @@
         [self smartZoom:result call:call];
     }
     // Hygen Generated Method Call Cases
+    else if ([call.method isEqualToString:PTSetLayoutModeKey]) {
+        [self setLayoutMode:result call:call];
+    }
+    else if ([call.method isEqualToString:PTSetFitModeKey]) {
+        [self setFitMode:result call:call];
+    }
     else if ([call.method isEqualToString:PTGetAnnotationsOnPageKey]) {
         [self getAnnotationsOnPage:result call:call];
     }
@@ -3543,6 +3549,20 @@
 }
 
 // Hygen Generated Methods
+- (void)setLayoutMode:(FlutterResult)result call:(FlutterMethodCall*)call
+{
+    PTDocumentController *documentController = [self getDocumentController];
+
+    flutterResult(nil);
+}
+
+- (void)setFitMode:(FlutterResult)result call:(FlutterMethodCall*)call
+{
+    PTDocumentController *documentController = [self getDocumentController];
+
+    flutterResult(nil);
+}
+
 - (void)getAnnotationsOnPage:(FlutterResult)result call:(FlutterMethodCall*)call
 {
     PTDocumentController *documentController = [self getDocumentController];
