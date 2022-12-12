@@ -3549,17 +3549,45 @@
 }
 
 // Hygen Generated Methods
-- (void)setLayoutMode:(FlutterResult)result call:(FlutterMethodCall*)call
+- (void)setLayoutMode:(FlutterResult)flutterResult call:(FlutterMethodCall*)call
 {
     PTDocumentController *documentController = [self getDocumentController];
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"set_layout_mode" message:@"Failed to set page presentation mode" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+    PTPDFViewCtrl *pdfViewCtrl = documentController.pdfViewCtrl;
 
+//    if(documentController == Nil)
+//    {
+//        // something is wrong, document view controller is not present
+//        NSLog(@"Error: The document view controller is not initialized.");
+//        flutterResult([FlutterError errorWithCode:@"set_layout_mode" message:@"Failed to set page presentation mode" details:@"Error: The document view controller is not initialized."]);
+//        return;
+//    }
+
+    [pdfViewCtrl SetPagePresentationMode:<#(TrnPagePresentationMode)#>];
     flutterResult(nil);
 }
 
-- (void)setFitMode:(FlutterResult)result call:(FlutterMethodCall*)call
+- (void)setFitMode:(FlutterResult)flutterResult call:(FlutterMethodCall*)call
 {
     PTDocumentController *documentController = [self getDocumentController];
-
+    NSString* fitString = [call.arguments[PTFitPageKey] stringValue];
+    
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"set_fit_mode" message:@"Failed to set page view mode" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+    
+    
+    [documentController.pdfViewCtrl SetPageViewMode:fitString];
     flutterResult(nil);
 }
 
