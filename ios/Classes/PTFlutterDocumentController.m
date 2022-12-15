@@ -483,6 +483,22 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 
     NSMutableArray<UIMenuItem *> *permittedItems = [NSMutableArray array];
 
+    // Condition to show share sticky notes (Decisions)
+    if(annotType == PTExtendedAnnotTypeText)
+    {
+        const SEL decisionsShareSelector = NSSelectorFromString(PTShareDecisionsAnnotationsKey);
+        UIMenuItem  *decisionsShare = [[UIMenuItem alloc] initWithTitle:@"Share" action:(decisionsShareSelector)];
+        
+        if([menuController.menuItems containsObject:decisionsShare ])
+        {}else
+        {
+            [permittedItems addObject:decisionsShare];
+            PT_addMethod([self class], decisionsShareSelector, ^(id self) {
+                [self overriddenAnnotationMenuItemPressed:@"ShareDecisions"];
+            });
+        }
+    }
+    
     for (UIMenuItem *menuItem in menuController.menuItems) {
         NSString *menuItemId = localizedMap[menuItem.title];
 
@@ -508,21 +524,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
             menuItem.action = selector;
         }
     }
-    // Condition to show
-    if(annotType == PTExtendedAnnotTypeText)
-    {
-        const SEL decisionsShareSelector = NSSelectorFromString(PTShareDecisionsAnnotationsKey);
-        UIMenuItem  *decisionsShare = [[UIMenuItem alloc] initWithTitle:@"Share" action:(decisionsShareSelector)];
-        
-        if([menuController.menuItems containsObject:decisionsShare ])
-        {}else
-        {
-            [permittedItems addObject:decisionsShare];
-            PT_addMethod([self class], decisionsShareSelector, ^(id self) {
-                [self overriddenAnnotationMenuItemPressed:@"ShareDecisions"];
-            });
-        }
-    }
+
 
     menuController.menuItems = [permittedItems copy];
 
