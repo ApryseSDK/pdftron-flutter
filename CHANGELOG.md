@@ -1,3 +1,7 @@
+# 1.0.0-3 - Dec 16, 2022
+- setFitMode()
+- setLayoutMode()
+
 # 1.0.0-2 - Dec 2, 2022
 - Update Android to v9.4.1
 
