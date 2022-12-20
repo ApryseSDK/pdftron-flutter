@@ -1068,8 +1068,9 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     
     // Whether toggling toolbars on tap is allowed.
     self.hidesControlsOnTap = _toolbarsHiddenOnTap;
-    
-    [self DecisionsTool];
+   
+    // uncomment to show decisions "d" logo
+   // [self DecisionsTool];
     
     // Annotation Manager
     if (self.isAnnotationManagerEnabled && self.userId) {
