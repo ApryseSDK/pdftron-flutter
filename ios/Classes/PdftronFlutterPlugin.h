@@ -77,6 +77,7 @@ static NSString * const PTHideScrollbarsKey = @"hideScrollbars";
 static NSString * const PTQuickBookmarkCreationKey = @"quickBookmarkCreation";
 
 // Hygen Generated Configs
+static NSString * const PTMaxSignatureCountKey = @"maxSignatureCount";
 
 // tool
 static NSString * const PTAnnotationEditToolKey = @"AnnotationEdit";
@@ -264,10 +265,17 @@ static NSString * const PTSetZoomLimitsKey = @"setZoomLimits";
 static NSString * const PTSmartZoomKey = @"smartZoom";
 static NSString * const PTGetSavedSignaturesKey = @"getSavedSignatures";
 static NSString * const PTGetSavedSignatureFolderKey = @"getSavedSignatureFolder";
+static NSString * const PTSetBackgroundColorKey = @"setBackgroundColor";
+static NSString * const PTSetDefaultPageColorKey = @"setDefaultPageColor";
+static NSString * const PTGetScrollPosKey = @"getScrollPos";
+static NSString * const PTSetHorizontalScrollPositionKey = @"setHorizontalScrollPosition";
+static NSString * const PTSetVerticalScrollPositionKey = @"setVerticalScrollPosition";
 static NSString * const PTStartSearchModeKey = @"startSearchMode";
 static NSString * const PTExitSearchModeKey = @"exitSearchMode";
 
 // Hygen Generated Methods
+static NSString * const PTSetLayoutModeKey = @"setLayoutMode";
+static NSString * const PTSetFitModeKey = @"setFitMode";
 static NSString * const PTGetAnnotationsOnPageKey = @"getAnnotationsOnPage";
 
 // argument
@@ -295,12 +303,19 @@ static NSString * const PTSourceRectArgumentKey = @"sourceRect";
 static NSString * const PTPathArgumentKey = @"path";
 static NSString * const PTDpiArgumentKey = @"dpi";
 static NSString * const PTExportFormatArgumentKey = @"exportFormat";
+static NSString * const PTRedKey = @"red";
+static NSString * const PTBlueKey = @"blue";
+static NSString * const PTGreenKey = @"green";
+static NSString * const PTHorizontalScrollPositionArgumentKey = @"horizontalScrollPosition";
+static NSString * const PTVerticalScrollPositionArgumentKey = @"verticalScrollPosition";
 static NSString * const PTSearchStringArgumentKey = @"searchString";
 static NSString * const PTMatchCaseArgumentKey = @"matchCase";
 static NSString * const PTMatchWholeWordArgumentKey = @"matchWholeWord";
 static NSString * const PTAnimatedArgumentKey = @"animated";
 
 // Hygen Generated Method Parameters
+static NSString * const PTLayoutModeArgumentKey = @"layoutMode";
+static NSString * const PTFitModeArgumentKey = @"fitMode";
 
 // event strings
 static NSString * const PTExportAnnotationCommandEventKey = @"export_annotation_command_event";
@@ -321,6 +336,8 @@ static NSString * const PTPageMovedEventKey = @"page_moved_event";
 static NSString *const PTScrollChangedEventKey = @"scroll_changed_event";
 
 // Hygen Generated Event Listeners (1)
+static NSString * const PTAnnotationToolbarItemPressedEventKey = @"annotation_toolbar_item_pressed_event";
+static NSString * const PTAppBarButtonPressedEventKey = @"app_bar_button_pressed_event";
 
 // fit mode
 static NSString * const PTFitPageKey = @"FitPage";
@@ -443,6 +460,10 @@ static NSString * const PTAnnotationManagerUndoModeAllKey = @"undoModeAll";
 static NSString * const PTAnnotationToolbarAlignmentStartKey = @"GravityStart";
 static NSString * const PTAnnotationToolbarAlignmentEndKey = @"GravityEnd";
 
+// Scroll direction
+static NSString * const PTScrollHorizontalKey = @"horizontal";
+static NSString * const PTScrollVerticalKey = @"vertical";
+
 // RGB colors
 static NSString * const PTColorRedKey = @"red";
 static NSString * const PTColorGreenKey = @"green";
@@ -468,6 +489,12 @@ static const PTAnnotationToolbarKey PTAnnotationToolbarKeyName = @"name";
 static const PTAnnotationToolbarKey PTAnnotationToolbarKeyIcon = @"icon";
 static const PTAnnotationToolbarKey PTAnnotationToolbarKeyItems = @"items";
 
+// Custom annotation toolbar item keys.
+typedef NSString *PTAnnotationToolbarItemKey NS_TYPED_EXTENSIBLE_ENUM;
+static const PTAnnotationToolbarItemKey PTAnnotationToolbarItemKeyId = @"id";
+static const PTAnnotationToolbarItemKey PTAnnotationToolbarItemKeyName = @"name";
+static const PTAnnotationToolbarItemKey PTAnnotationToolbarItemKeyIcon = @"icon";
+
 typedef enum
 {
     exportAnnotationId = 0,
@@ -485,9 +512,10 @@ typedef enum
     pageChangedId,
     zoomChangedId,
     pageMovedId,
-    scrollChangedId,
-
     // Hygen Generated Event Listeners (2)
+    scrollChangedId,
+    annotationToolbarItemPressedId,
+    appBarButtonPressedId,
 } EventSinkId;
 
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
@@ -514,8 +542,9 @@ typedef enum
 - (void)documentController:(PTDocumentController *)docVC zoomChanged:(NSNumber *)zoom;
 - (void)documentController:(PTDocumentController *)docVC pageMoved:(NSString *)pageNumbersString;
 - (void)documentController:(PTDocumentController *)docVC scrollChanged:(NSString*)scrollString;
-
 // Hygen Generated Event Listeners (3)
+- (void)documentController:(PTDocumentController *)docVC annotationToolbarItemPressed:(NSString *)annotationToolbarItemPressedId;
+- (void)documentController:(PTDocumentController *)docVC appBarButtonPressed:(NSString *)appBarButtonPressedString;
 
 - (void)topLeftButtonPressed:(UIBarButtonItem *)barButtonItem;
 
