@@ -1072,8 +1072,6 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     // uncomment to show decisions "d" logo
    // [self DecisionsTool];
     
-    [self DecisionsTool];
-    
     // Annotation Manager
     if (self.isAnnotationManagerEnabled && self.userId) {
         // Edit Mode
