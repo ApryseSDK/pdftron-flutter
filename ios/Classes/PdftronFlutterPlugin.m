@@ -12,7 +12,6 @@
 @property (nonatomic, strong) FlutterEventSink documentErrorEventSink;
 @property (nonatomic, strong) FlutterEventSink annotationChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink annotationsSelectedEventSink;
-@property (nonatomic, strong) FlutterEventSink shareDecisionsEventSink;
 @property (nonatomic, strong) FlutterEventSink formFieldValueChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink behaviorActivatedEventSink;
 @property (nonatomic, strong) FlutterEventSink longPressMenuPressedEventSink;
@@ -23,9 +22,8 @@
 @property (nonatomic, strong) FlutterEventSink pageMovedEventSink;
 @property (nonatomic, strong) FlutterEventSink scrollChangedEventSink;
 @property (nonatomic, strong) FlutterEventSink annotationToolbarItemPressedEventSink;
-// Hygen Generated Event Listeners (1)
 @property (nonatomic, strong) FlutterEventSink appBarButtonPressedEventSink;
-
+@property (nonatomic, strong) FlutterEventSink shareDecisionsEventSink; //Decisions Event sink
 @property (nonatomic, assign, getter=isWidgetView) BOOL widgetView;
 @property (nonatomic, assign, getter=isMultiTabSet) BOOL multiTabSet;
 
@@ -140,8 +138,6 @@
     
     FlutterEventChannel* annotationsSelectedEventChannel = [FlutterEventChannel eventChannelWithName:PTAnnotationsSelectedEventKey binaryMessenger:messenger];
     
-    FlutterEventChannel* shareDecisionsEventChannel = [FlutterEventChannel eventChannelWithName:PTShareDecisionsEventKey binaryMessenger:messenger];
-    
     FlutterEventChannel* formFieldValueChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTFormFieldValueChangedEventKey binaryMessenger:messenger];
     
     FlutterEventChannel* behaviorActivatedEventChannel = [FlutterEventChannel eventChannelWithName:PTBehaviorActivatedEventKey binaryMessenger:messenger];
@@ -159,6 +155,8 @@
     FlutterEventChannel* pageMovedEventChannel = [FlutterEventChannel eventChannelWithName:PTPageMovedEventKey binaryMessenger:messenger];
 
     FlutterEventChannel* scrollChangedEventChannel = [FlutterEventChannel eventChannelWithName:PTScrollChangedEventKey binaryMessenger:messenger];
+    
+    FlutterEventChannel* shareDecisionsEventChannel = [FlutterEventChannel eventChannelWithName:PTShareDecisionsEventKey binaryMessenger:messenger];
 
     [xfdfEventChannel setStreamHandler:self];
     
@@ -171,8 +169,6 @@
     [annotationChangedEventChannel setStreamHandler:self];
     
     [annotationsSelectedEventChannel setStreamHandler:self];
-    
-    [shareDecisionsEventChannel setStreamHandler:self];
     
     [formFieldValueChangedEventChannel setStreamHandler:self];
     
@@ -191,6 +187,8 @@
     [pageMovedEventChannel setStreamHandler:self];
 
     [scrollChangedEventChannel setStreamHandler:self];
+    
+    [shareDecisionsEventChannel setStreamHandler:self];
 
     // Hygen Generated Event Listeners (2)
     FlutterEventChannel* annotationToolbarItemPressedEventChannel = [FlutterEventChannel eventChannelWithName:PTAnnotationToolbarItemPressedEventKey binaryMessenger:messenger];

@@ -503,7 +503,6 @@ typedef enum
     documentErrorId,
     annotationChangedId,
     annotationsSelectedId,
-    shareDecisionsId,
     formFieldValueChangedId,
     behaviorActivatedId,
     longPressMenuPressedId,
@@ -512,10 +511,10 @@ typedef enum
     pageChangedId,
     zoomChangedId,
     pageMovedId,
-    // Hygen Generated Event Listeners (2)
     scrollChangedId,
     annotationToolbarItemPressedId,
     appBarButtonPressedId,
+    shareDecisionsId,
 } EventSinkId;
 
 @interface PdftronFlutterPlugin : NSObject<FlutterPlugin, FlutterStreamHandler, FlutterPlatformView>
