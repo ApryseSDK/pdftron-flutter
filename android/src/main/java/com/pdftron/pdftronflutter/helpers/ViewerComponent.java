@@ -75,20 +75,19 @@ public interface ViewerComponent {
 
     EventChannel.EventSink getLeadingNavButtonPressedEventEmitter();
 
-    EventChannel.EventSink getShareDecisionsEventEmitter();
-
     EventChannel.EventSink getPageChangedEventEmitter();
 
     EventChannel.EventSink getZoomChangedEventEmitter();
 
     EventChannel.EventSink getPageMovedEventEmitter();
 
-    EventChannel.EventSink getAnnotationToolbarItemPressedEventEmitter();
-    
     EventChannel.EventSink getScrollChangedEventEmitter();
 
-    // Hygen Generated Event Listeners
+    EventChannel.EventSink getAnnotationToolbarItemPressedEventEmitter();
+
     EventChannel.EventSink getAppBarButtonPressedEventEmitter();
+
+    EventChannel.EventSink getShareDecisionsEventEmitter();  //Decisions Event sink
 
     MethodChannel.Result getFlutterLoadResult();
 

@@ -181,19 +181,6 @@ public class PluginMethodCallHandler implements MethodCallHandler {
             }
         });
 
-        final EventChannel shareDecisionsEventChannel = new EventChannel(messenger, EVENT_SHARE_DECISIONS_EVENT);
-        shareDecisionsEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
-            @Override
-            public void onListen(Object arguments, EventChannel.EventSink emitter) {
-                FlutterDocumentActivity.setLeadingNavButtonPressedEventEmitter(emitter);
-            }
-
-            @Override
-            public void onCancel(Object arguments) {
-                FlutterDocumentActivity.setLeadingNavButtonPressedEventEmitter(null);
-            }
-        });
-
         final EventChannel annotationMenuPressedEventChannel = new EventChannel(messenger, EVENT_ANNOTATION_MENU_PRESSED);
         annotationMenuPressedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
@@ -284,6 +271,19 @@ public class PluginMethodCallHandler implements MethodCallHandler {
             @Override
             public void onCancel(Object arguments) {
                 FlutterDocumentActivity.setAppBarButtonPressedEventEmitter(null);
+            }
+        });
+
+        final EventChannel shareDecisionsEventChannel = new EventChannel(messenger, EVENT_SHARE_DECISIONS_EVENT);
+        shareDecisionsEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                FlutterDocumentActivity.setLeadingNavButtonPressedEventEmitter(emitter);
+            }
+
+            @Override
+            public void onCancel(Object arguments) {
+                FlutterDocumentActivity.setLeadingNavButtonPressedEventEmitter(null);
             }
         });
     }

@@ -4346,25 +4346,17 @@ public class PluginUtils {
         }
     }
 
+
     public static void handleAnnotationCustomToolbarItemPressed(ViewerComponent component, MenuItem item) {
         if (component == null) {
             return;
         }
-        if(item.getTitle().equals("Decisions"))
-        {
-            EventChannel.EventSink eventSink = component.getShareDecisionsEventEmitter();
-            if (eventSink != null) {
-                eventSink.success("DecisionsButtonClicked");
-            }
-            return;
-        }else {
-            EventChannel.EventSink annotationCustomToolbarItemPressedEventSink = component.getAnnotationMenuPressedEventEmitter();
-            int itemId = item.getItemId();
-            String itemKey = mToolIdMap.get(itemId);
-            if (itemKey != null && annotationCustomToolbarItemPressedEventSink != null) {
-                // this is a custom button
-                annotationCustomToolbarItemPressedEventSink.success(itemId);
-            }
+        EventChannel.EventSink annotationCustomToolbarItemPressedEventSink = component.getAnnotationToolbarItemPressedEventEmitter();
+        int itemId = item.getItemId();
+        String itemKey = mToolIdMap.get(itemId);
+        if (itemKey != null && annotationCustomToolbarItemPressedEventSink != null) {
+            // this is a custom button
+            annotationCustomToolbarItemPressedEventSink.success(itemKey);
         }
     }
 

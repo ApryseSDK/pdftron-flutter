@@ -26,7 +26,6 @@ import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
-import com.pdftron.pdftronflutter.nativeviews.FlutterPdfViewCtrlTabFragment;
 
 import org.json.JSONObject;
 
@@ -41,6 +40,7 @@ import io.flutter.plugin.common.MethodChannel.Result;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleAnnotationCustomToolbarItemPressed;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleAppBarButtonPressed;
 import static com.pdftron.pdftronflutter.helpers.PluginUtils.handleLeadingNavButtonPressed;
+import com.pdftron.pdftronflutter.nativeviews.FlutterPdfViewCtrlTabFragment;
 
 public class FlutterDocumentActivity extends DocumentActivity implements ViewerComponent {
 
@@ -81,7 +81,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
     private static AtomicReference<EventSink> sLongPressMenuPressedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sAnnotationMenuPressedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sLeadingNavButtonPressedEventEmitter = new AtomicReference<>();
-    private static AtomicReference<EventSink> sShareDecisionsEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sPageChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sZoomChangedEventEmitter = new AtomicReference<>();
     private static AtomicReference<EventSink> sPageMovedEventEmitter = new AtomicReference<>();
@@ -242,9 +241,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sLeadingNavButtonPressedEventEmitter.set(emitter);
     }
 
-    public static void setShareDecisionsEventEmitterEventEmitter(EventSink emitter) {
-        sShareDecisionsEventEmitter.set(emitter);
-    }
 
     public static void setPageChangedEventEmitter(EventSink emitter) {
         sPageChangedEventEmitter.set(emitter);
@@ -442,7 +438,6 @@ public class FlutterDocumentActivity extends DocumentActivity implements ViewerC
         sLongPressMenuPressedEventEmitter.set(null);
         sAnnotationMenuPressedEventEmitter.set(null);
         sLeadingNavButtonPressedEventEmitter.set(null);
-        sShareDecisionsEventEmitter.set(null);
         sPageChangedEventEmitter.set(null);
         sZoomChangedEventEmitter.set(null);
         sPageMovedEventEmitter.set(null);

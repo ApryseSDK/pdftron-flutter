@@ -330,26 +330,6 @@ public class ViewerImpl {
                             if (eventSink != null) {
                                 eventSink.success(annotationMenuObject.toString());
                             }
-//                            PDFViewCtrl pdfViewCtrl = mViewerComponent.getPdfViewCtrl();
-//                            pdfViewCtrl.docLockRead();
-//                            PDFDoc pdfDoc = pdfViewCtrl.getDoc();
-//                            ArrayList<Annot> validAnnotationList = new ArrayList<>(1);
-//                            JSONArray stickyNoteJsonObject =  getAnnotationsData(mViewerComponent);
-//                            JSONObject currAnnot = stickyNoteJsonObject.getJSONObject(0);
-//                            String currAnnotId = currAnnot.getString(KEY_ANNOTATION_ID);
-//
-//                            int currAnnotPageNumber = currAnnot.getInt(KEY_PAGE_NUMBER);
-//                            Annot validAnnotation =    ViewerUtils.getAnnotById(pdfViewCtrl, currAnnotId, currAnnotPageNumber);
-//                            Log.i("ShareDecisions", validAnnotation.toString());
-//                            validAnnotationList.add(validAnnotation);
-//                            FDFDoc fdfDoc = pdfDoc.fdfExtract(validAnnotationList);
-//                            String finalShareContent = fdfDoc.saveAsXFDF();
-//                            Log.i("shareDecisions_XFDF", finalShareContent);
-//                            pdfViewCtrl.docUnlockRead();
-//                            EventChannel.EventSink eventSink = mViewerComponent.getShareDecisionsEventEmitter();
-//                            if (eventSink != null) {
-//                                eventSink.success(finalShareContent);
-//                            }
                         }
                         else {
                             JSONObject annotationMenuObject = new JSONObject();
@@ -368,7 +348,6 @@ public class ViewerImpl {
                     if (mViewerComponent.getLongPressMenuOverrideItems() != null) {
                         result = mViewerComponent.getLongPressMenuOverrideItems().contains(menuStr);
                     }
-
                     try {
                         JSONObject longPressMenuObject = new JSONObject();
                         longPressMenuObject.put(KEY_LONG_PRESS_MENU_ITEM, menuStr);
