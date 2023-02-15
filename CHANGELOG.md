@@ -1,3 +1,6 @@
+# 1.0.0-8 - Feb 17, 2023
+- Update Android to v9.5.0
+
 # 1.0.0-4 - Dec 19, 2022
 - Update Android to v9.4.2
 
