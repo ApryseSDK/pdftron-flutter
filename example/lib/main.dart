@@ -197,7 +197,6 @@ class _ViewerState extends State<Viewer> {
   void _onDocumentViewCreated(DocumentViewController controller) async {
     Config config = new Config();
     if (Platform.isAndroid) {
-
       CustomToolbarItem decisionsTool = new CustomToolbarItem(
         '0001',
         'Decisions',
@@ -216,6 +215,7 @@ class _ViewerState extends State<Viewer> {
         decisionsTool,
       ]);
       config.annotationToolbars = [customToolBar];
+      config.longPressMenuItems = ["delete"];
     }
 
     config.hideDefaultAnnotationToolbars = [
@@ -267,12 +267,12 @@ class _ViewerState extends State<Viewer> {
         if (decisionsPDFTronResponse ==
             CommonConstants.DecisionsButtonClicked_PDFTronButton) {
           print("DecisionsButtonClicked");
-        } else if (json.decode(decisionsPDFTronResponse)[
-                EventParameters.annotationMenuItem] ==
+        } else if (json.decode(
+                decisionsPDFTronResponse)[EventParameters.annotationMenuItem] ==
             CommonConstants.ShareDecisions_PDFTronMenu) {
           print("shareDecisionsListener: $decisionsPDFTronResponse");
-          var annotationsData = json.decode(decisionsPDFTronResponse)[
-              EventParameters.annotations][0];
+          var annotationsData = json
+              .decode(decisionsPDFTronResponse)[EventParameters.annotations][0];
           Annot _annotModelData = Annot.fromJson(annotationsData);
           List<Annot> annotList = [];
           annotList.add(_annotModelData);
