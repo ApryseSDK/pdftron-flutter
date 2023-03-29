@@ -25,7 +25,7 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
     ndkVersion flutter.ndkVersion
 
     compileOptions {
@@ -40,7 +40,7 @@ android {
     defaultConfig {
         applicationId "com.pdftron.pdftronflutterexample"
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 33
         multiDexEnabled true
         manifestPlaceholders += [pdftronLicenseKey:PDFTRON_LICENSE_KEY]
         versionCode flutterVersionCode.toInteger()
