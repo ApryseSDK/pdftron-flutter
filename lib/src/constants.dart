@@ -241,12 +241,10 @@ class Tools {
   static const formCreateRadioField = 'FormCreateRadioField';
   static const formCreateComboBoxField = 'FormCreateComboBoxField';
   static const formCreateListBoxField = 'FormCreateListBoxField';
+  static const annotationSmartPen = 'AnnotationSmartPen';
 
   /// iOS only.
   static const pencilKitDrawing = 'PencilKitDrawing';
-
-  /// Android only.
-  static const annotationSmartPen = 'AnnotationSmartPen';
 
   /// Android only.
   static const annotationLasso = 'AnnotationLasso';

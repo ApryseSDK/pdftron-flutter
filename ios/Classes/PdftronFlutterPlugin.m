@@ -1022,6 +1022,9 @@
             else if ([string isEqualToString:PTPencilKitDrawingToolKey]) {
                 toolManager.pencilDrawingAnnotationOptions.canCreate = value;
             }
+            else if ([string isEqualToString:PTAnnotationSmartPenToolKey]) {
+                toolManager.smartPenEnabled = value;
+            }
         }
     }
 }
@@ -3018,6 +3021,8 @@
         // TODO
     } else if ([toolMode isEqualToString:PTPencilKitDrawingToolKey]) {
         toolClass = [PTPencilDrawingCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationSmartPenToolKey]) {
+        toolClass = [PTSmartPen class];
     }
 
     if (toolClass) {
