@@ -208,10 +208,33 @@ class _ViewerState extends State<Viewer> {
       // });
 
       // Show a dialog when leading navigation button is pressed.
-      _showMyDialog();
+      // _showMyDialog();
+      _exportAnnot(controller);
     });
 
     await controller.openDocument(_document, config: config);
+  }
+
+  Future<void> _exportAnnot(DocumentViewController controller) async {
+    var command = await controller.exportAnnotations(null);
+    // print(xfdf);
+    if (command != null) {
+      // Dart limits how many characters are printed onto the console.
+      // The code below ensures that all of the XFDF command is printed.
+      if (command.length > 1024) {
+        print("flutter xfdfCommand:\n");
+        int start = 0;
+        int end = 1023;
+        while (end < command.length) {
+          print(command.substring(start, end) + "\n");
+          start += 1024;
+          end += 1024;
+        }
+        print(command.substring(start));
+      } else {
+        print(command);
+      }
+    }
   }
 
   Future<void> _showMyDialog() async {
