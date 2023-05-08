@@ -1,3 +1,6 @@
+# 1.0.0-13 - May 10, 2023
+- Update Android to v10.1.0
+
 # 1.0.0-9 - Mar 27, 2023
 - Update Android to v10.0.0
 
