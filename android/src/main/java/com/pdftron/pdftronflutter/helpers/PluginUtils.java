@@ -61,6 +61,8 @@ import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
 import com.pdftron.pdftronflutter.R;
 import com.pdftron.pdf.PDFDraw;
+import com.pdftron.pdftronflutter.customs.CustomStamp;
+import com.pdftron.pdftronflutter.customs.CustomSticky;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -362,6 +364,10 @@ public class PluginUtils {
     public static final String FUNCTION_SET_LAYOUT_MODE = "setLayoutMode";
     public static final String FUNCTION_SET_FIT_MODE = "setFitMode";
     public static final String FUNCTION_GET_ANNOTATIONS_ON_PAGE = "getAnnotationsOnPage";
+
+    // Custom
+    public static final String FUNCTION_USE_CUSTOM_STAMP = "setUseCustomStamp";
+    public static final String FUNCTION_USE_CUSTOM_STICKY_NOTE = "setUseCustomStickyNote";
 
     public static final String BUTTON_TOOLS = "toolsButton";
     public static final String BUTTON_SEARCH = "searchButton";
@@ -2699,6 +2705,14 @@ public class PluginUtils {
                 getAnnotationsOnPage(call, result, component);
                 break;
             }
+            case FUNCTION_USE_CUSTOM_STAMP: {
+                setUseCustomStamp(call, result, component);
+                break;
+            }
+            case FUNCTION_USE_CUSTOM_STICKY_NOTE: {
+                setUseCustomStickyNote(call, result, component);
+                break;
+            }
             default:
                 Log.e("PDFTronFlutter", "notImplemented: " + call.method);
                 result.notImplemented();
@@ -4220,6 +4234,38 @@ public class PluginUtils {
         }
 
         result.success(resultAnnotations.toString());
+    }
+
+    public static void setUseCustomStickyNote(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment2 hostFragment = component.getPdfViewCtrlTabHostFragment();
+
+        if (hostFragment == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        ToolManager toolManager = hostFragment.getCurrentPdfViewCtrlFragment().getToolManager();
+        ToolManager.Tool customTool = toolManager.createTool(CustomSticky.MODE, toolManager.getTool());
+        // Then set it in ToolManager
+        toolManager.setTool(customTool);
+
+        result.success("setUseCustomStickyNote");
+    }
+
+    public static void setUseCustomStamp(MethodCall call, MethodChannel.Result result, ViewerComponent component) {
+        PdfViewCtrlTabHostFragment2 hostFragment = component.getPdfViewCtrlTabHostFragment();
+
+        if (hostFragment == null) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+
+        ToolManager toolManager = component.getToolManager();
+        ToolManager.Tool customStampTool = toolManager.createTool(CustomStamp.MODE, toolManager.getTool());
+        // Then set it in ToolManager
+        toolManager.setTool(customStampTool);
+
+        result.success("setUseCustomStamp");
     }
 
     // Events

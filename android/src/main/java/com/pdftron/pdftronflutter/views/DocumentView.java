@@ -29,6 +29,9 @@ import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
 import com.pdftron.pdftronflutter.nativeviews.FlutterPdfViewCtrlTabFragment;
 
+import com.pdftron.pdftronflutter.customs.CustomSticky;
+import com.pdftron.pdftronflutter.customs.CustomStamp;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -221,8 +224,42 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
 
         mExportDir = context.getCacheDir().getAbsolutePath();
         mOpenUrlCacheDir = context.getCacheDir().getAbsolutePath();
-        mToolManagerBuilder = ToolManagerBuilder.from();
+        mToolManagerBuilder = ToolManagerBuilder.from()
+                .addCustomizedTool(CustomStamp.MODE, CustomStamp.class)
+                .addCustomizedTool(CustomSticky.MODE, CustomSticky.class);
         mBuilder = new ViewerConfig.Builder();
+
+//        ToolManager mToolManager = this.getToolManager();
+//        mToolManager.setBasicAnnotationListener(new ToolManager.BasicAnnotationListener() {
+//            @Override
+//            public void onAnnotationSelected(Annot annot, int pageNum) {
+//
+//            }
+//
+//            @Override
+//            public void onAnnotationUnselected() {
+//
+//            }
+//
+//            @Override
+//            public boolean onInterceptAnnotationHandling(@Nullable Annot annot, Bundle extra, ToolManager.ToolMode toolMode) {
+//                try {
+//                    if (annot.getType() == ToolManager.ToolMode.TEXT_ANNOT_CREATE.getValue()) {
+//                        Log.d("InterceptAnnot", "handling link annotation");
+//                        return true;
+//                    }
+//                } catch (PDFNetException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onInterceptDialog(AlertDialog dialog) {
+//                return false;
+//            }
+//        });
 
         mPDFViewCtrlConfig = PDFViewCtrlConfig.getDefaultConfig(context);
     }
@@ -269,7 +306,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
             FlutterPdfViewCtrlTabFragment fragment = (FlutterPdfViewCtrlTabFragment) getPdfViewCtrlTabFragment();
             fragment.setViewerComponent(this);
         }
-        
+
         handleDocumentLoaded(this);
     }
 
@@ -407,7 +444,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
     public void setAnnotationToolbarItemPressedEventEmitter(EventChannel.EventSink emitter) {
         sAnnotationToolbarItemPressedEventEmitter = emitter;
     }
-    
+
     public void setScrollChangedEventEmitter(EventChannel.EventSink emitter) {
         sScrollChangedEventEmitter = emitter;
     }

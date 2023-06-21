@@ -5,6 +5,7 @@
 
     <style name="FlutterAppThemeBase" parent="PDFTronAppTheme">
         <item name="search_toolbar">@style/FlutterSearchToolbarStyle</item>
+<!--        <item name="sticky_note_default_style">@style/StickyNoteCustomColors</item>-->
     </style>
 
     <style name="BaseSearchToolbarStyle">
@@ -12,6 +13,12 @@
     </style>
 
     <style name="FlutterSearchToolbarStyle" parent="BaseSearchToolbarStyle">
+    </style>
+
+    <style name="StickyNoteCustomColors" parent="AnnotPresetStyle1">
+        <item name="annot_color">@android:color/black</item>
+        <item name="annot_icon">Comment</item>
+        <item name="annot_thickness">2</item>
     </style>
 
 </resources>

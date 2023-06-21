@@ -75,13 +75,17 @@ class Functions {
   static const getScrollPos = "getScrollPos";
   static const setHorizontalScrollPosition = "setHorizontalScrollPosition";
   static const setVerticalScrollPosition = "setVerticalScrollPosition";
-  static const smartZoom = "smartZoom"; 
+  static const smartZoom = "smartZoom";
   static const getVisiblePages = "getVisiblePages";
 
   // Hygen Generated Methods
   static const setLayoutMode = "setLayoutMode";
   static const setFitMode = "setFitMode";
   static const getAnnotationsOnPage = "getAnnotationsOnPage";
+
+  // Custom Tools
+  static const setUseCustomStamp = "setUseCustomStamp";
+  static const setUseCustomStickyNote = "setUseCustomStickyNote";
 }
 
 /// Parameters of functions.

@@ -603,7 +603,7 @@ class PdftronFlutter {
   static Future<void> exitSearchMode() {
     return _channel.invokeMethod(Functions.exitSearchMode);
   }
-  
+
   /// Zooms the viewer to the given scale using the given coordinate as the center.
   ///
   /// The zoom center ([x],[y]) is represented in the screen space, whose origin
@@ -612,7 +612,7 @@ class PdftronFlutter {
     return _channel.invokeMethod(Functions.zoomWithCenter,
         <String, dynamic>{"zoom": zoom, "x": x, "y": y});
   }
-  
+
   /// Zooms the viewer to fit the given rectangular area in the specified page.
   ///
   /// ```dart
@@ -712,7 +712,7 @@ class PdftronFlutter {
       Parameters.blue: blue
       });
   }
-  
+
   /// Gets the horizontal and vertical scroll position in the current document viewer.
   ///
   /// The scroll position is returned as a `Map<String, int>` with the keys
@@ -742,7 +742,7 @@ class PdftronFlutter {
       Parameters.verticalScrollPosition: verticalScrollPosition
     });
   }
-  
+
   /// Gets the page numbers of currently visible pages in the viewer.
   static Future<List<int>?> getVisiblePages() {
     return _channel.invokeMethod(Functions.getVisiblePages);
@@ -775,5 +775,15 @@ class PdftronFlutter {
       }
       return annotList;
     });
+  }
+
+  /// using custom sticky note from native module
+  static Future<String?> setUseCustomStickyNote() {
+    return _channel.invokeMethod(Functions.setUseCustomStickyNote);
+  }
+
+  /// using custom sticky note from native module
+  static Future<String?> setUseCustomStamp() {
+    return _channel.invokeMethod(Functions.setUseCustomStamp);
   }
 }

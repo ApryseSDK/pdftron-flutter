@@ -622,7 +622,7 @@ class DocumentViewController {
   Future<void> exitSearchMode() {
     return _channel.invokeMethod(Functions.exitSearchMode);
   }
-  
+
   /// Zooms the viewer to the given scale using the given coordinate as the center.
   ///
   /// The zoom center ([x],[y]) is represented in the screen space, whose origin
@@ -683,7 +683,7 @@ class DocumentViewController {
       Parameters.animated: animated,
     });
   }
-  
+
   /// Gets a list of absolute file paths to all saved signatures as PDFs.
   Future<List<String>?> getSavedSignatures() {
     return _channel.invokeMethod(Functions.getSavedSignatures);
@@ -730,7 +730,7 @@ class DocumentViewController {
       Parameters.blue: blue
     });
   }
-  
+
   /// Gets the horizontal and vertical scroll position in the current document viewer.
   ///
   /// The scroll position is returned as a `Map<String, int>` with the keys
@@ -791,5 +791,15 @@ class DocumentViewController {
       }
       return annotList;
     });
+  }
+
+  /// using custom sticky note from native module
+  Future<String?> setUseCustomStickyNote() {
+    return _channel.invokeMethod(Functions.setUseCustomStickyNote);
+  }
+
+  /// using custom sticky note from native module
+  Future<String?> setUseCustomStamp() {
+    return _channel.invokeMethod(Functions.setUseCustomStamp);
   }
 }
