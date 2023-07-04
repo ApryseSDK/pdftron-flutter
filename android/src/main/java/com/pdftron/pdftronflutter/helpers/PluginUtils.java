@@ -3565,10 +3565,10 @@ public class PluginUtils {
     private static void saveDocument(MethodChannel.Result result, ViewerComponent component) {
         PdfViewCtrlTabFragment2 pdfViewCtrlTabFragment = component.getPdfViewCtrlTabFragment();
         if (pdfViewCtrlTabFragment != null) {
-            pdfViewCtrlTabFragment.setSavingEnabled(component.isAutoSaveEnabled());
+            pdfViewCtrlTabFragment.setSavingEnabled(true);
             pdfViewCtrlTabFragment.save(false, true, true);
+            pdfViewCtrlTabFragment.setSavingEnabled(component.isAutoSaveEnabled());
 
-            // TODO if add auto save flag: getPdfViewCtrlTabFragment().setSavingEnabled(mAutoSaveEnabled);
             if (component.isBase64()) {
                 try {
                     byte[] data = FileUtils.readFileToByteArray(pdfViewCtrlTabFragment.getFile());
