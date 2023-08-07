@@ -1022,6 +1022,9 @@
             else if ([string isEqualToString:PTPencilKitDrawingToolKey]) {
                 toolManager.pencilDrawingAnnotationOptions.canCreate = value;
             }
+            else if ([string isEqualToString:PTAnnotationSmartPenToolKey]) {
+                toolManager.smartPenEnabled = value;
+            }
         }
     }
 }
@@ -1696,6 +1699,12 @@
         [self smartZoom:result call:call];
     }
     // Hygen Generated Method Call Cases
+    else if ([call.method isEqualToString:PTSetLayoutModeKey]) {
+        [self setLayoutMode:result call:call];
+    }
+    else if ([call.method isEqualToString:PTSetFitModeKey]) {
+        [self setFitMode:result call:call];
+    }
     else if ([call.method isEqualToString:PTGetAnnotationsOnPageKey]) {
         [self getAnnotationsOnPage:result call:call];
     }
@@ -3012,6 +3021,8 @@
         // TODO
     } else if ([toolMode isEqualToString:PTPencilKitDrawingToolKey]) {
         toolClass = [PTPencilDrawingCreate class];
+    } else if ([toolMode isEqualToString:PTAnnotationSmartPenToolKey]) {
+        toolClass = [PTSmartPen class];
     }
 
     if (toolClass) {
@@ -3543,6 +3554,81 @@
 }
 
 // Hygen Generated Methods
+- (void)setLayoutMode:(FlutterResult)flutterResult call:(FlutterMethodCall*)call
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    PTPDFViewCtrl *pdfViewCtrl = documentController.pdfViewCtrl;
+    NSString* layoutMode = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTLayoutModeArgumentKey]];
+    
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"set_layout_mode" message:@"Failed to set page presentation mode" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+    
+    if ([layoutMode isEqualToString:PTSingleKey]) {
+        [pdfViewCtrl SetPagePresentationMode:e_trn_single_page];
+    }
+    else if ([layoutMode isEqualToString:PTContinuousKey]) {
+        [pdfViewCtrl SetPagePresentationMode:e_trn_single_continuous];
+    }
+    else if ([layoutMode isEqualToString:PTFacingKey]) {
+        [pdfViewCtrl SetPagePresentationMode:e_trn_facing];
+    }
+    else if ([layoutMode isEqualToString:PTFacingContinuousKey]) {
+        [pdfViewCtrl SetPagePresentationMode:e_trn_facing_continuous];
+    }
+    else if ([layoutMode isEqualToString:PTFacingCoverKey]) {
+        [pdfViewCtrl SetPagePresentationMode:e_trn_facing_cover];
+    }
+    else if ([layoutMode isEqualToString:PTFacingCoverContinuousKey]) {
+        [pdfViewCtrl SetPagePresentationMode:e_trn_facing_continuous_cover];
+    }
+    [pdfViewCtrl Update:YES];
+    flutterResult(nil);
+}
+
+- (void)setFitMode:(FlutterResult)flutterResult call:(FlutterMethodCall*)call
+{
+    PTDocumentController *documentController = [self getDocumentController];
+    PTPDFViewCtrl *pdfViewCtrl = documentController.pdfViewCtrl;
+    NSString* fitMode = [PdftronFlutterPlugin PT_idAsNSString:call.arguments[PTFitModeArgumentKey]];
+    
+    if(documentController == Nil)
+    {
+        // something is wrong, document view controller is not present
+        NSLog(@"Error: The document view controller is not initialized.");
+        flutterResult([FlutterError errorWithCode:@"set_fit_mode" message:@"Failed to set page view mode" details:@"Error: The document view controller is not initialized."]);
+        return;
+    }
+    
+    if (!fitMode) {
+        return;
+    }
+    
+    if ([fitMode isEqualToString:PTFitPageKey]) {
+        [pdfViewCtrl SetPageViewMode:e_trn_fit_page];
+        [pdfViewCtrl SetPageRefViewMode:e_trn_fit_page];
+    }
+    else if ([fitMode isEqualToString:PTFitWidthKey]) {
+        [pdfViewCtrl SetPageViewMode:e_trn_fit_width];
+        [pdfViewCtrl SetPageRefViewMode:e_trn_fit_width];
+    }
+    else if ([fitMode isEqualToString:PTFitHeightKey]) {
+        [pdfViewCtrl SetPageViewMode:e_trn_fit_height];
+        [pdfViewCtrl SetPageRefViewMode:e_trn_fit_height];
+    }
+    else if ([fitMode isEqualToString:PTZoomKey]) {
+        [pdfViewCtrl SetPageViewMode:e_trn_zoom];
+        [pdfViewCtrl SetPageRefViewMode:e_trn_zoom];
+    }
+    
+    [pdfViewCtrl Update:YES];
+    flutterResult(nil);
+}
+
 - (void)getAnnotationsOnPage:(FlutterResult)result call:(FlutterMethodCall*)call
 {
     PTDocumentController *documentController = [self getDocumentController];

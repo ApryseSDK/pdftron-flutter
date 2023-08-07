@@ -119,6 +119,7 @@ static NSString * const PTFormCreateRadioFieldToolKey = @"FormCreateRadioField";
 static NSString * const PTFormCreateComboBoxFieldToolKey = @"FormCreateComboBoxField";
 static NSString * const PTFormCreateListBoxFieldToolKey = @"FormCreateListBoxField";
 static NSString * const PTPencilKitDrawingToolKey = @"PencilKitDrawing";
+static NSString * const PTAnnotationSmartPenToolKey = @"AnnotationSmartPen";
 
 // button
 static NSString * const PTStickyToolButtonKey = @"stickyToolButton";
@@ -273,6 +274,8 @@ static NSString * const PTStartSearchModeKey = @"startSearchMode";
 static NSString * const PTExitSearchModeKey = @"exitSearchMode";
 
 // Hygen Generated Methods
+static NSString * const PTSetLayoutModeKey = @"setLayoutMode";
+static NSString * const PTSetFitModeKey = @"setFitMode";
 static NSString * const PTGetAnnotationsOnPageKey = @"getAnnotationsOnPage";
 
 // argument
@@ -311,6 +314,8 @@ static NSString * const PTMatchWholeWordArgumentKey = @"matchWholeWord";
 static NSString * const PTAnimatedArgumentKey = @"animated";
 
 // Hygen Generated Method Parameters
+static NSString * const PTLayoutModeArgumentKey = @"layoutMode";
+static NSString * const PTFitModeArgumentKey = @"fitMode";
 
 // event strings
 static NSString * const PTExportAnnotationCommandEventKey = @"export_annotation_command_event";

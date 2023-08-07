@@ -79,6 +79,8 @@ class Functions {
   static const getVisiblePages = "getVisiblePages";
 
   // Hygen Generated Methods
+  static const setLayoutMode = "setLayoutMode";
+  static const setFitMode = "setFitMode";
   static const getAnnotationsOnPage = "getAnnotationsOnPage";
 }
 
@@ -120,6 +122,8 @@ class Parameters {
   static const animated = "animated";
 
   // Hygen Generated Method Parameters
+  static const layoutMode = "layoutMode";
+  static const fitMode = "fitMode";
 }
 
 /// Parameters of events.
@@ -237,12 +241,10 @@ class Tools {
   static const formCreateRadioField = 'FormCreateRadioField';
   static const formCreateComboBoxField = 'FormCreateComboBoxField';
   static const formCreateListBoxField = 'FormCreateListBoxField';
+  static const annotationSmartPen = 'AnnotationSmartPen';
 
   /// iOS only.
   static const pencilKitDrawing = 'PencilKitDrawing';
-
-  /// Android only.
-  static const annotationSmartPen = 'AnnotationSmartPen';
 
   /// Android only.
   static const annotationLasso = 'AnnotationLasso';
