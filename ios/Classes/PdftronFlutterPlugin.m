@@ -3811,6 +3811,9 @@
     else if ([key isEqualToString:PTAnnotationCreateFreeHighlighterToolKey]) {
         return [PTFreeHandHighlightCreate class];
     }
+    else if ([key isEqualToString:PTEraserToolKey]) {
+        return [PTEraser class];
+    }
 
     return Nil;
 }
