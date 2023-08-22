@@ -304,6 +304,7 @@ public class PluginUtils {
     public static final String FUNCTION_SET_FLAG_FOR_FIELDS = "setFlagForFields";
     public static final String FUNCTION_SET_VALUES_FOR_FIELDS = "setValuesForFields";
     public static final String FUNCTION_IMPORT_ANNOTATIONS = "importAnnotations";
+    public static final String FUNCTION_MERGE_ANNOTATIONS = "mergeAnnotations";
     public static final String FUNCTION_EXPORT_ANNOTATIONS = "exportAnnotations";
     public static final String FUNCTION_FLATTEN_ANNOTATIONS = "flattenAnnotations";
     public static final String FUNCTION_DELETE_ANNOTATIONS = "deleteAnnotations";
@@ -2182,6 +2183,16 @@ public class PluginUtils {
                 }
                 break;
             }
+            case FUNCTION_MERGE_ANNOTATIONS: {
+                checkFunctionPrecondition(component);
+                String xfdf = call.argument(KEY_XFDF);
+                try {
+                    mergeAnnotations(xfdf, result, component);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+            }
             case FUNCTION_EXPORT_ANNOTATIONS: {
                 checkFunctionPrecondition(component);
                 String annotationList = call.argument(KEY_ANNOTATION_LIST);
@@ -2887,6 +2898,47 @@ public class PluginUtils {
             FDFDoc fdfDoc = FDFDoc.createFromXFDF(xfdf);
 
             pdfDoc.fdfUpdate(fdfDoc);
+            pdfDoc.refreshAnnotAppearances();
+            pdfViewCtrl.update(true);
+
+            result.success(null);
+        } finally {
+            if (shouldUnlock) {
+                pdfViewCtrl.docUnlock();
+            }
+        }
+    }
+
+    private static void mergeAnnotations(String xfdf, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
+        PDFDoc pdfDoc = component.getPdfDoc();
+        if (null == pdfViewCtrl || null == pdfDoc || null == xfdf) {
+            result.error("InvalidState", "Activity not attached", null);
+            return;
+        }
+        boolean shouldUnlockRead = false;
+        try {
+            pdfViewCtrl.docLockRead();
+            shouldUnlockRead = true;
+
+            if (pdfDoc.hasDownloader()) {
+                // still downloading file, let's wait for next call
+                result.error("InvalidState", "Document download in progress, try again later", null);
+                return;
+            }
+        } finally {
+            if (shouldUnlockRead) {
+                pdfViewCtrl.docUnlockRead();
+            }
+        }
+
+        boolean shouldUnlock = false;
+        try {
+            pdfViewCtrl.docLock(true);
+            shouldUnlock = true;
+
+            FDFDoc fdfDoc = FDFDoc.createFromXFDF(xfdf);
+            pdfDoc.fdfMerge(fdfDoc);
             pdfDoc.refreshAnnotAppearances();
             pdfViewCtrl.update(true);
 

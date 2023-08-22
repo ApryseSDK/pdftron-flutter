@@ -62,6 +62,12 @@ class PdftronFlutter {
         Functions.importAnnotations, <String, dynamic>{Parameters.xfdf: xfdf});
   }
 
+  /// Merges the given XFDF annotation string to the current document.
+  static Future<void> mergeAnnotations(String xfdf) {
+    return _channel.invokeMethod(
+        Functions.mergeAnnotations, <String, dynamic>{Parameters.xfdf: xfdf});
+  }
+
   /// Exports the specified annotations in the current document as a XFDF annotation string.
   ///
   /// ```dart
