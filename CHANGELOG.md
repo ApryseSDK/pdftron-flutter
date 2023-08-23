@@ -1,4 +1,4 @@
-# 1.0.0-17 - August 23, 2023
+# 1.0.0-18 - August 23, 2023
 - mergeAnnotations()
 
 # 1.0.0-16 - August 2, 2023
