@@ -2176,7 +2176,7 @@ public class PluginUtils {
                 checkFunctionPrecondition(component);
                 String xfdf = call.argument(KEY_XFDF);
                 try {
-                    importAnnotations(xfdf, result, component);
+                    importAnnotations(xfdf, true, result, component);
                 } catch (PDFNetException ex) {
                     ex.printStackTrace();
                     result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
@@ -2187,7 +2187,7 @@ public class PluginUtils {
                 checkFunctionPrecondition(component);
                 String xfdf = call.argument(KEY_XFDF);
                 try {
-                    mergeAnnotations(xfdf, result, component);
+                    importAnnotations(xfdf, false, result, component);
                 } catch (PDFNetException ex) {
                     ex.printStackTrace();
                     result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
@@ -2867,7 +2867,7 @@ public class PluginUtils {
         }
     }
 
-    private static void importAnnotations(String xfdf, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+    private static void importAnnotations(String xfdf, boolean replace, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         if (null == pdfViewCtrl || null == pdfDoc || null == xfdf) {
@@ -2897,48 +2897,11 @@ public class PluginUtils {
 
             FDFDoc fdfDoc = FDFDoc.createFromXFDF(xfdf);
 
-            pdfDoc.fdfUpdate(fdfDoc);
-            pdfDoc.refreshAnnotAppearances();
-            pdfViewCtrl.update(true);
-
-            result.success(null);
-        } finally {
-            if (shouldUnlock) {
-                pdfViewCtrl.docUnlock();
+            if (replace) {
+                pdfDoc.fdfUpdate(fdfDoc);
+            } else {
+                pdfDoc.fdfMerge(fdfDoc);
             }
-        }
-    }
-
-    private static void mergeAnnotations(String xfdf, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
-        PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
-        PDFDoc pdfDoc = component.getPdfDoc();
-        if (null == pdfViewCtrl || null == pdfDoc || null == xfdf) {
-            result.error("InvalidState", "Activity not attached", null);
-            return;
-        }
-        boolean shouldUnlockRead = false;
-        try {
-            pdfViewCtrl.docLockRead();
-            shouldUnlockRead = true;
-
-            if (pdfDoc.hasDownloader()) {
-                // still downloading file, let's wait for next call
-                result.error("InvalidState", "Document download in progress, try again later", null);
-                return;
-            }
-        } finally {
-            if (shouldUnlockRead) {
-                pdfViewCtrl.docUnlockRead();
-            }
-        }
-
-        boolean shouldUnlock = false;
-        try {
-            pdfViewCtrl.docLock(true);
-            shouldUnlock = true;
-
-            FDFDoc fdfDoc = FDFDoc.createFromXFDF(xfdf);
-            pdfDoc.fdfMerge(fdfDoc);
             pdfDoc.refreshAnnotAppearances();
             pdfViewCtrl.update(true);
 
