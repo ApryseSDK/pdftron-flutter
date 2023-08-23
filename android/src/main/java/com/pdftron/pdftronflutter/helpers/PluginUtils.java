@@ -304,6 +304,7 @@ public class PluginUtils {
     public static final String FUNCTION_SET_FLAG_FOR_FIELDS = "setFlagForFields";
     public static final String FUNCTION_SET_VALUES_FOR_FIELDS = "setValuesForFields";
     public static final String FUNCTION_IMPORT_ANNOTATIONS = "importAnnotations";
+    public static final String FUNCTION_MERGE_ANNOTATIONS = "mergeAnnotations";
     public static final String FUNCTION_EXPORT_ANNOTATIONS = "exportAnnotations";
     public static final String FUNCTION_FLATTEN_ANNOTATIONS = "flattenAnnotations";
     public static final String FUNCTION_DELETE_ANNOTATIONS = "deleteAnnotations";
@@ -2175,12 +2176,22 @@ public class PluginUtils {
                 checkFunctionPrecondition(component);
                 String xfdf = call.argument(KEY_XFDF);
                 try {
-                    importAnnotations(xfdf, result, component);
+                    importAnnotations(xfdf, true, result, component);
                 } catch (PDFNetException ex) {
                     ex.printStackTrace();
                     result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
                 }
                 break;
+            }
+            case FUNCTION_MERGE_ANNOTATIONS: {
+                checkFunctionPrecondition(component);
+                String xfdf = call.argument(KEY_XFDF);
+                try {
+                    importAnnotations(xfdf, false, result, component);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
             }
             case FUNCTION_EXPORT_ANNOTATIONS: {
                 checkFunctionPrecondition(component);
@@ -2856,7 +2867,7 @@ public class PluginUtils {
         }
     }
 
-    private static void importAnnotations(String xfdf, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+    private static void importAnnotations(String xfdf, boolean replace, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         if (null == pdfViewCtrl || null == pdfDoc || null == xfdf) {
@@ -2886,7 +2897,11 @@ public class PluginUtils {
 
             FDFDoc fdfDoc = FDFDoc.createFromXFDF(xfdf);
 
-            pdfDoc.fdfUpdate(fdfDoc);
+            if (replace) {
+                pdfDoc.fdfUpdate(fdfDoc);
+            } else {
+                pdfDoc.fdfMerge(fdfDoc);
+            }
             pdfDoc.refreshAnnotAppearances();
             pdfViewCtrl.update(true);
 

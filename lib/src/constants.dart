@@ -11,6 +11,7 @@ class Functions {
   /// Android only
   static const getSavedSignatureJpgFolder = "getSavedSignatureJpgFolder";
   static const importAnnotations = "importAnnotations";
+  static const mergeAnnotations = "mergeAnnotations";
   static const exportAnnotations = "exportAnnotations";
   static const flattenAnnotations = "flattenAnnotations";
   static const deleteAnnotations = "deleteAnnotations";
