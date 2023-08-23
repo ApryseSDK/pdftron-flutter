@@ -1,6 +1,9 @@
 # 1.0.0-18 - August 23, 2023
 - mergeAnnotations()
 
+# 1.0.0-17 - August 8, 2023
+- added eraser to PTToolKey (iOS)
+  
 # 1.0.0-16 - August 2, 2023
 - Update Android to v10.3.0
 
