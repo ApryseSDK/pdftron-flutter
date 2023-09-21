@@ -2192,6 +2192,7 @@ public class PluginUtils {
                     ex.printStackTrace();
                     result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
                 }
+                break;
             }
             case FUNCTION_EXPORT_ANNOTATIONS: {
                 checkFunctionPrecondition(component);
