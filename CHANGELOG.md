@@ -1,3 +1,9 @@
+# 1.0.0-22 - October 25, 2023
+- Update Android to v10.5.0
+
+# 1.0.0-21 - September 21, 2023
+- Fix bug in mergeAnnotations()
+
 # 1.0.0-20 - September 13, 2023
 - Update Android to v10.4.0
 
