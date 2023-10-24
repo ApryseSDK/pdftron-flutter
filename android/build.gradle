@@ -38,6 +38,6 @@ android {
 
 dependencies {
     // PDFTron SDK dependencies
-    implementation "com.pdftron:pdftron:10.4.0"
-    implementation "com.pdftron:tools:10.4.0"
+    implementation "com.pdftron:pdftron:10.5.0"
+    implementation "com.pdftron:tools:10.5.0"
 }
