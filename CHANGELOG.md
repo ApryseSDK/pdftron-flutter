@@ -1,3 +1,6 @@
+# 1.0.0-24 - December 13, 2023
+- expose Pan tool
+
 # 1.0.0-23 - December 6, 2023
 - Update Android to v10.6.0
 
