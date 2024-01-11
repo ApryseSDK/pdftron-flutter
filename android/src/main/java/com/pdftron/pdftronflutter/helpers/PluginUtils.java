@@ -413,6 +413,7 @@ public class PluginUtils {
     public static final String TOOL_BUTTON_CALLOUT = "calloutToolButton";
     public static final String TOOL_BUTTON_STAMP = "stampToolButton";
 
+    public static final String TOOL_PAN = "Pan";
     public static final String TOOL_ANNOTATION_CREATE_FREE_HAND = "AnnotationCreateFreeHand";
     public static final String TOOL_ANNOTATION_CREATE_TEXT_HIGHLIGHT = "AnnotationCreateTextHighlight";
     public static final String TOOL_ANNOTATION_CREATE_TEXT_UNDERLINE = "AnnotationCreateTextUnderline";
@@ -1677,6 +1678,8 @@ public class PluginUtils {
             mode = ToolManager.ToolMode.SMART_PEN_INK;
         } else if (TOOL_ANNOTATION_LASSO.equals(item)) {
             mode = ToolManager.ToolMode.ANNOT_EDIT_RECT_GROUP;
+        } else if (TOOL_PAN.equals(item)) {
+            mode = ToolManager.ToolMode.PAN;
         }
         return mode;
     }
@@ -1794,6 +1797,8 @@ public class PluginUtils {
             annotType = Annot.e_Widget;
         } else if (TOOL_FORM_CREATE_TOOL_BOX_FIELD.equals(item)) {
             annotType = Annot.e_Widget;
+        } else if (TOOL_PAN.equals(item)) {
+            annotType = Annot.e_Unknown;
         }
         return annotType;
     }

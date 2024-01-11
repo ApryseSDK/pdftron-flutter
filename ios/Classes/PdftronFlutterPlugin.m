@@ -3023,6 +3023,8 @@
         toolClass = [PTPencilDrawingCreate class];
     } else if ([toolMode isEqualToString:PTAnnotationSmartPenToolKey]) {
         toolClass = [PTSmartPen class];
+    } else if ([toolMode isEqualToString:PTPanToolKey]) {
+        toolClass = [PTPanTool class];
     }
 
     if (toolClass) {
@@ -3813,6 +3815,9 @@
     }
     else if ([key isEqualToString:PTEraserToolKey]) {
         return [PTEraser class];
+    }
+    else if ([key isEqualToString:PTPanToolKey]) {
+        return [PTPanTool class];
     }
 
     return Nil;

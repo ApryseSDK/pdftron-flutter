@@ -243,6 +243,7 @@ class Tools {
   static const formCreateComboBoxField = 'FormCreateComboBoxField';
   static const formCreateListBoxField = 'FormCreateListBoxField';
   static const annotationSmartPen = 'AnnotationSmartPen';
+  static const pan = 'Pan';
 
   /// iOS only.
   static const pencilKitDrawing = 'PencilKitDrawing';
