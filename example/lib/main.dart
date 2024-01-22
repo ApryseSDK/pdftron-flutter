@@ -89,6 +89,23 @@ class _ViewerState extends State<Viewer> {
     // await PdftronFlutter.openDocument(_document);
 
     var config = Config();
+    // config.hideBottomToolbar = true;
+    // config.hideTopAppNavBar = true;
+    // config.hideTopToolbars = true;
+    // config.annotationMenuItems = [];
+    // config.longPressMenuEnabled = false;
+    // config.tabletLayoutEnabled = true;
+    config.followSystemDarkMode = false;
+
+    // config.readOnly = true;
+    // config.hideThumbnailFilterModes = [
+    //   ThumbnailFilterModes.annotated,
+    //   ThumbnailFilterModes.bookmarked,
+    // ];
+    //
+    // config.outlineListEditingEnabled = false;
+    // config.thumbnailViewEditingEnabled = false;
+
     // How to disable functionality:
     //      config.disabledElements = [Buttons.shareButton, Buttons.searchButton];
     //      config.disabledTools = [Tools.annotationCreateLine, Tools.annotationCreateRectangle];
@@ -200,6 +217,22 @@ class _ViewerState extends State<Viewer> {
   // Function(DocumentViewController controller) being passed to it.
   void _onDocumentViewCreated(DocumentViewController controller) async {
     Config config = new Config();
+    // config.hideBottomToolbar = true;
+    // config.hideTopAppNavBar = true;
+    // config.hideTopToolbars = true;
+    // config.annotationMenuItems = [];
+    // config.longPressMenuEnabled = false;
+    // config.tabletLayoutEnabled = true;
+    config.followSystemDarkMode = false;
+    //
+    // config.readOnly = true;
+    // config.hideThumbnailFilterModes = [
+    //   ThumbnailFilterModes.annotated,
+    //   ThumbnailFilterModes.bookmarked,
+    // ];
+    //
+    // config.outlineListEditingEnabled = false;
+    // config.thumbnailViewEditingEnabled = false;
 
     var leadingNavCancel = startLeadingNavButtonPressedListener(() {
       // Uncomment this to quit viewer when leading navigation button is pressed:
