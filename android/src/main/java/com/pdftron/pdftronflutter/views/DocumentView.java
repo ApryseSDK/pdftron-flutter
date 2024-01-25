@@ -28,6 +28,7 @@ import com.pdftron.pdftronflutter.helpers.PluginUtils;
 import com.pdftron.pdftronflutter.helpers.ViewerComponent;
 import com.pdftron.pdftronflutter.helpers.ViewerImpl;
 import com.pdftron.pdftronflutter.nativeviews.FlutterPdfViewCtrlTabFragment;
+import com.pdftron.pdftronflutter.nativeviews.FlutterPdfViewCtrlTabHostFragment;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -175,6 +176,7 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
                 .usingCustomHeaders(mCustomHeaders)
                 .usingTabTitle(mTabTitle)
                 .usingTabClass(FlutterPdfViewCtrlTabFragment.class)
+                .usingTabHostClass(FlutterPdfViewCtrlTabHostFragment.class)
                 .usingTheme(R.style.FlutterAppTheme);
     }
 

@@ -304,6 +304,7 @@ public class PluginUtils {
     public static final String FUNCTION_SET_FLAG_FOR_FIELDS = "setFlagForFields";
     public static final String FUNCTION_SET_VALUES_FOR_FIELDS = "setValuesForFields";
     public static final String FUNCTION_IMPORT_ANNOTATIONS = "importAnnotations";
+    public static final String FUNCTION_MERGE_ANNOTATIONS = "mergeAnnotations";
     public static final String FUNCTION_EXPORT_ANNOTATIONS = "exportAnnotations";
     public static final String FUNCTION_FLATTEN_ANNOTATIONS = "flattenAnnotations";
     public static final String FUNCTION_DELETE_ANNOTATIONS = "deleteAnnotations";
@@ -412,6 +413,7 @@ public class PluginUtils {
     public static final String TOOL_BUTTON_CALLOUT = "calloutToolButton";
     public static final String TOOL_BUTTON_STAMP = "stampToolButton";
 
+    public static final String TOOL_PAN = "Pan";
     public static final String TOOL_ANNOTATION_CREATE_FREE_HAND = "AnnotationCreateFreeHand";
     public static final String TOOL_ANNOTATION_CREATE_TEXT_HIGHLIGHT = "AnnotationCreateTextHighlight";
     public static final String TOOL_ANNOTATION_CREATE_TEXT_UNDERLINE = "AnnotationCreateTextUnderline";
@@ -1676,6 +1678,8 @@ public class PluginUtils {
             mode = ToolManager.ToolMode.SMART_PEN_INK;
         } else if (TOOL_ANNOTATION_LASSO.equals(item)) {
             mode = ToolManager.ToolMode.ANNOT_EDIT_RECT_GROUP;
+        } else if (TOOL_PAN.equals(item)) {
+            mode = ToolManager.ToolMode.PAN;
         }
         return mode;
     }
@@ -1793,6 +1797,8 @@ public class PluginUtils {
             annotType = Annot.e_Widget;
         } else if (TOOL_FORM_CREATE_TOOL_BOX_FIELD.equals(item)) {
             annotType = Annot.e_Widget;
+        } else if (TOOL_PAN.equals(item)) {
+            annotType = Annot.e_Unknown;
         }
         return annotType;
     }
@@ -2175,7 +2181,18 @@ public class PluginUtils {
                 checkFunctionPrecondition(component);
                 String xfdf = call.argument(KEY_XFDF);
                 try {
-                    importAnnotations(xfdf, result, component);
+                    importAnnotations(xfdf, true, result, component);
+                } catch (PDFNetException ex) {
+                    ex.printStackTrace();
+                    result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
+                }
+                break;
+            }
+            case FUNCTION_MERGE_ANNOTATIONS: {
+                checkFunctionPrecondition(component);
+                String xfdf = call.argument(KEY_XFDF);
+                try {
+                    importAnnotations(xfdf, false, result, component);
                 } catch (PDFNetException ex) {
                     ex.printStackTrace();
                     result.error(Long.toString(ex.getErrorCode()), "PDFTronException Error: " + ex, null);
@@ -2856,7 +2873,7 @@ public class PluginUtils {
         }
     }
 
-    private static void importAnnotations(String xfdf, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
+    private static void importAnnotations(String xfdf, boolean replace, MethodChannel.Result result, ViewerComponent component) throws PDFNetException {
         PDFViewCtrl pdfViewCtrl = component.getPdfViewCtrl();
         PDFDoc pdfDoc = component.getPdfDoc();
         if (null == pdfViewCtrl || null == pdfDoc || null == xfdf) {
@@ -2886,7 +2903,11 @@ public class PluginUtils {
 
             FDFDoc fdfDoc = FDFDoc.createFromXFDF(xfdf);
 
-            pdfDoc.fdfUpdate(fdfDoc);
+            if (replace) {
+                pdfDoc.fdfUpdate(fdfDoc);
+            } else {
+                pdfDoc.fdfMerge(fdfDoc);
+            }
             pdfDoc.refreshAnnotAppearances();
             pdfViewCtrl.update(true);
 

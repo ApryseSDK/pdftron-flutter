@@ -1,3 +1,24 @@
+# 1.0.0-24 - December 13, 2023
+- expose Pan tool
+
+# 1.0.0-23 - December 6, 2023
+- Update Android to v10.6.0
+
+# 1.0.0-22 - October 25, 2023
+- Update Android to v10.5.0
+
+# 1.0.0-21 - September 21, 2023
+- Fix bug in mergeAnnotations()
+
+# 1.0.0-20 - September 13, 2023
+- Update Android to v10.4.0
+
+# 1.0.0-18 - August 23, 2023
+- mergeAnnotations()
+
+# 1.0.0-17 - August 8, 2023
+- added eraser to PTToolKey (iOS)
+  
 # 1.0.0-16 - August 2, 2023
 - Update Android to v10.3.0
 

@@ -18,7 +18,7 @@ jobs:
       - name: Get Latest pubspec.yaml
         run: | 
           git fetch 
-          git checkout -m origin/master pubspec.yaml
+          git checkout origin/master pubspec.yaml
           git add pubspec.yaml
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
