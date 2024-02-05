@@ -1,3 +1,6 @@
+# 1.0.0-27 - February 7, 2024
+- Update Android to v10.7.0
+
 # 1.0.0-24 - December 13, 2023
 - expose Pan tool
 
