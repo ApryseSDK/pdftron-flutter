@@ -7,6 +7,7 @@ public class FlutterPdfViewCtrlTabHostFragment extends PdfViewCtrlTabHostFragmen
     @Override
     protected boolean canRecreateActivity() {
         return true;
+    }
 
     @Override
     protected void updateFullScreenModeLayout() {
