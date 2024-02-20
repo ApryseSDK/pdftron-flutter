@@ -1,26 +1,19 @@
 package com.pdftron.pdftronflutter.nativeviews;
 
-import android.app.Activity;
-import androidx.annotation.NonNull;
+import android.os.Bundle;
+import androidx.fragment.app.FragmentActivity;
 
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 
 public class FlutterPdfViewCtrlTabHostFragment extends PdfViewCtrlTabHostFragment2 {
 
-    private boolean themeApplied = false;
-
     @Override
-    protected boolean canRecreateActivity() {
-        return true;
-    }
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    @Override
-    protected boolean applyTheme(@NonNull Activity activity) {
-        if (themeApplied) {
-            return false;
-        } else {
-            themeApplied = true;
-            return super.applyTheme(activity);
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            applyTheme(activity);
         }
     }
 
