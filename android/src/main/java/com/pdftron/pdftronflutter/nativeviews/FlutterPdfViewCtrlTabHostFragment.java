@@ -9,12 +9,12 @@ public class FlutterPdfViewCtrlTabHostFragment extends PdfViewCtrlTabHostFragmen
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         FragmentActivity activity = getActivity();
         if (activity != null) {
             applyTheme(activity);
         }
+
+        super.onCreate(savedInstanceState);
     }
 
     @Override
