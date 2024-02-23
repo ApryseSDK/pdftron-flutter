@@ -21,7 +21,6 @@ import com.pdftron.pdf.config.ViewerConfig;
 import com.pdftron.pdf.controls.PdfViewCtrlTabFragment2;
 import com.pdftron.pdf.controls.PdfViewCtrlTabHostFragment2;
 import com.pdftron.pdf.tools.ToolManager;
-import com.pdftron.pdf.utils.PdfViewCtrlSettingsManager;
 import com.pdftron.pdf.utils.Utils;
 import com.pdftron.pdftronflutter.R;
 import com.pdftron.pdftronflutter.helpers.PluginUtils;
@@ -324,11 +323,11 @@ public class DocumentView extends com.pdftron.pdf.controls.DocumentView2 impleme
         return mAutoSaveEnabled;
     }
 
-    public boolean isAnnotationManagerEnabled() { return mAnnotationManagerEnabled; };
+    public boolean isAnnotationManagerEnabled() { return mAnnotationManagerEnabled; }
 
-    public String getUserId() { return mUserId; };
+    public String getUserId() { return mUserId; }
 
-    public String getUserName() { return mUserName; };
+    public String getUserName() { return mUserName; }
 
     public boolean isUseStylusAsPen() {
         return mUseStylusAsPen;
