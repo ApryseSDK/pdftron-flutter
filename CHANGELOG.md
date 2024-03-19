@@ -1,3 +1,6 @@
+# 1.0.0-29 - March 20, 2024
+- Update Android to v10.8.0
+
 # 1.0.0-27 - February 7, 2024
 - Update Android to v10.7.0
 

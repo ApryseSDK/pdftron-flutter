@@ -37,7 +37,7 @@ android {
 }
 
 dependencies {
-    // PDFTron SDK dependencies
-    implementation "com.pdftron:pdftron:10.7.0"
-    implementation "com.pdftron:tools:10.7.0"
+    // Apryse SDK dependencies
+    implementation "com.pdftron:pdftron:10.8.0"
+    implementation "com.pdftron:tools:10.8.0"
 }
