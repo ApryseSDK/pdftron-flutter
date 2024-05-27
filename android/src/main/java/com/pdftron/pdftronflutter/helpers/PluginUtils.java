@@ -4372,7 +4372,7 @@ public class PluginUtils {
         String itemKey = mToolIdMap.get(itemId);
         if (itemKey != null && annotationCustomToolbarItemPressedEventSink != null) {
             // this is a custom button
-            annotationCustomToolbarItemPressedEventSink.success(itemId);
+            annotationCustomToolbarItemPressedEventSink.success(itemKey);
         }
     }
 
