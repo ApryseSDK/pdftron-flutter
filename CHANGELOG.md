@@ -1,3 +1,15 @@
+# 1.0.0-32 - July 24, 2024
+- Update Android to v10.11.0
+
+# 1.0.0-31 - May 27, 2024
+- Fix bug in `startAnnotationToolbarItemPressedListener`
+
+# 1.0.0-30 - May 1, 2024
+- Update Android to v10.9.0
+
+# 1.0.0-29 - March 20, 2024
+- Update Android to v10.8.0
+
 # 1.0.0-27 - February 7, 2024
 - Update Android to v10.7.0
 
