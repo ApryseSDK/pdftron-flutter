@@ -1,3 +1,6 @@
+# 1.0.0-32 - September 4, 2024
+- Update Android to v10.12.0
+
 # 1.0.0-32 - July 24, 2024
 - Update Android to v10.11.0
 
