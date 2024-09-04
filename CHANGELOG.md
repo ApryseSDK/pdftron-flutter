@@ -130,7 +130,7 @@
 
 # 1.0.0-beta.3 - November 8, 2021
 
-- Updated the Android plugin and widget ([#128](https://github.com/PDFTron/pdftron-flutter/issues/128)):
+- Updated the Android plugin and widget ([#128](https://github.com/ApryseSDK/pdftron-flutter/issues/128)):
   - The plugin now supports [Flutter's new embedding engine](https://flutter.dev/docs/development/packages-and-plugins/plugin-api-migration).
   - The widget now uses [hybrid composition](https://flutter.dev/docs/development/platform-integration/platform-views?tab=ios-platform-views-objective-c-tab#hybrid-composition). This update fixes issues such as: https://github.com/flutter/flutter/issues/58273
     and in regards to stability, places the widget on parity with the plugin.

@@ -8,7 +8,7 @@ PDFTron's Flutter PDF library brings smooth, flexible, and stand-alone document 
 - Night mode to improve viewing in low-light environments
 - And much more...
 
-More information can be found at https://www.pdftron.com/documentation/guides/flutter
+More information can be found at https://docs.apryse.com/documentation/guides/flutter/
 
 **Android**|**iOS**
 :--:|:--:
@@ -36,7 +36,7 @@ More information can be found at https://www.pdftron.com/documentation/guides/fl
 Dart now supports [sound null safety](https://dart.dev/null-safety), which is available starting from Dart 2.12.0 and Flutter 2.0.0. Here is a guide to migrate to [null safety](https://dart.dev/null-safety/migration-guide)
 
 If you would like to use our null safe SDK, it is available in the following places:
-- [GitHub](https://github.com/PDFTron/pdftron-flutter)
+- [GitHub](https://github.com/ApryseSDK/pdftron-flutter)
 - [pub.dev](https://pub.dev/packages/pdftron_flutter)
 
 The rest of this README.md contains documentation, installation instructions, and information for the null safe version of our SDK.
@@ -45,7 +45,7 @@ The rest of this README.md contains documentation, installation instructions, an
 
 Version `0.0.6` is the last stable release for the legacy UI.
 
-The release can be found here: https://github.com/PDFTron/pdftron-flutter/releases/tag/legacy-ui.
+The release can be found here: https://github.com/ApryseSDK/pdftron-flutter/releases/tag/legacy-ui.
 
 ## Installation
 
@@ -67,7 +67,7 @@ The release can be found here: https://github.com/PDFTron/pdftron-flutter/releas
           sdk: flutter
     +   pdftron_flutter:
     +     git:
-    +       url: git://github.com/PDFTron/pdftron-flutter.git
+    +       url: git://github.com/ApryseSDK/pdftron-flutter.git
     ```
 
 3. In the `myapp` directory, run `flutter packages get`.
@@ -433,11 +433,11 @@ return Scaffold(
   ```
 
 ## Changelog
-See [Changelog](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/CHANGELOG.md)
+See [Changelog](https://github.com/ApryseSDK/pdftron-flutter/blob/publish-prep-nullsafe/CHANGELOG.md)
 
 ## Contributing
-See [Contributing](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/CONTRIBUTING.md)
+See [Contributing](https://github.com/ApryseSDK/pdftron-flutter/blob/publish-prep-nullsafe/CONTRIBUTING.md)
 
 ## License
-See [License](https://github.com/PDFTron/pdftron-flutter/blob/publish-prep-nullsafe/LICENSE)
+See [License](https://github.com/ApryseSDK/pdftron-flutter/blob/publish-prep-nullsafe/LICENSE)
 ![](https://onepixel.pdftron.com/pdftron-flutter)
