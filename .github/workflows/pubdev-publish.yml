@@ -7,7 +7,7 @@ on:
       - master
 jobs:
   build:
-    if: github.repository == ApryseSDK/pdftron-flutter'
+    if: github.repository == 'ApryseSDK/pdftron-flutter'
     runs-on: ubuntu-latest
     container:
       image:  google/dart:latest
