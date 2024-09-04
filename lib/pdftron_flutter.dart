@@ -377,7 +377,7 @@ class PdftronFlutter {
   /// [path] specifies the file name of the image resource. The button will use
   /// the specified icon if [Config.showLeadingNavButton], which is true by
   /// default, is true in the config. To add an image file to your application,
-  /// please follow the steps in the [wiki page](https://github.com/PDFTron/pdftron-flutter/wiki/Adding-an-Image-Resource-To-Your-Application).
+  /// please follow the steps in the [wiki page](https://github.com/ApryseSDK/pdftron-flutter/wiki/Adding-an-Image-Resource-To-Your-Application).
   static Future<void> setLeadingNavButtonIcon(String path) {
     return _channel.invokeMethod(Functions.setLeadingNavButtonIcon,
         <String, dynamic>{Parameters.leadingNavButtonIcon: path});
