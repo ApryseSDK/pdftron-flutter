@@ -40,7 +40,7 @@ android {
     defaultConfig {
         applicationId "com.pdftron.pdftronflutterexample"
         minSdkVersion 21
-        targetSdkVersion 33
+        targetSdkVersion 34
         multiDexEnabled true
         manifestPlaceholders += [pdftronLicenseKey:PDFTRON_LICENSE_KEY]
         versionCode flutterVersionCode.toInteger()
