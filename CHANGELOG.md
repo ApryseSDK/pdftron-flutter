@@ -1,3 +1,6 @@
+# 1.0.0-37 - November 25, 2024
+- Update Android to v11.1.0
+
 # 1.0.0-36 - October 28, 2024
 - Update Android to v11.0.0
 - Update Android targetSDK to 34
