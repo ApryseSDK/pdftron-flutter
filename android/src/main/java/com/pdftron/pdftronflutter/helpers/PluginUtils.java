@@ -59,7 +59,7 @@ import com.pdftron.pdf.widget.bottombar.builder.BottomBarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.AnnotationToolbarBuilder;
 import com.pdftron.pdf.widget.toolbar.builder.ToolbarButtonType;
 import com.pdftron.pdf.widget.toolbar.component.DefaultToolbars;
-import com.pdftron.pdftronflutter.R;
+import com.pdftron.pdf.tools.R;
 import com.pdftron.pdf.PDFDraw;
 
 import org.apache.commons.io.FileUtils;
