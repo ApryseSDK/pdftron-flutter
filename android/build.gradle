@@ -25,7 +25,9 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 33
+    namespace 'com.pdftron.pdftronflutter'
+
+    compileSdk 34
 
     defaultConfig {
         minSdkVersion 19
