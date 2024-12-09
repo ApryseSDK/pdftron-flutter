@@ -208,7 +208,7 @@ return Scaffold(
 1. If you want to use local files on Android, add the following dependency to `myapp/pubspec.yaml`:
 
   ```yaml
-    permission_handler: ^8.1.1
+    permission_handler: ^11.3.1
   ```
 
 2. Open `lib/main.dart`, replace the entire file with the following:
