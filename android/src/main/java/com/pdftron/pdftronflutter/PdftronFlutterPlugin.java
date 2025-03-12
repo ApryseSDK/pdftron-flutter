@@ -10,7 +10,7 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
+// import io.flutter.plugin.common.PluginRegistry.Registrar;
 import io.flutter.plugin.platform.PlatformViewRegistry;
 
 /**
@@ -60,12 +60,12 @@ public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
     /**
      * Plugin registration using Android embedding v1.
      */
-    public static void registerWith(Registrar registrar) {
-        final MethodChannel methodChannel = new MethodChannel(registrar.messenger(), "pdftron_flutter");
-        methodChannel.setMethodCallHandler(new PluginMethodCallHandler(registrar.messenger(), registrar.activeContext()));
-        registrar
-                .platformViewRegistry()
-                .registerViewFactory(viewTypeId,
-                        new DocumentViewFactory(registrar.messenger(), registrar.activeContext()));
-    }
+    // public static void registerWith(Registrar registrar) {
+    //     final MethodChannel methodChannel = new MethodChannel(registrar.messenger(), "pdftron_flutter");
+    //     methodChannel.setMethodCallHandler(new PluginMethodCallHandler(registrar.messenger(), registrar.activeContext()));
+    //     registrar
+    //             .platformViewRegistry()
+    //             .registerViewFactory(viewTypeId,
+    //                     new DocumentViewFactory(registrar.messenger(), registrar.activeContext()));
+    // }
 }
