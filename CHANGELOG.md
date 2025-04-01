@@ -1,3 +1,6 @@
+# 1.0.0-43 - April 9, 2025
+- Update Android to v11.4.0
+
 # 1.0.0-40 - February 19, 2025
 - Update Android to v11.3.0
 
