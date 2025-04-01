@@ -143,14 +143,12 @@ The following instructions are only applicable to Android development; click her
 
 The following instructions are only applicable to iOS development; click here for the [Android counterpart](#android).
 
-> **Note**
-> (August 2022) 
+> [!IMPORTANT]
+> As of March 2025, use of the `PDFTron` and `PDFTronTools` podspecs distributed specifically for the PDFTron Flutter wrapper (`https://pdftron.com/downloads/ios/flutter/pdftron/latest.podspec` and `https://pdftron.com/downloads/ios/flutter/pdftron-tools/latest.podspec`, respectively) is deprecated.
+> 
+> **All new and existing users are recommended to use the standard [Apryse iOS SDK CocoaPods](https://docs.apryse.com/ios/guides/get-started/integration?tab=cocoapods) instead.**
 >
-> There are new podspec files to use when integrating the PDFTron Flutter Wrapper for iOS:
-> - `PDFTron` CocoaPod, providing `PDFNet.xcframework`: https://pdftron.com/downloads/ios/flutter/pdftron/latest.podspec
-> - `PDFTronTools` CocoaPod, providing `Tools.xcframework`: https://pdftron.com/downloads/ios/flutter/pdftron-tools/latest.podspec
->
-> Please update your `ios/Podfile` accordingly.
+> Please update your `Podfile` accordingly.
 
 4. Open `myapp/ios/Podfile` file and add:
 	```diff
@@ -161,8 +159,8 @@ The following instructions are only applicable to iOS development; click here fo
 	  target 'Runner' do
 	    ...
 	+   # PDFTron Pods
-	+   pod 'PDFTron', podspec: 'https://pdftron.com/downloads/ios/flutter/pdftron/latest.podspec'
-	+   pod 'PDFTronTools', podspec: 'https://pdftron.com/downloads/ios/flutter/pdftron-tools/latest.podspec'
+	+   pod 'PDFTron', podspec: 'https://www.pdftron.com/downloads/ios/cocoapods/xcframeworks/pdftron/latest.podspec'
+	+   pod 'PDFTronTools', podspec: 'https://www.pdftron.com/downloads/ios/cocoapods/xcframeworks/pdftron-tools/latest.podspec'
 	  end
 	```
 5. To ensure integration process is successful, run `flutter build ios --no-codesign` 
