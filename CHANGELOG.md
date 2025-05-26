@@ -1,87 +1,87 @@
-# 1.0.0-44 - May 28, 2025
+# 1.0.1-44 - May 28, 2025
 - Update Android to v11.5.0
 
-# 1.0.0-43 - April 9, 2025
+# 1.0.1-43 - April 9, 2025
 - Update Android to v11.4.0
 
-# 1.0.0-40 - February 19, 2025
+# 1.0.1-40 - February 19, 2025
 - Update Android to v11.3.0
 
-# 1.0.0-39 - January 6, 2025
+# 1.0.1-39 - January 6, 2025
 - Update Android to v11.2.0
 
-# 1.0.0-37 - November 25, 2024
+# 1.0.1-37 - November 25, 2024
 - Update Android to v11.1.0
 
-# 1.0.0-36 - October 28, 2024
+# 1.0.1-36 - October 28, 2024
 - Update Android to v11.0.0
 - Update Android targetSDK to 34
 
-# 1.0.0-33 - September 4, 2024
+# 1.0.1-33 - September 4, 2024
 - Update Android to v10.12.0
 
-# 1.0.0-32 - July 24, 2024
+# 1.0.1-32 - July 24, 2024
 - Update Android to v10.11.0
 
-# 1.0.0-31 - May 27, 2024
+# 1.0.1-31 - May 27, 2024
 - Fix bug in `startAnnotationToolbarItemPressedListener`
 
-# 1.0.0-30 - May 1, 2024
+# 1.0.1-30 - May 1, 2024
 - Update Android to v10.9.0
 
-# 1.0.0-29 - March 20, 2024
+# 1.0.1-29 - March 20, 2024
 - Update Android to v10.8.0
 
-# 1.0.0-27 - February 7, 2024
+# 1.0.1-27 - February 7, 2024
 - Update Android to v10.7.0
 
-# 1.0.0-24 - December 13, 2023
+# 1.0.1-24 - December 13, 2023
 - expose Pan tool
 
-# 1.0.0-23 - December 6, 2023
+# 1.0.1-23 - December 6, 2023
 - Update Android to v10.6.0
 
-# 1.0.0-22 - October 25, 2023
+# 1.0.1-22 - October 25, 2023
 - Update Android to v10.5.0
 
-# 1.0.0-21 - September 21, 2023
+# 1.0.1-21 - September 21, 2023
 - Fix bug in mergeAnnotations()
 
-# 1.0.0-20 - September 13, 2023
+# 1.0.1-20 - September 13, 2023
 - Update Android to v10.4.0
 
-# 1.0.0-18 - August 23, 2023
+# 1.0.1-18 - August 23, 2023
 - mergeAnnotations()
 
-# 1.0.0-17 - August 8, 2023
+# 1.0.1-17 - August 8, 2023
 - added eraser to PTToolKey (iOS)
   
-# 1.0.0-16 - August 2, 2023
+# 1.0.1-16 - August 2, 2023
 - Update Android to v10.3.0
 
-# 1.0.0-15 - July 4, 2023
+# 1.0.1-15 - July 4, 2023
 - Fix bug in Android `saveDocument`
 
-# 1.0.0-14 - June 21, 2023
+# 1.0.1-14 - June 21, 2023
 - Update Android to v10.2.0
 
-# 1.0.0-13 - May 10, 2023
+# 1.0.1-13 - May 10, 2023
 - Update Android to v10.1.0
 
-# 1.0.0-9 - Mar 27, 2023
+# 1.0.1-9 - Mar 27, 2023
 - Update Android to v10.0.0
 
-# 1.0.0-8 - Feb 17, 2023
+# 1.0.1-8 - Feb 17, 2023
 - Update Android to v9.5.0
 
-# 1.0.0-4 - Dec 19, 2022
+# 1.0.1-4 - Dec 19, 2022
 - Update Android to v9.4.2
 
-# 1.0.0-3 - Dec 16, 2022
+# 1.0.1-3 - Dec 16, 2022
 - setFitMode()
 - setLayoutMode()
 
-# 1.0.0-2 - Dec 2, 2022
+# 1.0.1-2 - Dec 2, 2022
 - Update Android to v9.4.1
 
 # 1.0.0-beta.55 - Oct 13, 2022
