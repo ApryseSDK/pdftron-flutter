@@ -1,7 +1,5 @@
 package com.pdftron.pdftronflutter;
 
-import android.content.Context;
-
 import com.pdftron.pdftronflutter.factories.DocumentViewFactory;
 import com.pdftron.pdftronflutter.helpers.PluginMethodCallHandler;
 
@@ -10,7 +8,6 @@ import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.plugin.common.BinaryMessenger;
 import io.flutter.plugin.common.MethodChannel;
-import io.flutter.plugin.common.PluginRegistry.Registrar;
 import io.flutter.plugin.platform.PlatformViewRegistry;
 
 /**
@@ -24,7 +21,8 @@ public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
     private BinaryMessenger mMessenger;
     private MethodChannel mMethodChannel;
 
-    public PdftronFlutterPlugin() { }
+    public PdftronFlutterPlugin() {
+    }
 
     @Override
     public void onAttachedToEngine(FlutterPluginBinding binding) {
@@ -47,7 +45,8 @@ public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
     }
 
     @Override
-    public void onDetachedFromActivityForConfigChanges() { }
+    public void onDetachedFromActivityForConfigChanges() {
+    }
 
     @Override
     public void onReattachedToActivityForConfigChanges(ActivityPluginBinding binding) {
@@ -55,17 +54,6 @@ public class PdftronFlutterPlugin implements FlutterPlugin, ActivityAware {
     }
 
     @Override
-    public void onDetachedFromActivity() { }
-
-    /**
-     * Plugin registration using Android embedding v1.
-     */
-    public static void registerWith(Registrar registrar) {
-        final MethodChannel methodChannel = new MethodChannel(registrar.messenger(), "pdftron_flutter");
-        methodChannel.setMethodCallHandler(new PluginMethodCallHandler(registrar.messenger(), registrar.activeContext()));
-        registrar
-                .platformViewRegistry()
-                .registerViewFactory(viewTypeId,
-                        new DocumentViewFactory(registrar.messenger(), registrar.activeContext()));
+    public void onDetachedFromActivity() {
     }
 }
