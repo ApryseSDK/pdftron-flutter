@@ -93,7 +93,7 @@ The following instructions are only applicable to Android development; click her
 	<manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.example.myapp">
  
-    <!-- Required if you want to work with online documents -->
+	  <!-- Required if you want to work with online documents -->
 	+ <uses-permission android:name="android.permission.INTERNET" />
 	  <!-- Required if you want to record audio annotations -->
 	+ <uses-permission android:name="android.permission.RECORD_AUDIO" />
