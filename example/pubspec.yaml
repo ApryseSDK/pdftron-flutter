@@ -6,12 +6,14 @@ version: 1.0.0+1
 publish_to: 'none'
 
 environment:
-  sdk: ">=2.17.5 <3.0.0"
-  flutter: ">=1.12.0"
+  sdk: ^3.8.0
 
 dependencies:
   flutter:
     sdk: flutter
+
+  pdftron_flutter:
+    path: ../
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -20,9 +22,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  pdftron_flutter:
-    path: ../
 
 # For information on the generic Dart part of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec

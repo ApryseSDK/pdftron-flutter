@@ -1,3 +1,6 @@
+# 1.0.1-45 - Jun 10, 2025
+- Update Android to embedding v2
+
 # 1.0.1-44 - May 28, 2025
 - Update Android to v11.5.0
 

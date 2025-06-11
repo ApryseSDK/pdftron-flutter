@@ -3,6 +3,10 @@
 
     <application>
 
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+
         <!-- Document viewer activity declaration-->
         <activity
             android:name=".FlutterDocumentActivity"
