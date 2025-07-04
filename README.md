@@ -108,9 +108,9 @@ The following instructions are only applicable to Android development; click her
 	+     android:value="@string/PDFTRON_LICENSE_KEY" />
 	    ...
       <activity
-        ...
-  -     android:windowSoftInputMode="adjustResize"
-  +     android:windowSoftInputMode="adjustPan">
+	      ...
+	-     android:windowSoftInputMode="adjustResize"
+	+     android:windowSoftInputMode="adjustPan">
       </activity>
 	```
 
