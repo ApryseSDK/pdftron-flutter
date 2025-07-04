@@ -107,6 +107,11 @@ The following instructions are only applicable to Android development; click her
 	+     android:name="pdftron_license_key"
 	+     android:value="@string/PDFTRON_LICENSE_KEY" />
 	    ...
+      <activity
+        ...
+  -     android:windowSoftInputMode="adjustResize"
+  +     android:windowSoftInputMode="adjustPan">
+      </activity>
 	```
 
     If you are using the `DocumentView` widget, change the parent class of your `MainActivity` file (either Kotlin or Java) to `FlutterFragmentActivity`:
