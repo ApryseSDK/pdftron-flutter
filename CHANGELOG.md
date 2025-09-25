@@ -1,3 +1,6 @@
+# 1.0.1-48 - September 25, 2025
+- Update Android to v11.8.0
+
 # 1.0.1-47 - August 18, 2025
 - Update Android to v11.7.0
 
