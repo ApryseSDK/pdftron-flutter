@@ -1958,8 +1958,9 @@
     PTAnnotationManager * const annotationManager = documentController.toolManager.annotationManager;
     
     NSError *updateError = nil;
-    const BOOL updateSuccess = [annotationManager updateAnnotationsWithXFDFString:xfdf
-                                                                            error:&updateError];
+    const BOOL updateSuccess = [self updateAnnotationsWithXFDFString:xfdf
+                                                               error:&updateError
+                                                   annotationManager:annotationManager];
     if (!updateSuccess) {
         if (updateError) {
             NSLog(@"Error: There was an error while trying to import annotation command. %@", updateError.localizedDescription);
@@ -1968,6 +1969,49 @@
     } else {
         flutterResult(nil);
     }
+}
+
+- (BOOL)updateAnnotationsWithXFDFString:(NSString *)xfdfString
+                                  error:(NSError * _Nullable __autoreleasing * _Nullable)error
+                      annotationManager:(PTAnnotationManager *)annotationManager
+{
+    PTPDFViewCtrl * const pdfViewCtrl = annotationManager.pdfViewCtrl;
+    if (!pdfViewCtrl) {
+        return NO;
+    }
+    
+    [annotationManager willUpdateAnnotationsWithXFDFString:xfdfString];
+    
+    NSError *writeError = nil;
+    const BOOL writeSuccess = [pdfViewCtrl DocLock:YES
+                                         withBlock:^(PTPDFDoc * _Nullable doc) {
+        
+        PTFDFDoc * const fdfDoc = [PTFDFDoc CreateFromXFDF:xfdfString];
+        if (!fdfDoc) {
+            return;
+        }
+        
+        [doc FDFUpdate:fdfDoc];
+        
+        // Allow non-standard annotation rotations.
+        PTRefreshOptions * const refreshOptions = [[PTRefreshOptions alloc] init];
+        [refreshOptions SetUseNonStandardRotation:YES];
+        
+        [doc RefreshAnnotAppearances:refreshOptions];
+        
+        [pdfViewCtrl Update:YES];
+    } error:&writeError];
+    if (!writeSuccess) {
+        NSLog(@"Error: %@", writeError);
+        if (error) {
+            *error = writeError;
+        }
+        return NO;
+    }
+    
+    [annotationManager didUpdateAnnotationsWithXFDFString:xfdfString];
+    
+    return YES;
 }
 
 - (void)exportAnnotations:(NSString *)annotationList resultToken:(FlutterResult)flutterResult
