@@ -1,3 +1,6 @@
+# 1.0.1-50 - October 16, 2025
+- Update the example project to use the official Apryse iOS podspec links
+
 # 1.0.1-49 - October 15, 2025
 - Performance update for the `importAnnotations()` API on iOS
 
