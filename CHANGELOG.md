@@ -1,4 +1,4 @@
-# 1.0.1-51 - October 16, 2025
+# 1.0.1-51 - November 27, 2025
 - Update Android to v11.9.0
 
 # 1.0.1-50 - October 16, 2025
