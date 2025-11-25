@@ -1,3 +1,6 @@
+# 1.0.1-51 - October 16, 2025
+- Update Android to v11.9.0
+
 # 1.0.1-50 - October 16, 2025
 - Update the example project to use the official Apryse iOS podspec links
 
