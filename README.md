@@ -137,11 +137,11 @@ The following instructions are only applicable to Android development; click her
 The following instructions are only applicable to iOS development; click here for the [Android counterpart](#android).
 
 > [!IMPORTANT]
-> As of March 2025, use of the `PDFTron` and `PDFTronTools` podspecs distributed specifically for the PDFTron Flutter wrapper (`https://pdftron.com/downloads/ios/cocoapods/xcframeworks/pdftron/latest.podspec` and `https://pdftron.com/downloads/ios/cocoapods/xcframeworks/pdftron-tools/latest.podspec`, respectively) is deprecated.
+> As of March 2025, use of the `PDFTron` and `PDFTronTools` podspecs distributed specifically for the PDFTron Flutter wrapper (`https://pdftron.com/downloads/ios/flutter/pdftron/latest.podspec` and `https://pdftron.com/downloads/ios/flutter/pdftron-tools/latest.podspec`, respectively) is deprecated and no longer maintained.
 > 
-> **All new and existing users are recommended to use the standard [Apryse iOS SDK CocoaPods](https://docs.apryse.com/ios/guides/get-started/integration?tab=cocoapods) instead.**
+> Please update to the latest podspecs provided for the wrapper as soon as possible (`https://www.pdftron.com/downloads/ios/cocoapods/xcframeworks/pdftron/latest.podspec`) and (`https://www.pdftron.com/downloads/ios/cocoapods/xcframeworks/pdftron-tools/latest.podspec`)
 >
-> Please update your `Podfile` accordingly.
+> See more information here: [Apryse iOS SDK CocoaPods](https://docs.apryse.com/ios/guides/get-started/integration?tab=cocoapods)
 
 4. Open `myapp/ios/Podfile` file and add:
 	```diff
