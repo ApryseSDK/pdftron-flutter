@@ -1,3 +1,6 @@
+# 1.0.1-52 - January 7, 2026
+- Update Android to v11.10.0
+
 # 1.0.1-51 - November 27, 2025
 - Update Android to v11.9.0
 
