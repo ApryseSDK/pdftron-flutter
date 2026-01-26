@@ -3,23 +3,6 @@
 > [!IMPORTANT]
 > This repository serves as a wrapper around the native SDKs. It exposes only a limited set of APIs intended for basic viewing, annotating and removing components from the out‑of‑box UI. Any advanced customization or access to lower‑level functionality should be performed directly through the native SDKs rather than this wrapper.
 
-PDFTron's Flutter PDF library brings smooth, flexible, and stand-alone document viewing and editing solutions using Flutter codebases for iOS and Android applications.
-
-- Direct MS Office document viewing and conversion
-- Fully customizable open source UI to improve app engagement
-- Document reflow to increase readability and accessibility on mobile
-- File streaming to view remote and complex documents faster
-- Night mode to improve viewing in low-light environments
-- And much more...
-
-More information can be found at https://docs.apryse.com/documentation/guides/flutter/
-
-**Android**|**iOS**
-:--:|:--:
-<img src="https://pdftron.s3.amazonaws.com/custom/websitefiles/flutter/flutter-pdftron-demo-android.gif" alt="A gif showcasing the UI and some features on Android"/>|<img src="https://pdftron.s3.amazonaws.com/custom/websitefiles/flutter/flutter-pdftron-demo-ios.gif" alt="A gif showcasing the UI and some features on iOS"/>
-
-## Contents
-
 - [API](https://pub.dev/documentation/pdftron_flutter/latest/pdftron/pdftron-library.html)
 - [Prerequisites](#prerequisites)
 - [Null Safety](#Null-safety)
@@ -30,6 +13,12 @@ More information can be found at https://docs.apryse.com/documentation/guides/fl
 - [Changelog](#changelog)
 - [Contributing](#contributing)
 - [License](#license)
+
+## Preview
+
+**Android**|**iOS**
+:--:|:--:
+<img src="https://pdftron.s3.amazonaws.com/custom/websitefiles/flutter/flutter-pdftron-demo-android.gif" alt="A gif showcasing the UI and some features on Android"/>|<img src="https://pdftron.s3.amazonaws.com/custom/websitefiles/flutter/flutter-pdftron-demo-ios.gif" alt="A gif showcasing the UI and some features on iOS"/>
 
 ## Prerequisites
 - No license key is required for trial. However, a valid commercial license key is required after trial.
