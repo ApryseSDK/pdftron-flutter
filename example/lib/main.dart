@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,7 +10,7 @@ import 'package:pdftron_flutter/pdftron_flutter.dart';
 // import 'package:permission_handler/permission_handler.dart';
 
 //set this value to view document via Widget
-var enableWidget = true;
+var enableWidget = false;
 
 void main() => runApp(MyApp());
 
@@ -102,6 +103,9 @@ class _ViewerState extends State<Viewer> {
     });
 
     await PdftronFlutter.openDocument(_document, config: config);
+
+    var sampleXfdf = await loadAsset();
+    print(sampleXfdf);
 
     try {
       // The imported command is in XFDF format and tells whether to add,
@@ -236,5 +240,9 @@ class _ViewerState extends State<Viewer> {
         );
       },
     );
+  }
+
+  Future<String> loadAsset() async {
+    return await rootBundle.loadString('assets/sample_xfdf.txt');
   }
 }
