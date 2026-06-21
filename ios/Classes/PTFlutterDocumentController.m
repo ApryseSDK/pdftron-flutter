@@ -1922,7 +1922,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 - (BOOL)shouldSetNavigationBarHidden:(BOOL)navigationBarHidden animated:(BOOL)animated
 {
     if (!navigationBarHidden) {
-        return [self isNavigationBarEnabled];
+        return [self isNavigationBarEnabled] && !self.topToolbarsHidden;
     }
     return YES;
 }
