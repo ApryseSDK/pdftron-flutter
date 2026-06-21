@@ -1037,7 +1037,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     const BOOL hideTopToolbars = self.topToolbarsHidden;
     self.controlsHidden = hideTopToolbars;
     
-    const BOOL hideTopAppNavBar = self.topAppNavBarHidden;
+    const BOOL hideTopAppNavBar = (self.topAppNavBarHidden || self.topToolbarsHidden);
     const BOOL translucent = hideTopAppNavBar;
     [self.navigationController setNavigationBarHidden:hideTopAppNavBar animated:NO];
     self.navigationController.navigationBar.translucent = translucent;
