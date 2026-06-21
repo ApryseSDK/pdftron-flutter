@@ -1034,10 +1034,12 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     }
     self.toolManager.pencilTool = self.useStylusAsPen ? pencilTool : [PTPanTool class];
     
-    const BOOL hideNav = self.topToolbarsHidden;
-    self.controlsHidden = hideNav;
+    const BOOL hideTopToolbars = self.topToolbarsHidden;
+    self.controlsHidden = hideTopToolbars;
     
-    const BOOL translucent = (self.topAppNavBarHidden || self.topToolbarsHidden);
+    const BOOL hideTopAppNavBar = (self.topAppNavBarHidden || self.topToolbarsHidden);
+    const BOOL translucent = hideTopAppNavBar;
+    [self.navigationController setNavigationBarHidden:hideTopAppNavBar animated:NO];
     self.navigationController.navigationBar.translucent = translucent;
     self.thumbnailSliderController.toolbar.translucent = translucent;
     
