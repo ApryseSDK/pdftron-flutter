@@ -223,7 +223,7 @@ class _ViewerState extends State<Viewer> {
         return AlertDialog(
           title: Text('AlertDialog'),
           content: SingleChildScrollView(
-            child: Text('Leading navigation button has been pressed.'),
+            child: Text('Leading navigation button has been pressed: ' + _version),
           ),
           actions: <Widget>[
             TextButton(
