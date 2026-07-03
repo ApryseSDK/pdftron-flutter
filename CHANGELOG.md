@@ -1,3 +1,6 @@
+# 1.0.1-57 - July 8, 2026
+- Update Android to v12.0.0
+
 # 1.0.1-56 - May 27, 2026
 - Update Android to v11.13.0
 
