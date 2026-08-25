@@ -3041,6 +3041,7 @@ public class PluginUtils {
                 }
             }
         }
+        result.success(null);
     }
 
     private static void selectAnnotation(String annotation, MethodChannel.Result result, ViewerComponent component) throws PDFNetException, JSONException {
@@ -3418,6 +3419,7 @@ public class PluginUtils {
                 pdfViewCtrl.docUnlock();
             }
         }
+        result.success(null);
     }
 
     private static boolean isValidJSONValue(JSONObject json, String key) throws JSONException {
@@ -3618,8 +3620,9 @@ public class PluginUtils {
                 ((AdvancedShapeCreate) currentTool).commit();
                 toolManager.setTool(toolManager.createTool(ToolManager.ToolMode.PAN, null));
                 result.success(true);
+            } else {
+                result.success(false);
             }
-            result.success(false);
             return;
         }
         result.error("InvalidState", "Tool manager not found", null);
