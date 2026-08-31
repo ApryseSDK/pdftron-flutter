@@ -1,3 +1,6 @@
+# 1.0.1-59 - August 25, 2026
+- Fix issue with missing resolve calls on Android
+
 # 1.0.1-58 - August 19, 2026
 - Update Android to v12.1.0
 
