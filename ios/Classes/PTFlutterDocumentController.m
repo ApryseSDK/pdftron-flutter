@@ -140,7 +140,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 
 - (BOOL)isTopToolbarEnabled
 {
-    return (!self.topAppNavBarHidden && !self.topToolbarsHidden);
+    return !self.topToolbarsHidden;
 }
 
 - (BOOL)areTopToolbarsEnabled
@@ -157,6 +157,9 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 {
     if (self.navigationController) {
         if ([self isTopToolbarEnabled]) {
+            if (![self isNavigationBarEnabled]) {
+                return NO;
+            }
             return [self.navigationController isNavigationBarHidden];
         }
         if ([self isBottomToolbarEnabled]) {
@@ -1031,10 +1034,12 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
     }
     self.toolManager.pencilTool = self.useStylusAsPen ? pencilTool : [PTPanTool class];
     
-    const BOOL hideNav = (self.topAppNavBarHidden || self.topToolbarsHidden);
-    self.controlsHidden = hideNav;
+    const BOOL hideTopToolbars = self.topToolbarsHidden;
+    self.controlsHidden = hideTopToolbars;
     
-    const BOOL translucent = hideNav;
+    const BOOL hideTopAppNavBar = (self.topAppNavBarHidden || self.topToolbarsHidden);
+    const BOOL translucent = hideTopAppNavBar;
+    [self.navigationController setNavigationBarHidden:hideTopAppNavBar animated:NO];
     self.navigationController.navigationBar.translucent = translucent;
     self.thumbnailSliderController.toolbar.translucent = translucent;
     
@@ -1917,7 +1922,7 @@ static BOOL PT_addMethod(Class cls, SEL selector, void (^block)(id))
 - (BOOL)shouldSetNavigationBarHidden:(BOOL)navigationBarHidden animated:(BOOL)animated
 {
     if (!navigationBarHidden) {
-        return [self isTopToolbarEnabled];
+        return [self isNavigationBarEnabled] && !self.topToolbarsHidden;
     }
     return YES;
 }
