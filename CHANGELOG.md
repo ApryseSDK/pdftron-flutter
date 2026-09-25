@@ -1,3 +1,6 @@
+# 1.0.1-61 - October 1, 2026
+- Update Android to v12.2.0
+
 # 1.0.1-60 - September 18, 2026
 - Update annotation author to display on annotation list/comments in iOS
 
