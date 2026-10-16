@@ -11,14 +11,13 @@ A new flutter plugin project.
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Your Company' => 'email@example.com' }
-  s.platform         = :ios, "11.0"
+  s.platform         = :ios, "13.0"
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
-  s.public_header_files = 'Classes/**/*.h'
+  s.source_files = 'pdftron_flutter/Sources/pdftron_flutter/**/*.{h,m}'
+  s.public_header_files = 'pdftron_flutter/Sources/pdftron_flutter/include/**/*.h'
   s.dependency 'Flutter'
   s.dependency 'PDFTron'
   s.dependency 'PDFTronTools'
 
   s.frameworks = 'PDFNet', 'Tools'
 end
-

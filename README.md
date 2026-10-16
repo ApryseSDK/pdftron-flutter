@@ -129,6 +129,34 @@ The following instructions are only applicable to Android development; click her
 
 The following instructions are only applicable to iOS development; click here for the [Android counterpart](#android).
 
+The plugin supports two integration methods on iOS: [Swift Package Manager](#swift-package-manager-recommended) (recommended) and [CocoaPods](#cocoapods). Both require a minimum deployment target of iOS 13.0.
+
+#### Swift Package Manager (recommended)
+
+With Swift Package Manager, the PDFNet and Tools frameworks are pulled in automatically by the plugin from the [pdftron-apple-package](https://github.com/ApryseSDK/pdftron-apple-package) Swift package, so no manual dependency declarations are needed.
+
+Requires Flutter 3.24 or higher.
+
+4. Enable Swift Package Manager support in the Flutter tool (one-time, machine-wide):
+	```bash
+	flutter config --enable-swift-package-manager
+	```
+	Alternatively, enable it for a single project by adding the following to `myapp/pubspec.yaml`. A project-level setting takes precedence over the machine-wide one, so this works even on machines where Swift Package Manager has not been enabled:
+	```yaml
+	flutter:
+	  config:
+	    enable-swift-package-manager: true
+	```
+5. Make sure your app's iOS deployment target is at least 13.0. In Xcode, select the `Runner` target and set **Minimum Deployments** to iOS 13.0, or set `IPHONEOS_DEPLOYMENT_TARGET = 13.0` in your build settings.
+6. To ensure the integration process is successful, run `flutter build ios --no-codesign`.
+7. Follow the instructions outlined [in the Usage section](#usage).
+8. Run `flutter emulators --launch apple_ios_simulator`
+9. Run `flutter run`
+
+#### CocoaPods
+
+CocoaPods is still fully supported. Use it if you are on a Flutter version older than 3.24, or if your project is not ready to migrate.
+
 > [!IMPORTANT]
 > As of March 2025, use of the `PDFTron` and `PDFTronTools` podspecs distributed specifically for the PDFTron Flutter wrapper (`https://pdftron.com/downloads/ios/flutter/pdftron/latest.podspec` and `https://pdftron.com/downloads/ios/flutter/pdftron-tools/latest.podspec`, respectively) is deprecated and no longer maintained.
 > 
@@ -136,23 +164,30 @@ The following instructions are only applicable to iOS development; click here fo
 >
 > See more information here: [Apryse iOS SDK CocoaPods](https://docs.apryse.com/ios/guides/get-started/integration?tab=cocoapods)
 
-4. Open `myapp/ios/Podfile` file and add:
+4. If Swift Package Manager is enabled in your Flutter tool, disable it for this project by adding the following to `myapp/pubspec.yaml`:
+	```yaml
+	flutter:
+	  config:
+	    enable-swift-package-manager: false
+	```
+5. Open `myapp/ios/Podfile` file and add:
 	```diff
 	  # Uncomment this line to define a global platform for your project
-	- # platform :ios, '9.0'
-	+ platform :ios, '10.0'
+	- # platform :ios, '12.0'
+	+ platform :ios, '13.0'
 	  ...
 	  target 'Runner' do
 	    ...
 	+   # PDFTron Pods
+	+   use_frameworks!
 	+   pod 'PDFTron', podspec: 'https://www.pdftron.com/downloads/ios/cocoapods/xcframeworks/pdftron/latest.podspec'
 	+   pod 'PDFTronTools', podspec: 'https://www.pdftron.com/downloads/ios/cocoapods/xcframeworks/pdftron-tools/latest.podspec'
 	  end
 	```
-5. To ensure integration process is successful, run `flutter build ios --no-codesign` 
-6. Follow the instructions outlined [in the Usage section](#usage).
-7. Run `flutter emulators --launch apple_ios_simulator`
-8. Run `flutter run`
+6. To ensure integration process is successful, run `flutter build ios --no-codesign` 
+7. Follow the instructions outlined [in the Usage section](#usage).
+8. Run `flutter emulators --launch apple_ios_simulator`
+9. Run `flutter run`
 
 ## Widget or Plugin
 

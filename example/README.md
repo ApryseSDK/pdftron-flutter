@@ -3,8 +3,26 @@
 Demonstrates how to use the `pdftron_flutter` plugin.
 
 ## Prerequisites
-- PDFTron SDK >= 6.9.0
-- Flutter >= 1.12.0
+- PDFTron SDK >= 12.2.0
+- Flutter >= 3.24 (required for Swift Package Manager support on iOS)
+- Xcode >= 15 for iOS builds
+
+This example integrates its iOS dependencies through Swift Package Manager and
+ships no Podfile. Swift Package Manager is enabled for this project in
+`example/pubspec.yaml`, so it works even when the feature is turned off
+machine-wide:
+
+```yaml
+flutter:
+  config:
+    enable-swift-package-manager: true
+```
+
+Run `flutter pub get` in this directory before opening
+`example/ios/Runner.xcworkspace`. The Xcode project references a generated
+Swift package under `ios/Flutter/ephemeral/`, which the Flutter tool creates
+during `flutter pub get`. Opening Xcode beforehand reports a missing package
+product.
 
 ## Installation
 
