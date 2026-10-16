@@ -28,6 +28,11 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  # This example app integrates iOS dependencies through Swift Package Manager
+  # and intentionally ships no Podfile, so SPM is enabled here regardless of the
+  # machine-wide `flutter config --enable-swift-package-manager` setting.
+  config:
+    enable-swift-package-manager: true
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in

@@ -141,6 +141,12 @@ Requires Flutter 3.24 or higher.
 	```bash
 	flutter config --enable-swift-package-manager
 	```
+	Alternatively, enable it for a single project by adding the following to `myapp/pubspec.yaml`. A project-level setting takes precedence over the machine-wide one, so this works even on machines where Swift Package Manager has not been enabled:
+	```yaml
+	flutter:
+	  config:
+	    enable-swift-package-manager: true
+	```
 5. Make sure your app's iOS deployment target is at least 13.0. In Xcode, select the `Runner` target and set **Minimum Deployments** to iOS 13.0, or set `IPHONEOS_DEPLOYMENT_TARGET = 13.0` in your build settings.
 6. To ensure the integration process is successful, run `flutter build ios --no-codesign`.
 7. Follow the instructions outlined [in the Usage section](#usage).
