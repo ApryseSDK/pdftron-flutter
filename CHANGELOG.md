@@ -1,3 +1,6 @@
+# 1.0.1-63 - November 25, 2026
+- Update Android to v12.3.0
+
 # 1.0.1-62 - October 13, 2026
 - Add Swift Package Manager support for iOS, using the [pdftron-apple-package](https://github.com/ApryseSDK/pdftron-apple-package) Swift package (PDFNet and Tools v12.2 or later) for apps integrating via SPM
 - Raise the minimum iOS deployment target to 13.0
